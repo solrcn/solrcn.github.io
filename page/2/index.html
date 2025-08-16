@@ -139,7 +139,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
         <a href="/archives/">
-          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-count">45</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -150,7 +150,7 @@
       </div>
       <div class="site-state-item site-state-tags">
           <a href="/tags/">
-        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-count">35</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -167,6 +167,644 @@
     </div>
 
     <div class="main-inner index posts-expand">
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2018/02/05/%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8solr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2018/02/05/%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8solr/" class="post-title-link" itemprop="url">快速启动SOLR</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2018-02-05 11:23:55" itemprop="dateCreated datePublished" datetime="2018-02-05T11:23:55+08:00">2018-02-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-16 23:22:58" itemprop="dateModified" datetime="2025-08-16T23:22:58+08:00">2025-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="快速启动Solr脚本"><a href="#快速启动Solr脚本" class="headerlink" title="快速启动Solr脚本"></a>快速启动Solr脚本</h1><p>这是一个用于快速启动Solr 7.2.1的shell脚本。</p>
+<h2 id="脚本内容"><a href="#脚本内容" class="headerlink" title="脚本内容"></a>脚本内容</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line"></span><br><span class="line">solrversion=7.2.1</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ ! -z <span class="variable">$1</span> ]; <span class="keyword">then</span></span><br><span class="line">    solrversion=<span class="variable">$1</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;setup solr-<span class="variable">$solrversion</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> [ -d solr-<span class="variable">$solrversion</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">rm</span> -rf solr-<span class="variable">$solrversion</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line">wget -O solr-<span class="variable">$solrversion</span>.tgz http://archive.apache.org/dist/lucene/solr/<span class="variable">$solrversion</span>/solr-<span class="variable">$solrversion</span>.tgz</span><br><span class="line">tar zxf solr-<span class="variable">$solrversion</span>.tgz</span><br><span class="line"><span class="built_in">cd</span> solr-<span class="variable">$solrversion</span></span><br><span class="line"></span><br><span class="line">bin/solr start -c -force</span><br><span class="line">bin/solr create_collection -c collection1 -force</span><br><span class="line">bin/post example/exampledocs/ -c collection1</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;stopcmd:&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;bin/solr delete -c collection1&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;bin/solr stop -all&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="脚本说明"><a href="#脚本说明" class="headerlink" title="脚本说明"></a>脚本说明</h2><h3 id="功能"><a href="#功能" class="headerlink" title="功能"></a>功能</h3><ul>
+<li>下载指定版本的Solr（默认7.2.1）</li>
+<li>解压并启动SolrCloud模式</li>
+<li>创建collection1集合</li>
+<li>导入示例数据</li>
+</ul>
+<h3 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用默认版本7.2.1</span></span><br><span class="line">./script.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定其他版本</span></span><br><span class="line">./script.sh 8.11.2</span><br></pre></td></tr></table></figure>
+
+<h3 id="停止命令"><a href="#停止命令" class="headerlink" title="停止命令"></a>停止命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bin/solr delete -c collection1</span><br><span class="line">bin/solr stop -all</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/" class="post-title-link" itemprop="url">关于maxWarmingSearchers告警和设置</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2017-08-28 18:12:39" itemprop="dateCreated datePublished" datetime="2017-08-28T18:12:39+08:00">2017-08-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-16 22:56:49" itemprop="dateModified" datetime="2025-08-16T22:56:49+08:00">2025-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <ul>
+<li>**理解：**把maxWarmingSearchers理解成一个提交队列，上一个提交没完成下一个提交就进入了，大概是下面这样的情况:</li>
+</ul>
+<ol>
+<li><p>希望提交的数据马上可见，于是设置add之后马上提交</p>
+</li>
+<li><p>数据增量频率很高，每秒都有增量</p>
+</li>
+<li><p>服务器配置有限，每提交一次需要2秒;</p>
+</li>
+</ol>
+<ul>
+<li>**实验：**那么问题来了，一分钟进行了60次提交，但是服务器需要120秒才能反应过来，接下来会发生这样的情况：</li>
+</ul>
+<ol>
+<li><p>设置maxWarmingSearchers值为120：不会出现Error opening new searcher. exceeded limit of maxWarmingSearchers提示，但是120个提交积压在“提交队列”里面，数据依然不可见，因为下一分钟还有同样数据的增量和数据挤压，很快就会出现错误提示，如果将这个值无限放大，服务器会无法响应</p>
+</li>
+<li><p>设置maxWarmingSearchers值为119，出现Error opening new searcher. exceeded limit of maxWarmingSearchers提示，最后一个提交被拒绝</p>
+</li>
+</ol>
+<ul>
+<li>**思考:**我们会发现,maxWarmingSearchers无论怎样设置都无法达到快速看到数据更新的初衷，那我们应该怎么做呢：</li>
+</ul>
+<ol>
+<li><p>控制数据提交的频率</p>
+</li>
+<li><p>使用softcommit协调数据一致性延迟要求</p>
+</li>
+<li><p>从业务角度理解需求，不要单纯做技术实现</p>
+</li>
+</ol>
+<ul>
+<li><strong>进步：</strong>:那么maxWarmingSearchers参数和日志的意义在哪里呢：</li>
+</ul>
+<ol>
+<li><p>控制服务器压力，避免提交过于频繁导致服务器无法正常提供检索服务</p>
+</li>
+<li><p>作为一个预警，知晓资源已经接近阈值</p>
+</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/" class="post-title-link" itemprop="url">Solr 检索调试</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2014-08-21 18:26:28" itemprop="dateCreated datePublished" datetime="2014-08-21T18:26:28+08:00">2014-08-21</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:29:31" itemprop="dateModified" datetime="2025-08-17T00:29:31+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%8A%80%E5%B7%A7/" itemprop="url" rel="index"><span itemprop="name">Solr技巧</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>      Solr&#x2F;Lucene是一个全文检索引擎，全文引擎和SQL引擎所不同的是强调部分相关度高的内容返回，而不是所有内容返回，<br>所以部分内容包含在索引库中却无法命中是正常现象。<br>      多数情况下我们建议优化分词器或者引擎其它部分达到预期检索效果。  </p>
+<h2 id="分词器调节"><a href="#分词器调节" class="headerlink" title="分词器调节"></a>分词器调节</h2><p>按照如下步骤进入分词器调试界面：</p>
+<p><img src="/images/uploads/082114_1024_SOLR1.jpg"></p>
+<ol>
+<li>选择 collection</li>
+<li>选择 analysis 菜单</li>
+<li>在索引框中输入要索引的文档</li>
+<li>在检索框中输入要检索的词语</li>
+<li>选择需要调试的字段，这里假设要将内容索引到 title 字段，并且在该字段上检索</li>
+<li>点击分析按钮</li>
+<li>在展示出来的原文分词结果（左侧）和关键词分词结果（右侧）中对比最下面一行，若右侧分词结果的所有词在左侧都能找到，那么在 AND 关系的检索时能够匹配；若部分能够找到，那么在 OR 关系的检索中能够匹配；若完全找不到，那么无法匹配。</li>
+</ol>
+<h2 id="检索调节"><a href="#检索调节" class="headerlink" title="检索调节"></a>检索调节</h2><h3 id="准备数据"><a href="#准备数据" class="headerlink" title="准备数据"></a>准备数据</h3><p>索引一条记录，<code>id=1</code>，<code>title=中华人民共和国</code>来做调试</p>
+<p><img src="/images/uploads/082114_1024_SOLR2.jpg"></p>
+<h3 id="直接检索无法出结果问题"><a href="#直接检索无法出结果问题" class="headerlink" title="直接检索无法出结果问题"></a>直接检索无法出结果问题</h3><p>直接检索“中华人民共和国”</p>
+<p><img src="/images/uploads/082114_1024_SOLR3.jpg"></p>
+<p>从上图看（图可放大），最终检索结果被解析成了 <code>+text:中 +text:华 +text:人 +text:民 +text:共 +text:和 +text:国</code>，因为我们在 q 的输入框中没有输入检索字段，所以 Solr 会检索默认字段 <code>text</code>，而该字段不包含我们需要的信息，所以检索无结果。</p>
+<p><img src="/images/uploads/082114_1024_SOLR4.jpg"></p>
+<p>输入正确的字段 <code>title</code> 后，可以成功检索出来</p>
+<h3 id="部分匹配无法出结果问题"><a href="#部分匹配无法出结果问题" class="headerlink" title="部分匹配无法出结果问题"></a>部分匹配无法出结果问题</h3><p>原文中华人民共和国分词后：中华、人民、共和国</p>
+<p>搜索词中华解放军分词后：中华、解放军</p>
+<p>部分匹配，我们也希望检索出来</p>
+<p><img src="/images/uploads/082114_1024_SOLR5.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">从上图看（图可放大），最终检索结果被解析成了&quot;+title:中 +title:华 +title:解放 +title:军&quot;，加号（+）标识逻辑与关系，相当于检索&quot;title:中 AND title:华 AND title:解放 AND title:军&quot;，因此无法检索出来</span><br></pre></td></tr></table></figure>
+
+<p><img src="/images/uploads/082114_1024_SOLR6.jpg"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">修改默认逻辑关系(q.op=OR)为OR后，分此后的检索式加号没了，是逻辑或关系，因此能够成功检索出来。这里OR一定要大写。</span><br></pre></td></tr></table></figure>
+
+<p>这个默认检索关系可以通过修改schema.xml的defaultOperator进行配置<br><solrQueryParser defaultOperator="OR"/></p>
+<ol>
+<li><h1 id="多关键字检索无法出结果问题"><a href="#多关键字检索无法出结果问题" class="headerlink" title="多关键字检索无法出结果问题"></a>多关键字检索无法出结果问题</h1></li>
+</ol>
+<p>有时候用户会用空格输入多个关键字进行检索，如title:中华 人民 共和国</p>
+<p><img src="/images/uploads/082114_1024_SOLR7.jpg"></p>
+<p>通过开启debugQuery参数，我们看到，最终检索结果被解析成了</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+(+title:中 +title:华) +(+text:人 +text:民) +(+text:共 +text:和 +text:国)</span><br></pre></td></tr></table></figure>
+
+<p>中华是在title上检索的，后面的词都到text字段检索了</p>
+<p><img src="/images/uploads/082114_1024_SOLR8.jpg"></p>
+<p>通过指定默认字段 df 为 title，可以修正最终检索式，从上图看，修正后结果可以正常检索返回。</p>
+<h2 id="其它"><a href="#其它" class="headerlink" title="其它"></a>其它</h2><p>    以上是一些常见数据召回问题。</p>
+<p>    检索调优是搜索引擎使用中最复杂的过程，需要在长期实践中积累经验，同时需要了解数据情况，业务特点等多方面根据情况进行调整。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/" class="post-title-link" itemprop="url">Ganglia 监控 Solr</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2014-05-28 22:03:25" itemprop="dateCreated datePublished" datetime="2014-05-28T22:03:25+08:00">2014-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:24:10" itemprop="dateModified" datetime="2025-08-17T00:24:10+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="安装-Ganglia"><a href="#安装-Ganglia" class="headerlink" title="安装 Ganglia"></a>安装 Ganglia</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yum install -y wget apr-devel apr-util check-devel cairo-devel pango-devel libxml2-devel rpmbuild glib2-devel dbus-devel freetype-devel fontconfig-devel gcc-c++ expat-devel python-devel libXrender-devel rrdtool*</span><br><span class="line"></span><br><span class="line">rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm</span><br><span class="line"></span><br><span class="line">rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm</span><br><span class="line"></span><br><span class="line">rpm -ivh http://github.com/downloads/jmxtrans/jmxtrans/jmxtrans-20121016.145842.6a28c97fbb-0.noarch.rpm</span><br><span class="line"></span><br><span class="line">yum install ganglia*</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-Ganglia（仅指出必要配置部分）"><a href="#配置-Ganglia（仅指出必要配置部分）" class="headerlink" title="配置 Ganglia（仅指出必要配置部分）"></a>配置 Ganglia（仅指出必要配置部分）</h2><p>编辑配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ganglia/gmetad.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data_source &quot;solrcluster&quot; 127.0.0.1 # 运行 gmod 机器的 IP</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">vim /etc/ganglia/gmond.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cluster &#123;</span><br><span class="line">    name = &quot;solrcluster&quot;</span><br><span class="line">    owner = &quot;unspecified&quot;</span><br><span class="line">    latlong = &quot;unspecified&quot;</span><br><span class="line">    url = &quot;unspecified&quot;</span><br><span class="line">&#125;</span><br><span class="line">```  </span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">vim /etc/httpd/conf.d/ganglia.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Location /ganglia&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">deny</span>,<span class="literal">allow</span></span><br><span class="line">    <span class="attribute">Allow</span> from <span class="literal">all</span></span><br><span class="line">    <span class="attribute">Allow</span> from <span class="number">127.0.0.1</span></span><br><span class="line">    <span class="attribute">Allow</span> from ::<span class="number">1</span></span><br><span class="line">    <span class="comment"># Allow from .example.com</span></span><br><span class="line"><span class="section">&lt;/Location&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-Solr-启动参数"><a href="#配置-Solr-启动参数" class="headerlink" title="配置 Solr 启动参数"></a>配置 Solr 启动参数</h2><p>必要参数配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /home/solr/start-solr.sh</span></span><br><span class="line">java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=3000 -Dcom.sun.management.jmxremote.ssl=<span class="literal">false</span> -Dcom.sun.management.jmxremote.authenticate=<span class="literal">false</span> -Djava.rmi.server.hostname=127.0.0.1 -jar start.jar</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-JMXTrans"><a href="#配置-JMXTrans" class="headerlink" title="配置 JMXTrans"></a>配置 JMXTrans</h2><p>配置文件路径：<code>/var/lib/jmxtrans/solr.json</code></p>
+<p><strong>注意：</strong> host 的 IP 地址必须与 <code>-Djava.rmi.server.hostname=IP_OR_HOSTNAME</code> 参数指定的 IP 相同</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">&quot;servers&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;alias&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;3000&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;queries&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=Memory&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.heap&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;HeapMemoryUsage&quot;</span><span class="punctuation">,</span> <span class="string">&quot;NonHeapMemoryUsage&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:name=CMS Old Gen,type=MemoryPool&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.cmsoldgen&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;Usage&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=GarbageCollector,name=*&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.gc&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;CollectionCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;CollectionTime&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=Threading&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.threads&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;DaemonThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;PeakThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;ThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;TotalStartedThreadCount&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr/collection1:type=queryResultCache,id=org.apache.solr.search.LRUCache&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.queryCache&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;warmupTime&quot;</span><span class="punctuation">,</span><span class="string">&quot;size&quot;</span><span class="punctuation">,</span><span class="string">&quot;lookups&quot;</span><span class="punctuation">,</span><span class="string">&quot;evictions&quot;</span><span class="punctuation">,</span><span class="string">&quot;hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;hitratio&quot;</span><span class="punctuation">,</span><span class="string">&quot;inserts&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_lookups&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hitratio&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_inserts&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_evictions&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr/collection1:type=searcher,id=org.apache.solr.search.SolrIndexSearcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.searcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;maxDoc&quot;</span><span class="punctuation">,</span><span class="string">&quot;numDocs&quot;</span><span class="punctuation">,</span><span class="string">&quot;warmupTime&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p><strong>注意：</strong> JMXTrans 要最后启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/httpd start</span><br><span class="line">/etc/init.d/gmetad start</span><br><span class="line">/etc/init.d/gmond start</span><br><span class="line">/home/solr/start-solr.sh</span><br><span class="line">/etc/init.d/jmxtrans start</span><br></pre></td></tr></table></figure>
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2014/05/20/%E6%A3%80%E7%B4%A2faq/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content=" | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          <a href="/2014/05/20/%E6%A3%80%E7%B4%A2faq/" class="post-title-link" itemprop="url">检索 FAQ</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2014-05-20 08:57:09" itemprop="dateCreated datePublished" datetime="2014-05-20T08:57:09+08:00">2014-05-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:23:37" itemprop="dateModified" datetime="2025-08-17T00:23:37+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="检索系统FAQ"><a href="#检索系统FAQ" class="headerlink" title="检索系统FAQ"></a>检索系统FAQ</h1><h2 id="Q1：不到1秒的时间怎么在网上检索到那么多的东东？"><a href="#Q1：不到1秒的时间怎么在网上检索到那么多的东东？" class="headerlink" title="Q1：不到1秒的时间怎么在网上检索到那么多的东东？"></a>Q1：不到1秒的时间怎么在网上检索到那么多的东东？</h2><p><strong>A：</strong> 检索所需的信息，需要完成收集信息、分析信息和查询信息三个工作，我们的检索系统也不例外。</p>
+<p><strong>收集信息：</strong> 通常通过 spider（或 crawler）根据网络上的各种链接遍历 Web 空间采集网页资料。不同的应用，信息的采集方式也不尽相同。</p>
+<p><strong>分析信息：</strong> 通常需要完成三件事情：</p>
+<ol>
+<li>解析网页（见网页解析 FAQ）</li>
+<li>相关性因素的分析或计算</li>
+<li>建立倒排索引</li>
+</ol>
+<p><strong>查询信息：</strong> 根据关键词，通过倒排索引查找与关键词匹配的数据集，按照相关性将最终结果有序输出即可。</p>
+<p>收集信息的全部工作和分析信息的绝大部分工作已经被检索系统预先做好了，我们平时的检索主要进行的是最后一步工作，速度自然很快。这是目前百度所采用的搜索引擎模型，也被人称为全文搜索引擎（FullText Search Engine）。</p>
+<h2 id="Q2：什么是倒排索引？"><a href="#Q2：什么是倒排索引？" class="headerlink" title="Q2：什么是倒排索引？"></a>Q2：什么是倒排索引？</h2><p><strong>A：</strong> 顾名思义，倒排就是将对象到描述的这种”正排”关系”倒”过来成为描述到对象的”倒排”关系，这样利用这种关系我们就可以通过描述信息检索到对象了，倒排索引就记录了这种关系。</p>
+<p>例如，网页1、网页2的描述信息如下：</p>
+<ul>
+<li>网页1：中国人民的大学</li>
+<li>网页2：中国人民大学</li>
+</ul>
+<p>对描述信息进行切词：</p>
+<ul>
+<li>网页1：中国|人民|的|大学</li>
+<li>网页2：中国|人民|大学</li>
+</ul>
+<p>可以得到描述信息到两个网页对象的倒排关系：</p>
+<ul>
+<li>中国 → 1，2</li>
+<li>人民 → 1，2</li>
+<li>的 → 1</li>
+<li>大学 → 1，2</li>
+</ul>
+<p>倒排关系的记录方式，即倒排索引，随应用环境的不同而各异。一般在建立倒排关系的过程中，为了方便动态追加，在内存中采用链式结构；存储到硬盘上时，为了高效读取，采用顺序存储。习惯上把倒排索引数据称之为倒排拉链或索引拉链。</p>
+<h2 id="Q3：像mp3、image这种非文本对象怎么建立倒排索引？"><a href="#Q3：像mp3、image这种非文本对象怎么建立倒排索引？" class="headerlink" title="Q3：像mp3、image这种非文本对象怎么建立倒排索引？"></a>Q3：像mp3、image这种非文本对象怎么建立倒排索引？</h2><p><strong>A：</strong> 目前 ns 的产品线检索系统都是基于文本的，还没有基于内容的系统。MP3、image 这种非文本对象，在网页解析时，需要根据 HTML 页面的 tag 等解析与对象相关的文本（歌曲名、图像周围文字等），解析出文本之后，建立倒排索引的过程与文本对象一致。</p>
+<h2 id="Q4：为什么要进行切词？怎么进行切词？"><a href="#Q4：为什么要进行切词？怎么进行切词？" class="headerlink" title="Q4：为什么要进行切词？怎么进行切词？"></a>Q4：为什么要进行切词？怎么进行切词？</h2><p><strong>A：</strong> 中文词汇之间没有天然的分隔符，如果按照单字建立倒排索引，将会带来两方面的问题：</p>
+<ol>
+<li>单字的平均索引拉链过长，每次查询需要进行合并的拉链数过多</li>
+<li>TF-IDF、人名书名识别等与相关性有关的因素难以考虑</li>
+</ol>
+<p>目前 ns 都是调用 NLP 组提供的切词接口。需要注意的是，后端建倒排索引时的切词要求保证召回率（recall），前端查询时的切词要求保证准确率（precise），因此需要对切词结果按不同策略进行处理或者调用不同的切词接口。通常把切词接口给出的一个基本单元叫做一个 term。</p>
+<h2 id="Q5：检索系统是怎么实现Q1中所说的检索过程的？"><a href="#Q5：检索系统是怎么实现Q1中所说的检索过程的？" class="headerlink" title="Q5：检索系统是怎么实现Q1中所说的检索过程的？"></a>Q5：检索系统是怎么实现Q1中所说的检索过程的？</h2><p><strong>A：</strong> 目前检索系统架构上大同小异，大体上分两大类程序来实现检索：</p>
+<p><strong>后端建库程序：</strong> 完成收集信息工作和分析信息的绝大部分工作。根据不同的应用，有的直接从大搜索网页库中取数据（mp3、image），有的需要从web站点抓取数据（news、mp3），有的直接获取用户提交的数据（tieba、iknown、space）。得到数据之后，建索引模块建立倒排索引，生成索引数据。</p>
+<p><strong>前端检索服务：</strong> 由若干个程序合作，完成对用户检索串的解析、倒排索引数据的匹配查找、摘要的生成、最终结果的组装等工作。</p>
+<h2 id="Q6：前端检索服务程序之间是怎么分工合作的？"><a href="#Q6：前端检索服务程序之间是怎么分工合作的？" class="headerlink" title="Q6：前端检索服务程序之间是怎么分工合作的？"></a>Q6：前端检索服务程序之间是怎么分工合作的？</h2><p><strong>A：</strong> 各前端检索服务程序的功能如下：</p>
+<ul>
+<li><ul>
+<li><strong>Apache：</strong> Web 服务器，接受用户检索请求，返回检索结果</li>
+</ul>
+</li>
+<li><strong>UI：</strong> User Interface，根据检索结果生成页面</li>
+<li><strong>AS：</strong> Advanced Search，从 UI 接收检索请求，将请求分发到一个或多个 BS，并对 BS 返回的结果进行合并除重等操作，根据 BS 的结果向 DI 获取 DI 信息，最后将整个检索的最终结果返回给 UI</li>
+<li><strong>BS：</strong> Basic Search，解析 AS 的检索请求，得到对应的 term 以及他们之间的逻辑关系，读取各 term 的索引拉链并根据他们之间的逻辑关系得到满足检索请求的索引集合，计算结果集合中每个元素的相关性权值，按权值对最终结果排序并返回给 AS</li>
+<li><strong>DI：</strong> Display Information，接受 AS 的请求，返回给 AS 一些检索结果中需要展示的信息，比如摘要、标题、URL 等</li>
+</ul>
+<p>根据上述各个服务程序的功能，一个典型检索的流程为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用户检索请求 → apache → ui → as → bs → as → di → as → ui → apache → 检索结果</span><br></pre></td></tr></table></figure>
+
+<h2 id="Q7：as、bs、di的检索架构有什么好处？"><a href="#Q7：as、bs、di的检索架构有什么好处？" class="headerlink" title="Q7：as、bs、di的检索架构有什么好处？"></a>Q7：as、bs、di的检索架构有什么好处？</h2><p><strong>A：</strong> 这种架构有如下一些优点：</p>
+<ol>
+<li><strong>方便数据扩容</strong> - 采用分层（组）的方式，将数据分层（组），每层（组）数据有相应的bs和di。一旦系统的数据容量达到上限，新增数据层（组），即可实现扩容</li>
+<li><strong>索引数据和di数据相分离</strong> - Di数据相对索引数据比较大，在该架构下只有前端需要展现的数据才去di服务获取相应数据，避免检索过程中读入过多无用数据</li>
+<li><strong>便于服务合理配置优化</strong> - bs和di需要从硬盘读取数据，比较耗io资源；as需要居中调度，比较耗cpu和内存资源。可以利用这些特点合理的在不同配置的服务器上分布服务</li>
+</ol>
+<h2 id="Q8：建索引模块如何获取上游模块数据？"><a href="#Q8：建索引模块如何获取上游模块数据？" class="headerlink" title="Q8：建索引模块如何获取上游模块数据？"></a>Q8：建索引模块如何获取上游模块数据？</h2><p><strong>A：</strong> 从获取数据的主动性角度，分为两种：</p>
+<ol>
+<li><strong>主动获取</strong> - 建索引模块启动时，主动以上游模块的输出做为自己的输入。数据量较大，时效性要求不高时多采用这种方式</li>
+<li><strong>被动获取</strong> - 被动接受上游模块（transfer）分发过来的数据</li>
+</ol>
+<h2 id="Q9：大规模的数据如何高效的建立倒排索引？"><a href="#Q9：大规模的数据如何高效的建立倒排索引？" class="headerlink" title="Q9：大规模的数据如何高效的建立倒排索引？"></a>Q9：大规模的数据如何高效的建立倒排索引？</h2><p><strong>A：</strong> 要做到这一点，需要考虑两个方面的因素：</p>
+<ol>
+<li><strong>分层次完成建索引的过程</strong> - 首先，以一定数目的对象为一组建索引，保证对每组对象建索引的过程能够在内存中完成而不需要存取中间数据到硬盘；然后，将各组结果进行合并，得到最终的倒排索引数据</li>
+<li><strong>注意内存的使用和硬盘数据的存取</strong> - 尽量申请足够的大内存块，然后在整个进程周期内重复使用。为了方便对各组索引合并，每组数据输出到硬盘时，将term表排序，索引拉链进行顺序存储</li>
+</ol>
+<h2 id="Q10：对实时更新的数据如何快速的建立倒排索引？"><a href="#Q10：对实时更新的数据如何快速的建立倒排索引？" class="headerlink" title="Q10：对实时更新的数据如何快速的建立倒排索引？"></a>Q10：对实时更新的数据如何快速的建立倒排索引？</h2><p><strong>A：</strong> 对该问题，目前ns通用内存索引机制进行解决。该方案的核心思想就是，处理实时数据的建索引模块只负责少量数据，保证建索引过程能够在内存中完成而不需要到硬盘存取中间数据，这样就能快速的处理实时数据，并且根据时效性要求，将内存中的索引数据定期存到硬盘，以供相应的bs模块查询。</p>
+<h2 id="Q11：如何为标题检索、站点搜索这样一些特殊的检索考虑倒排索引？"><a href="#Q11：如何为标题检索、站点搜索这样一些特殊的检索考虑倒排索引？" class="headerlink" title="Q11：如何为标题检索、站点搜索这样一些特殊的检索考虑倒排索引？"></a>Q11：如何为标题检索、站点搜索这样一些特殊的检索考虑倒排索引？</h2><p><strong>A：</strong> 把标题中的term、站点域名等这些特殊的词按照特殊的格式建到索引中，在检索的时候还按照这种特殊格式去检索，就能够完成检索。</p>
+<p>例如标题检索，某篇文章标题中有”百度”，建立倒排时，对来源于标题的term”百度”增加前缀”T_”，即对term”T_百度”建立倒排索引，检索时，如果查询标题中含有”百度”的文章，检索程序（一般是bs）会根据要求自动将检索term修改为”T_百度”。</p>
+<h2 id="Q12：bs如何高效的处理索引拉链？"><a href="#Q12：bs如何高效的处理索引拉链？" class="headerlink" title="Q12：bs如何高效的处理索引拉链？"></a>Q12：bs如何高效的处理索引拉链？</h2><p><strong>A：</strong> 在 ns 组的实践中，有一些经验能够保证这一点：</p>
+<ol>
+<li>先读取索引拉链最短 term 的拉链，因为最终归并结果肯定短于该拉链长度</li>
+<li>利用 A∩B∩C&#x3D;（A∩B）∩C，将多路归并转化为多个二路归并，避免过多的读取无用数据</li>
+<li>读取索引拉链时按块读取，每归并完一块再读取下一块</li>
+<li>合理选择排序算法。比如权值空间在百量级时采用基数排序；过大的话采用堆排序</li>
+</ol>
+<h2 id="Q13：相关性需要考虑哪些因素？"><a href="#Q13：相关性需要考虑哪些因素？" class="headerlink" title="Q13：相关性需要考虑哪些因素？"></a>Q13：相关性需要考虑哪些因素？</h2><p><strong>A：</strong> 只能具体应用具体分析，针对ns的产品，可以考虑如下一些角度：</p>
+<ul>
+<li><strong>长文本：</strong> tf-idf、offset、文本质量等</li>
+<li><strong>短文本：</strong> 不同类型给予不同权重、检索串与匹配文本的基本词数比例、不同term的切词属性、覆盖关系等</li>
+<li><strong>query特点：</strong> query中心词提取、term权重标识等</li>
+<li><strong>具体产品的特点：</strong> mp3的下载速度、image的图片质量、news的实效性等</li>
+</ul>
+<h2 id="Q14：实时信息的检索是如何实现的？"><a href="#Q14：实时信息的检索是如何实现的？" class="headerlink" title="Q14：实时信息的检索是如何实现的？"></a>Q14：实时信息的检索是如何实现的？</h2><p><strong>A：</strong> 对于动态数据类检索（比如tieba，zhidao），用户实时提交的信息需要能够及时的检索到，这通常是通过使用两种类型的索引库来实现的：</p>
+<ol>
+<li><strong>实时库（day库）</strong> - 该库会以较高的频率进行重建（通常5分钟~半小时），使得新提交的信息能够及时的合并入该索引，并提供检索</li>
+<li><strong>历史库（mon库）</strong> - 该库维护了历史以来的所有数据（除了当天的实时数据），每天夜里合并实时库时重建一遍</li>
+</ol>
+<h2 id="Q15：什么是offset索引，有什么用？"><a href="#Q15：什么是offset索引，有什么用？" class="headerlink" title="Q15：什么是offset索引，有什么用？"></a>Q15：什么是offset索引，有什么用？</h2><p><strong>A：</strong> offset索引就是在索引单元中记录了term在文本中出现位置信息的索引。某些term会大量在文本中出现，所以通常会控制记录的位置数（比如只记录出现的前16个位置），以控制索引数据的大小。</p>
+<p>offset索引在长文本检索系统中对于调权的意义很重大，通过offset信息可以发现匹配”最好”的结果。</p>
+<h2 id="Q16：有哪些用于提高性能的索引技术？"><a href="#Q16：有哪些用于提高性能的索引技术？" class="headerlink" title="Q16：有哪些用于提高性能的索引技术？"></a>Q16：有哪些用于提高性能的索引技术？</h2><p><strong>A：</strong> 当一个检索系统的数据规模变大以后，利用普通索引来检索会导致性能下降。为了提高检索效率，通常可以有如下的一些索引组织方式：</p>
+<ol>
+<li><strong>位图索引（bitmap索引）</strong> - 主要针对DF（文档频率）非常高的term</li>
+<li><strong>压缩索引</strong> - 通常针对于索引较长的term，将其中次要的一些信息剔除</li>
+<li><strong>差分索引</strong> - 采用记录差值来代替记录 ID，并使用特定的编码</li>
+<li><strong>截断索引</strong> - 保留一定长度的记录了详细信息的索引</li>
+<li><strong>预索引</strong> - 将检索高频词预先检索一遍，得到结果并存储为新的索引文件</li>
+</ol>
+<h2 id="Q17：对于可修改的信息如何建立实时索引？"><a href="#Q17：对于可修改的信息如何建立实时索引？" class="headerlink" title="Q17：对于可修改的信息如何建立实时索引？"></a>Q17：对于可修改的信息如何建立实时索引？</h2><p><strong>A：</strong> 在某些类型的动态数据检索系统中，需要提供某个文档可修改的功能。通常可以采用的方法有：</p>
+<ol>
+<li><strong>记录修改次数</strong> - 一个全局的位图结构记录每个文档的当前修改次数，每次修改该次数增1</li>
+<li><strong>大小ID编号方法</strong> - 小ID表示全局ID，大ID表示检索系统内部ID，通过位图结构记录大ID当前是否有效</li>
+</ol>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
 
     
 
@@ -786,560 +1424,8 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/06/06/solrj%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2013/06/06/solrj%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" class="post-title-link" itemprop="url">SolrJ使用教程</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2013-06-06 00:19:27" itemprop="dateCreated datePublished" datetime="2013-06-06T00:19:27+08:00">2013-06-06</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-17 00:25:48" itemprop="dateModified" datetime="2025-08-17T00:25:48+08:00">2025-08-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <p><a target="_blank" rel="noopener" href="http://www.solr.cc/blog/wp-content/uploads/2013/06/solrjdemo.rar" title="SolrJ测试代码下载">Solr4.x 测试代码下载</a></p>
-<h2 id="Solr3-x-版本"><a href="#Solr3-x-版本" class="headerlink" title="Solr3.x 版本"></a>Solr3.x 版本</h2><h3 id="添加数据"><a href="#添加数据" class="headerlink" title="添加数据"></a>添加数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrInputDocument;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrjPopulator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SolrServerException &#123;</span><br><span class="line">        <span class="type">CommonsHttpSolrServer</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonsHttpSolrServer</span>(<span class="string">&quot;http://localhost:8983/solr&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;<span class="number">1000</span>; ++i) &#123;</span><br><span class="line">            <span class="type">SolrInputDocument</span> <span class="variable">doc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SolrInputDocument</span>();</span><br><span class="line">            doc.addField(<span class="string">&quot;cat&quot;</span>, <span class="string">&quot;book&quot;</span>);</span><br><span class="line">            doc.addField(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;book-&quot;</span> + i);</span><br><span class="line">            doc.addField(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;The Legend of Po part &quot;</span> + i);</span><br><span class="line">            server.add(doc);</span><br><span class="line">            <span class="keyword">if</span>(i%<span class="number">100</span>==<span class="number">0</span>) server.commit();  <span class="comment">// periodically flush</span></span><br><span class="line">        &#125;</span><br><span class="line">        server.commit(); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="查询数据"><a href="#查询数据" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.response.QueryResponse;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrDocumentList;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.params.ModifiableSolrParams;</span><br><span class="line"><span class="keyword">import</span> java.net.MalformedURLException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrJSearcher</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> MalformedURLException, SolrServerException &#123;</span><br><span class="line">        <span class="type">CommonsHttpSolrServer</span> <span class="variable">solr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CommonsHttpSolrServer</span>(<span class="string">&quot;http://localhost:8983/solr&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">ModifiableSolrParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModifiableSolrParams</span>();</span><br><span class="line">        params.set(<span class="string">&quot;q&quot;</span>, <span class="string">&quot;cat:electronics&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;defType&quot;</span>, <span class="string">&quot;edismax&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;start&quot;</span>, <span class="string">&quot;0&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">QueryResponse</span> <span class="variable">response</span> <span class="operator">=</span> solr.query(params);</span><br><span class="line">        <span class="type">SolrDocumentList</span> <span class="variable">results</span> <span class="operator">=</span> response.getResults();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; results.size(); ++i) &#123;</span><br><span class="line">            System.out.println(results.get(i));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="Solr4-x-版本"><a href="#Solr4-x-版本" class="headerlink" title="Solr4.x 版本"></a>Solr4.x 版本</h2><h3 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.HttpSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrInputDocument;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrjPopulator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SolrServerException &#123;</span><br><span class="line">        <span class="type">HttpSolrServer</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpSolrServer</span>(<span class="string">&quot;http://localhost:8983/solr&quot;</span>);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; ++i) &#123;</span><br><span class="line">            <span class="type">SolrInputDocument</span> <span class="variable">doc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SolrInputDocument</span>();</span><br><span class="line">            doc.addField(<span class="string">&quot;cat&quot;</span>, <span class="string">&quot;book&quot;</span>);</span><br><span class="line">            doc.addField(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;book-&quot;</span> + i);</span><br><span class="line">            doc.addField(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;The Legend of Po part &quot;</span> + i);</span><br><span class="line">            server.add(doc);</span><br><span class="line">            <span class="keyword">if</span> (i % <span class="number">100</span> == <span class="number">0</span>)</span><br><span class="line">                server.commit(); <span class="comment">// periodically flush</span></span><br><span class="line">        &#125;</span><br><span class="line">        server.commit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="查询数据-1"><a href="#查询数据-1" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.MalformedURLException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.HttpSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.response.QueryResponse;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrDocumentList;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.params.ModifiableSolrParams;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrJSearcher</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> MalformedURLException, SolrServerException &#123;</span><br><span class="line">        <span class="type">HttpSolrServer</span> <span class="variable">solr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HttpSolrServer</span>(<span class="string">&quot;http://localhost:8983/solr&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">ModifiableSolrParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModifiableSolrParams</span>();</span><br><span class="line">        params.set(<span class="string">&quot;q&quot;</span>, <span class="string">&quot;cat:electronics&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;defType&quot;</span>, <span class="string">&quot;edismax&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;start&quot;</span>, <span class="string">&quot;0&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">QueryResponse</span> <span class="variable">response</span> <span class="operator">=</span> solr.query(params);</span><br><span class="line">        <span class="type">SolrDocumentList</span> <span class="variable">results</span> <span class="operator">=</span> response.getResults();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; results.size(); ++i) &#123;</span><br><span class="line">            System.out.println(results.get(i));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="SolrCloud"><a href="#SolrCloud" class="headerlink" title="SolrCloud"></a>SolrCloud</h2><h3 id="添加数据-1"><a href="#添加数据-1" class="headerlink" title="添加数据"></a>添加数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.CloudSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrInputDocument;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrCloudSolrjPopulator</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException, SolrServerException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">zkHost</span> <span class="operator">=</span> <span class="string">&quot;localhost:2181&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">defaultCollection</span> <span class="operator">=</span> <span class="string">&quot;collection1&quot;</span>;</span><br><span class="line">        <span class="type">CloudSolrServer</span> <span class="variable">server</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CloudSolrServer</span>(zkHost);</span><br><span class="line">        server.setDefaultCollection(defaultCollection);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; <span class="number">1000</span>; ++i) &#123;</span><br><span class="line">            <span class="type">SolrInputDocument</span> <span class="variable">doc</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SolrInputDocument</span>();</span><br><span class="line">            doc.addField(<span class="string">&quot;cat&quot;</span>, <span class="string">&quot;book&quot;</span>);</span><br><span class="line">            doc.addField(<span class="string">&quot;id&quot;</span>, <span class="string">&quot;book-&quot;</span> + i);</span><br><span class="line">            doc.addField(<span class="string">&quot;name&quot;</span>, <span class="string">&quot;The Legend of Po part &quot;</span> + i);</span><br><span class="line">            server.add(doc);</span><br><span class="line">            <span class="keyword">if</span> (i % <span class="number">100</span> == <span class="number">0</span>)</span><br><span class="line">                server.commit(); <span class="comment">// periodically flush</span></span><br><span class="line">        &#125;</span><br><span class="line">        server.commit();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h3 id="查询数据-2"><a href="#查询数据-2" class="headerlink" title="查询数据"></a>查询数据</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.net.MalformedURLException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.SolrServerException;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.impl.CloudSolrServer;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.client.solrj.response.QueryResponse;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.SolrDocumentList;</span><br><span class="line"><span class="keyword">import</span> org.apache.solr.common.params.ModifiableSolrParams;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">SolrCloudSolrJSearcher</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> MalformedURLException, SolrServerException &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">zkHost</span> <span class="operator">=</span> <span class="string">&quot;localhost:2181&quot;</span>;</span><br><span class="line">        <span class="type">String</span> <span class="variable">defaultCollection</span> <span class="operator">=</span> <span class="string">&quot;collection1&quot;</span>;</span><br><span class="line">        <span class="type">CloudSolrServer</span> <span class="variable">solr</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CloudSolrServer</span>(zkHost);</span><br><span class="line">        solr.setDefaultCollection(defaultCollection);</span><br><span class="line"></span><br><span class="line">        <span class="type">ModifiableSolrParams</span> <span class="variable">params</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ModifiableSolrParams</span>();</span><br><span class="line">        params.set(<span class="string">&quot;q&quot;</span>, <span class="string">&quot;cat:electronics&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;defType&quot;</span>, <span class="string">&quot;edismax&quot;</span>);</span><br><span class="line">        params.set(<span class="string">&quot;start&quot;</span>, <span class="string">&quot;0&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="type">QueryResponse</span> <span class="variable">response</span> <span class="operator">=</span> solr.query(params);</span><br><span class="line">        <span class="type">SolrDocumentList</span> <span class="variable">results</span> <span class="operator">=</span> response.getResults();</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; results.size(); ++i) &#123;</span><br><span class="line">            System.out.println(results.get(i));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本教程介绍了 SolrJ 的基本使用方法，包括：</p>
-<ol>
-<li><strong>Solr 3.x 版本：</strong> 使用 <code>CommonsHttpSolrServer</code></li>
-<li><strong>Solr 4.x 版本：</strong> 使用 <code>HttpSolrServer</code></li>
-<li><strong>SolrCloud 模式：</strong> 使用 <code>CloudSolrServer</code></li>
-</ol>
-<p>每个版本都提供了完整的增删改查示例代码，可以作为实际项目开发的参考。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/03/12/%E6%90%9C%E7%B4%A2%E5%BB%BA%E8%AE%AE%EF%BC%88suggest%EF%BC%89%E9%85%8D%E7%BD%AE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2013/03/12/%E6%90%9C%E7%B4%A2%E5%BB%BA%E8%AE%AE%EF%BC%88suggest%EF%BC%89%E9%85%8D%E7%BD%AE/" class="post-title-link" itemprop="url">搜索建议（suggest）配置</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2013-03-12 20:37:34" itemprop="dateCreated datePublished" datetime="2013-03-12T20:37:34+08:00">2013-03-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-16 23:10:55" itemprop="dateModified" datetime="2025-08-16T23:10:55+08:00">2025-08-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Solr-搜索建议配置"><a href="#Solr-搜索建议配置" class="headerlink" title="Solr 搜索建议配置"></a>Solr 搜索建议配置</h1><h2 id="solrconfig-xml-配置"><a href="#solrconfig-xml-配置" class="headerlink" title="solrconfig.xml 配置"></a>solrconfig.xml 配置</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/suggest&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SearchHandler&quot;</span> <span class="attr">startup</span>=<span class="string">&quot;lazy&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;df&quot;</span>&gt;</span>text<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;omitHeader&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;rows&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span>&gt;</span>on<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.dictionary&quot;</span>&gt;</span>suggest<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.count&quot;</span>&gt;</span>5<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.onlyMorePopular&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.collate&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;last-components&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span>&gt;</span>spellcheck<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="拼写检查器配置"><a href="#拼写检查器配置" class="headerlink" title="拼写检查器配置"></a>拼写检查器配置</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellchecker&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>suggest<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;classname&quot;</span>&gt;</span>org.apache.solr.spelling.suggest.Suggester<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;lookupImpl&quot;</span>&gt;</span>org.apache.solr.spelling.suggest.tst.TSTLookup<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>SpellText<span class="tag">&lt;/<span class="name">str</span>&gt;</span> <span class="comment">&lt;!--用于拼写检查的字段，建议最好不要分词--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;threshold&quot;</span>&gt;</span>0.005<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;buildOnCommit&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--&lt;str name=&quot;sourceLocation&quot;&gt;dict.txt&lt;/str&gt;--&gt;</span><span class="comment">&lt;!--用文本格式的字典，一行一个字--&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" class="post-title-link" itemprop="url">solr的一些查询语法</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2013-03-05 18:31:32" itemprop="dateCreated datePublished" datetime="2013-03-05T18:31:32+08:00">2013-03-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-17 00:23:15" itemprop="dateModified" datetime="2025-08-17T00:23:15+08:00">2025-08-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h2 id="1-基本查询概念"><a href="#1-基本查询概念" class="headerlink" title="1. 基本查询概念"></a>1. 基本查询概念</h2><h3 id="1-1-字段查询"><a href="#1-1-字段查询" class="headerlink" title="1.1 字段查询"></a>1.1 字段查询</h3><p>首先假设我的数据里 fields 有：name, tel, address<br>预设的搜寻是 name 这个字段，如果要搜寻的数据刚好就是 name 这个字段，就不需要指定搜寻字段名称。</p>
-<h3 id="1-2-查询规则"><a href="#1-2-查询规则" class="headerlink" title="1.2 查询规则"></a>1.2 查询规则</h3><p>如欲查询特定字段（非预设字段），请在查询词前加上该字段名称加 “:” 符号，例如：</p>
-<ul>
-<li><code>address:北京市海淀区上地软件园</code></li>
-<li><code>tel:88xxxxx1</code></li>
-</ul>
-<h3 id="1-3-查询参数说明"><a href="#1-3-查询参数说明" class="headerlink" title="1.3 查询参数说明"></a>1.3 查询参数说明</h3><ol>
-<li><strong>q</strong> 代表 query input</li>
-<li><strong>version</strong> 代表 solr 版本（建议不要变动此变量）</li>
-<li><strong>start</strong> 代表显示结果从哪一笔结果资料开始，预设为 0 代表第一笔</li>
-<li><strong>rows</strong> 是说要显示几笔数据，预设为 10 笔</li>
-</ol>
-<p>因为有时查询结果可能有几百笔，但不需要显示所有结果，所以预设是从第一笔开始到第十笔。</p>
-<p>所以若要显示第 10 到 30 笔就改为：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/solr/select/?indent=on&amp;version=2.2&amp;q=address:北京市海淀区上地软件园+tel:88xxxxx1&amp;version=2.2&amp;start=10&amp;rows=20&amp;indent=on</span><br></pre></td></tr></table></figure>
-
-<p>（indent 代表输出的 xml 要不要缩行，预设为开启 on）</p>
-<h3 id="1-4-输出字段限定"><a href="#1-4-输出字段限定" class="headerlink" title="1.4 输出字段限定"></a>1.4 输出字段限定</h3><p>要限定输出结果的内容可用 “fl&#x3D;” 加上你要的字段名称，如以下这个范例：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/solr/select/?indent=on&amp;version=2.2&amp;q=text:北京+OR+text:亿度&amp;start=0&amp;rows=10&amp;fl=name,address,tel</span><br></pre></td></tr></table></figure>
-
-<p>在 fl&#x3D; 之后加上了 name, address, tel</p>
-<h2 id="2-查询参数"><a href="#2-查询参数" class="headerlink" title="2. 查询参数"></a>2. 查询参数</h2><h3 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h3><ul>
-<li><strong>q</strong> - 查询字符串，必须的。</li>
-<li><strong>fl</strong> - 指定返回那些字段内容，用逗号或空格分隔多个。</li>
-<li><strong>start</strong> - 返回第一条记录在完整找到结果中的偏移位置，0 开始，一般分页用。</li>
-<li><strong>rows</strong> - 指定返回结果最多有多少条记录，配合 start 来实现分页。</li>
-<li><strong>sort</strong> - 排序，格式：<code>sort=&lt;field name&gt;+&lt;desc|asc&gt;[,&lt;field name&gt;+&lt;desc|asc&gt;]…</code><br>示例：<code>inStock desc, price asc</code> 表示先 “inStock” 降序，再 “price” 升序，默认是相关性降序。</li>
-<li><strong>wt</strong> - (writer type) 指定输出格式，可以有 xml, json, php, phps，后面 solr 1.3 增加的。</li>
-<li><strong>fq</strong> - (filter query) 过滤查询，作用：在 q 查询符合结果中同时是 fq 查询符合的。<br>例如：<code>q=mm&amp;fq=date_time:[20081001 TO 20091031]</code>，找关键字 mm，并且 date_time 是 20081001 到 20091031 之间的。</li>
-</ul>
-<p>官方文档：<a target="_blank" rel="noopener" href="http://wiki.apache.org/solr/CommonQueryParameters">http://wiki.apache.org/solr/CommonQueryParameters</a></p>
-<h3 id="不常用参数"><a href="#不常用参数" class="headerlink" title="不常用参数"></a>不常用参数</h3><ul>
-<li><strong>q.op</strong> - 覆盖 schema.xml 的 defaultOperator（有空格时用 “AND” 还是用 “OR” 操作逻辑），一般默认指定</li>
-<li><strong>df</strong> - 默认的查询字段，一般默认指定</li>
-<li><strong>qt</strong> - (query type) 指定那个类型来处理查询请求，一般不用指定，默认是 standard。</li>
-</ul>
-<h3 id="其它参数"><a href="#其它参数" class="headerlink" title="其它参数"></a>其它参数</h3><ul>
-<li><strong>indent</strong> - 返回的结果是否缩进，默认关闭，用 <code>indent=true</code> 或 <code>on</code> 开启，一般调试 json, php, phps, ruby 输出才有必要用这个参数。</li>
-<li><strong>version</strong> - 查询语法的版本，建议不使用它，由服务器指定默认值。</li>
-</ul>
-<h2 id="3-Solr-的检索运算符"><a href="#3-Solr-的检索运算符" class="headerlink" title="3. Solr 的检索运算符"></a>3. Solr 的检索运算符</h2><h3 id="基本运算符"><a href="#基本运算符" class="headerlink" title="基本运算符"></a>基本运算符</h3><ul>
-<li><strong>“:”</strong> 指定字段查指定值，如返回所有值 <code>*:*</code></li>
-<li><strong>“?”</strong> 表示单个任意字符的通配</li>
-<li><strong>“*”</strong> 表示多个任意字符的通配（不能在检索的项开始使用 * 或者 ? 符号）</li>
-<li><strong>“~”</strong> 表示模糊检索，如检索拼写类似于 “roam” 的项这样写：<code>roam~</code> 将找到形如 foam 和 roams 的单词；<code>roam~0.8</code>，检索返回相似度在 0.8 以上的记录。</li>
-</ul>
-<h3 id="邻近检索"><a href="#邻近检索" class="headerlink" title="邻近检索"></a>邻近检索</h3><p>如检索相隔 10 个单词的 “apache” 和 “jakarta”：<code>&quot;jakarta apache&quot;~10</code></p>
-<h3 id="相关度控制"><a href="#相关度控制" class="headerlink" title="相关度控制"></a>相关度控制</h3><p><strong>“^”</strong> 控制相关度检索，如检索 jakarta apache，同时希望去让 “jakarta” 的相关度更加好，那么在其后加上 “^” 符号和增量值，即 <code>jakarta^4 apache</code></p>
-<h3 id="布尔操作符"><a href="#布尔操作符" class="headerlink" title="布尔操作符"></a>布尔操作符</h3><ul>
-<li><strong>AND、&amp;&amp;</strong> 布尔操作符 AND</li>
-<li><strong>OR、||</strong> 布尔操作符 OR</li>
-<li><strong>NOT、!、-</strong> 布尔操作符 NOT（排除操作符不能单独与项使用构成查询）</li>
-<li><strong>“+”</strong> 存在操作符，要求符号 “+” 后的项必须在文档相应的域中存在</li>
-<li><strong>( )</strong> 用于构成子查询</li>
-</ul>
-<h3 id="范围查询"><a href="#范围查询" class="headerlink" title="范围查询"></a>范围查询</h3><ul>
-<li><strong>[ ]</strong> 包含范围检索，如检索某时间段记录，包含头尾：<code>date:[200707 TO 200710]</code></li>
-<li><strong>{ }</strong> 不包含范围检索，如检索某时间段记录，不包含头尾：<code>date:&#123;200707 TO 200710&#125;</code></li>
-</ul>
-<h3 id="时间范围查询示例"><a href="#时间范围查询示例" class="headerlink" title="时间范围查询示例"></a>时间范围查询示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">timestamp:[* TO NOW]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z TO *]</span><br><span class="line">createdate:[1995-12-31T23:59:59.999Z TO 2007-03-06T00:00:00Z]</span><br><span class="line">pubdate:[NOW-1YEAR/DAY TO NOW/DAY+1DAY]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z TO 1976-03-06T23:59:59.999Z+1YEAR]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z/YEAR TO 1976-03-06T23:59:59.999Z]</span><br></pre></td></tr></table></figure>
-
-<h3 id="转义操作符"><a href="#转义操作符" class="headerlink" title="转义操作符"></a>转义操作符</h3><p><strong>“&quot;</strong> 转义操作符，特殊字符包括：</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ - &amp; ! ( ) &#123; &#125; [ ] ^ &quot; ~ * ? : \</span><br></pre></td></tr></table></figure>
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/02/26/%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5solr%E6%97%B6%E5%BA%94%E8%AF%A5%E8%80%83%E8%99%91%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2013/02/26/%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5solr%E6%97%B6%E5%BA%94%E8%AF%A5%E8%80%83%E8%99%91%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" class="post-title-link" itemprop="url">项目引入Solr时应该考虑的一些问题</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2013-02-26 10:22:07" itemprop="dateCreated datePublished" datetime="2013-02-26T10:22:07+08:00">2013-02-26</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-16 23:53:37" itemprop="dateModified" datetime="2025-08-16T23:53:37+08:00">2025-08-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="项目引入Solr时应该考虑的问题"><a href="#项目引入Solr时应该考虑的问题" class="headerlink" title="项目引入Solr时应该考虑的问题"></a>项目引入Solr时应该考虑的问题</h1><p>在项目中引入Solr搜索引擎之前，需要从多个维度进行评估和规划，以确保系统能够满足业务需求并具有良好的性能表现。</p>
-<h2 id="核心考虑因素"><a href="#核心考虑因素" class="headerlink" title="核心考虑因素"></a>核心考虑因素</h2><h3 id="1-数据更新频率"><a href="#1-数据更新频率" class="headerlink" title="1. 数据更新频率"></a>1. 数据更新频率</h3><ul>
-<li>每天数据增量有多大</li>
-<li>随时更新还是定时更新</li>
-</ul>
-<h3 id="2-数据总量"><a href="#2-数据总量" class="headerlink" title="2. 数据总量"></a>2. 数据总量</h3><ul>
-<li>数据要保存多长时间</li>
-<li>预期的数据增长规模</li>
-</ul>
-<h3 id="3-一致性要求"><a href="#3-一致性要求" class="headerlink" title="3. 一致性要求"></a>3. 一致性要求</h3><ul>
-<li>期望多长时间内看到更新的数据</li>
-<li>最长允许多长时间延迟</li>
-</ul>
-<h3 id="4-数据特点"><a href="#4-数据特点" class="headerlink" title="4. 数据特点"></a>4. 数据特点</h3><ul>
-<li>数据源包括哪些</li>
-<li>平均单条记录大小</li>
-</ul>
-<h3 id="5-业务特点"><a href="#5-业务特点" class="headerlink" title="5. 业务特点"></a>5. 业务特点</h3><ul>
-<li>有哪些排序要求</li>
-<li>主要的检索条件</li>
-</ul>
-<h3 id="6-资源复用"><a href="#6-资源复用" class="headerlink" title="6. 资源复用"></a>6. 资源复用</h3><ul>
-<li>已有的硬件配置是怎样的</li>
-<li>是否有升级计划</li>
-</ul>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/01/23/solr%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content=" | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          <a href="/2013/01/23/solr%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0/" class="post-title-link" itemprop="url">Solr原子更新</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2013-01-23 14:05:30" itemprop="dateCreated datePublished" datetime="2013-01-23T14:05:30+08:00">2013-01-23</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-16 23:37:43" itemprop="dateModified" datetime="2025-08-16T23:37:43+08:00">2025-08-16</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Solr原子更新"><a href="#Solr原子更新" class="headerlink" title="Solr原子更新"></a>Solr原子更新</h1><p>Solr 4.0开始支持简单的原子更新和添加字段。</p>
-<h2 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h2><p>Solr支持多种修饰符，自动更新文档的值：</p>
-<ul>
-<li><code>set</code> – 更新一个字段</li>
-<li><code>add</code> – 添加一个字段  </li>
-<li><code>inc</code> – 在原有值的基础上增加（看下面的例子更清楚）</li>
-</ul>
-<p><strong>备注：</strong> 所有原始字段必须存储（在fieldType 里面设置 <code>stored=true</code>）</p>
-<h2 id="操作例子"><a href="#操作例子" class="headerlink" title="操作例子"></a>操作例子</h2><h3 id="第一步：添加一条数据"><a href="#第一步：添加一条数据" class="headerlink" title="第一步：添加一条数据"></a>第一步：添加一条数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/update -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">[</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;id&quot;: &quot;book1&quot;,</span></span><br><span class="line"><span class="string">    &quot;title&quot;: &quot;Snow Crash&quot;,</span></span><br><span class="line"><span class="string">    &quot;copies_i&quot;: 5,</span></span><br><span class="line"><span class="string">    &quot;cat&quot;: &quot;Science Fiction&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">]&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="第二步：修改字段"><a href="#第二步：修改字段" class="headerlink" title="第二步：修改字段"></a>第二步：修改字段</h3><p>修改一个字段author，把copies_i字段的值加3，添加一个cat字段：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/update -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">[</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;id&quot;: &quot;book1&quot;,</span></span><br><span class="line"><span class="string">    &quot;author&quot;: &#123;&quot;set&quot;: &quot;Neal Stephenson&quot;&#125;,</span></span><br><span class="line"><span class="string">    &quot;copies_i&quot;: &#123;&quot;inc&quot;: 3&#125;,</span></span><br><span class="line"><span class="string">    &quot;cat&quot;: &#123;&quot;add&quot;: &quot;Cyberpunk&quot;&#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">]&#x27;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="第三步：查询数据"><a href="#第三步：查询数据" class="headerlink" title="第三步：查询数据"></a>第三步：查询数据</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/get?<span class="built_in">id</span>=book1</span><br></pre></td></tr></table></figure>
-
-<p>查询结果：</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;doc&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;book1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Snow Crash&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;copies_i&quot;</span><span class="punctuation">:</span> <span class="number">8</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;cat&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;Science Fiction&quot;</span><span class="punctuation">,</span> <span class="string">&quot;Cyberpunk&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Neal Stephenson&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;_version_&quot;</span><span class="punctuation">:</span> <span class="number">1408729977723027456</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="遗留问题"><a href="#遗留问题" class="headerlink" title="遗留问题"></a>遗留问题</h2><ol>
-<li><strong>中文分词器字段更新后丢失</strong> - 用中文分词器的字段更新后会丢失</li>
-<li><strong>SolrJ支持</strong> - solrj没有提供相应的方法，这部分有待研究</li>
-</ol>
-<h2 id="相关资源"><a href="#相关资源" class="headerlink" title="相关资源"></a>相关资源</h2><p>Java例子代码可供下载参考。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
   <nav class="pagination">
-    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
+    <a class="extend prev" rel="prev" title="上一页" aria-label="上一页" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" title="下一页" aria-label="下一页" href="/page/3/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 </div>
