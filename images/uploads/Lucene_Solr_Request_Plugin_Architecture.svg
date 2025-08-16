@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="300" xmlns="http://www.w3.org/2000/svg">
+  <rect width="100%" height="100%" fill="#f0f0f0" stroke="#ccc" stroke-width="2"/>
+  <text x="50%" y="50%" text-anchor="middle" dy="0.3em" font-family="Arial, sans-serif" font-size="16" fill="#666">
+     Each request handler can be mapped to a different URL • SearchHandler is a componentized RequestHandler that allows search components to be chained together and also enables the framework for distributed search operations. • Each Searchhandler can have it’s own custom set of search components, along with default or invariant parameters • All of the configuration is declarative – including adding new request handlers or search components. • The QueryResponse object is very generic and can handle returning any type of data
+  </text>
+  <text x="50%" y="70%" text-anchor="middle" dy="0.3em" font-family="Arial, sans-serif" font-size="12" fill="#999">
+    (原图片链接已失效)
+  </text>
+</svg>

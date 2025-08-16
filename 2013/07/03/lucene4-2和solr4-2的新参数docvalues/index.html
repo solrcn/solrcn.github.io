@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="原文地址： http:&#x2F;&#x2F;wiki.apache.org&#x2F;solr&#x2F;DocValues DocValues 从 Lucene 4.2 和 Solr 4.2 开始加入，通过建立字段的正排索引，提升 sorting、faceting、grouping、function queries 等性能。 介绍在 Solr 的配置文件 (schema.xml) 中，如果需要为一个 Field 建立倒排索引，可以通">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr4.2 新特性 DocValues">
+<meta property="og:url" content="https://solrcn.github.io/2013/07/03/lucene4-2%E5%92%8Csolr4-2%E7%9A%84%E6%96%B0%E5%8F%82%E6%95%B0docvalues/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="原文地址： http:&#x2F;&#x2F;wiki.apache.org&#x2F;solr&#x2F;DocValues DocValues 从 Lucene 4.2 和 Solr 4.2 开始加入，通过建立字段的正排索引，提升 sorting、faceting、grouping、function queries 等性能。 介绍在 Solr 的配置文件 (schema.xml) 中，如果需要为一个 Field 建立倒排索引，可以通">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-07-03T07:33:53.000Z">
+<meta property="article:modified_time" content="2025-08-16T16:24:48.291Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr, Lucene, 搜索引擎, 全文检索, Apache Solr, 中文社区">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2013/07/03/lucene4-2%E5%92%8Csolr4-2%E7%9A%84%E6%96%B0%E5%8F%82%E6%95%B0docvalues/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2013/07/03/lucene4-2%E5%92%8Csolr4-2%E7%9A%84%E6%96%B0%E5%8F%82%E6%95%B0docvalues/","path":"2013/07/03/lucene4-2和solr4-2的新参数docvalues/","title":"Solr4.2 新特性 DocValues"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr4.2 新特性 DocValues | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.</span> <span class="nav-text">介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DocValues-%E7%9A%84%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">1. DocValues 的特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DocValues-%E4%B8%8D%E8%83%BD%E5%AE%9E%E7%8E%B0%E7%9A%84"><span class="nav-number">1.2.</span> <span class="nav-text">2. DocValues 不能实现的</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lucene-%E7%9A%84-DocValues-%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">Lucene 的 DocValues 格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#NUMERIC"><span class="nav-number">2.1.</span> <span class="nav-text">NUMERIC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SORTED"><span class="nav-number">2.2.</span> <span class="nav-text">SORTED</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SORTED-SET"><span class="nav-number">2.3.</span> <span class="nav-text">SORTED_SET</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BINARY"><span class="nav-number">2.4.</span> <span class="nav-text">BINARY</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solr-%E7%9A%84-DocValues-%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.</span> <span class="nav-text">Solr 的 DocValues 类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#StrField-multiValued-false"><span class="nav-number">3.1.</span> <span class="nav-text">StrField (multiValued&#x3D;false)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StrField-multiValued-true"><span class="nav-number">3.2.</span> <span class="nav-text">StrField (multiValued&#x3D;true)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TrieXXXField-multiValued-false"><span class="nav-number">3.3.</span> <span class="nav-text">TrieXXXField (multiValued&#x3D;false)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TrieXXXField-multiValued-true"><span class="nav-number">3.4.</span> <span class="nav-text">TrieXXXField (multiValued&#x3D;true)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%B8%8D%E5%90%8C%E7%9A%84-Codec-%E5%AE%9E%E7%8E%B0"><span class="nav-number">4.</span> <span class="nav-text">配置不同的 Codec 实现</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/07/03/lucene4-2%E5%92%8Csolr4-2%E7%9A%84%E6%96%B0%E5%8F%82%E6%95%B0docvalues/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr4.2 新特性 DocValues | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr4.2 新特性 DocValues
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-07-03 15:33:53" itemprop="dateCreated datePublished" datetime="2013-07-03T15:33:53+08:00">2013-07-03</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:24:48" itemprop="dateModified" datetime="2025-08-17T00:24:48+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><strong>原文地址：</strong> <a target="_blank" rel="noopener" href="http://wiki.apache.org/solr/DocValues">http://wiki.apache.org/solr/DocValues</a></p>
+<p>DocValues 从 Lucene 4.2 和 Solr 4.2 开始加入，通过建立字段的正排索引，提升 sorting、faceting、grouping、function queries 等性能。</p>
+<h2 id="介绍"><a href="#介绍" class="headerlink" title="介绍"></a>介绍</h2><p>在 Solr 的配置文件 (schema.xml) 中，如果需要为一个 Field 建立倒排索引，可以通过配置 <code>indexed=&quot;true&quot;</code> 来实现，DocValues 是一种正排索引方式，通过设置 <code>docValues=&quot;true&quot;</code> 来实现。</p>
+<h3 id="1-DocValues-的特性"><a href="#1-DocValues-的特性" class="headerlink" title="1. DocValues 的特性"></a>1. DocValues 的特性</h3><ul>
+<li><p><strong>近实时索引：</strong> 在每一个索引段里面都会有一个 docvalues 数据结构，这个结构与索引同时建立，并且能够快速更新、生效；</p>
+</li>
+<li><p><strong>基本的查询和过滤支持：</strong> 你可以做基本的词、范围等基本查询，但是不参与评分，并且速度较慢，如果你对速度和评分排序有要求，你可以将该字段设置为 <code>indexed=&quot;true&quot;</code></p>
+</li>
+<li><p><strong>更好的压缩比：</strong> DocValues fields 的压缩效果比 fieldcache 好，但不强调做到极致。</p>
+</li>
+<li><p><strong>节约内存：</strong> 你可以定义一个 fieldType 的 docValuesFormat (docValuesFormat&#x3D;”Disk”)，这样的只有一小部分数据加载到内存，其它部分保留在磁盘上。</p>
+</li>
+</ul>
+<h3 id="2-DocValues-不能实现的"><a href="#2-DocValues-不能实现的" class="headerlink" title="2. DocValues 不能实现的"></a>2. DocValues 不能实现的</h3><ul>
+<li><p><strong>不能用来代替存储字段：</strong> 这和字段存储完全不同，只是一些便于 (sort&#x2F;facet&#x2F;group&#x2F;join&#x2F;scoring) 检索的数据存储结构。</p>
+</li>
+<li><p><strong>对于静态索引不是最有选择：</strong> 如果你有一个完全不更新的索引，docvalues 看起来不会很吸引你。另一方面如果你需要和 fieldcache 对比，继续往下看。</p>
+</li>
+<li><p><strong>风险较大：</strong> 这个功能在 4.2 版本整合到 Solr，非常新，可能仍有一些未知的 bug！</p>
+</li>
+</ul>
+<h2 id="Lucene-的-DocValues-格式"><a href="#Lucene-的-DocValues-格式" class="headerlink" title="Lucene 的 DocValues 格式"></a>Lucene 的 DocValues 格式</h2><p>Lucene 有四个基础字段类型可以使用 docvalues。目前 Solr 使用了其中三种：</p>
+<h3 id="NUMERIC"><a href="#NUMERIC" class="headerlink" title="NUMERIC"></a>NUMERIC</h3><p>每一个文档里面只有一个这样类型的单值字段。这就像在整个索引里有一个很大的 long[]，数据基于实际使用的值经过压缩的。</p>
+<p>例如，假设有 3 个这样的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doc[0] = 1005</span><br><span class="line">doc[1] = 1006</span><br><span class="line">doc[2] = 1005</span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，每个文档仅需要一个 bit。</p>
+<h3 id="SORTED"><a href="#SORTED" class="headerlink" title="SORTED"></a>SORTED</h3><p>每一个文档里面有一个这样类型的单值字段。这就像在整个索引里有一个很大的 String[]，但用的是不同的寻址方式。每一个唯一的 value 被赋予一个数字代表其顺序。所以每个文档只是记录一个压缩后的整数，有字典来还原他们原来的词。</p>
+<p>例如，假设有 3 个这样的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doc[0] = &quot;aardvark&quot;</span><br><span class="line">doc[1] = &quot;beaver&quot;</span><br><span class="line">doc[2] = &quot;aardvark&quot;</span><br></pre></td></tr></table></figure>
+
+<p>值 “aardvark” 被映射成 0，”beaver” 映射成 1，建立两个数据结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">doc[0] = 0</span><br><span class="line">doc[1] = 1</span><br><span class="line">doc[2] = 0</span><br><span class="line"></span><br><span class="line">term[0] = &quot;aardvark&quot;</span><br><span class="line">term[1] = &quot;beaver&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="SORTED-SET"><a href="#SORTED-SET" class="headerlink" title="SORTED_SET"></a>SORTED_SET</h3><p>每个文档里面有一个 string 类型的多值字段。这个和 SORTED 类型比较相似，每个文档有一个 value 的 “set”（按照递增存储）。</p>
+<p>这里刻意的去除了重复的 value，并且忽略了原有 value 的排序。</p>
+<p>例如，假设有 3 个这样的文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">doc[0] = &quot;cat&quot;, &quot;aardvark&quot;, &quot;beaver&quot;, &quot;aardvark&quot;</span><br><span class="line">doc[1] = </span><br><span class="line">doc[2] = &quot;cat&quot;</span><br></pre></td></tr></table></figure>
+
+<p>值 “aardvark” 被映射成 0，”beaver” 映射成 1，”cat” 映射成 2，建立两个数据结构如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">doc[0] = [0, 1, 2]</span><br><span class="line">doc[1] = []</span><br><span class="line">doc[2] = [2]</span><br><span class="line"></span><br><span class="line">term[0] = &quot;aardvark&quot;</span><br><span class="line">term[1] = &quot;beaver&quot;</span><br><span class="line">term[2] = &quot;cat&quot;</span><br></pre></td></tr></table></figure>
+
+<h3 id="BINARY"><a href="#BINARY" class="headerlink" title="BINARY"></a>BINARY</h3><p>每个文档存在一个 byte[] array。这个编码及数据结构可以由用户自定义。</p>
+<h2 id="Solr-的-DocValues-类型"><a href="#Solr-的-DocValues-类型" class="headerlink" title="Solr 的 DocValues 类型"></a>Solr 的 DocValues 类型</h2><h3 id="StrField-multiValued-false"><a href="#StrField-multiValued-false" class="headerlink" title="StrField (multiValued&#x3D;false)"></a>StrField (multiValued&#x3D;false)</h3><p>这个背后实际上是由 SORTED 实现。对于要排序的字段，这是一个不错的选择。</p>
+<p>例子：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manu_exact&quot;</span> <span class="attr">type</span>=<span class="string">&quot;str&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span> <span class="attr">default</span>=<span class="string">&quot;&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="StrField-multiValued-true"><a href="#StrField-multiValued-true" class="headerlink" title="StrField (multiValued&#x3D;true)"></a>StrField (multiValued&#x3D;true)</h3><p>这个背后实际上是由 SORTED_SET 实现。</p>
+<p>例子：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;productCategories&quot;</span> <span class="attr">type</span>=<span class="string">&quot;str&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">multiValued</span>=<span class="string">&quot;true&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="TrieXXXField-multiValued-false"><a href="#TrieXXXField-multiValued-false" class="headerlink" title="TrieXXXField (multiValued&#x3D;false)"></a>TrieXXXField (multiValued&#x3D;false)</h3><p>这个背后实际上是由 NUMERIC 实现。这个对于排序字段或者用 function queries 打分的字段比较有益。</p>
+<p>例子：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;popularity&quot;</span> <span class="attr">type</span>=<span class="string">&quot;int&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span> <span class="attr">default</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="TrieXXXField-multiValued-true"><a href="#TrieXXXField-multiValued-true" class="headerlink" title="TrieXXXField (multiValued&#x3D;true)"></a>TrieXXXField (multiValued&#x3D;true)</h3><p>这个背后实际上是由 SORTED_SET 实现，数字编码的值由基础反推出原始的数字，可以用于排序。</p>
+<p>例子：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;specialCodes&quot;</span> <span class="attr">type</span>=<span class="string">&quot;int&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">multiValued</span>=<span class="string">&quot;true&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置不同的-Codec-实现"><a href="#配置不同的-Codec-实现" class="headerlink" title="配置不同的 Codec 实现"></a>配置不同的 Codec 实现</h2><p>你可以通过设置 fieldType 的 docValuesFormat 属性来选择不同的实现。</p>
+<p>要启用 per-field DocValues 格式，必须在 solrconfig.xml 里面设置 SchemaCodecFactory：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">codecFactory</span> <span class="attr">class</span>=<span class="string">&quot;solr.SchemaCodecFactory&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>schema.xml 下面的配置：</p>
+<ul>
+<li><strong>docValuesFormat&#x3D;”Lucene42”</strong>: 这是默认设置，所有数据会被加载到堆内存中。</li>
+<li><strong>docValuesFormat&#x3D;”Disk”</strong>: 这是另外一个实现，将部分数据存储在磁盘上。</li>
+<li><strong>docValuesFormat&#x3D;”SimpleText”</strong>: 文本格式，非常慢，用于学习。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2013/06/06/solrj%E4%BD%BF%E7%94%A8%E6%95%99%E7%A8%8B/" rel="prev" title="SolrJ使用教程">
+                  <i class="fa fa-angle-left"></i> SolrJ使用教程
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2013/07/05/tomcat%E4%B8%8A%E9%83%A8%E7%BD%B2solrcloud/" rel="next" title="Tomcat上部署SolrCloud">
+                  Tomcat上部署SolrCloud <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

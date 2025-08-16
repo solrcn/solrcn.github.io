@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="安装 Ganglia123456789yum install -y wget apr-devel apr-util check-devel cairo-devel pango-devel libxml2-devel rpmbuild glib2-devel dbus-devel freetype-devel fontconfig-devel gcc-c++ expat-devel python-d">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ganglia 监控 Solr">
+<meta property="og:url" content="https://solrcn.github.io/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="安装 Ganglia123456789yum install -y wget apr-devel apr-util check-devel cairo-devel pango-devel libxml2-devel rpmbuild glib2-devel dbus-devel freetype-devel fontconfig-devel gcc-c++ expat-devel python-d">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2014-05-28T14:03:25.000Z">
+<meta property="article:modified_time" content="2025-08-16T16:24:10.532Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr, Lucene, 搜索引擎, 全文检索, Apache Solr, 中文社区">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/","path":"2014/05/28/ganglia监控solr/","title":"Ganglia 监控 Solr"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Ganglia 监控 Solr | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AE%89%E8%A3%85-Ganglia"><span class="nav-number">1.</span> <span class="nav-text">安装 Ganglia</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Ganglia%EF%BC%88%E4%BB%85%E6%8C%87%E5%87%BA%E5%BF%85%E8%A6%81%E9%85%8D%E7%BD%AE%E9%83%A8%E5%88%86%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">配置 Ganglia（仅指出必要配置部分）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-Solr-%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">配置 Solr 启动参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE-JMXTrans"><span class="nav-number">1.3.</span> <span class="nav-text">配置 JMXTrans</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1"><span class="nav-number">1.4.</span> <span class="nav-text">启动服务</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2014/05/28/ganglia%E7%9B%91%E6%8E%A7solr/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Ganglia 监控 Solr | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ganglia 监控 Solr
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2014-05-28 22:03:25" itemprop="dateCreated datePublished" datetime="2014-05-28T22:03:25+08:00">2014-05-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:24:10" itemprop="dateModified" datetime="2025-08-17T00:24:10+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" itemprop="url" rel="index"><span itemprop="name">Solr进阶</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="安装-Ganglia"><a href="#安装-Ganglia" class="headerlink" title="安装 Ganglia"></a>安装 Ganglia</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">yum install -y wget apr-devel apr-util check-devel cairo-devel pango-devel libxml2-devel rpmbuild glib2-devel dbus-devel freetype-devel fontconfig-devel gcc-c++ expat-devel python-devel libXrender-devel rrdtool*</span><br><span class="line"></span><br><span class="line">rpm -ivh http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm</span><br><span class="line"></span><br><span class="line">rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm</span><br><span class="line"></span><br><span class="line">rpm -ivh http://github.com/downloads/jmxtrans/jmxtrans/jmxtrans-20121016.145842.6a28c97fbb-0.noarch.rpm</span><br><span class="line"></span><br><span class="line">yum install ganglia*</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-Ganglia（仅指出必要配置部分）"><a href="#配置-Ganglia（仅指出必要配置部分）" class="headerlink" title="配置 Ganglia（仅指出必要配置部分）"></a>配置 Ganglia（仅指出必要配置部分）</h2><p>编辑配置文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/ganglia/gmetad.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">data_source &quot;solrcluster&quot; 127.0.0.1 # 运行 gmod 机器的 IP</span><br><span class="line">```  </span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">vim /etc/ganglia/gmond.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cluster &#123;</span><br><span class="line">    name = &quot;solrcluster&quot;</span><br><span class="line">    owner = &quot;unspecified&quot;</span><br><span class="line">    latlong = &quot;unspecified&quot;</span><br><span class="line">    url = &quot;unspecified&quot;</span><br><span class="line">&#125;</span><br><span class="line">```  </span><br><span class="line"> </span><br><span class="line"></span><br><span class="line">```bash</span><br><span class="line">vim /etc/httpd/conf.d/ganglia.conf</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">&lt;Location /ganglia&gt;</span></span><br><span class="line">    <span class="attribute">Order</span> <span class="literal">deny</span>,<span class="literal">allow</span></span><br><span class="line">    <span class="attribute">Allow</span> from <span class="literal">all</span></span><br><span class="line">    <span class="attribute">Allow</span> from <span class="number">127.0.0.1</span></span><br><span class="line">    <span class="attribute">Allow</span> from ::<span class="number">1</span></span><br><span class="line">    <span class="comment"># Allow from .example.com</span></span><br><span class="line"><span class="section">&lt;/Location&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-Solr-启动参数"><a href="#配置-Solr-启动参数" class="headerlink" title="配置 Solr 启动参数"></a>配置 Solr 启动参数</h2><p>必要参数配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /home/solr/start-solr.sh</span></span><br><span class="line">java -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=3000 -Dcom.sun.management.jmxremote.ssl=<span class="literal">false</span> -Dcom.sun.management.jmxremote.authenticate=<span class="literal">false</span> -Djava.rmi.server.hostname=127.0.0.1 -jar start.jar</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置-JMXTrans"><a href="#配置-JMXTrans" class="headerlink" title="配置 JMXTrans"></a>配置 JMXTrans</h2><p>配置文件路径：<code>/var/lib/jmxtrans/solr.json</code></p>
+<p><strong>注意：</strong> host 的 IP 地址必须与 <code>-Djava.rmi.server.hostname=IP_OR_HOSTNAME</code> 参数指定的 IP 相同</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">&quot;servers&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">  <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;127.0.0.1&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;alias&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;3000&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;queries&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=Memory&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.heap&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;HeapMemoryUsage&quot;</span><span class="punctuation">,</span> <span class="string">&quot;NonHeapMemoryUsage&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:name=CMS Old Gen,type=MemoryPool&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.cmsoldgen&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;Usage&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=GarbageCollector,name=*&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.gc&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;CollectionCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;CollectionTime&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;java.lang:type=Threading&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.threads&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;DaemonThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;PeakThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;ThreadCount&quot;</span><span class="punctuation">,</span> <span class="string">&quot;TotalStartedThreadCount&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr/collection1:type=queryResultCache,id=org.apache.solr.search.LRUCache&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.queryCache&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;warmupTime&quot;</span><span class="punctuation">,</span><span class="string">&quot;size&quot;</span><span class="punctuation">,</span><span class="string">&quot;lookups&quot;</span><span class="punctuation">,</span><span class="string">&quot;evictions&quot;</span><span class="punctuation">,</span><span class="string">&quot;hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;hitratio&quot;</span><span class="punctuation">,</span><span class="string">&quot;inserts&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_lookups&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hits&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_hitratio&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_inserts&quot;</span><span class="punctuation">,</span><span class="string">&quot;cumulative_evictions&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;obj&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;solr/collection1:type=searcher,id=org.apache.solr.search.SolrIndexSearcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;resultAlias&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr1.searcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;attr&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;maxDoc&quot;</span><span class="punctuation">,</span><span class="string">&quot;numDocs&quot;</span><span class="punctuation">,</span><span class="string">&quot;warmupTime&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;outputWriters&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;@class&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;com.googlecode.jmxtrans.model.output.GangliaWriter&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;settings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;groupName&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Solr-JVM&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;host&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;239.2.11.71&quot;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;port&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;8649&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br><span class="line"></span><br><span class="line"><span class="punctuation">&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="启动服务"><a href="#启动服务" class="headerlink" title="启动服务"></a>启动服务</h2><p><strong>注意：</strong> JMXTrans 要最后启动</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">/etc/init.d/httpd start</span><br><span class="line">/etc/init.d/gmetad start</span><br><span class="line">/etc/init.d/gmond start</span><br><span class="line">/home/solr/start-solr.sh</span><br><span class="line">/etc/init.d/jmxtrans start</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2014/05/20/%E6%A3%80%E7%B4%A2faq/" rel="prev" title="检索 FAQ">
+                  <i class="fa fa-angle-left"></i> 检索 FAQ
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/" rel="next" title="Solr 检索调试">
+                  Solr 检索调试 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

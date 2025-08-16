@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr查询语法详解1. 匹配所有文档1*:*  2. 强制、阻止和可选查询Mandatory（强制）查询结果中必须包括的（例如，只返回包含指定词的条目） Solr&#x2F;Lucene语法：  +make +make +up +make +up +kiss  Prohibited（阻止）例如，所有文档除了包含某个词的文档 Solr&#x2F;Lucene语法：  +make +up -kiss">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询语法">
+<meta property="og:url" content="https://solrcn.github.io/2013/01/23/solr%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询语法详解1. 匹配所有文档1*:*  2. 强制、阻止和可选查询Mandatory（强制）查询结果中必须包括的（例如，只返回包含指定词的条目） Solr&#x2F;Lucene语法：  +make +make +up +make +up +kiss  Prohibited（阻止）例如，所有文档除了包含某个词的文档 Solr&#x2F;Lucene语法：  +make +up -kiss">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-01-23T03:28:48.000Z">
+<meta property="article:modified_time" content="2025-08-16T15:11:57.712Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="solr入门">
+<meta property="article:tag" content="新手必看">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2013/01/23/solr%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2013/01/23/solr%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/","path":"2013/01/23/solr查询语法/","title":"Solr查询语法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr查询语法 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr查询语法详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%8C%B9%E9%85%8D%E6%89%80%E6%9C%89%E6%96%87%E6%A1%A3"><span class="nav-number">1.1.</span> <span class="nav-text">1. 匹配所有文档</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E5%BC%BA%E5%88%B6%E3%80%81%E9%98%BB%E6%AD%A2%E5%92%8C%E5%8F%AF%E9%80%89%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.</span> <span class="nav-text">2. 强制、阻止和可选查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Mandatory%EF%BC%88%E5%BC%BA%E5%88%B6%EF%BC%89"><span class="nav-number">1.2.1.</span> <span class="nav-text">Mandatory（强制）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prohibited%EF%BC%88%E9%98%BB%E6%AD%A2%EF%BC%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">Prohibited（阻止）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Optional%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">Optional（可选）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%B8%83%E5%B0%94%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">3. 布尔操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9F%A5%E8%AF%A2%EF%BC%88%E5%AD%90%E6%9F%A5%E8%AF%A2%EF%BC%89"><span class="nav-number">1.4.</span> <span class="nav-text">4. 子表达式查询（子查询）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E5%AD%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%9F%A5%E8%AF%A2%E4%B8%AD%E9%98%BB%E6%AD%A2%E6%9F%A5%E8%AF%A2%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.5.</span> <span class="nav-text">5. 子表达式查询中阻止查询的限制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-%E5%A4%9A%E5%AD%97%E6%AE%B5%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.6.</span> <span class="nav-text">6. 多字段查询</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#7-%E9%80%9A%E9%85%8D%E7%AC%A6%E6%9F%A5%E8%AF%A2%EF%BC%88wildCard-Query%EF%BC%89"><span class="nav-number">1.7.</span> <span class="nav-text">7. 通配符查询（wildCard Query）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6-%E5%92%8C"><span class="nav-number">1.7.1.</span> <span class="nav-text">通配符 ? 和 *</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.7.2.</span> <span class="nav-text">注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#8-%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2%E3%80%81%E7%9B%B8%E4%BC%BC%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.8.</span> <span class="nav-text">8. 模糊查询、相似查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%88%AC%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.8.1.</span> <span class="nav-text">一般模糊查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%A8%E6%A7%9B%E6%A8%A1%E7%B3%8A%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.8.2.</span> <span class="nav-text">门槛模糊查询</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2%EF%BC%88Range-Query%EF%BC%89"><span class="nav-number">1.9.</span> <span class="nav-text">9. 范围查询（Range Query）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F%E8%8C%83%E5%9B%B4%EF%BC%88ISO-8601-%E6%97%B6%E9%97%B4GMT%EF%BC%89"><span class="nav-number">1.9.1.</span> <span class="nav-text">日期范围（ISO-8601 时间GMT）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97%E8%8C%83%E5%9B%B4"><span class="nav-number">1.9.2.</span> <span class="nav-text">数字范围</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%9C%AC%E8%8C%83%E5%9B%B4"><span class="nav-number">1.9.3.</span> <span class="nav-text">文本范围</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E6%97%A5%E6%9C%9F%E5%8C%B9%E9%85%8D"><span class="nav-number">1.10.</span> <span class="nav-text">10. 日期匹配</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BE%8B%E5%AD%90"><span class="nav-number">1.10.1.</span> <span class="nav-text">例子</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/01/23/solr%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr查询语法 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr查询语法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-01-23 11:28:48" itemprop="dateCreated datePublished" datetime="2013-01-23T11:28:48+08:00">2013-01-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-16 23:11:57" itemprop="dateModified" datetime="2025-08-16T23:11:57+08:00">2025-08-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr查询语法详解"><a href="#Solr查询语法详解" class="headerlink" title="Solr查询语法详解"></a>Solr查询语法详解</h1><h2 id="1-匹配所有文档"><a href="#1-匹配所有文档" class="headerlink" title="1. 匹配所有文档"></a>1. 匹配所有文档</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*:*</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-强制、阻止和可选查询"><a href="#2-强制、阻止和可选查询" class="headerlink" title="2. 强制、阻止和可选查询"></a>2. 强制、阻止和可选查询</h2><h3 id="Mandatory（强制）"><a href="#Mandatory（强制）" class="headerlink" title="Mandatory（强制）"></a>Mandatory（强制）</h3><p>查询结果中必须包括的（例如，只返回包含指定词的条目）</p>
+<p><strong>Solr&#x2F;Lucene语法：</strong></p>
+<ul>
+<li><code>+make</code></li>
+<li><code>+make +up</code></li>
+<li><code>+make +up +kiss</code></li>
+</ul>
+<h3 id="Prohibited（阻止）"><a href="#Prohibited（阻止）" class="headerlink" title="Prohibited（阻止）"></a>Prohibited（阻止）</h3><p>例如，所有文档除了包含某个词的文档</p>
+<p><strong>Solr&#x2F;Lucene语法：</strong></p>
+<ul>
+<li><code>+make +up -kiss</code></li>
+</ul>
+<h3 id="Optional（可选）"><a href="#Optional（可选）" class="headerlink" title="Optional（可选）"></a>Optional（可选）</h3><p><strong>Solr&#x2F;Lucene语法：</strong></p>
+<ul>
+<li><code>+make +up kiss</code></li>
+</ul>
+<h2 id="3-布尔操作"><a href="#3-布尔操作" class="headerlink" title="3. 布尔操作"></a>3. 布尔操作</h2><p>AND、OR和NOT布尔操作（必须大写）与Mandatory、optional和prohibited相似。</p>
+<ol>
+<li><code>make AND up</code> &#x3D; <code>+make +up</code>：AND左右两边的操作都是mandatory</li>
+<li><code>make up</code> &#x3D; <code>make OR up</code> &#x3D; <code>make up</code>：OR左右两边的操作都是optional</li>
+<li><code>+make +up NOT kiss</code> &#x3D; <code>+make +up –kiss</code></li>
+<li><code>make AND up OR french AND Kiss</code> 不可以达到期望的结果，因为AND两边的操作都是mandatory的</li>
+</ol>
+<h2 id="4-子表达式查询（子查询）"><a href="#4-子表达式查询（子查询）" class="headerlink" title="4. 子表达式查询（子查询）"></a>4. 子表达式查询（子查询）</h2><p>可以使用”()”构造子查询。</p>
+<p><strong>例子：</strong> <code>(make AND up) OR (french AND Kiss)</code></p>
+<h2 id="5-子表达式查询中阻止查询的限制"><a href="#5-子表达式查询中阻止查询的限制" class="headerlink" title="5. 子表达式查询中阻止查询的限制"></a>5. 子表达式查询中阻止查询的限制</h2><p><strong>例子：</strong> <code>make (-up)</code> 只能取得make的查询结果；要使用 <code>make (-up *:*)</code> 查询make或者不包括up的结果。</p>
+<h2 id="6-多字段查询"><a href="#6-多字段查询" class="headerlink" title="6. 多字段查询"></a>6. 多字段查询</h2><p>通过字段名加上分号的方式（fieldName:query）来进行查询</p>
+<p><strong>例子：</strong> <code>entryNm:make AND entryId:3cdc86e8e0fb4da8ab17caed42f6760c</code></p>
+<h2 id="7-通配符查询（wildCard-Query）"><a href="#7-通配符查询（wildCard-Query）" class="headerlink" title="7. 通配符查询（wildCard Query）"></a>7. 通配符查询（wildCard Query）</h2><h3 id="通配符-和"><a href="#通配符-和" class="headerlink" title="通配符 ? 和 *"></a>通配符 ? 和 *</h3><ul>
+<li><code>*</code> 表示匹配任意字符</li>
+<li><code>?</code> 表示匹配出现的位置</li>
+</ul>
+<p><strong>例子：</strong> </p>
+<ul>
+<li><code>ma?*</code>（ma后面的一个位置匹配）</li>
+<li><code>ma??*</code>（ma后面两个位置都匹配）</li>
+</ul>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><ol>
+<li><strong>查询字符必须要小写：</strong> <code>+Ma +be**</code> 可以搜索到结果；<code>+Ma +Be**</code> 没有搜索结果</li>
+<li><strong>查询速度较慢，</strong> 尤其是通配符在首位：主要原因一是需要迭代查询字段中的每个term，判断是否匹配；二是匹配上的term被加到内部的查询，当terms数量达到1024的时候，查询会失败。</li>
+<li><strong>Solr中默认通配符不能出现在首位</strong> （可以修改QueryParser，设置setAllowLeadingWildcard为true）</li>
+<li>设置 <code>setAllowLeadingWildcard</code> 为 <code>true</code></li>
+</ol>
+<h2 id="8-模糊查询、相似查询"><a href="#8-模糊查询、相似查询" class="headerlink" title="8. 模糊查询、相似查询"></a>8. 模糊查询、相似查询</h2><p>不是精确的查询，通过对查询的字段进行重新插入、删除和转换来取得得分较高的查询结果（由Levenstein Distance Algorithm算法支持）。</p>
+<h3 id="一般模糊查询"><a href="#一般模糊查询" class="headerlink" title="一般模糊查询"></a>一般模糊查询</h3><p><strong>例子：</strong> <code>make-believ~</code></p>
+<h3 id="门槛模糊查询"><a href="#门槛模糊查询" class="headerlink" title="门槛模糊查询"></a>门槛模糊查询</h3><p>对模糊查询可以设置查询门槛，门槛是0~1之间的数值，门槛越高表面相似度越高。</p>
+<p><strong>例子：</strong> </p>
+<ul>
+<li><code>make-believ~0.5</code></li>
+<li><code>make-believ~0.8</code></li>
+<li><code>make-believ~0.9</code></li>
+</ul>
+<h2 id="9-范围查询（Range-Query）"><a href="#9-范围查询（Range-Query）" class="headerlink" title="9. 范围查询（Range Query）"></a>9. 范围查询（Range Query）</h2><p>Lucene支持对数字、日期甚至文本的范围查询。结束的范围可以使用”*”通配符。</p>
+<h3 id="日期范围（ISO-8601-时间GMT）"><a href="#日期范围（ISO-8601-时间GMT）" class="headerlink" title="日期范围（ISO-8601 时间GMT）"></a>日期范围（ISO-8601 时间GMT）</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sa_type:2 AND a_begin_date:[1990-01-01T00:00:00.000Z TO 1999-12-31T24:59:99.999Z]</span><br></pre></td></tr></table></figure>
+
+<h3 id="数字范围"><a href="#数字范围" class="headerlink" title="数字范围"></a>数字范围</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">salary:[2000 TO *]</span><br></pre></td></tr></table></figure>
+
+<h3 id="文本范围"><a href="#文本范围" class="headerlink" title="文本范围"></a>文本范围</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">entryNm:[a TO a]</span><br></pre></td></tr></table></figure>
+
+<h2 id="10-日期匹配"><a href="#10-日期匹配" class="headerlink" title="10. 日期匹配"></a>10. 日期匹配</h2><p>YEAR, MONTH, DAY, DATE (synonymous with DAY) HOUR, MINUTE, SECOND, MILLISECOND, 和 MILLI (synonymous with MILLISECOND) 可以被标志成日期。</p>
+<h3 id="例子"><a href="#例子" class="headerlink" title="例子"></a>例子</h3><ol>
+<li><p><strong>2年前的现在这个时间：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r_event_date:[* TO NOW-2YEAR]</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>2年前前一天的这个时间：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">r_event_date:[* TO NOW/DAY-2YEAR]</span><br></pre></td></tr></table></figure></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/solr%E5%85%A5%E9%97%A8/" rel="tag"># solr入门</a>
+              <a href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/" rel="tag"># 新手必看</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2013/01/23/solr%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0queryparam/" rel="prev" title="Solr查询参数QueryParam">
+                  <i class="fa fa-angle-left"></i> Solr查询参数QueryParam
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2013/01/23/solr%E5%87%BD%E6%95%B0%E6%9F%A5%E8%AF%A2/" rel="next" title="Solr函数查询">
+                  Solr函数查询 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="一. 数据导入 (DataImportHandler-DIH)DIH 是 solr 提供的一种针对数据库、xml&#x2F;HTTP、富文本对象导入到 solr 索引库的工具包。这里只针对数据库做介绍。 A、准备以下 jar 包 apache-solr-dataimporthandler-4.0.0.jar apache-solr-dataimporthandler-extras-4.0.0.ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr从数据库导入数据（DIH）">
+<meta property="og:url" content="https://solrcn.github.io/2013/01/23/solr%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%88dih%EF%BC%89/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="一. 数据导入 (DataImportHandler-DIH)DIH 是 solr 提供的一种针对数据库、xml&#x2F;HTTP、富文本对象导入到 solr 索引库的工具包。这里只针对数据库做介绍。 A、准备以下 jar 包 apache-solr-dataimporthandler-4.0.0.jar apache-solr-dataimporthandler-extras-4.0.0.ja">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://solrcn.github.io/images/uploads/dih.png">
+<meta property="article:published_time" content="2013-01-23T03:31:52.000Z">
+<meta property="article:modified_time" content="2025-08-16T16:20:28.178Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="solr入门">
+<meta property="article:tag" content="新手必看">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://solrcn.github.io/images/uploads/dih.png">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2013/01/23/solr%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%88dih%EF%BC%89/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2013/01/23/solr%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%88dih%EF%BC%89/","path":"2013/01/23/solr从数据库导入数据（dih）/","title":"Solr从数据库导入数据（DIH）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr从数据库导入数据（DIH） | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80-%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5-DataImportHandler-DIH"><span class="nav-number">1.</span> <span class="nav-text">一. 数据导入 (DataImportHandler-DIH)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#A%E3%80%81%E5%87%86%E5%A4%87%E4%BB%A5%E4%B8%8B-jar-%E5%8C%85"><span class="nav-number">1.1.</span> <span class="nav-text">A、准备以下 jar 包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B%E3%80%81%E9%85%8D%E7%BD%AE-solrconfig-xml"><span class="nav-number">1.2.</span> <span class="nav-text">B、配置 solrconfig.xml</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#C%E3%80%81%E9%85%8D%E7%BD%AE%E6%95%B0%E6%8D%AE%E6%BA%90"><span class="nav-number">1.3.</span> <span class="nav-text">C、配置数据源</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#D%E3%80%81%E5%A4%84%E7%90%86-CLOB-%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.</span> <span class="nav-text">D、处理 CLOB 字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#E%E3%80%81DIH-%E5%86%85%E5%AD%98%E6%BA%A2%E5%87%BA%E9%94%99%E8%AF%AF"><span class="nav-number">1.5.</span> <span class="nav-text">E、DIH 内存溢出错误</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#F%E3%80%81%E8%87%AA%E5%8A%A8%E5%85%A8%E5%AF%BC%E5%85%A5%E5%92%8C%E8%87%AA%E5%8A%A8%E5%A2%9E%E9%87%8F%E5%AF%BC%E5%85%A5"><span class="nav-number">1.6.</span> <span class="nav-text">F、自动全导入和自动增量导入</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/01/23/solr%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%88dih%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr从数据库导入数据（DIH） | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr从数据库导入数据（DIH）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-01-23 11:31:52" itemprop="dateCreated datePublished" datetime="2013-01-23T11:31:52+08:00">2013-01-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:20:28" itemprop="dateModified" datetime="2025-08-17T00:20:28+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="一-数据导入-DataImportHandler-DIH"><a href="#一-数据导入-DataImportHandler-DIH" class="headerlink" title="一. 数据导入 (DataImportHandler-DIH)"></a>一. 数据导入 (DataImportHandler-DIH)</h2><p>DIH 是 solr 提供的一种针对数据库、xml&#x2F;HTTP、富文本对象导入到 solr 索引库的工具包。这里只针对数据库做介绍。</p>
+<h3 id="A、准备以下-jar-包"><a href="#A、准备以下-jar-包" class="headerlink" title="A、准备以下 jar 包"></a>A、准备以下 jar 包</h3><ul>
+<li>apache-solr-dataimporthandler-4.0.0.jar</li>
+<li>apache-solr-dataimporthandler-extras-4.0.0.jar</li>
+<li>apache-solr-dataimportscheduler-1.1.jar（增量导入使用）</li>
+<li>数据库对应的 jdbc 驱动包</li>
+</ul>
+<p>这里使用的是 Oracle oracle10g.jar，放入 <code>Tomcat6.0.36/webapps/solr/WEB-INF/lib</code> 中</p>
+<h3 id="B、配置-solrconfig-xml"><a href="#B、配置-solrconfig-xml" class="headerlink" title="B、配置 solrconfig.xml"></a>B、配置 solrconfig.xml</h3><p>在 solrconfig.xml 中加入如下配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/dataimport&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.handler.dataimport.DataImportHandler&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;config&quot;</span>&gt;</span>xx-data-config.xml<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="C、配置数据源"><a href="#C、配置数据源" class="headerlink" title="C、配置数据源"></a>C、配置数据源</h3><p>在与 solrconfig.xml 文件同级的目录中建立上述配置中的 xx-data-config.xml 文件，配置如下：</p>
+<p><a target="_blank" rel="noopener" href="http://www.solr.cc/blog/?attachment_id=261"><img src="/images/uploads/dih.png" alt="dih"></a></p>
+<p>query 属性为全导入的时候使用。其他为增量导入使用。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dataConfig</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;JdbcDataSource&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">driver</span>=<span class="string">&quot;oracle.jdbc.driver.OracleDriver&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">url</span>=<span class="string">&quot;jdbc:oracle:thin:@192.168.0.129:1521:orcl&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">user</span>=<span class="string">&quot;username&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">password</span>=<span class="string">&quot;password&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">document</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">&quot;business_info&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">pk</span>=<span class="string">&quot;ID&quot;</span> </span></span><br><span class="line"><span class="tag">                <span class="attr">query</span>=<span class="string">&quot;select t.ID id,business_name,bussiness_type from business t&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">deltaImportQuery</span>=<span class="string">&quot;select t.ID id,business_name,bussiness_type from business t where id=&#x27;$&#123;dataimporter.delta.ID&#125;&#x27;&quot;</span></span></span><br><span class="line"><span class="tag">                <span class="attr">deltaQuery</span>=<span class="string">&quot;select t.ID id,business_name,bussiness_type from business t where to_char(updatetime,&#x27;yyyy-mm-dd hh24:mi:ss&#x27;)&gt; &#x27;$&#123;dataimporter.last_index_time&#125;&#x27;&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">entity</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">document</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dataConfig</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>至此所有 DIH 的配置完成，在浏览器中输入命令：</p>
+<p><strong>全导入：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8085/solr/core0/dataimport?command=full-import&amp;commit=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>增量导入：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8085/solr/core0/dataimport?command=delta-import&amp;clean=false&amp;commit=true</span><br></pre></td></tr></table></figure>
+
+<p><strong>查看导入状态：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8085/solr/core0/dataimport?command=status</span><br></pre></td></tr></table></figure>
+
+<h3 id="D、处理-CLOB-字段"><a href="#D、处理-CLOB-字段" class="headerlink" title="D、处理 CLOB 字段"></a>D、处理 CLOB 字段</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">entity</span> <span class="attr">name</span>=<span class="string">&quot;meta&quot;</span> <span class="attr">query</span>=<span class="string">&quot;select id,filename,content,bytes from documents&quot;</span> <span class="attr">transformer</span>=<span class="string">&quot;ClobTransformer&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;ID&quot;</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">column</span>=<span class="string">&quot;CONTENT&quot;</span> <span class="attr">name</span>=<span class="string">&quot;CONTENT&quot;</span> <span class="attr">clob</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">entity</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>CLOB 字段的 column 必须大写！！</p>
+<h3 id="E、DIH-内存溢出错误"><a href="#E、DIH-内存溢出错误" class="headerlink" title="E、DIH 内存溢出错误"></a>E、DIH 内存溢出错误</h3><p>在使用 DIH 时，容易报内存溢出错误。可以通过设置 jvm 大小来解决。设置方法如下：</p>
+<p>在 <code>tomcat\bin\startup.bat</code> 加入：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SET JAVA_OPTS=-Xms128m -Xmx1024m</span><br></pre></td></tr></table></figure>
+
+<p>这里设置的是 1024M，根据情况可以适量增大</p>
+<h3 id="F、自动全导入和自动增量导入"><a href="#F、自动全导入和自动增量导入" class="headerlink" title="F、自动全导入和自动增量导入"></a>F、自动全导入和自动增量导入</h3><p>此功能可以自己写程序实现，也可利用 apache-solr-dataimportscheduler-1.0.jar 包完成此功能。配置如下：</p>
+<p>修改 solr.war 中 WEB-INF&#x2F;web.xml，在 servlet 节点前面增加：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">listener-class</span>&gt;</span></span><br><span class="line">        org.apache.solr.handler.dataimport.scheduler.ApplicationListener</span><br><span class="line">    <span class="tag">&lt;/<span class="name">listener-class</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>将 apache-solr-dataimportscheduler-.jar 中 dataimport.properties 取出并根据实际情况修改，然后放到 solr.home&#x2F;conf（不是 solr.home&#x2F;core&#x2F;conf）目录下面</p>
+<p>具体配置可参考：<a target="_blank" rel="noopener" href="http://code.google.com/p/solr-dataimport-scheduler/">http://code.google.com/p/solr-dataimport-scheduler/</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/solr%E5%85%A5%E9%97%A8/" rel="tag"># solr入门</a>
+              <a href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/" rel="tag"># 新手必看</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2013/01/23/solr%E5%87%BD%E6%95%B0%E6%9F%A5%E8%AF%A2/" rel="prev" title="Solr函数查询">
+                  <i class="fa fa-angle-left"></i> Solr函数查询
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2013/01/23/solr%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0/" rel="next" title="Solr原子更新">
+                  Solr原子更新 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

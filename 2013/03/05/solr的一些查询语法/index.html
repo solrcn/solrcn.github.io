@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="1. 基本查询概念1.1 字段查询首先假设我的数据里 fields 有：name, tel, address预设的搜寻是 name 这个字段，如果要搜寻的数据刚好就是 name 这个字段，就不需要指定搜寻字段名称。 1.2 查询规则如欲查询特定字段（非预设字段），请在查询词前加上该字段名称加 “:” 符号，例如：  address:北京市海淀区上地软件园 tel:88xxxxx1  1.3 查询参">
+<meta property="og:type" content="article">
+<meta property="og:title" content="solr的一些查询语法">
+<meta property="og:url" content="https://solrcn.github.io/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="1. 基本查询概念1.1 字段查询首先假设我的数据里 fields 有：name, tel, address预设的搜寻是 name 这个字段，如果要搜寻的数据刚好就是 name 这个字段，就不需要指定搜寻字段名称。 1.2 查询规则如欲查询特定字段（非预设字段），请在查询词前加上该字段名称加 “:” 符号，例如：  address:北京市海淀区上地软件园 tel:88xxxxx1  1.3 查询参">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-03-05T10:31:32.000Z">
+<meta property="article:modified_time" content="2025-08-16T16:23:15.854Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="solr入门">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/","path":"2013/03/05/solr的一些查询语法/","title":"solr的一些查询语法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>solr的一些查询语法 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%9F%BA%E6%9C%AC%E6%9F%A5%E8%AF%A2%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1. 基本查询概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AD%97%E6%AE%B5%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 字段查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%9F%A5%E8%AF%A2%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 查询规则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 查询参数说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-%E8%BE%93%E5%87%BA%E5%AD%97%E6%AE%B5%E9%99%90%E5%AE%9A"><span class="nav-number">1.4.</span> <span class="nav-text">1.4 输出字段限定</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0"><span class="nav-number">2.</span> <span class="nav-text">2. 查询参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="nav-number">2.1.</span> <span class="nav-text">常用参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%B8%B8%E7%94%A8%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">不常用参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E5%AE%83%E5%8F%82%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">其它参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-Solr-%E7%9A%84%E6%A3%80%E7%B4%A2%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.</span> <span class="nav-text">3. Solr 的检索运算符</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97%E7%AC%A6"><span class="nav-number">3.1.</span> <span class="nav-text">基本运算符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%82%BB%E8%BF%91%E6%A3%80%E7%B4%A2"><span class="nav-number">3.2.</span> <span class="nav-text">邻近检索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E5%BA%A6%E6%8E%A7%E5%88%B6"><span class="nav-number">3.3.</span> <span class="nav-text">相关度控制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.4.</span> <span class="nav-text">布尔操作符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2"><span class="nav-number">3.5.</span> <span class="nav-text">范围查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.6.</span> <span class="nav-text">时间范围查询示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BD%AC%E4%B9%89%E6%93%8D%E4%BD%9C%E7%AC%A6"><span class="nav-number">3.7.</span> <span class="nav-text">转义操作符</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/03/05/solr%E7%9A%84%E4%B8%80%E4%BA%9B%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="solr的一些查询语法 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          solr的一些查询语法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-03-05 18:31:32" itemprop="dateCreated datePublished" datetime="2013-03-05T18:31:32+08:00">2013-03-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:23:15" itemprop="dateModified" datetime="2025-08-17T00:23:15+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h2 id="1-基本查询概念"><a href="#1-基本查询概念" class="headerlink" title="1. 基本查询概念"></a>1. 基本查询概念</h2><h3 id="1-1-字段查询"><a href="#1-1-字段查询" class="headerlink" title="1.1 字段查询"></a>1.1 字段查询</h3><p>首先假设我的数据里 fields 有：name, tel, address<br>预设的搜寻是 name 这个字段，如果要搜寻的数据刚好就是 name 这个字段，就不需要指定搜寻字段名称。</p>
+<h3 id="1-2-查询规则"><a href="#1-2-查询规则" class="headerlink" title="1.2 查询规则"></a>1.2 查询规则</h3><p>如欲查询特定字段（非预设字段），请在查询词前加上该字段名称加 “:” 符号，例如：</p>
+<ul>
+<li><code>address:北京市海淀区上地软件园</code></li>
+<li><code>tel:88xxxxx1</code></li>
+</ul>
+<h3 id="1-3-查询参数说明"><a href="#1-3-查询参数说明" class="headerlink" title="1.3 查询参数说明"></a>1.3 查询参数说明</h3><ol>
+<li><strong>q</strong> 代表 query input</li>
+<li><strong>version</strong> 代表 solr 版本（建议不要变动此变量）</li>
+<li><strong>start</strong> 代表显示结果从哪一笔结果资料开始，预设为 0 代表第一笔</li>
+<li><strong>rows</strong> 是说要显示几笔数据，预设为 10 笔</li>
+</ol>
+<p>因为有时查询结果可能有几百笔，但不需要显示所有结果，所以预设是从第一笔开始到第十笔。</p>
+<p>所以若要显示第 10 到 30 笔就改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/solr/select/?indent=on&amp;version=2.2&amp;q=address:北京市海淀区上地软件园+tel:88xxxxx1&amp;version=2.2&amp;start=10&amp;rows=20&amp;indent=on</span><br></pre></td></tr></table></figure>
+
+<p>（indent 代表输出的 xml 要不要缩行，预设为开启 on）</p>
+<h3 id="1-4-输出字段限定"><a href="#1-4-输出字段限定" class="headerlink" title="1.4 输出字段限定"></a>1.4 输出字段限定</h3><p>要限定输出结果的内容可用 “fl&#x3D;” 加上你要的字段名称，如以下这个范例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8080/solr/select/?indent=on&amp;version=2.2&amp;q=text:北京+OR+text:亿度&amp;start=0&amp;rows=10&amp;fl=name,address,tel</span><br></pre></td></tr></table></figure>
+
+<p>在 fl&#x3D; 之后加上了 name, address, tel</p>
+<h2 id="2-查询参数"><a href="#2-查询参数" class="headerlink" title="2. 查询参数"></a>2. 查询参数</h2><h3 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h3><ul>
+<li><strong>q</strong> - 查询字符串，必须的。</li>
+<li><strong>fl</strong> - 指定返回那些字段内容，用逗号或空格分隔多个。</li>
+<li><strong>start</strong> - 返回第一条记录在完整找到结果中的偏移位置，0 开始，一般分页用。</li>
+<li><strong>rows</strong> - 指定返回结果最多有多少条记录，配合 start 来实现分页。</li>
+<li><strong>sort</strong> - 排序，格式：<code>sort=&lt;field name&gt;+&lt;desc|asc&gt;[,&lt;field name&gt;+&lt;desc|asc&gt;]…</code><br>示例：<code>inStock desc, price asc</code> 表示先 “inStock” 降序，再 “price” 升序，默认是相关性降序。</li>
+<li><strong>wt</strong> - (writer type) 指定输出格式，可以有 xml, json, php, phps，后面 solr 1.3 增加的。</li>
+<li><strong>fq</strong> - (filter query) 过滤查询，作用：在 q 查询符合结果中同时是 fq 查询符合的。<br>例如：<code>q=mm&amp;fq=date_time:[20081001 TO 20091031]</code>，找关键字 mm，并且 date_time 是 20081001 到 20091031 之间的。</li>
+</ul>
+<p>官方文档：<a target="_blank" rel="noopener" href="http://wiki.apache.org/solr/CommonQueryParameters">http://wiki.apache.org/solr/CommonQueryParameters</a></p>
+<h3 id="不常用参数"><a href="#不常用参数" class="headerlink" title="不常用参数"></a>不常用参数</h3><ul>
+<li><strong>q.op</strong> - 覆盖 schema.xml 的 defaultOperator（有空格时用 “AND” 还是用 “OR” 操作逻辑），一般默认指定</li>
+<li><strong>df</strong> - 默认的查询字段，一般默认指定</li>
+<li><strong>qt</strong> - (query type) 指定那个类型来处理查询请求，一般不用指定，默认是 standard。</li>
+</ul>
+<h3 id="其它参数"><a href="#其它参数" class="headerlink" title="其它参数"></a>其它参数</h3><ul>
+<li><strong>indent</strong> - 返回的结果是否缩进，默认关闭，用 <code>indent=true</code> 或 <code>on</code> 开启，一般调试 json, php, phps, ruby 输出才有必要用这个参数。</li>
+<li><strong>version</strong> - 查询语法的版本，建议不使用它，由服务器指定默认值。</li>
+</ul>
+<h2 id="3-Solr-的检索运算符"><a href="#3-Solr-的检索运算符" class="headerlink" title="3. Solr 的检索运算符"></a>3. Solr 的检索运算符</h2><h3 id="基本运算符"><a href="#基本运算符" class="headerlink" title="基本运算符"></a>基本运算符</h3><ul>
+<li><strong>“:”</strong> 指定字段查指定值，如返回所有值 <code>*:*</code></li>
+<li><strong>“?”</strong> 表示单个任意字符的通配</li>
+<li><strong>“*”</strong> 表示多个任意字符的通配（不能在检索的项开始使用 * 或者 ? 符号）</li>
+<li><strong>“~”</strong> 表示模糊检索，如检索拼写类似于 “roam” 的项这样写：<code>roam~</code> 将找到形如 foam 和 roams 的单词；<code>roam~0.8</code>，检索返回相似度在 0.8 以上的记录。</li>
+</ul>
+<h3 id="邻近检索"><a href="#邻近检索" class="headerlink" title="邻近检索"></a>邻近检索</h3><p>如检索相隔 10 个单词的 “apache” 和 “jakarta”：<code>&quot;jakarta apache&quot;~10</code></p>
+<h3 id="相关度控制"><a href="#相关度控制" class="headerlink" title="相关度控制"></a>相关度控制</h3><p><strong>“^”</strong> 控制相关度检索，如检索 jakarta apache，同时希望去让 “jakarta” 的相关度更加好，那么在其后加上 “^” 符号和增量值，即 <code>jakarta^4 apache</code></p>
+<h3 id="布尔操作符"><a href="#布尔操作符" class="headerlink" title="布尔操作符"></a>布尔操作符</h3><ul>
+<li><strong>AND、&amp;&amp;</strong> 布尔操作符 AND</li>
+<li><strong>OR、||</strong> 布尔操作符 OR</li>
+<li><strong>NOT、!、-</strong> 布尔操作符 NOT（排除操作符不能单独与项使用构成查询）</li>
+<li><strong>“+”</strong> 存在操作符，要求符号 “+” 后的项必须在文档相应的域中存在</li>
+<li><strong>( )</strong> 用于构成子查询</li>
+</ul>
+<h3 id="范围查询"><a href="#范围查询" class="headerlink" title="范围查询"></a>范围查询</h3><ul>
+<li><strong>[ ]</strong> 包含范围检索，如检索某时间段记录，包含头尾：<code>date:[200707 TO 200710]</code></li>
+<li><strong>{ }</strong> 不包含范围检索，如检索某时间段记录，不包含头尾：<code>date:&#123;200707 TO 200710&#125;</code></li>
+</ul>
+<h3 id="时间范围查询示例"><a href="#时间范围查询示例" class="headerlink" title="时间范围查询示例"></a>时间范围查询示例</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">timestamp:[* TO NOW]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z TO *]</span><br><span class="line">createdate:[1995-12-31T23:59:59.999Z TO 2007-03-06T00:00:00Z]</span><br><span class="line">pubdate:[NOW-1YEAR/DAY TO NOW/DAY+1DAY]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z TO 1976-03-06T23:59:59.999Z+1YEAR]</span><br><span class="line">createdate:[1976-03-06T23:59:59.999Z/YEAR TO 1976-03-06T23:59:59.999Z]</span><br></pre></td></tr></table></figure>
+
+<h3 id="转义操作符"><a href="#转义操作符" class="headerlink" title="转义操作符"></a>转义操作符</h3><p><strong>“&quot;</strong> 转义操作符，特殊字符包括：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">+ - &amp; ! ( ) &#123; &#125; [ ] ^ &quot; ~ * ? : \</span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/solr%E5%85%A5%E9%97%A8/" rel="tag"># solr入门</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2013/02/26/%E9%A1%B9%E7%9B%AE%E5%BC%95%E5%85%A5solr%E6%97%B6%E5%BA%94%E8%AF%A5%E8%80%83%E8%99%91%E7%9A%84%E4%B8%80%E4%BA%9B%E9%97%AE%E9%A2%98/" rel="prev" title="项目引入Solr时应该考虑的一些问题">
+                  <i class="fa fa-angle-left"></i> 项目引入Solr时应该考虑的一些问题
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2013/03/12/%E6%90%9C%E7%B4%A2%E5%BB%BA%E8%AE%AE%EF%BC%88suggest%EF%BC%89%E9%85%8D%E7%BD%AE/" rel="next" title="搜索建议（suggest）配置">
+                  搜索建议（suggest）配置 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

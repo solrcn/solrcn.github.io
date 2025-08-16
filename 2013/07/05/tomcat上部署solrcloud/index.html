@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="本文介绍在 Tomcat 上部署 SolrCloud 集群的完整过程。 环境规划SolrCloud 服务器 s1.solr.com s2.solr.com  s3.solr.com  Zookeeper 服务器 z1.com z2.com z3.com  默认安装目录： &#x2F;home&#x2F;myuser 第一步：启动 Zookeeper 集群按照顺序启动 z1.com, z2.com, z3.com 1.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Tomcat上部署SolrCloud">
+<meta property="og:url" content="https://solrcn.github.io/2013/07/05/tomcat%E4%B8%8A%E9%83%A8%E7%BD%B2solrcloud/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="本文介绍在 Tomcat 上部署 SolrCloud 集群的完整过程。 环境规划SolrCloud 服务器 s1.solr.com s2.solr.com  s3.solr.com  Zookeeper 服务器 z1.com z2.com z3.com  默认安装目录： &#x2F;home&#x2F;myuser 第一步：启动 Zookeeper 集群按照顺序启动 z1.com, z2.com, z3.com 1.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2013-07-05T06:50:35.000Z">
+<meta property="article:modified_time" content="2025-08-16T16:24:00.923Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="tomcat">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2013/07/05/tomcat%E4%B8%8A%E9%83%A8%E7%BD%B2solrcloud/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2013/07/05/tomcat%E4%B8%8A%E9%83%A8%E7%BD%B2solrcloud/","path":"2013/07/05/tomcat上部署solrcloud/","title":"Tomcat上部署SolrCloud"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Tomcat上部署SolrCloud | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%A7%84%E5%88%92"><span class="nav-number">1.</span> <span class="nav-text">环境规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">SolrCloud 服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zookeeper-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">Zookeeper 服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E5%90%AF%E5%8A%A8-Zookeeper-%E9%9B%86%E7%BE%A4"><span class="nav-number">2.</span> <span class="nav-text">第一步：启动 Zookeeper 集群</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%B8%8B%E8%BD%BD-Zookeeper"><span class="nav-number">2.1.</span> <span class="nav-text">1. 下载 Zookeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%A7%A3%E5%8E%8B%E7%BC%A9-Zookeeper"><span class="nav-number">2.2.</span> <span class="nav-text">2. 解压缩 Zookeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BC%96%E8%BE%91-Zookeeper-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">3. 编辑 Zookeeper 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E4%B8%BA%E6%AF%8F%E4%B8%AA%E6%9C%8D%E5%8A%A1%E5%99%A8%E5%BB%BA%E7%AB%8B-ID-%E6%96%87%E4%BB%B6"><span class="nav-number">2.4.</span> <span class="nav-text">4. 为每个服务器建立 ID 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%90%AF%E5%8A%A8%E6%89%80%E6%9C%89-Zookeeper-%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">2.5.</span> <span class="nav-text">5. 启动所有 Zookeeper 服务器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9A%E5%AE%89%E8%A3%85-SolrCloud"><span class="nav-number">3.</span> <span class="nav-text">第二步：安装 SolrCloud</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%87%86%E5%A4%87-Solr-%E6%96%87%E4%BB%B6"><span class="nav-number">3.1.</span> <span class="nav-text">1. 准备 Solr 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE%E5%88%B0-Zookeeper"><span class="nav-number">3.2.</span> <span class="nav-text">2. 上传配置到 Zookeeper</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BB%BA%E7%AB%8B-Solr-%E7%B4%A2%E5%BC%95%E7%9B%AE%E5%BD%95"><span class="nav-number">3.3.</span> <span class="nav-text">3. 建立 Solr 索引目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%88%9B%E5%BB%BA-solr-xml-%E6%96%87%E4%BB%B6"><span class="nav-number">3.4.</span> <span class="nav-text">4. 创建 solr.xml 文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E9%85%8D%E7%BD%AE-Tomcat"><span class="nav-number">3.5.</span> <span class="nav-text">5. 配置 Tomcat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E5%88%9B%E5%BB%BA-Collection"><span class="nav-number">3.6.</span> <span class="nav-text">6. 创建 Collection</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%8C%E6%88%90"><span class="nav-number">4.</span> <span class="nav-text">完成</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">24</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2013/07/05/tomcat%E4%B8%8A%E9%83%A8%E7%BD%B2solrcloud/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Tomcat上部署SolrCloud | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Tomcat上部署SolrCloud
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2013-07-05 14:50:35" itemprop="dateCreated datePublished" datetime="2013-07-05T14:50:35+08:00">2013-07-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-17 00:24:00" itemprop="dateModified" datetime="2025-08-17T00:24:00+08:00">2025-08-17</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>本文介绍在 Tomcat 上部署 SolrCloud 集群的完整过程。</p>
+<h2 id="环境规划"><a href="#环境规划" class="headerlink" title="环境规划"></a>环境规划</h2><h3 id="SolrCloud-服务器"><a href="#SolrCloud-服务器" class="headerlink" title="SolrCloud 服务器"></a>SolrCloud 服务器</h3><ul>
+<li>s1.solr.com</li>
+<li>s2.solr.com </li>
+<li>s3.solr.com</li>
+</ul>
+<h3 id="Zookeeper-服务器"><a href="#Zookeeper-服务器" class="headerlink" title="Zookeeper 服务器"></a>Zookeeper 服务器</h3><ul>
+<li>z1.com</li>
+<li>z2.com</li>
+<li>z3.com</li>
+</ul>
+<p><strong>默认安装目录：</strong> <code>/home/myuser</code></p>
+<h2 id="第一步：启动-Zookeeper-集群"><a href="#第一步：启动-Zookeeper-集群" class="headerlink" title="第一步：启动 Zookeeper 集群"></a>第一步：启动 Zookeeper 集群</h2><p>按照顺序启动 z1.com, z2.com, z3.com</p>
+<h3 id="1-下载-Zookeeper"><a href="#1-下载-Zookeeper" class="headerlink" title="1. 下载 Zookeeper"></a>1. 下载 Zookeeper</h3><p>从 <a target="_blank" rel="noopener" href="http://hadoop.apache.org/zookeeper/releases.html">http://hadoop.apache.org/zookeeper/releases.html</a> 下载 zookeeper</p>
+<h3 id="2-解压缩-Zookeeper"><a href="#2-解压缩-Zookeeper" class="headerlink" title="2. 解压缩 Zookeeper"></a>2. 解压缩 Zookeeper</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar -xf zookeeper-*.tar.gz -C /home/myuser/zookeeper/</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-编辑-Zookeeper-配置文件"><a href="#3-编辑-Zookeeper-配置文件" class="headerlink" title="3. 编辑 Zookeeper 配置文件"></a>3. 编辑 Zookeeper 配置文件</h3><p>编辑 <code>/home/myuser/zookeeper/conf/zoo.cfg</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># The number of milliseconds of each tick</span></span><br><span class="line">tickTime=2000</span><br><span class="line"></span><br><span class="line"><span class="comment"># The number of ticks that the initial synchronization phase can take</span></span><br><span class="line">initLimit=10</span><br><span class="line"></span><br><span class="line"><span class="comment"># The number of ticks that can pass between</span></span><br><span class="line"><span class="comment"># sending a request and getting an acknowledgement</span></span><br><span class="line">syncLimit=5</span><br><span class="line"></span><br><span class="line"><span class="comment"># the directory where the snapshot is stored.</span></span><br><span class="line"><span class="comment"># Choose appropriately for your environment</span></span><br><span class="line">dataDir=/home/myuser/zookeeper/data/</span><br><span class="line"></span><br><span class="line"><span class="comment"># the port at which the clients will connect</span></span><br><span class="line">clientPort=2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># the directory where transaction log is stored.</span></span><br><span class="line"><span class="comment"># this parameter provides dedicated log device for ZooKeeper</span></span><br><span class="line">dataLogDir=/home/myuser/zookeeper/log/</span><br><span class="line"></span><br><span class="line"><span class="comment"># ZooKeeper server and its port no.</span></span><br><span class="line"><span class="comment"># ZooKeeper ensemble should know about every other machine in the ensemble</span></span><br><span class="line"><span class="comment"># specify server id by creating &#x27;myid&#x27; file in the dataDir</span></span><br><span class="line"><span class="comment"># use hostname instead of IP address for convenient maintenance</span></span><br><span class="line">server.1=z1.com:2888:3888</span><br><span class="line">server.2=z2.com:2888:3888</span><br><span class="line">server.3=z3.com:2888:3888</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-为每个服务器建立-ID-文件"><a href="#4-为每个服务器建立-ID-文件" class="headerlink" title="4. 为每个服务器建立 ID 文件"></a>4. 为每个服务器建立 ID 文件</h3><p>为每个服务器在 data 目录建立一个 id 文件，配置合适的 id：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 z1.com 上</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1&quot;</span> &gt; /home/myuser/zookeeper/data/myid</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 z2.com 上</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;2&quot;</span> &gt; /home/myuser/zookeeper/data/myid</span><br><span class="line"></span><br><span class="line"><span class="comment"># 在 z3.com 上</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;3&quot;</span> &gt; /home/myuser/zookeeper/data/myid</span><br></pre></td></tr></table></figure>
+
+<p>myid 文件用于标识 zookeeper 服务器。</p>
+<h3 id="5-启动所有-Zookeeper-服务器"><a href="#5-启动所有-Zookeeper-服务器" class="headerlink" title="5. 启动所有 Zookeeper 服务器"></a>5. 启动所有 Zookeeper 服务器</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/myuser/zookeeper/bin/</span><br><span class="line">./zkServer.sh start</span><br></pre></td></tr></table></figure>
+
+<h2 id="第二步：安装-SolrCloud"><a href="#第二步：安装-SolrCloud" class="headerlink" title="第二步：安装 SolrCloud"></a>第二步：安装 SolrCloud</h2><p>现在 zookeeper 集群已经准备好了，我们接下来安装 SolrCloud 服务器：s1.solr.com, s2.solr.com, s3.solr.com</p>
+<h3 id="1-准备-Solr-文件"><a href="#1-准备-Solr-文件" class="headerlink" title="1. 准备 Solr 文件"></a>1. 准备 Solr 文件</h3><p>首先从一台 solr 服务器上加载配置文件</p>
+<ol>
+<li><p>把 solr.war 放到 s1.solr.com 服务器</p>
+</li>
+<li><p>拷贝 solr.war 到 solr-war 目录：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> solr.war /home/myuser/solr-war</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>解压 solr.war：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> /home/myuser/solr-war</span><br><span class="line">jar xvf solr.war</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>拷贝依赖库：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> WEB-INF/lib/* /home/myuser/solr-war-lib/</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>把所有配置文件（例如 solrconfig.xml, schema.xml 等等）放到：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/home/myuser/solr-config/</span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="2-上传配置到-Zookeeper"><a href="#2-上传配置到-Zookeeper" class="headerlink" title="2. 上传配置到 Zookeeper"></a>2. 上传配置到 Zookeeper</h3><p>用 solr zookeeper cli（zookeeper 客户端）上传配置文件到 zookeeper：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">java -classpath .:/home/myuser/solr-war-lib/* org.apache.solr.cloud.ZkCLI \</span><br><span class="line">  -cmd upconfig \</span><br><span class="line">  -zkhost z1.com:2181,z2.com:2181,z3.com:2181 \</span><br><span class="line">  -confdir /home/myuser/solr-config \</span><br><span class="line">  -confname myconf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-建立-Solr-索引目录"><a href="#3-建立-Solr-索引目录" class="headerlink" title="3. 建立 Solr 索引目录"></a>3. 建立 Solr 索引目录</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">mkdir</span> -p /home/myuser/solr-cores/</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-创建-solr-xml-文件"><a href="#4-创建-solr-xml-文件" class="headerlink" title="4. 创建 solr.xml 文件"></a>4. 创建 solr.xml 文件</h3><p>在 solr-cores 里面建立 solr.xml 文件，内容如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span> ?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">solr</span> <span class="attr">persistent</span>=<span class="string">&quot;true&quot;</span> <span class="attr">sharedLib</span>=<span class="string">&quot;lib&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">cores</span> <span class="attr">adminPath</span>=<span class="string">&quot;/admin/cores&quot;</span> <span class="attr">zkClientTimeout</span>=<span class="string">&quot;20000&quot;</span> <span class="attr">hostPort</span>=<span class="string">&quot;8080&quot;</span> <span class="attr">hostContext</span>=<span class="string">&quot;solr&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">cores</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-配置-Tomcat"><a href="#5-配置-Tomcat" class="headerlink" title="5. 配置 Tomcat"></a>5. 配置 Tomcat</h3><ol>
+<li><p><strong>设置 JVM 参数启动 Tomcat：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-DzkHost=z1.com:2181,z2.com:2181,z3.com:2181</span><br></pre></td></tr></table></figure>
+</li>
+<li><p><strong>部署 solr.war：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cp</span> solr.war /home/myuser/tomcat/webapps/</span><br></pre></td></tr></table></figure>
+<p>然后重启 tomcat</p>
+</li>
+<li><p><strong>编辑 context.xml：</strong><br>编辑 <code>/home/myuser/tomcat/webapps/solr/META-INF/context.xml</code> 文件并且重启 tomcat：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;utf-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">Context</span> <span class="attr">docBase</span>=<span class="string">&quot;solr.war&quot;</span> <span class="attr">debug</span>=<span class="string">&quot;0&quot;</span> <span class="attr">crossContext</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">Environment</span> <span class="attr">name</span>=<span class="string">&quot;solr/home&quot;</span> <span class="attr">type</span>=<span class="string">&quot;java.lang.String&quot;</span> </span></span><br><span class="line"><span class="tag">               <span class="attr">value</span>=<span class="string">&quot;/home/myuser/solr-cores&quot;</span> <span class="attr">override</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">Context</span>&gt;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h3 id="6-创建-Collection"><a href="#6-创建-Collection" class="headerlink" title="6. 创建 Collection"></a>6. 创建 Collection</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://s1.solr.com:8080/solr/admin/collections?action=CREATE&amp;name=mycollection&amp;numShards=3&amp;replicationFactor=1&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="完成"><a href="#完成" class="headerlink" title="完成"></a>完成</h2><p>至此，SolrCloud 集群部署完成。重复步骤 2 的 5-6 部分在其他服务器上完成整个集群的搭建。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/tomcat/" rel="tag"># tomcat</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2013/07/03/lucene4-2%E5%92%8Csolr4-2%E7%9A%84%E6%96%B0%E5%8F%82%E6%95%B0docvalues/" rel="prev" title="Solr4.2 新特性 DocValues">
+                  <i class="fa fa-angle-left"></i> Solr4.2 新特性 DocValues
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2013/07/05/999/" rel="next" title="Solr缓存">
+                  Solr缓存 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
