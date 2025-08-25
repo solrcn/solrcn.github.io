@@ -149,6 +149,248 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-Solr部署：审计日志"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">Solr部署：审计日志</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" class="article-date">
+	  <time datetime="2025-02-04T16:00:00.000Z" itemprop="datePublished">二月 5, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr部署：审计日志Solr具有记录进入系统的所有HTTP请求审计跟踪的能力。审计记录器是可插拔的，以适应任何可能的格式或日志目标。
+
+审计跟踪（也称为审计日志）是与安全相关的按时间顺序记录、记录集合和&#x2F;或记录的目标和来源，它们提供了影响特定操作、过程、事件或设备的活动序列的书面证据。
+——维基百科
+
+配置审计日志审计日志在security.json中的auditlogging键下配置。
+下面的示例使用插件默认值配置同步审计日志到Solr的默认日志文件。
+12345&#123;  &quot;auditlogging&quot;:&#123;    &quot;class&quot;: &quot;solr.SolrLogAuditLoggerPlugin&quot;  &#125;&#125;
+
+默认情况下，任何审计日志插件将在后台异步记录以避免减慢请求速度。要使审计日...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/">审计日志</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8/">安全</a>
+  
+    <a class="article-tag" href="/tags/%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/">日志记录</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr部署：别名"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/">Solr部署：别名</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/" class="article-date">
+	  <time datetime="2025-02-03T16:00:00.000Z" itemprop="datePublished">二月 4, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr部署：别名SolrCloud具有通过替代名称查询一个或多个集合的能力。这些集合的替代名称称为别名，在您想要时非常有用：
+
+原子地切换到使用新（重新）索引的集合，零停机时间（通过重新定义别名）
+将客户端编程与集合名称变化隔离
+对具有相同模式的多个集合发出单个查询
+
+有两种类型的别名：标准别名和路由别名。在路由别名中，有两种类型：类别路由别名和时间路由别名。本节讨论这些类型。
+可以向别名发送集合更新命令，但只能发送到那些解析为单个集合的别名，或那些定义多个集合之间路由的别名（路由别名）。在其他情况下，更新命令会被拒绝并显示错误，因为没有逻辑来在多个集合之间分发文档。
+标准别名标准别名使用CREATEALIAS命令创建和更新。
+作为别名成员的当前集合列表可以通过CLUSTERSTATUS命令验证。
+所有别名的完整定义，包括关于该别名的元数据（在路由别名的情况下，见下文）可以通过LI...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%AB%E5%90%8D/">别名</a>
+  
+    <a class="article-tag" href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/">集合管理</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr部署：别名管理"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/02/03/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/">Solr部署：别名管理</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/03/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" class="article-date">
+	  <time datetime="2025-02-02T16:00:00.000Z" itemprop="datePublished">二月 3, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr部署：别名管理集合别名是Solr与普通集合相同对待的虚拟集合。别名集合可以指向一个或多个真实集合。
+集合别名的一些使用场景：
+
+时间序列数据
+在后台重新索引内容
+
+有关Solr中别名的概述，请参见别名部分。
+CREATEALIAS：为集合创建或修改别名CREATEALIAS操作将创建指向一个或多个集合的新别名。别名有两种类型：标准别名和路由别名。
+标准别名很简单：CREATEALIAS用命令提供的一个或多个集合的名称注册别名名称。如果现有别名存在，它将被替换&#x2F;更新。
+标准别名可以作为重命名集合的手段，也可以用于原子地交换哪个支持&#x2F;底层集合对各种目的来说是”活跃的”。
+当Solr搜索指向多个集合的别名时，Solr将搜索所有集合的所有分片作为聚合整体。虽然可以向跨越多个集合的别名发送更新，但标准别名没有在引用集合之间分发文档的逻辑，因此所有更新都将发送到列表中...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/02/03/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/">集合管理</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/">别名管理</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Solr查询：块连接查询解析器"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1528,239 +1770,6 @@ solr.MappingCharFilterFactory此过滤器创建org.apache.lucene.analysis.Mappin
     <a class="article-tag" href="/tags/Admin-UI/">Admin UI</a>
   
     <a class="article-tag" href="/tags/Token%E6%B5%81/">Token流</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Solr配置：solr.xml配置详解"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/">Solr配置：solr.xml配置详解</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" class="article-date">
-	  <time datetime="2025-01-17T16:00:00.000Z" itemprop="datePublished">一月 18, 2025</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            Solr配置：solr.xml配置详解solr.xml文件定义了一些适用于所有或多个核心的全局配置选项。
-本节将描述Solr附带的默认solr.xml文件以及如何根据需要修改它。有关如何配置core.properties的详细信息，请参见核心发现部分。
-定义solr.xml您可以在$SOLR_HOME目录（通常是server/solr或/var/solr/data）中找到solr.xml，或者在使用SolrCloud时可选地在ZooKeeper中找到。如果找不到$SOLR_HOME/solr.xml，Solr将使用默认的solr.xml文件。
-警告： 从ZooKeeper加载solr.xml已弃用，在未来版本中将不受支持。作为Solr的节点配置，此文件必须在早期启动时可用，并且也允许节点之间不同。
-默认的solr.xml文件位于$SOLR_TIP/server/solr/solr.x...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
-  
-    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-  
-    <a class="article-tag" href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/">核心管理</a>
-  
-    <a class="article-tag" href="/tags/solr-xml/">solr.xml</a>
-  
-    <a class="article-tag" href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/">全局配置</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Solr配置：Configsets API完整指南"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Solr配置：Configsets API完整指南</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
-	  <time datetime="2025-01-16T16:00:00.000Z" itemprop="datePublished">一月 17, 2025</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            Solr配置：Configsets API完整指南Configsets API使您能够在Solr运行SolrCloud模式时向ZooKeeper上传新的配置集、创建和删除配置集。
-配置集是配置文件的集合，如solrconfig.xml、synonyms.txt、模式、特定语言的文件和其他集合级配置文件（通常位于conf目录中的所有内容）。Solr附带两个示例配置集（_default和sample_techproducts_configs），可在创建集合时使用。使用相同概念，您可以创建自己的配置集，并在创建集合时使其可用。
-此API提供了一种将配置文件上传到ZooKeeper并在两个或多个集合之间共享相同配置文件集的方法。
-一旦配置集已上传到ZooKeeper，在使用Collections API创建集合时使用配置集名称，集合将使用您的配置文件。
-如果通过此API上传，配置集不必在集合...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
-  
-    <a class="article-tag" href="/tags/ZooKeeper/">ZooKeeper</a>
-  
-    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-  
-    <a class="article-tag" href="/tags/Configsets-API/">Configsets API</a>
-  
-    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/">配置集管理</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Solr配置：Config API详解"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/">Solr配置：Config API详解</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" class="article-date">
-	  <time datetime="2025-01-15T16:00:00.000Z" itemprop="datePublished">一月 16, 2025</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            Solr配置：Config API详解Config API使您能够使用类似REST的API调用操作solrconfig.xml的各个方面。
-此功能默认启用，在SolrCloud、用户管理集群和单节点安装中的工作方式类似。许多常编辑的属性（如缓存大小和提交设置）和请求处理器定义都可以通过此API更改。
-使用此API时，solrconfig.xml不会被更改。相反，所有编辑的配置都存储在名为configoverlay.json的文件中。configoverlay.json中的值会覆盖solrconfig.xml中的值。
-Config API端点所有Config API端点都是特定于集合的，这意味着此API一次只能检查或修改单个集合的配置。
-
-_collection_/config：检索完整的有效配置，或修改配置。使用GET检索，使用POST执行命令。
-_collection_/confi...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">请求处理器</a>
-  
-    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
-  
-    <a class="article-tag" href="/tags/Config-API/">Config API</a>
-  
-    <a class="article-tag" href="/tags/REST-API/">REST API</a>
-  
-    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/">配置管理</a>
   
 
       

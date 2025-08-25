@@ -149,6 +149,177 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-Solr教程-练习二-索引Films数据和分面探索"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">Solr教程：练习二 - 索引Films数据和分面探索</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/" class="article-date">
+	  <time datetime="2024-11-19T16:00:00.000Z" itemprop="datePublished">十一月 20, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            本练习将使用电影数据集，重点探索Solr的分面（Faceting）功能，这是构建强大搜索界面的关键特性。
+集合设置1. 创建Films集合使用_default配置集创建一个新的”films”集合：
+1bin/solr create -c films --shards 2 --replication-factor 2
+
+这将创建一个具有2个分片和2个副本的集合，提供良好的容错性。
+模式准备2. 创建必要的字段创建”name”字段：
+12345678curl -X POST -H &#x27;Content-type:application/json&#x27; --data-binary &#x27;&#123;  &quot;add-field&quot;: &#123;    &quot;name&quot;:&quot;name&quot;,     &quot;type&quo...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
+  
+    <a class="article-tag" href="/tags/Facets/">Facets</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/">分面搜索</a>
+  
+    <a class="article-tag" href="/tags/Films%E6%95%B0%E6%8D%AE%E9%9B%86/">Films数据集</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr教程-练习一-索引Techproducts数据"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/">Solr教程：练习一 - 索引Techproducts数据</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/" class="article-date">
+	  <time datetime="2024-11-14T16:00:00.000Z" itemprop="datePublished">十一月 15, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            本练习将指导您启动Solr、创建集合、索引基本文档并执行搜索操作。
+启动Solr云模式1. 启动Solr云模式使用以下命令启动Solr云模式：
+1bin/solr start -e cloud
+
+2. 按照交互式提示操作
+选择2个节点（默认）
+接受默认端口（8983和7574）
+将集合命名为”techproducts”
+选择”sample_techproducts_configs”配置
+
+索引Techproducts数据使用post工具索引示例文档：
+1bin/solr post -c techproducts example/exampledocs/*
+
+这个命令会索引example&#x2F;exampledocs目录下的所有文档，包括各种格式的文件。
+基本搜索技术1. 搜索所有文档1q=*:*
+
+这将返回集合中的所有文档。
+2. 搜索单个词条1q=foundation
+
+搜索包...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95/">索引</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2/">搜索</a>
+  
+    <a class="article-tag" href="/tags/Techproducts/">Techproducts</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Solr教程-入门指南概览"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1662,160 +1833,6 @@ OpenAPI 规范生成：自动生成标准化的 API 文档
 	<span class="ico-folder"></span>
     
       <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-      
-    
-
-      
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-关于maxwarmingsearchers告警和设置"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/">关于maxWarmingSearchers告警和设置</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/" class="article-date">
-	  <time datetime="2017-08-28T10:12:39.000Z" itemprop="datePublished">八月 28, 2017</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            
-**理解：**把maxWarmingSearchers理解成一个提交队列，上一个提交没完成下一个提交就进入了，大概是下面这样的情况:
-
-
-希望提交的数据马上可见，于是设置add之后马上提交
-
-数据增量频率很高，每秒都有增量
-
-服务器配置有限，每提交一次需要2秒;
-
-
-
-**实验：**那么问题来了，一分钟进行了60次提交，但是服务器需要120秒才能反应过来，接下来会发生这样的情况：
-
-
-设置maxWarmingSearchers值为120：不会出现Error opening new searcher. exceeded limit of maxWarmingSearchers提示，但是120个提交积压在“提交队列”里面，数据依然不可见，因为下一分钟还有同样数据的增量和数据挤压，很快就会出现错误提示，如果将这个值无限放大，服务器会无法响应
-
-设置maxWarmingSearchers值...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E8%BF%9B%E9%98%B6/">Solr进阶</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-solr检索调试"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/">Solr 检索调试</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/" class="article-date">
-	  <time datetime="2014-08-21T10:26:28.000Z" itemprop="datePublished">八月 21, 2014</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            前言      Solr&#x2F;Lucene是一个全文检索引擎，全文引擎和SQL引擎所不同的是强调部分相关度高的内容返回，而不是所有内容返回，所以部分内容包含在索引库中却无法命中是正常现象。      多数情况下我们建议优化分词器或者引擎其它部分达到预期检索效果。  
-分词器调节按照如下步骤进入分词器调试界面：
-
-
-选择 collection
-选择 analysis 菜单
-在索引框中输入要索引的文档
-在检索框中输入要检索的词语
-选择需要调试的字段，这里假设要将内容索引到 title 字段，并且在该字段上检索
-点击分析按钮
-在展示出来的原文分词结果（左侧）和关键词分词结果（右侧）中对比最下面一行，若右侧分词结果的所有词在左侧都能找到，那么在 AND 关系的检索时能够匹配；若部分能够找到，那么在 OR 关系的检索中能够匹配；若完全找不到，那么无法匹配。
-
-检索调节准备数据索引一条记录...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2014/08/21/solr%E6%A3%80%E7%B4%A2%E8%B0%83%E8%AF%95/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E6%8A%80%E5%B7%A7/">Solr技巧</a>
       
     
 

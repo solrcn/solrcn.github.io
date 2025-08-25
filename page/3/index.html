@@ -149,6 +149,239 @@ var themeMenus = {};
         
           <section id="main">
   
+    <article id="post-Solr配置：solr.xml配置详解"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/">Solr配置：solr.xml配置详解</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-17T16:00:00.000Z" itemprop="datePublished">一月 18, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr配置：solr.xml配置详解solr.xml文件定义了一些适用于所有或多个核心的全局配置选项。
+本节将描述Solr附带的默认solr.xml文件以及如何根据需要修改它。有关如何配置core.properties的详细信息，请参见核心发现部分。
+定义solr.xml您可以在$SOLR_HOME目录（通常是server/solr或/var/solr/data）中找到solr.xml，或者在使用SolrCloud时可选地在ZooKeeper中找到。如果找不到$SOLR_HOME/solr.xml，Solr将使用默认的solr.xml文件。
+警告： 从ZooKeeper加载solr.xml已弃用，在未来版本中将不受支持。作为Solr的节点配置，此文件必须在早期启动时可用，并且也允许节点之间不同。
+默认的solr.xml文件位于$SOLR_TIP/server/solr/solr.x...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/">核心管理</a>
+  
+    <a class="article-tag" href="/tags/solr-xml/">solr.xml</a>
+  
+    <a class="article-tag" href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/">全局配置</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr配置：Configsets API完整指南"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">Solr配置：Configsets API完整指南</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-01-16T16:00:00.000Z" itemprop="datePublished">一月 17, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr配置：Configsets API完整指南Configsets API使您能够在Solr运行SolrCloud模式时向ZooKeeper上传新的配置集、创建和删除配置集。
+配置集是配置文件的集合，如solrconfig.xml、synonyms.txt、模式、特定语言的文件和其他集合级配置文件（通常位于conf目录中的所有内容）。Solr附带两个示例配置集（_default和sample_techproducts_configs），可在创建集合时使用。使用相同概念，您可以创建自己的配置集，并在创建集合时使其可用。
+此API提供了一种将配置文件上传到ZooKeeper并在两个或多个集合之间共享相同配置文件集的方法。
+一旦配置集已上传到ZooKeeper，在使用Collections API创建集合时使用配置集名称，集合将使用您的配置文件。
+如果通过此API上传，配置集不必在集合...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/ZooKeeper/">ZooKeeper</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/Configsets-API/">Configsets API</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/">配置集管理</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr配置：Config API详解"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/">Solr配置：Config API详解</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-15T16:00:00.000Z" itemprop="datePublished">一月 16, 2025</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr配置：Config API详解Config API使您能够使用类似REST的API调用操作solrconfig.xml的各个方面。
+此功能默认启用，在SolrCloud、用户管理集群和单节点安装中的工作方式类似。许多常编辑的属性（如缓存大小和提交设置）和请求处理器定义都可以通过此API更改。
+使用此API时，solrconfig.xml不会被更改。相反，所有编辑的配置都存储在名为configoverlay.json的文件中。configoverlay.json中的值会覆盖solrconfig.xml中的值。
+Config API端点所有Config API端点都是特定于集合的，这意味着此API一次只能检查或修改单个集合的配置。
+
+_collection_/config：检索完整的有效配置，或修改配置。使用GET检索，使用POST执行命令。
+_collection_/confi...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">请求处理器</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/Config-API/">Config API</a>
+  
+    <a class="article-tag" href="/tags/REST-API/">REST API</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/">配置管理</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
     <article id="post-Solr配置：提交与事务日志详解"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1181,97 +1414,6 @@ NOT：排除特定条件
     
 
   
-    <article id="post-Solr入门：5分钟快速上手"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2025/01/03/Solr%E5%85%A5%E9%97%A8%EF%BC%9A5%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/">Solr入门：5分钟快速上手</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2025/01/03/Solr%E5%85%A5%E9%97%A8%EF%BC%9A5%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" class="article-date">
-	  <time datetime="2025-01-02T16:00:00.000Z" itemprop="datePublished">一月 3, 2025</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            这个练习将指导您在短短5分钟内开始使用Solr！通过这个快速入门教程，您将体验到Solr的核心功能。
-启动Solr云模式启动第一个节点要启动Solr，请运行：
-
-Unix或MacOS：bin/solr start -c
-Windows：bin\solr.cmd start -c
-
-参数 -c 表示以SolrCloud模式启动，这是Solr的分布式模式。
-启动第二个节点（可选）要启动另一个Solr节点并让它加入第一个节点组成集群：
-1$ bin/solr start -c -z localhost:9983 -p 8984
-
-参数说明：
-
--c：以SolrCloud模式启动
--z localhost:9983：连接到ZooKeeper（第一个节点自动启动的）
--p 8984：使用端口8984（避免与第一个节点的8983端口冲突）
-
-创建集合就像数据库系统将数据保存在表中一样，Solr将...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2025/01/03/Solr%E5%85%A5%E9%97%A8%EF%BC%9A5%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-  
-    <a class="article-tag" href="/tags/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/">快速入门</a>
-  
-    <a class="article-tag" href="/tags/5%E5%88%86%E9%92%9F%E6%95%99%E7%A8%8B/">5分钟教程</a>
-  
-    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
-  
-    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C/">索引操作</a>
-  
-    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E5%85%A5%E9%97%A8/">查询入门</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
     <article id="post-Solr入门：管理界面详解"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
@@ -1725,177 +1867,6 @@ HNSW算法分层可导航小世界（Hierarchical Navigable Small World）：
     <a class="article-tag" href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE/">自定义数据</a>
   
     <a class="article-tag" href="/tags/%E5%AE%9E%E6%96%BD%E8%A7%84%E5%88%92/">实施规划</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Solr教程-练习二-索引Films数据和分面探索"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">Solr教程：练习二 - 索引Films数据和分面探索</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/" class="article-date">
-	  <time datetime="2024-11-19T16:00:00.000Z" itemprop="datePublished">十一月 20, 2024</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            本练习将使用电影数据集，重点探索Solr的分面（Faceting）功能，这是构建强大搜索界面的关键特性。
-集合设置1. 创建Films集合使用_default配置集创建一个新的”films”集合：
-1bin/solr create -c films --shards 2 --replication-factor 2
-
-这将创建一个具有2个分片和2个副本的集合，提供良好的容错性。
-模式准备2. 创建必要的字段创建”name”字段：
-12345678curl -X POST -H &#x27;Content-type:application/json&#x27; --data-binary &#x27;&#123;  &quot;add-field&quot;: &#123;    &quot;name&quot;:&quot;name&quot;,     &quot;type&quo...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
-  
-    <a class="article-tag" href="/tags/Facets/">Facets</a>
-  
-    <a class="article-tag" href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/">分面搜索</a>
-  
-    <a class="article-tag" href="/tags/Films%E6%95%B0%E6%8D%AE%E9%9B%86/">Films数据集</a>
-  
-    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/">数据分析</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-Solr教程-练习一-索引Techproducts数据"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/">Solr教程：练习一 - 索引Techproducts数据</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/" class="article-date">
-	  <time datetime="2024-11-14T16:00:00.000Z" itemprop="datePublished">十一月 15, 2024</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            本练习将指导您启动Solr、创建集合、索引基本文档并执行搜索操作。
-启动Solr云模式1. 启动Solr云模式使用以下命令启动Solr云模式：
-1bin/solr start -e cloud
-
-2. 按照交互式提示操作
-选择2个节点（默认）
-接受默认端口（8983和7574）
-将集合命名为”techproducts”
-选择”sample_techproducts_configs”配置
-
-索引Techproducts数据使用post工具索引示例文档：
-1bin/solr post -c techproducts example/exampledocs/*
-
-这个命令会索引example&#x2F;exampledocs目录下的所有文档，包括各种格式的文件。
-基本搜索技术1. 搜索所有文档1q=*:*
-
-这将返回集合中的所有文档。
-2. 搜索单个词条1q=foundation
-
-搜索包...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
-  
-    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
-  
-    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95/">索引</a>
-  
-    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2/">搜索</a>
-  
-    <a class="article-tag" href="/tags/Techproducts/">Techproducts</a>
   
 
       
