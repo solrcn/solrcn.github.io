@@ -1,25 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+  <meta charset="utf-8">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
 
+  
+  
 
+  <!-- PACE Progress Bar START -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="这里列出了Solr中使用的常见术语及其定义。掌握这些术语是深入学习Solr的基础。 A原子更新（Atomic Updates）一种只更新文档的一个或多个字段的方法，而不需要重新索引整个文档。这种方法提高了更新效率，特别适合大文档的部分字段更新场景。 应用场景：  更新产品价格而不重新索引产品描述 更新文章的阅读次数而保持内容不变 批量修改文档的某个标签或状态  B布尔操作符（Boolean Ope">
+  
+  <title>solr入门：术语词汇表 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr入门术语词汇专业术语参考手册概念定义" />
+  
+  
+  
+  
+  <meta name="description" content="这里列出了Solr中使用的常见术语及其定义。掌握这些术语是深入学习Solr的基础。 A原子更新（Atomic Updates）一种只更新文档的一个或多个字段的方法，而不需要重新索引整个文档。这种方法提高了更新效率，特别适合大文档的部分字段更新场景。 应用场景：  更新产品价格而不重新索引产品描述 更新文章的阅读次数而保持内容不变 批量修改文档的某个标签或状态  B布尔操作符（Boolean Ope">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solr入门：术语词汇表">
 <meta property="og:url" content="https://solrcn.github.io/2025/01/05/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/index.html">
@@ -35,213 +41,176 @@
 <meta property="article:tag" content="参考手册">
 <meta property="article:tag" content="概念定义">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://solrcn.github.io/2025/01/05/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/05/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/","path":"2025/01/05/Solr入门：术语词汇表/","title":"Solr入门：术语词汇表"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Solr入门：术语词汇表 | Solr Community of China</title>
   
-
-
-
-
-
-
-
-
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
+  <link rel="icon" href="/css/images/favicon.ico">
   
-
-
-
-
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
 
 
   
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
 
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
 
 
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
 
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Solr Community of China</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-  </ul>
-</nav>
-
-
-
-
 </header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr入门：术语词汇表" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
         
   
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#A"><span class="nav-number">1.</span> <span class="nav-text">A</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0%EF%BC%88Atomic-Updates%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">原子更新（Atomic Updates）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B"><span class="nav-number">2.</span> <span class="nav-text">B</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E6%93%8D%E4%BD%9C%E7%AC%A6%EF%BC%88Boolean-Operators%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">布尔操作符（Boolean Operators）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C"><span class="nav-number">3.</span> <span class="nav-text">C</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%EF%BC%88Cluster%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">集群（Cluster）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%EF%BC%88Collection%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">集合（Collection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%EF%BC%88Commit%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">提交（Commit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%EF%BC%88Core%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">核心（Core）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E9%87%8D%E8%BD%BD%EF%BC%88Core-Reload%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">核心重载（Core Reload）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#D"><span class="nav-number">4.</span> <span class="nav-text">D</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%EF%BC%88Distributed-Search%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">分布式搜索（Distributed Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%EF%BC%88Document%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">文档（Document）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#E"><span class="nav-number">5.</span> <span class="nav-text">E</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%BB%84%EF%BC%88Ensemble%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">集群组（Ensemble）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#F"><span class="nav-number">6.</span> <span class="nav-text">F</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%9D%A2%EF%BC%88Facet%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">分面（Facet）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%EF%BC%88Field%EF%BC%89"><span class="nav-number">6.2.</span> <span class="nav-text">字段（Field）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I"><span class="nav-number">7.</span> <span class="nav-text">I</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%86%E6%96%87%E6%A1%A3%E9%A2%91%E7%8E%87%EF%BC%88Inverse-Document-Frequency-IDF%EF%BC%89"><span class="nav-number">7.1.</span> <span class="nav-text">逆文档频率（Inverse Document Frequency, IDF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%EF%BC%88Inverted-Index%EF%BC%89"><span class="nav-number">7.2.</span> <span class="nav-text">倒排索引（Inverted Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#L"><span class="nav-number">8.</span> <span class="nav-text">L</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%89%AF%E6%9C%AC%EF%BC%88Leader%EF%BC%89"><span class="nav-number">8.1.</span> <span class="nav-text">主副本（Leader）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M"><span class="nav-number">9.</span> <span class="nav-text">M</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%88Metadata%EF%BC%89"><span class="nav-number">9.1.</span> <span class="nav-text">元数据（Metadata）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N"><span class="nav-number">10.</span> <span class="nav-text">N</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E6%9F%A5%E8%AF%A2%EF%BC%88Natural-Language-Query%EF%BC%89"><span class="nav-number">10.1.</span> <span class="nav-text">自然语言查询（Natural Language Query）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%EF%BC%88Node%EF%BC%89"><span class="nav-number">10.2.</span> <span class="nav-text">节点（Node）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#O"><span class="nav-number">11.</span> <span class="nav-text">O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%88Optimistic-Concurrency%EF%BC%89"><span class="nav-number">11.1.</span> <span class="nav-text">乐观并发控制（Optimistic Concurrency）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E7%9D%A3%E8%80%85%EF%BC%88Overseer%EF%BC%89"><span class="nav-number">11.2.</span> <span class="nav-text">监督者（Overseer）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q"><span class="nav-number">12.</span> <span class="nav-text">Q</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%EF%BC%88Query-Parser%EF%BC%89"><span class="nav-number">12.1.</span> <span class="nav-text">查询解析器（Query Parser）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R"><span class="nav-number">13.</span> <span class="nav-text">R</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AC%E5%9B%9E%E7%8E%87%EF%BC%88Recall%EF%BC%89"><span class="nav-number">13.1.</span> <span class="nav-text">召回率（Recall）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7%EF%BC%88Relevance%EF%BC%89"><span class="nav-number">13.2.</span> <span class="nav-text">相关性（Relevance）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%EF%BC%88Replica%EF%BC%89"><span class="nav-number">13.3.</span> <span class="nav-text">副本（Replica）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%EF%BC%88Replication%EF%BC%89"><span class="nav-number">13.4.</span> <span class="nav-text">复制（Replication）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%88RequestHandler%EF%BC%89"><span class="nav-number">13.5.</span> <span class="nav-text">请求处理器（RequestHandler）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#S"><span class="nav-number">14.</span> <span class="nav-text">S</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6%EF%BC%88SearchComponent%EF%BC%89"><span class="nav-number">14.1.</span> <span class="nav-text">搜索组件（SearchComponent）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%89%87%EF%BC%88Shard%EF%BC%89"><span class="nav-number">14.2.</span> <span class="nav-text">分片（Shard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud"><span class="nav-number">14.3.</span> <span class="nav-text">SolrCloud</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E6%A8%A1%E5%BC%8F%EF%BC%88Schema%EF%BC%89"><span class="nav-number">14.4.</span> <span class="nav-text">Solr模式（Schema）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrConfig%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">14.5.</span> <span class="nav-text">SolrConfig配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%EF%BC%88Spell-Check%EF%BC%89"><span class="nav-number">14.6.</span> <span class="nav-text">拼写检查（Spell Check）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E7%94%A8%E8%AF%8D%EF%BC%88Stopwords%EF%BC%89"><span class="nav-number">14.7.</span> <span class="nav-text">停用词（Stopwords）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%99%A8%EF%BC%88Suggester%EF%BC%89"><span class="nav-number">14.8.</span> <span class="nav-text">建议器（Suggester）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B9%89%E8%AF%8D%EF%BC%88Synonyms%EF%BC%89"><span class="nav-number">14.9.</span> <span class="nav-text">同义词（Synonyms）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#T"><span class="nav-number">15.</span> <span class="nav-text">T</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%8D%E9%A2%91%EF%BC%88Term-Frequency%EF%BC%89"><span class="nav-number">15.1.</span> <span class="nav-text">词频（Term Frequency）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%EF%BC%88Transaction-Log%EF%BC%89"><span class="nav-number">15.2.</span> <span class="nav-text">事务日志（Transaction Log）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#W"><span class="nav-number">16.</span> <span class="nav-text">W</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%EF%BC%88Wildcard%EF%BC%89"><span class="nav-number">16.1.</span> <span class="nav-text">通配符（Wildcard）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Z"><span class="nav-number">17.</span> <span class="nav-text">Z</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZooKeeper"><span class="nav-number">17.1.</span> <span class="nav-text">ZooKeeper</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">18.</span> <span class="nav-text">术语使用建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%AD%A6%E8%80%85%E9%87%8D%E7%82%B9%E6%8E%8C%E6%8F%A1"><span class="nav-number">18.1.</span> <span class="nav-text">初学者重点掌握</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0%E9%87%8D%E7%82%B9"><span class="nav-number">18.2.</span> <span class="nav-text">进阶学习重点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">19.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%AD%A6%E4%B9%A0"><span class="nav-number">20.</span> <span class="nav-text">下一步学习</span></a></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">longkeyy</p>
-  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">108</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">236</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr入门：术语词汇表
+    </h1>
   
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/05/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Solr入门：术语词汇表 | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Solr入门：术语词汇表
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-01-05 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-05T00:00:00+08:00">2025-01-05</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 15:43:01" itemprop="dateModified" datetime="2025-08-25T15:43:01+08:00">2025-08-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">Solr入门</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
       </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/05/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/" class="article-date">
+	  <time datetime="2025-01-04T16:00:00.000Z" itemprop="datePublished">一月 5, 2025</time>
+	</a>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><p>这里列出了Solr中使用的常见术语及其定义。掌握这些术语是深入学习Solr的基础。</p>
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>这里列出了Solr中使用的常见术语及其定义。掌握这些术语是深入学习Solr的基础。</p>
 <h2 id="A"><a href="#A" class="headerlink" title="A"></a>A</h2><h3 id="原子更新（Atomic-Updates）"><a href="#原子更新（Atomic-Updates）" class="headerlink" title="原子更新（Atomic Updates）"></a>原子更新（Atomic Updates）</h3><p>一种只更新文档的一个或多个字段的方法，而不需要重新索引整个文档。这种方法提高了更新效率，特别适合大文档的部分字段更新场景。</p>
 <p><strong>应用场景</strong>：</p>
 <ul>
@@ -608,79 +577,218 @@
 <li><a href="/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E4%BD%93%E7%B3%BB/">Solr配置：配置文件体系</a> - 学习配置相关术语的实际应用</li>
 </ul>
 
+      
     </div>
-
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
     
-    
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+      
     
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Solr%E5%85%A5%E9%97%A8/" rel="tag"># Solr入门</a>
-              <a href="/tags/%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87/" rel="tag"># 术语词汇</a>
-              <a href="/tags/%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" rel="tag"># 专业术语</a>
-              <a href="/tags/%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/" rel="tag"># 参考手册</a>
-              <a href="/tags/%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89/" rel="tag"># 概念定义</a>
-          </div>
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+  
+    <a class="article-tag" href="/tags/%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87/">术语词汇</a>
+  
+    <a class="article-tag" href="/tags/%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/">专业术语</a>
+  
+    <a class="article-tag" href="/tags/%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/">参考手册</a>
+  
+    <a class="article-tag" href="/tags/%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89/">概念定义</a>
+  
 
+      
+            
+      
         
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/01/04/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E5%8E%9F%E7%90%86/" rel="prev" title="Solr入门：搜索相关性原理">
-                  <i class="fa fa-angle-left"></i> Solr入门：搜索相关性原理
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/01/06/Solr%E5%85%A5%E9%97%A8%EF%BC%9AAWS%E4%BA%91%E7%AB%AFSolrCloud%E9%83%A8%E7%BD%B2%E6%95%99%E7%A8%8B/" rel="next" title="Solr入门：AWS云端SolrCloud部署教程">
-                  Solr入门：AWS云端SolrCloud部署教程 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
     </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">longkeyy</span>
   </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/06/Solr%E5%85%A5%E9%97%A8%EF%BC%9AAWS%E4%BA%91%E7%AB%AFSolrCloud%E9%83%A8%E7%BD%B2%E6%95%99%E7%A8%8B/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr入门：AWS云端SolrCloud部署教程
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/04/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr入门：搜索相关性原理</div>
+    </a>
+  
+</nav>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#A"><span class="nav-number">1.</span> <span class="nav-text">A</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0%EF%BC%88Atomic-Updates%EF%BC%89"><span class="nav-number">1.1.</span> <span class="nav-text">原子更新（Atomic Updates）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#B"><span class="nav-number">2.</span> <span class="nav-text">B</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E6%93%8D%E4%BD%9C%E7%AC%A6%EF%BC%88Boolean-Operators%EF%BC%89"><span class="nav-number">2.1.</span> <span class="nav-text">布尔操作符（Boolean Operators）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#C"><span class="nav-number">3.</span> <span class="nav-text">C</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%EF%BC%88Cluster%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">集群（Cluster）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E5%90%88%EF%BC%88Collection%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">集合（Collection）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%EF%BC%88Commit%EF%BC%89"><span class="nav-number">3.3.</span> <span class="nav-text">提交（Commit）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%EF%BC%88Core%EF%BC%89"><span class="nav-number">3.4.</span> <span class="nav-text">核心（Core）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E9%87%8D%E8%BD%BD%EF%BC%88Core-Reload%EF%BC%89"><span class="nav-number">3.5.</span> <span class="nav-text">核心重载（Core Reload）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#D"><span class="nav-number">4.</span> <span class="nav-text">D</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2%EF%BC%88Distributed-Search%EF%BC%89"><span class="nav-number">4.1.</span> <span class="nav-text">分布式搜索（Distributed Search）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%EF%BC%88Document%EF%BC%89"><span class="nav-number">4.2.</span> <span class="nav-text">文档（Document）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#E"><span class="nav-number">5.</span> <span class="nav-text">E</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%BB%84%EF%BC%88Ensemble%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">集群组（Ensemble）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#F"><span class="nav-number">6.</span> <span class="nav-text">F</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%9D%A2%EF%BC%88Facet%EF%BC%89"><span class="nav-number">6.1.</span> <span class="nav-text">分面（Facet）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%EF%BC%88Field%EF%BC%89"><span class="nav-number">6.2.</span> <span class="nav-text">字段（Field）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#I"><span class="nav-number">7.</span> <span class="nav-text">I</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%86%E6%96%87%E6%A1%A3%E9%A2%91%E7%8E%87%EF%BC%88Inverse-Document-Frequency-IDF%EF%BC%89"><span class="nav-number">7.1.</span> <span class="nav-text">逆文档频率（Inverse Document Frequency, IDF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%EF%BC%88Inverted-Index%EF%BC%89"><span class="nav-number">7.2.</span> <span class="nav-text">倒排索引（Inverted Index）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#L"><span class="nav-number">8.</span> <span class="nav-text">L</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E5%89%AF%E6%9C%AC%EF%BC%88Leader%EF%BC%89"><span class="nav-number">8.1.</span> <span class="nav-text">主副本（Leader）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#M"><span class="nav-number">9.</span> <span class="nav-text">M</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E6%95%B0%E6%8D%AE%EF%BC%88Metadata%EF%BC%89"><span class="nav-number">9.1.</span> <span class="nav-text">元数据（Metadata）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#N"><span class="nav-number">10.</span> <span class="nav-text">N</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E6%9F%A5%E8%AF%A2%EF%BC%88Natural-Language-Query%EF%BC%89"><span class="nav-number">10.1.</span> <span class="nav-text">自然语言查询（Natural Language Query）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%EF%BC%88Node%EF%BC%89"><span class="nav-number">10.2.</span> <span class="nav-text">节点（Node）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#O"><span class="nav-number">11.</span> <span class="nav-text">O</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%90%E8%A7%82%E5%B9%B6%E5%8F%91%E6%8E%A7%E5%88%B6%EF%BC%88Optimistic-Concurrency%EF%BC%89"><span class="nav-number">11.1.</span> <span class="nav-text">乐观并发控制（Optimistic Concurrency）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E7%9D%A3%E8%80%85%EF%BC%88Overseer%EF%BC%89"><span class="nav-number">11.2.</span> <span class="nav-text">监督者（Overseer）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Q"><span class="nav-number">12.</span> <span class="nav-text">Q</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%EF%BC%88Query-Parser%EF%BC%89"><span class="nav-number">12.1.</span> <span class="nav-text">查询解析器（Query Parser）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#R"><span class="nav-number">13.</span> <span class="nav-text">R</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AC%E5%9B%9E%E7%8E%87%EF%BC%88Recall%EF%BC%89"><span class="nav-number">13.1.</span> <span class="nav-text">召回率（Recall）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7%EF%BC%88Relevance%EF%BC%89"><span class="nav-number">13.2.</span> <span class="nav-text">相关性（Relevance）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%89%AF%E6%9C%AC%EF%BC%88Replica%EF%BC%89"><span class="nav-number">13.3.</span> <span class="nav-text">副本（Replica）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%EF%BC%88Replication%EF%BC%89"><span class="nav-number">13.4.</span> <span class="nav-text">复制（Replication）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%EF%BC%88RequestHandler%EF%BC%89"><span class="nav-number">13.5.</span> <span class="nav-text">请求处理器（RequestHandler）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#S"><span class="nav-number">14.</span> <span class="nav-text">S</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6%EF%BC%88SearchComponent%EF%BC%89"><span class="nav-number">14.1.</span> <span class="nav-text">搜索组件（SearchComponent）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%89%87%EF%BC%88Shard%EF%BC%89"><span class="nav-number">14.2.</span> <span class="nav-text">分片（Shard）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud"><span class="nav-number">14.3.</span> <span class="nav-text">SolrCloud</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E6%A8%A1%E5%BC%8F%EF%BC%88Schema%EF%BC%89"><span class="nav-number">14.4.</span> <span class="nav-text">Solr模式（Schema）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrConfig%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">14.5.</span> <span class="nav-text">SolrConfig配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%EF%BC%88Spell-Check%EF%BC%89"><span class="nav-number">14.6.</span> <span class="nav-text">拼写检查（Spell Check）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%81%9C%E7%94%A8%E8%AF%8D%EF%BC%88Stopwords%EF%BC%89"><span class="nav-number">14.7.</span> <span class="nav-text">停用词（Stopwords）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%99%A8%EF%BC%88Suggester%EF%BC%89"><span class="nav-number">14.8.</span> <span class="nav-text">建议器（Suggester）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%8C%E4%B9%89%E8%AF%8D%EF%BC%88Synonyms%EF%BC%89"><span class="nav-number">14.9.</span> <span class="nav-text">同义词（Synonyms）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#T"><span class="nav-number">15.</span> <span class="nav-text">T</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%8D%E9%A2%91%EF%BC%88Term-Frequency%EF%BC%89"><span class="nav-number">15.1.</span> <span class="nav-text">词频（Term Frequency）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%EF%BC%88Transaction-Log%EF%BC%89"><span class="nav-number">15.2.</span> <span class="nav-text">事务日志（Transaction Log）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#W"><span class="nav-number">16.</span> <span class="nav-text">W</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E9%85%8D%E7%AC%A6%EF%BC%88Wildcard%EF%BC%89"><span class="nav-number">16.1.</span> <span class="nav-text">通配符（Wildcard）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Z"><span class="nav-number">17.</span> <span class="nav-text">Z</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ZooKeeper"><span class="nav-number">17.1.</span> <span class="nav-text">ZooKeeper</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%AF%E8%AF%AD%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">18.</span> <span class="nav-text">术语使用建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9D%E5%AD%A6%E8%80%85%E9%87%8D%E7%82%B9%E6%8E%8C%E6%8F%A1"><span class="nav-number">18.1.</span> <span class="nav-text">初学者重点掌握</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E9%98%B6%E5%AD%A6%E4%B9%A0%E9%87%8D%E7%82%B9"><span class="nav-number">18.2.</span> <span class="nav-text">进阶学习重点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">19.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%AD%A6%E4%B9%A0"><span class="nav-number">20.</span> <span class="nav-text">下一步学习</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
   </div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
 </body>
 </html>

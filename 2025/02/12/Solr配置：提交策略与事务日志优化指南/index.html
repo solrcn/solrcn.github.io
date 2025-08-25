@@ -1,25 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+  <meta charset="utf-8">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
 
+  
+  
 
+  <!-- PACE Progress Bar START -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="Solr配置：提交策略与事务日志优化指南在Apache Solr中，提交（Commit）策略和事务日志（Transaction Log）配置直接影响搜索的实时性、数据安全性和系统性能。正确理解和配置这些机制对于构建高性能、高可用的搜索系统至关重要。本文将深入探讨Solr的提交机制、事务日志管理和性能优化策略。 提交机制概述什么是CommitCommit是Solr确保索引更新可见性和持久性的机制。S">
+  
+  <title>solr配置：提交策略与事务日志优化指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能优化Solr提交策略事务日志committransaction logNRT" />
+  
+  
+  
+  
+  <meta name="description" content="Solr配置：提交策略与事务日志优化指南在Apache Solr中，提交（Commit）策略和事务日志（Transaction Log）配置直接影响搜索的实时性、数据安全性和系统性能。正确理解和配置这些机制对于构建高性能、高可用的搜索系统至关重要。本文将深入探讨Solr的提交机制、事务日志管理和性能优化策略。 提交机制概述什么是CommitCommit是Solr确保索引更新可见性和持久性的机制。S">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solr配置：提交策略与事务日志优化指南">
 <meta property="og:url" content="https://solrcn.github.io/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/index.html">
@@ -37,213 +43,176 @@
 <meta property="article:tag" content="transaction log">
 <meta property="article:tag" content="NRT">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://solrcn.github.io/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/","path":"2025/02/12/Solr配置：提交策略与事务日志优化指南/","title":"Solr配置：提交策略与事务日志优化指南"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Solr配置：提交策略与事务日志优化指南 | Solr Community of China</title>
   
-
-
-
-
-
-
-
-
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
+  <link rel="icon" href="/css/images/favicon.ico">
   
-
-
-
-
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
 
 
   
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
 
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
 
 
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
 
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Solr Community of China</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-  </ul>
-</nav>
-
-
-
-
 </header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：提交策略与事务日志优化指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
         
   
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：提交策略与事务日志优化指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%9C%BA%E5%88%B6%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">提交机制概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCommit"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是Commit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="nav-number">1.1.2.</span> <span class="nav-text">提交类型对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">自动提交配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本配置语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E6%8F%90%E4%BA%A4%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">硬提交参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E6%8F%90%E4%BA%A4%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">软提交参数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">事务日志配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E6%A6%82%E8%BF%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务日志概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.3.</span> <span class="nav-text">高级配置选项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%9B%AE%E5%BD%95%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">1. 目录配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%90%8C%E6%AD%A5%E7%BA%A7%E5%88%AB%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">2. 同步级别配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%AE%B9%E9%87%8F%E7%AE%A1%E7%90%86"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">3. 容量管理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">性能优化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BF%91%E5%AE%9E%E6%97%B6%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 近实时搜索配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86NRT%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">标准NRT配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E9%A2%91%E6%9B%B4%E6%96%B0%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">高频更新场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%89%B9%E9%87%8F%E5%AF%BC%E5%85%A5%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 批量导入优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E6%9C%9F%E9%97%B4%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">导入期间配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%90%8E%E6%81%A2%E5%A4%8D%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">导入后恢复配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.5.</span> <span class="nav-text">实际应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%B5%E5%95%86%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 电商搜索系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 日志分析系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%86%85%E5%AE%B9%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 内容管理系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E4%BC%98"><span class="nav-number">1.6.</span> <span class="nav-text">监控和调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 性能监控指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">提交性能监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">事务日志监控</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 性能调优建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98%E7%9F%A9%E9%98%B5"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">参数调优矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E4%BC%98%E8%84%9A%E6%9C%AC"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">动态调优脚本</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.7.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 常见问题诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">提交性能问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">事务日志问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 故障恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">事务日志恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E6%81%A2%E5%A4%8D"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">提交策略恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">开发环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">测试环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">生产环境</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%9B%91%E6%8E%A7%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 监控建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BF%90%E7%BB%B4%E8%A6%81%E7%82%B9"><span class="nav-number">1.8.3.</span> <span class="nav-text">3. 运维要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E6%94%B6%E8%8E%B7"><span class="nav-number">1.9.1.</span> <span class="nav-text">关键收获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%96%BD%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">实施建议</span></a></li></ol></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">longkeyy</p>
-  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">108</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">236</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：提交策略与事务日志优化指南
+    </h1>
   
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Solr配置：提交策略与事务日志优化指南 | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Solr配置：提交策略与事务日志优化指南
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-12 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-12T00:00:00+08:00">2025-02-12</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 16:43:28" itemprop="dateModified" datetime="2025-08-25T16:43:28+08:00">2025-08-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
       </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-02-11T16:00:00.000Z" itemprop="datePublished">二月 12, 2025</time>
+	</a>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="Solr配置：提交策略与事务日志优化指南"><a href="#Solr配置：提交策略与事务日志优化指南" class="headerlink" title="Solr配置：提交策略与事务日志优化指南"></a>Solr配置：提交策略与事务日志优化指南</h1><p>在Apache Solr中，提交（Commit）策略和事务日志（Transaction Log）配置直接影响搜索的实时性、数据安全性和系统性能。正确理解和配置这些机制对于构建高性能、高可用的搜索系统至关重要。本文将深入探讨Solr的提交机制、事务日志管理和性能优化策略。</p>
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：提交策略与事务日志优化指南"><a href="#Solr配置：提交策略与事务日志优化指南" class="headerlink" title="Solr配置：提交策略与事务日志优化指南"></a>Solr配置：提交策略与事务日志优化指南</h1><p>在Apache Solr中，提交（Commit）策略和事务日志（Transaction Log）配置直接影响搜索的实时性、数据安全性和系统性能。正确理解和配置这些机制对于构建高性能、高可用的搜索系统至关重要。本文将深入探讨Solr的提交机制、事务日志管理和性能优化策略。</p>
 <h2 id="提交机制概述"><a href="#提交机制概述" class="headerlink" title="提交机制概述"></a>提交机制概述</h2><h3 id="什么是Commit"><a href="#什么是Commit" class="headerlink" title="什么是Commit"></a>什么是Commit</h3><p>Commit是Solr确保索引更新可见性和持久性的机制。Solr提供两种类型的提交：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">硬提交（Hard Commit）</span><br><span class="line">├── 将所有变更同步到磁盘</span><br><span class="line">├── 关闭当前事务日志，开启新的事务日志</span><br><span class="line">├── 启动新的索引段</span><br><span class="line">└── 确保数据持久化</span><br><span class="line"></span><br><span class="line">软提交（Soft Commit）</span><br><span class="line">├── 使索引变更可见</span><br><span class="line">├── 不执行磁盘同步</span><br><span class="line">├── 不影响事务日志</span><br><span class="line">└── 支持近实时搜索</span><br></pre></td></tr></table></figure>
 
@@ -404,81 +373,222 @@
 </ol>
 <p>正确的提交策略和事务日志配置是构建高性能、高可用Solr系统的重要基础，需要在系统设计和运维过程中给予持续的关注和优化。</p>
 
+      
     </div>
-
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
     
-    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
     
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" rel="tag"># 性能优化</a>
-              <a href="/tags/Solr/" rel="tag"># Solr</a>
-              <a href="/tags/%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5/" rel="tag"># 提交策略</a>
-              <a href="/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" rel="tag"># 事务日志</a>
-              <a href="/tags/commit/" rel="tag"># commit</a>
-              <a href="/tags/transaction-log/" rel="tag"># transaction log</a>
-              <a href="/tags/NRT/" rel="tag"># NRT</a>
-          </div>
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5/">提交策略</a>
+  
+    <a class="article-tag" href="/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/">事务日志</a>
+  
+    <a class="article-tag" href="/tags/commit/">commit</a>
+  
+    <a class="article-tag" href="/tags/transaction-log/">transaction log</a>
+  
+    <a class="article-tag" href="/tags/NRT/">NRT</a>
+  
 
+      
+            
+      
         
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" rel="prev" title="Solr配置：模式工厂与动态模式管理详解">
-                  <i class="fa fa-angle-left"></i> Solr配置：模式工厂与动态模式管理详解
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/02/13/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" rel="next" title="Solr配置：缓存优化与查询预热策略详解">
-                  Solr配置：缓存优化与查询预热策略详解 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
     </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">longkeyy</span>
   </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/13/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96%E4%B8%8E%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD%E7%AD%96%E7%95%A5%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：缓存优化与查询预热策略详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：模式工厂与动态模式管理详解</div>
+    </a>
+  
+</nav>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：提交策略与事务日志优化指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%9C%BA%E5%88%B6%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">提交机制概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFCommit"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是Commit</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E7%B1%BB%E5%9E%8B%E5%AF%B9%E6%AF%94"><span class="nav-number">1.1.2.</span> <span class="nav-text">提交类型对比</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E6%8F%90%E4%BA%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">自动提交配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本配置语法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A1%AC%E6%8F%90%E4%BA%A4%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">硬提交参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AF%E6%8F%90%E4%BA%A4%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">软提交参数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">事务日志配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E6%A6%82%E8%BF%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">事务日志概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.2.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.3.</span> <span class="nav-text">高级配置选项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%9B%AE%E5%BD%95%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">1. 目录配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%90%8C%E6%AD%A5%E7%BA%A7%E5%88%AB%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">2. 同步级别配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%AE%B9%E9%87%8F%E7%AE%A1%E7%90%86"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">3. 容量管理</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.</span> <span class="nav-text">性能优化策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%BF%91%E5%AE%9E%E6%97%B6%E6%90%9C%E7%B4%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 近实时搜索配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%87%E5%87%86NRT%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">标准NRT配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E9%A2%91%E6%9B%B4%E6%96%B0%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">高频更新场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%89%B9%E9%87%8F%E5%AF%BC%E5%85%A5%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 批量导入优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E6%9C%9F%E9%97%B4%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">导入期间配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E5%90%8E%E6%81%A2%E5%A4%8D%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">导入后恢复配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.5.</span> <span class="nav-text">实际应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%B5%E5%95%86%E6%90%9C%E7%B4%A2%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 电商搜索系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 日志分析系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%86%85%E5%AE%B9%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 内容管理系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E4%BC%98"><span class="nav-number">1.6.</span> <span class="nav-text">监控和调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 性能监控指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">提交性能监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E7%9B%91%E6%8E%A7"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">事务日志监控</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 性能调优建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%B0%83%E4%BC%98%E7%9F%A9%E9%98%B5"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">参数调优矩阵</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E8%B0%83%E4%BC%98%E8%84%9A%E6%9C%AC"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">动态调优脚本</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.7.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 常见问题诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">提交性能问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">事务日志问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%95%85%E9%9A%9C%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 故障恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E6%81%A2%E5%A4%8D"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">事务日志恢复</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E6%81%A2%E5%A4%8D"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">提交策略恢复</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">开发环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">测试环境</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">生产环境</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%9B%91%E6%8E%A7%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 监控建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E8%BF%90%E7%BB%B4%E8%A6%81%E7%82%B9"><span class="nav-number">1.8.3.</span> <span class="nav-text">3. 运维要点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E6%94%B6%E8%8E%B7"><span class="nav-number">1.9.1.</span> <span class="nav-text">关键收获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E6%96%BD%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">实施建议</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
   </div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
 </body>
 </html>

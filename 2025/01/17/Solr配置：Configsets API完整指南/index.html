@@ -1,25 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+  <meta charset="utf-8">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
 
+  
+  
 
+  <!-- PACE Progress Bar START -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作">
+  
+  <title>solr配置：configsets api完整指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloudZooKeeperSolr配置Configsets API配置集管理" />
+  
+  
+  
+  
+  <meta name="description" content="深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solr配置：Configsets API完整指南">
 <meta property="og:url" content="https://solrcn.github.io/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
@@ -35,214 +41,176 @@
 <meta property="article:tag" content="Configsets API">
 <meta property="article:tag" content="配置集管理">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://solrcn.github.io/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/","path":"2025/01/17/Solr配置：Configsets API完整指南/","title":"Solr配置：Configsets API完整指南"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Solr配置：Configsets API完整指南 | Solr Community of China</title>
   
-
-
-
-
-
-
-
-
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
+  <link rel="icon" href="/css/images/favicon.ico">
   
-
-
-
-
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
 
 
   
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
 
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
 
 
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
 
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Solr Community of China</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-  </ul>
-</nav>
-
-
-
-
 </header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：Configsets API完整指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
         
   
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets-API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：Configsets API完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.1.</span> <span class="nav-text">列出配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">上传配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-1"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-1"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-2"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-2"><span class="nav-number">1.2.0.4.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.3.</span> <span class="nav-text">创建配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-3"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-3"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.4.</span> <span class="nav-text">删除配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-4"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-4"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.5.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9B%86%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置集版本管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.5.2.</span> <span class="nav-text">安全考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">性能优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.6.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.6.1.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.6.2.</span> <span class="nav-text">错误处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">longkeyy</p>
-  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">108</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">236</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：Configsets API完整指南
+    </h1>
   
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Solr配置：Configsets API完整指南 | Solr Community of China">
-      <meta itemprop="description" content="深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Solr配置：Configsets API完整指南
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-01-17 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-17T00:00:00+08:00">2025-01-17</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 16:05:42" itemprop="dateModified" datetime="2025-08-25T16:05:42+08:00">2025-08-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-            <div class="post-description">深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作</div>
-        </div>
       </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-01-16T16:00:00.000Z" itemprop="datePublished">一月 17, 2025</time>
+	</a>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="Solr配置：Configsets-API完整指南"><a href="#Solr配置：Configsets-API完整指南" class="headerlink" title="Solr配置：Configsets API完整指南"></a>Solr配置：Configsets API完整指南</h1><p>Configsets API使您能够在Solr运行SolrCloud模式时向ZooKeeper上传新的配置集、创建和删除配置集。</p>
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：Configsets-API完整指南"><a href="#Solr配置：Configsets-API完整指南" class="headerlink" title="Solr配置：Configsets API完整指南"></a>Solr配置：Configsets API完整指南</h1><p>Configsets API使您能够在Solr运行SolrCloud模式时向ZooKeeper上传新的配置集、创建和删除配置集。</p>
 <p>配置集是配置文件的集合，如<code>solrconfig.xml</code>、<code>synonyms.txt</code>、模式、特定语言的文件和其他集合级配置文件（通常位于<code>conf</code>目录中的所有内容）。Solr附带两个示例配置集（<code>_default</code>和<code>sample_techproducts_configs</code>），可在创建集合时使用。使用相同概念，您可以创建自己的配置集，并在创建集合时使其可用。</p>
 <p>此API提供了一种将配置文件上传到ZooKeeper并在两个或多个集合之间共享相同配置文件集的方法。</p>
 <p>一旦配置集已上传到ZooKeeper，在使用<a href="collections-api.md">Collections API</a>创建集合时使用配置集名称，集合将使用您的配置文件。</p>
@@ -388,79 +356,218 @@
 <h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Configsets API为SolrCloud环境中的配置管理提供了强大而灵活的解决方案。通过支持配置集的上传、创建、列出和删除操作，它简化了多集合环境中的配置共享和版本管理。合理使用此API，结合适当的安全措施和最佳实践，可以大大提高Solr集群的可维护性和配置一致性。</p>
 <p>无论是在开发环境中进行快速配置迭代，还是在生产环境中进行精细的配置管理，Configsets API都提供了必要的工具来满足各种需求。通过理解其工作原理和限制，管理员可以构建更加健壮和可扩展的Solr解决方案。</p>
 
+      
     </div>
-
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
     
-    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
     
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/SolrCloud/" rel="tag"># SolrCloud</a>
-              <a href="/tags/ZooKeeper/" rel="tag"># ZooKeeper</a>
-              <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" rel="tag"># Solr配置</a>
-              <a href="/tags/Configsets-API/" rel="tag"># Configsets API</a>
-              <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/" rel="tag"># 配置集管理</a>
-          </div>
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/ZooKeeper/">ZooKeeper</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/Configsets-API/">Configsets API</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/">配置集管理</a>
+  
 
+      
+            
+      
         
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" rel="prev" title="Solr配置：Config API详解">
-                  <i class="fa fa-angle-left"></i> Solr配置：Config API详解
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" rel="next" title="Solr配置：solr.xml配置详解">
-                  Solr配置：solr.xml配置详解 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
     </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">longkeyy</span>
   </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：solr.xml配置详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：Config API详解</div>
+    </a>
+  
+</nav>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets-API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：Configsets API完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.1.</span> <span class="nav-text">列出配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">上传配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-1"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-1"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-2"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-2"><span class="nav-number">1.2.0.4.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.3.</span> <span class="nav-text">创建配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-3"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-3"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.4.</span> <span class="nav-text">删除配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-4"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-4"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.5.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9B%86%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置集版本管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.5.2.</span> <span class="nav-text">安全考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">性能优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.6.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.6.1.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.6.2.</span> <span class="nav-text">错误处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
   </div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
 </body>
 </html>

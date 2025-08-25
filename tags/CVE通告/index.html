@@ -1,25 +1,29 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+  <meta charset="utf-8">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
 
+  
+  
 
+  <!-- PACE Progress Bar START -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="Apache Solr&#x2F;Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+  
+  <title>tag: cve通告 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  
+  
+  
+  <meta name="description" content="Apache Solr&#x2F;Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Solr Community of China">
 <meta property="og:url" content="https://solrcn.github.io/tags/CVE%E9%80%9A%E5%91%8A/index.html">
@@ -29,246 +33,407 @@
 <meta property="article:author" content="longkeyy">
 <meta property="article:tag" content="Solr, Lucene, 搜索引擎, 全文检索, Apache Solr, 中文社区">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://solrcn.github.io/tags/CVE%E9%80%9A%E5%91%8A/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":false,"lang":"zh-CN","comments":"","permalink":"","path":"tags/CVE通告/index.html","title":""}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>标签: CVE通告 | Solr Community of China</title>
   
-
-
-
-
-
-
-
-
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
+  <link rel="icon" href="/css/images/favicon.ico">
   
-
-
-
-
-
-
-  
-
-
-
-
-
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
-
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
-
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
-  </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Solr Community of China</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-  </ul>
-</nav>
-
-
-
-
-</header>
-        
-  
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-overview-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">longkeyy</p>
-  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">108</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">236</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
     
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner tag posts-collapse">
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
 
 
   
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
   
+
+  <!-- Custom CSS -->
   
-  <div class="post-block">
-    <div class="post-content">
-      <div class="collection-title">
-        <h1 class="collection-header">CVE通告
-          <small>标签</small>
-        </h1>
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body>
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
       </div>
-
-      
-    <div class="collection-year">
-      <span class="collection-header">2025</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2025-01-26T00:00:00+08:00"
-              content="2025-01-26">
-          01-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2025/01/26/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-52012%E4%B8%8ECVE-2025-24814/" itemprop="url">
-            <span itemprop="name">Apache Solr 安全漏洞通告：CVE-2024-52012 与 CVE-2025-24814</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2024</span>
-    </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-      <div class="post-meta-container">
-        <time itemprop="dateCreated"
-              datetime="2024-10-14T00:00:00+08:00"
-              content="2024-10-14">
-          10-14
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/" itemprop="url">
-            <span itemprop="name">Apache Solr 重要安全更新：PKI 认证绕过与配置集信任漏洞修复</span>
-          </a>
-      </div>
-
-      
-    </header>
-  </article>
-
-    </div>
   </div>
+</header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main">
   
   
   
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <h1><a href="/archives/2025" class="archive-year">2025</a></h1>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+
+      <a href="/2025/01/26/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-52012%E4%B8%8ECVE-2025-24814/" class="archive-article-date">
+		  <time datetime="2025-01-25T16:00:00.000Z" itemprop="datePublished">1月 26, 2025</time>
+	  </a>
+      
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="archive-article-title" href="/2025/01/26/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-52012%E4%B8%8ECVE-2025-24814/">Apache Solr 安全漏洞通告：CVE-2024-52012 与 CVE-2025-24814</a>
+    </h1>
+  
+
+    </header>
+  </div>
+</article>
+  
+    
+    
+      
+        </div></section>
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <h1><a href="/archives/2024" class="archive-year">2024</a></h1>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+
+      <a href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/" class="archive-article-date">
+		  <time datetime="2024-10-13T16:00:00.000Z" itemprop="datePublished">10月 14, 2024</time>
+	  </a>
+      
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="archive-article-title" href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/">Apache Solr 重要安全更新：PKI 认证绕过与配置集信任漏洞修复</a>
+    </h1>
+  
+
+    </header>
+  </div>
+</article>
+  
+  
+    </div></section>
+  
+
+
+</section>
+          <aside id="sidebar">
+  
+    <div class="widget-wrap" style="margin: 20px 0;">
+	<div id="search-form-wrap">
+
+    <form class="search-form">
+        <label style="width: 75%;">
+            <span class="screen-reader-text">Search for:</span>
+            <input type="search" class="search-field" style="height: 42px;" placeholder=" 搜索…" value="" name="s" title="Search for:">
+        </label>
+        <input type="submit" class="search-form-submit" value="搜索">
+    </form>
+    <div class="ins-search">
+    <div class="ins-search-mask"></div>
+    <div class="ins-search-container">
+        <div class="ins-input-wrapper">
+            <input type="text" class="ins-search-input" placeholder="请输入关键词..."/>
+            <span class="ins-close ins-selectable"><i class="fa fa-times-circle"></i></span>
+        </div>
+        <div class="ins-section-wrapper">
+            <div class="ins-section-container"></div>
+        </div>
+    </div>
+</div>
+<script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: '文章',
+            PAGES: '页面',
+            CATEGORIES: '分类',
+            TAGS: '标签',
+            UNTITLED: '(无标题)',
+        },
+        ROOT_URL: '/',
+        CONTENT_URL: '/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/js/insight.js"></script>
+
 
 </div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">longkeyy</span>
-  </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
+</div>
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">标签云</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/5%E5%88%86%E9%92%9F%E6%95%99%E7%A8%8B/" style="font-size: 10px;">5分钟教程</a> <a href="/tags/A-B%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">A/B测试</a> <a href="/tags/AI%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">AI搜索</a> <a href="/tags/AI%E9%9B%86%E6%88%90/" style="font-size: 10px;">AI集成</a> <a href="/tags/API%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">API操作</a> <a href="/tags/API%E6%96%87%E6%A1%A3/" style="font-size: 10px;">API文档</a> <a href="/tags/API%E7%AB%AF%E7%82%B9/" style="font-size: 10px;">API端点</a> <a href="/tags/API%E7%AE%A1%E7%90%86/" style="font-size: 10px;">API管理</a> <a href="/tags/AWS%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">AWS部署</a> <a href="/tags/Admin-UI/" style="font-size: 10px;">Admin UI</a> <a href="/tags/Apache-Solr/" style="font-size: 10.91px;">Apache Solr</a> <a href="/tags/CVE%E9%80%9A%E5%91%8A/" style="font-size: 10.91px;">CVE通告</a> <a href="/tags/CharFilter/" style="font-size: 10px;">CharFilter</a> <a href="/tags/Collections-API/" style="font-size: 10px;">Collections API</a> <a href="/tags/Config-API/" style="font-size: 10.91px;">Config API</a> <a href="/tags/Configsets-API/" style="font-size: 10px;">Configsets API</a> <a href="/tags/ContentStream/" style="font-size: 10px;">ContentStream</a> <a href="/tags/CopyField/" style="font-size: 10px;">CopyField</a> <a href="/tags/CoreAdmin-API/" style="font-size: 10px;">CoreAdmin API</a> <a href="/tags/DIY/" style="font-size: 10px;">DIY</a> <a href="/tags/DirectoryFactory/" style="font-size: 10px;">DirectoryFactory</a> <a href="/tags/DisMax/" style="font-size: 10px;">DisMax</a> <a href="/tags/DocValues/" style="font-size: 10px;">DocValues</a> <a href="/tags/Docker%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">Docker部署</a> <a href="/tags/EC2%E5%AE%9E%E4%BE%8B/" style="font-size: 10px;">EC2实例</a> <a href="/tags/Facets/" style="font-size: 10px;">Facets</a> <a href="/tags/Films%E6%95%B0%E6%8D%AE%E9%9B%86/" style="font-size: 10px;">Films数据集</a> <a href="/tags/FilterCache/" style="font-size: 10px;">FilterCache</a> <a href="/tags/HTML%E6%B8%85%E7%90%86/" style="font-size: 10px;">HTML清理</a> <a href="/tags/HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF/" style="font-size: 10px;">HTTP客户端</a> <a href="/tags/InitParams/" style="font-size: 10px;">InitParams</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/Lucene/" style="font-size: 10.91px;">Lucene</a> <a href="/tags/Lucene%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">Lucene索引</a> <a href="/tags/NRT/" style="font-size: 10px;">NRT</a> <a href="/tags/PKI%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">PKI认证</a> <a href="/tags/ParamSets/" style="font-size: 10px;">ParamSets</a> <a href="/tags/Prometheus%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">Prometheus监控</a> <a href="/tags/QueryResultCache/" style="font-size: 10px;">QueryResultCache</a> <a href="/tags/REST-API/" style="font-size: 11.82px;">REST API</a> <a href="/tags/RequestHandler/" style="font-size: 10px;">RequestHandler</a> <a href="/tags/Schema/" style="font-size: 10.91px;">Schema</a> <a href="/tags/Schema-Factory/" style="font-size: 10px;">Schema Factory</a> <a href="/tags/Schema%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">Schema配置</a> <a href="/tags/SearchComponent/" style="font-size: 10px;">SearchComponent</a> <a href="/tags/Solr/" style="font-size: 19.09px;">Solr</a> <a href="/tags/SolrCloud/" style="font-size: 19.09px;">SolrCloud</a> <a href="/tags/SolrCore/" style="font-size: 10px;">SolrCore</a> <a href="/tags/SolrQuerySyntax/" style="font-size: 10px;">SolrQuerySyntax</a> <a href="/tags/Solr%E5%85%A5%E9%97%A8/" style="font-size: 14.55px;">Solr入门</a> <a href="/tags/Solr%E6%95%99%E7%A8%8B/" style="font-size: 16.36px;">Solr教程</a> <a href="/tags/Solr%E6%96%B0%E9%97%BB/" style="font-size: 17.27px;">Solr新闻</a> <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" style="font-size: 13.64px;">Solr查询</a> <a href="/tags/Solr%E6%A6%82%E5%BF%B5/" style="font-size: 17.27px;">Solr概念</a> <a href="/tags/Solr%E7%B4%A2%E5%BC%95/" style="font-size: 13.64px;">Solr索引</a> <a href="/tags/Solr%E9%83%A8%E7%BD%B2/" style="font-size: 13.64px;">Solr部署</a> <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" style="font-size: 20px;">Solr配置</a> <a href="/tags/TLS%E4%BC%98%E5%8C%96/" style="font-size: 10px;">TLS优化</a> <a href="/tags/Techproducts/" style="font-size: 10px;">Techproducts</a> <a href="/tags/TextField/" style="font-size: 10px;">TextField</a> <a href="/tags/Token%E6%B5%81/" style="font-size: 10px;">Token流</a> <a href="/tags/Web%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">Web界面</a> <a href="/tags/ZooKeeper/" style="font-size: 11.82px;">ZooKeeper</a> <a href="/tags/commit/" style="font-size: 10px;">commit</a> <a href="/tags/configoverlay/" style="font-size: 10px;">configoverlay</a> <a href="/tags/core-properties/" style="font-size: 10px;">core.properties</a> <a href="/tags/dataDir/" style="font-size: 10px;">dataDir</a> <a href="/tags/jar/" style="font-size: 10px;">jar</a> <a href="/tags/lib%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">lib目录</a> <a href="/tags/paramsets/" style="font-size: 10px;">paramsets</a> <a href="/tags/schema/" style="font-size: 10px;">schema</a> <a href="/tags/schema-xml/" style="font-size: 10px;">schema.xml</a> <a href="/tags/solr-xml/" style="font-size: 10px;">solr.xml</a> <a href="/tags/solrconfig/" style="font-size: 10px;">solrconfig</a> <a href="/tags/solrconfig-xml/" style="font-size: 10.91px;">solrconfig.xml</a> <a href="/tags/solr%E5%85%A5%E9%97%A8/" style="font-size: 15.45px;">solr入门</a> <a href="/tags/solr%E7%8B%AC%E5%AE%B6/" style="font-size: 18.18px;">solr独家</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/transaction-log/" style="font-size: 10px;">transaction log</a> <a href="/tags/%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" style="font-size: 10px;">专业术语</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" style="font-size: 10.91px;">事务日志</a> <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 10px;">云原生</a> <a href="/tags/%E4%BA%91%E7%AB%AF%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">云端搜索</a> <a href="/tags/%E4%BC%81%E4%B8%9A%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">企业搜索</a> <a href="/tags/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">使用说明</a> <a href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" style="font-size: 10px;">入门指南</a> <a href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">全局配置</a> <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" style="font-size: 10px;">内存管理</a> <a href="/tags/%E5%86%85%E5%AE%B9%E6%B5%81/" style="font-size: 10px;">内容流</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10px;">内置处理器</a> <a href="/tags/%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/" style="font-size: 10px;">减少函数</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10.91px;">分布式搜索</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">分布式部署</a> <a href="/tags/%E5%88%86%E6%9E%90%E5%99%A8/" style="font-size: 11.82px;">分析器</a> <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" style="font-size: 12.73px;">分析组件</a> <a href="/tags/%E5%88%86%E7%89%87%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">分片维护</a> <a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/" style="font-size: 10.91px;">分词器</a> <a href="/tags/%E5%88%86%E9%9D%A2/" style="font-size: 10px;">分面</a> <a href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">分面搜索</a> <a href="/tags/%E5%88%AB%E5%90%8D/" style="font-size: 10px;">别名</a> <a href="/tags/%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" style="font-size: 10px;">别名管理</a> <a href="/tags/%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86/" style="font-size: 10px;">副本管理</a> <a href="/tags/%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">动态模式</a> <a href="/tags/%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">动态配置</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/" style="font-size: 10px;">升级指南</a> <a href="/tags/%E5%8F%82%E6%95%B0%E7%AE%A1%E7%90%86/" style="font-size: 10px;">参数管理</a> <a href="/tags/%E5%8F%82%E6%95%B0%E9%9B%86/" style="font-size: 10px;">参数集</a> <a href="/tags/%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/" style="font-size: 10px;">参考手册</a> <a href="/tags/%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">召回率</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">向量搜索</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">向量查询</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">命令行工具</a> <a href="/tags/%E5%9D%97%E8%BF%9E%E6%8E%A5/" style="font-size: 10px;">块连接</a> <a href="/tags/%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D/" style="font-size: 10px;">备份恢复</a> <a href="/tags/%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">复制字段</a> <a href="/tags/%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">多值字段</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E6%98%A0%E5%B0%84/" style="font-size: 10px;">字段映射</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/" style="font-size: 11.82px;">字段类型</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">字符过滤器</a> <a href="/tags/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">学习路径</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 11.82px;">安全</a> <a href="/tags/%E5%AE%89%E5%85%A8%E4%BF%AE%E5%A4%8D/" style="font-size: 10.91px;">安全修复</a> <a href="/tags/%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E/" style="font-size: 10.91px;">安全漏洞</a> <a href="/tags/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">安全配置</a> <a href="/tags/%E5%AE%9E%E6%96%BD%E8%A7%84%E5%88%92/" style="font-size: 10px;">实施规划</a> <a href="/tags/%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" style="font-size: 10px;">审计日志</a> <a href="/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/" style="font-size: 10px;">容器化</a> <a href="/tags/%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3/" style="font-size: 10px;">嵌套文档</a> <a href="/tags/%E5%BA%93%E6%96%87%E4%BB%B6/" style="font-size: 10px;">库文件</a> <a href="/tags/%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">开源搜索</a> <a href="/tags/%E5%BC%82%E6%AD%A5API/" style="font-size: 10px;">异步API</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8/" style="font-size: 10px;">异步调用</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" style="font-size: 10px;">快速入门</a> <a href="/tags/%E6%80%A7%E8%83%BD/" style="font-size: 10px;">性能</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 16.36px;">性能优化</a> <a href="/tags/%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">性能监控</a> <a href="/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 11.82px;">性能调优</a> <a href="/tags/%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">托管模式</a> <a href="/tags/%E6%89%98%E7%AE%A1%E8%B5%84%E6%BA%90/" style="font-size: 10px;">托管资源</a> <a href="/tags/%E6%89%B9%E9%87%8F%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">批量数据</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8C%87%E5%8D%97%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">指南说明</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" style="font-size: 10px;">排序算法</a> <a href="/tags/%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC/" style="font-size: 10px;">控制脚本</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">推荐系统</a> <a href="/tags/%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5/" style="font-size: 10.91px;">提交策略</a> <a href="/tags/%E6%8F%92%E4%BB%B6/" style="font-size: 10.91px;">插件</a> <a href="/tags/%E6%8F%92%E4%BB%B6%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">插件系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">搜索</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/" style="font-size: 11.82px;">搜索优化</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/" style="font-size: 10.91px;">搜索功能</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0/" style="font-size: 10px;">搜索参数</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" style="font-size: 18.18px;">搜索引擎</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7/" style="font-size: 10.91px;">搜索相关性</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">搜索组件</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E8%B4%A8%E9%87%8F/" style="font-size: 10.91px;">搜索质量</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4/" style="font-size: 10px;">数据保护</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/" style="font-size: 10px;">数据导入</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90/" style="font-size: 10px;">数据源</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">数据目录</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">数据索引</a> <a href="/tags/%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" style="font-size: 10px;">文件管理</a> <a href="/tags/%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90/" style="font-size: 10px;">文本分析</a> <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">文本预处理</a> <a href="/tags/%E6%96%87%E6%A1%A3%E5%88%86%E6%9E%90/" style="font-size: 10px;">文档分析</a> <a href="/tags/%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84/" style="font-size: 10.91px;">文档结构</a> <a href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/" style="font-size: 14.55px;">新手必看</a> <a href="/tags/%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" style="font-size: 10px;">日志记录</a> <a href="/tags/%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" style="font-size: 10px;">映射函数</a> <a href="/tags/%E6%98%A0%E5%B0%84%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">映射过滤器</a> <a href="/tags/%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87/" style="font-size: 10px;">术语词汇</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">机器学习</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E5%85%A5%E9%97%A8/" style="font-size: 10px;">查询入门</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/" style="font-size: 11.82px;">查询解析器</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">查询语法</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD/" style="font-size: 10.91px;">查询预热</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD/" style="font-size: 10px;">核心加载</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8F%91%E7%8E%B0/" style="font-size: 10px;">核心发现</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/" style="font-size: 11.82px;">核心管理</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">核心维护</a> <a href="/tags/%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89/" style="font-size: 10px;">概念定义</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82/" style="font-size: 10px;">模式工厂</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" style="font-size: 10.91px;">模式设计</a> <a href="/tags/%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">熔断机制</a> <a href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/" style="font-size: 16.36px;">版本发布</a> <a href="/tags/%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">生产部署</a> <a href="/tags/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" style="font-size: 10px;">生命周期</a> <a href="/tags/%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" style="font-size: 10px;">用户体验</a> <a href="/tags/%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">用户界面</a> <a href="/tags/%E7%9B%91%E5%90%AC%E5%99%A8/" style="font-size: 10px;">监听器</a> <a href="/tags/%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">监控工具</a> <a href="/tags/%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%BF%AE%E5%A4%8D/" style="font-size: 10px;">稳定性修复</a> <a href="/tags/%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">管理界面</a> <a href="/tags/%E7%B1%BB%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">类路径</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6/" style="font-size: 10px;">精确度</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">精确度召回率</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD/" style="font-size: 10px;">系统功能</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" style="font-size: 10.91px;">系统管理</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98/" style="font-size: 10px;">系统调优</a> <a href="/tags/%E7%B4%A2%E5%BC%95/" style="font-size: 11.82px;">索引</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" style="font-size: 10px;">索引优化</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE/" style="font-size: 10px;">索引位置</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" style="font-size: 10px;">索引原理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%A4%84%E7%90%86/" style="font-size: 10px;">索引处理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">索引操作</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0/" style="font-size: 10px;">索引更新</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%A0%BC%E5%BC%8F/" style="font-size: 10.91px;">索引格式</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1/" style="font-size: 10.91px;">索引设计</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E8%81%9A%E5%90%88/" style="font-size: 10px;">统计聚合</a> <a href="/tags/%E7%BB%B4%E6%8A%A4%E7%89%88%E6%9C%AC/" style="font-size: 10px;">维护版本</a> <a href="/tags/%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96/" style="font-size: 10.91px;">缓存优化</a> <a href="/tags/%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8/" style="font-size: 10px;">编解码器</a> <a href="/tags/%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/" style="font-size: 10px;">聚合函数</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">自动化部署</a> <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">自定义数据</a> <a href="/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F/" style="font-size: 10.91px;">表达式</a> <a href="/tags/%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">认证</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 14.55px;">请求处理器</a> <a href="/tags/%E8%B7%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83/" style="font-size: 10px;">跨数据中心</a> <a href="/tags/%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10.91px;">过滤器</a> <a href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/" style="font-size: 10.91px;">运维工具</a> <a href="/tags/%E8%BF%9C%E7%A8%8B%E6%B5%81/" style="font-size: 10px;">远程流</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 12.73px;">配置</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/" style="font-size: 10px;">配置优化</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 10.91px;">配置文件</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/" style="font-size: 11.82px;">配置管理</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86/" style="font-size: 10px;">配置集</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/" style="font-size: 10px;">配置集管理</a> <a href="/tags/%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10.91px;">隐式请求处理器</a> <a href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/" style="font-size: 12.73px;">集合管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6/" style="font-size: 10px;">集群插件</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86/" style="font-size: 10.91px;">集群管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">集群部署</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 10px;">高可用</a> <a href="/tags/%E9%AB%98%E7%BA%A7%E6%90%9C%E7%B4%A2/" style="font-size: 10.91px;">高级搜索</a>
     </div>
-  </footer>
+  </div>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-  </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">归档</h3>
+
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/08/">八月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">七月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">五月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">三月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">五月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">十二月 2012</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">1</span></li></ul>
+    </div>
   </div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+  
+</aside>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
 </body>
 </html>

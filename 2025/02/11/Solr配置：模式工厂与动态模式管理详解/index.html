@@ -1,25 +1,31 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html>
 <head>
-  <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width">
-<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+  <meta charset="utf-8">
 
-  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
-  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
-  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
 
-<link rel="stylesheet" href="/css/main.css">
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
 
+  
+  
 
+  <!-- PACE Progress Bar START -->
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
-
-<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
-
-    <meta name="description" content="Solr配置：模式工厂与动态模式管理详解Apache Solr的模式（Schema）定义了文档的结构、字段类型和索引行为。Solr提供了两种不同的模式管理方式：托管模式（Managed Schema）和经典模式（Classic Schema）。本文将深入探讨模式工厂的配置方法、使用场景和最佳实践。 模式工厂概述什么是模式工厂模式工厂（Schema Factory）是Solr中负责加载和管理索引模式">
+  
+  <title>solr配置：模式工厂与动态模式管理详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr模式工厂Schema Factory托管模式schema.xml动态模式" />
+  
+  
+  
+  
+  <meta name="description" content="Solr配置：模式工厂与动态模式管理详解Apache Solr的模式（Schema）定义了文档的结构、字段类型和索引行为。Solr提供了两种不同的模式管理方式：托管模式（Managed Schema）和经典模式（Classic Schema）。本文将深入探讨模式工厂的配置方法、使用场景和最佳实践。 模式工厂概述什么是模式工厂模式工厂（Schema Factory）是Solr中负责加载和管理索引模式">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solr配置：模式工厂与动态模式管理详解">
 <meta property="og:url" content="https://solrcn.github.io/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
@@ -36,213 +42,176 @@
 <meta property="article:tag" content="schema.xml">
 <meta property="article:tag" content="动态模式">
 <meta name="twitter:card" content="summary">
-
-
-<link rel="canonical" href="https://solrcn.github.io/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/">
-
-
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/","path":"2025/02/11/Solr配置：模式工厂与动态模式管理详解/","title":"Solr配置：模式工厂与动态模式管理详解"}</script>
-
-<script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Solr配置：模式工厂与动态模式管理详解 | Solr Community of China</title>
   
-
-
-
-
-
-
-
-
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
-<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
-
+  <link rel="icon" href="/css/images/favicon.ico">
   
-
-
-
-
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
 
 
   
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
 
 
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
 
 
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
 
-  <noscript>
-    <link rel="stylesheet" href="/css/noscript.css">
-  </noscript>
-</head>
 
-<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
-  <div class="headband"></div>
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
 
-  <main class="main">
-    <div class="column">
-      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
-  <div class="site-nav-toggle">
-    <div class="toggle" aria-label="切换导航栏" role="button">
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-        <span class="toggle-line"></span>
-    </div>
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
   </div>
-
-  <div class="site-meta">
-
-    <a href="/" class="brand" rel="start">
-      <i class="logo-line"></i>
-      <p class="site-title">Solr Community of China</p>
-      <i class="logo-line"></i>
-    </a>
-      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
-  </div>
-
-  <div class="site-nav-right">
-    <div class="toggle popup-trigger" aria-label="搜索" role="button">
-    </div>
-  </div>
-</div>
-
-
-
-<nav class="site-nav">
-  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
-  </ul>
-</nav>
-
-
-
-
 </header>
+
+
+  <div id="originBgDiv" style="background: #fff; width: 100%;">
+
+      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
+        <img id="originBg" width="100%" alt="" src="">
+      </div>
+
+  </div>
+
+  <script>
+  function setAboutIMG(){
+      var imgUrls = "".split(",");
+      var random = Math.floor((Math.random() * imgUrls.length ));
+      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
+        document.getElementById("originBg").src=imgUrls[random];
+      } else {
+        document.getElementById("originBg").src='/' + imgUrls[random];
+      }
+  }
+  bgDiv=document.getElementById("originBgDiv");
+  if(location.pathname.match('about')){
+    setAboutIMG();
+    bgDiv.style.display='block';
+  }else{
+    bgDiv.style.display='none';
+  }
+  </script>
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：模式工厂与动态模式管理详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
         
   
-  <aside class="sidebar">
-
-    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
-      <ul class="sidebar-nav">
-        <li class="sidebar-nav-toc">
-          文章目录
-        </li>
-        <li class="sidebar-nav-overview">
-          站点概览
-        </li>
-      </ul>
-
-      <div class="sidebar-panel-container">
-        <!--noindex-->
-        <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：模式工厂与动态模式管理详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">模式工厂概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是模式工厂</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">两种模式工厂类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">托管模式工厂配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mutable%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">mutable参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#managedSchemaResourceName%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">managedSchemaResourceName参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E4%BC%98%E5%8A%BF"><span class="nav-number">1.2.3.</span> <span class="nav-text">托管模式优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">实际应用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">1. 开发环境配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">2. 生产环境配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">经典模式工厂配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E6%A8%A1%E5%BC%8F%E7%89%B9%E7%82%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">经典模式特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">适用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Schema-API%E4%B8%8E%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">Schema API与托管模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AD%97%E6%AE%B5%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 字段管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">添加字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">修改字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">删除字段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 字段类型管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">添加字段类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 复制字段管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E5%88%87%E6%8D%A2"><span class="nav-number">1.5.</span> <span class="nav-text">模式工厂切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EClassic%E5%88%87%E6%8D%A2%E5%88%B0Managed"><span class="nav-number">1.5.1.</span> <span class="nav-text">从Classic切换到Managed</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%A4%87%E4%BB%BD%E7%8E%B0%E6%9C%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">1. 备份现有模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9solrconfig-xml"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">2. 修改solrconfig.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%87%8D%E5%90%AF%E6%A0%B8%E5%BF%83"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">3. 重启核心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E9%AA%8C%E8%AF%81%E5%88%87%E6%8D%A2"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">4. 验证切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EManaged%E5%88%87%E6%8D%A2%E5%88%B0Classic"><span class="nav-number">1.5.2.</span> <span class="nav-text">从Managed切换到Classic</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AF%BC%E5%87%BA%E5%BD%93%E5%89%8D%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">1. 导出当前模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">2. 修改配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%B8%85%E7%90%86%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">3. 清理托管模式文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.</span> <span class="nav-text">高级配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%B7%AE%E5%BC%82%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 环境差异化配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%88%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">开发环境（动态模式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%EF%BC%88%E9%9D%99%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">生产环境（静态模式）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B7%B7%E5%90%88%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 混合环境配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.7.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 模式设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">字段命名规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">字段类型优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 版本管理策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">模式版本控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">模式变更日志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.7.3.</span> <span class="nav-text">3. 性能监控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">模式性能指标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.8.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 常见问题诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E9%94%81%E5%AE%9A%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">模式锁定问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">字段冲突问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%9B%9E%E6%BB%9A"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">模式回滚</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%A6%81%E7%82%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">关键要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">实践建议</span></a></li></ol></li></ol></li></ol></div>
-        </div>
-        <!--/noindex-->
-
-        <div class="site-overview-wrap sidebar-panel">
-          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
-  <p class="site-author-name" itemprop="name">longkeyy</p>
-  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
-</div>
-<div class="site-state-wrap animated">
-  <nav class="site-state">
-      <div class="site-state-item site-state-posts">
-        <a href="/archives/">
-          <span class="site-state-item-count">108</span>
-          <span class="site-state-item-name">日志</span>
-        </a>
-      </div>
-      <div class="site-state-item site-state-categories">
-          <a href="/categories/">
-        <span class="site-state-item-count">10</span>
-        <span class="site-state-item-name">分类</span></a>
-      </div>
-      <div class="site-state-item site-state-tags">
-          <a href="/tags/">
-        <span class="site-state-item-count">236</span>
-        <span class="site-state-item-name">标签</span></a>
-      </div>
-  </nav>
-</div>
-
-        </div>
-      </div>
-    </div>
-
-    
-  </aside>
-
-
-    </div>
-
-    <div class="main-inner post posts-expand">
-
-
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：模式工厂与动态模式管理详解
+    </h1>
   
 
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="longkeyy">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Solr Community of China">
-      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
-    </span>
-
-    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Solr配置：模式工厂与动态模式管理详解 | Solr Community of China">
-      <meta itemprop="description" content="">
-    </span>
-      <header class="post-header">
-        <h1 class="post-title" itemprop="name headline">
-          Solr配置：模式工厂与动态模式管理详解
-        </h1>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2025-02-11 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-11T00:00:00+08:00">2025-02-11</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2025-08-25 16:41:05" itemprop="dateModified" datetime="2025-08-25T16:41:05+08:00">2025-08-25</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
       </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/11/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-02-10T16:00:00.000Z" itemprop="datePublished">二月 11, 2025</time>
+	</a>
 
-    
-    
-    
-    <div class="post-body" itemprop="articleBody"><h1 id="Solr配置：模式工厂与动态模式管理详解"><a href="#Solr配置：模式工厂与动态模式管理详解" class="headerlink" title="Solr配置：模式工厂与动态模式管理详解"></a>Solr配置：模式工厂与动态模式管理详解</h1><p>Apache Solr的模式（Schema）定义了文档的结构、字段类型和索引行为。Solr提供了两种不同的模式管理方式：托管模式（Managed Schema）和经典模式（Classic Schema）。本文将深入探讨模式工厂的配置方法、使用场景和最佳实践。</p>
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：模式工厂与动态模式管理详解"><a href="#Solr配置：模式工厂与动态模式管理详解" class="headerlink" title="Solr配置：模式工厂与动态模式管理详解"></a>Solr配置：模式工厂与动态模式管理详解</h1><p>Apache Solr的模式（Schema）定义了文档的结构、字段类型和索引行为。Solr提供了两种不同的模式管理方式：托管模式（Managed Schema）和经典模式（Classic Schema）。本文将深入探讨模式工厂的配置方法、使用场景和最佳实践。</p>
 <h2 id="模式工厂概述"><a href="#模式工厂概述" class="headerlink" title="模式工厂概述"></a>模式工厂概述</h2><h3 id="什么是模式工厂"><a href="#什么是模式工厂" class="headerlink" title="什么是模式工厂"></a>什么是模式工厂</h3><p>模式工厂（Schema Factory）是Solr中负责加载和管理索引模式的组件。它决定了Solr如何读取、解析和处理模式定义，以及是否支持运行时的模式修改。</p>
 <h3 id="两种模式工厂类型"><a href="#两种模式工厂类型" class="headerlink" title="两种模式工厂类型"></a>两种模式工厂类型</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1. ManagedIndexSchemaFactory (托管模式工厂)</span><br><span class="line">   ├── 支持动态模式修改</span><br><span class="line">   ├── 使用managed-schema.xml文件</span><br><span class="line">   └── 提供Schema API支持</span><br><span class="line"></span><br><span class="line">2. ClassicIndexSchemaFactory (经典模式工厂)</span><br><span class="line">   ├── 静态模式管理</span><br><span class="line">   ├── 使用schema.xml文件</span><br><span class="line">   └── 需要重启才能生效</span><br></pre></td></tr></table></figure>
 
@@ -352,80 +321,220 @@
 </ol>
 <p>正确的模式工厂配置是构建可维护、高性能Solr应用的重要基础，值得在项目设计阶段给予充分考虑。</p>
 
+      
     </div>
-
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
     
-    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
     
 
-    <footer class="post-footer">
-          <div class="post-tags">
-              <a href="/tags/Solr/" rel="tag"># Solr</a>
-              <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82/" rel="tag"># 模式工厂</a>
-              <a href="/tags/Schema-Factory/" rel="tag"># Schema Factory</a>
-              <a href="/tags/%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F/" rel="tag"># 托管模式</a>
-              <a href="/tags/schema-xml/" rel="tag"># schema.xml</a>
-              <a href="/tags/%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F/" rel="tag"># 动态模式</a>
-          </div>
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82/">模式工厂</a>
+  
+    <a class="article-tag" href="/tags/Schema-Factory/">Schema Factory</a>
+  
+    <a class="article-tag" href="/tags/%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F/">托管模式</a>
+  
+    <a class="article-tag" href="/tags/schema-xml/">schema.xml</a>
+  
+    <a class="article-tag" href="/tags/%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F/">动态模式</a>
+  
 
+      
+            
+      
         
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
 
-          <div class="post-nav">
-            <div class="post-nav-item">
-                <a href="/2025/02/10/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%BA%93%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E4%B8%8E%E6%8F%92%E4%BB%B6%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" rel="prev" title="Solr配置：库文件管理与插件加载机制详解">
-                  <i class="fa fa-angle-left"></i> Solr配置：库文件管理与插件加载机制详解
-                </a>
-            </div>
-            <div class="post-nav-item">
-                <a href="/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" rel="next" title="Solr配置：提交策略与事务日志优化指南">
-                  Solr配置：提交策略与事务日志优化指南 <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-          </div>
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
     </footer>
-  </article>
-</div>
-
-
-
-
-
-
-</div>
-  </main>
-
-  <footer class="footer">
-    <div class="footer-inner">
-
-  <div class="copyright">
-    &copy; 
-    <span itemprop="copyrightYear">2025</span>
-    <span class="with-love">
-      <i class="fa fa-heart"></i>
-    </span>
-    <span class="author" itemprop="copyrightHolder">longkeyy</span>
   </div>
-  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
-  </div>
-
-    </div>
-  </footer>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/12/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：提交策略与事务日志优化指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/10/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%BA%93%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E4%B8%8E%E6%8F%92%E4%BB%B6%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：库文件管理与插件加载机制详解</div>
+    </a>
+  
+</nav>
 
   
-  <div class="toggle sidebar-toggle" role="button">
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
-    <span class="toggle-line"></span>
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E4%B8%8E%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：模式工厂与动态模式管理详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">模式工厂概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是模式工厂</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%A4%E7%A7%8D%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">两种模式工厂类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">托管模式工厂配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.2.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mutable%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">mutable参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#managedSchemaResourceName%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">managedSchemaResourceName参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E4%BC%98%E5%8A%BF"><span class="nav-number">1.2.3.</span> <span class="nav-text">托管模式优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.2.4.</span> <span class="nav-text">实际应用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.4.1.</span> <span class="nav-text">1. 开发环境配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.4.2.</span> <span class="nav-text">2. 生产环境配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">经典模式工厂配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE-1"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%85%B8%E6%A8%A1%E5%BC%8F%E7%89%B9%E7%82%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">经典模式特点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.3.3.</span> <span class="nav-text">适用场景</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Schema-API%E4%B8%8E%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">Schema API与托管模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AD%97%E6%AE%B5%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 字段管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">添加字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">修改字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">删除字段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 字段类型管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">添加字段类型</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">3. 复制字段管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82%E5%88%87%E6%8D%A2"><span class="nav-number">1.5.</span> <span class="nav-text">模式工厂切换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EClassic%E5%88%87%E6%8D%A2%E5%88%B0Managed"><span class="nav-number">1.5.1.</span> <span class="nav-text">从Classic切换到Managed</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%A4%87%E4%BB%BD%E7%8E%B0%E6%9C%89%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">1. 备份现有模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9solrconfig-xml"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">2. 修改solrconfig.xml</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E9%87%8D%E5%90%AF%E6%A0%B8%E5%BF%83"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">3. 重启核心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E9%AA%8C%E8%AF%81%E5%88%87%E6%8D%A2"><span class="nav-number">1.5.1.4.</span> <span class="nav-text">4. 验证切换</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%8EManaged%E5%88%87%E6%8D%A2%E5%88%B0Classic"><span class="nav-number">1.5.2.</span> <span class="nav-text">从Managed切换到Classic</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%AF%BC%E5%87%BA%E5%BD%93%E5%89%8D%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">1. 导出当前模式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">2. 修改配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%B8%85%E7%90%86%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">3. 清理托管模式文件</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.</span> <span class="nav-text">高级配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%B7%AE%E5%BC%82%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 环境差异化配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E7%8E%AF%E5%A2%83%EF%BC%88%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">开发环境（动态模式）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%EF%BC%88%E9%9D%99%E6%80%81%E6%A8%A1%E5%BC%8F%EF%BC%89"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">生产环境（静态模式）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%B7%B7%E5%90%88%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 混合环境配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.7.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 模式设计原则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%91%BD%E5%90%8D%E8%A7%84%E8%8C%83"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">字段命名规范</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">字段类型优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 版本管理策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">模式版本控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%8F%98%E6%9B%B4%E6%97%A5%E5%BF%97"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">模式变更日志</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.7.3.</span> <span class="nav-text">3. 性能监控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">1.7.3.1.</span> <span class="nav-text">模式性能指标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.8.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 常见问题诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E9%94%81%E5%AE%9A%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">模式锁定问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%86%B2%E7%AA%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">字段冲突问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E5%9B%9E%E6%BB%9A"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">模式回滚</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%A6%81%E7%82%B9"><span class="nav-number">1.9.1.</span> <span class="nav-text">关键要点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.2.</span> <span class="nav-text">实践建议</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
   </div>
-  <div class="sidebar-dimmer"></div>
-  <div class="back-to-top" role="button" aria-label="返回顶部">
-    <i class="fa fa-arrow-up fa-lg"></i>
-    <span>0%</span>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
   </div>
 
-<noscript>
-  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
-</noscript>
 
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
 </body>
 </html>
