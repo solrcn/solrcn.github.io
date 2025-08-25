@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：生产环境部署完整指南与最佳实践 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能优化Solr部署生产环境Linux服务JVM调优系统配置" />
+  
+  
+  
+  
+  <meta name="description" content="详细介绍Apache Solr生产环境部署方法，包括服务安装脚本、系统配置优化、内存GC调优、多节点部署和运维最佳实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：生产环境部署完整指南与最佳实践">
+<meta property="og:url" content="https://solrcn.github.io/2025/04/10/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="详细介绍Apache Solr生产环境部署方法，包括服务安装脚本、系统配置优化、内存GC调优、多节点部署和运维最佳实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-09T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:18:05.126Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="生产环境">
+<meta property="article:tag" content="Linux服务">
+<meta property="article:tag" content="JVM调优">
+<meta property="article:tag" content="系统配置">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：生产环境部署完整指南与最佳实践" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：生产环境部署完整指南与最佳实践
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/04/10/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" class="article-date">
+	  <time datetime="2025-04-09T16:00:00.000Z" itemprop="datePublished">四月 10, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr部署：生产环境部署完整指南与最佳实践"><a href="#Solr部署：生产环境部署完整指南与最佳实践" class="headerlink" title="Solr部署：生产环境部署完整指南与最佳实践"></a>Solr部署：生产环境部署完整指南与最佳实践</h1><p>本文提供了在*nix平台（如Ubuntu）上设置Solr生产环境运行的详细指南。我们将详细介绍在Linux主机上设置单个Solr实例的过程，然后提供在同一主机上支持多个Solr节点运行的技巧。</p>
+<h2 id="服务安装脚本概述"><a href="#服务安装脚本概述" class="headerlink" title="服务安装脚本概述"></a>服务安装脚本概述</h2><p>Solr包含一个服务安装脚本（<code>bin/install_solr_service.sh</code>），帮助您在Linux上将Solr安装为服务。目前，该脚本仅支持CentOS、Debian、Red Hat、SUSE和Ubuntu Linux发行版。</p>
+<h3 id="预安装规划"><a href="#预安装规划" class="headerlink" title="预安装规划"></a>预安装规划</h3><p>在运行脚本之前，需要确定设置的几个参数：</p>
+<ul>
+<li>Solr安装位置</li>
+<li>拥有Solr文件和进程的系统用户</li>
+</ul>
+<h2 id="目录结构规划"><a href="#目录结构规划" class="headerlink" title="目录结构规划"></a>目录结构规划</h2><p>我们建议将活动Solr文件（如日志和索引文件）与Solr发行包中包含的文件分开，因为这使得升级Solr更容易，也被认为是系统管理员应遵循的良好实践。</p>
+<h3 id="Solr安装目录"><a href="#Solr安装目录" class="headerlink" title="Solr安装目录"></a>Solr安装目录</h3><p>默认情况下，服务安装脚本将发行版归档提取到<code>/opt</code>目录。您可以使用运行安装脚本时的<code>-i</code>选项更改此位置。脚本还将创建到Solr版本化目录的符号链接。</p>
+<p>例如，如果您运行Solr 9.7.0的安装脚本，将使用以下目录结构：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">/opt/solr-9.7.0</span><br><span class="line">/opt/solr -&gt; /opt/solr-9.7.0</span><br></pre></td></tr></table></figure>
+
+<p><strong>使用符号链接的好处</strong>：</p>
+<ul>
+<li>隔离脚本对特定Solr版本的依赖性</li>
+<li>升级时只需更新符号链接指向新版本</li>
+<li>简化版本管理和回滚操作</li>
+</ul>
+<h3 id="可写文件分离目录"><a href="#可写文件分离目录" class="headerlink" title="可写文件分离目录"></a>可写文件分离目录</h3><p>您还应该将可写Solr文件分离到不同的目录；默认情况下，安装脚本使用<code>/var/solr</code>，但您可以使用<code>-d</code>选项覆盖此位置。</p>
+<p><strong>分离架构的优势</strong>：</p>
+<ul>
+<li><code>/opt/solr</code>中的文件保持不变</li>
+<li>所有在Solr运行时发生变化的文件都存储在<code>/var/solr</code>下</li>
+<li>便于备份和恢复操作</li>
+<li>简化权限管理</li>
+</ul>
+<h2 id="创建Solr用户"><a href="#创建Solr用户" class="headerlink" title="创建Solr用户"></a>创建Solr用户</h2><p>出于安全原因，不建议以<code>root</code>用户运行Solr，<code>bin/solr start</code>命令会拒绝这样做。因此，您应该确定将拥有所有Solr文件和运行Solr进程的系统用户名。</p>
+<h3 id="用户配置选项"><a href="#用户配置选项" class="headerlink" title="用户配置选项"></a>用户配置选项</h3><ul>
+<li><strong>默认用户</strong>：安装脚本将创建<code>solr</code>用户</li>
+<li><strong>自定义用户</strong>：使用<code>-u</code>选项覆盖设置</li>
+<li><strong>组织要求</strong>：如果组织对创建新用户账户有特定要求，应在运行脚本前创建用户</li>
+</ul>
+<p>安装脚本将使Solr用户成为<code>/opt/solr</code>和<code>/var/solr</code>目录的所有者。</p>
+<h2 id="运行Solr安装脚本"><a href="#运行Solr安装脚本" class="headerlink" title="运行Solr安装脚本"></a>运行Solr安装脚本</h2><h3 id="下载和提取安装脚本"><a href="#下载和提取安装脚本" class="headerlink" title="下载和提取安装脚本"></a>下载和提取安装脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 提取安装脚本</span></span><br><span class="line">tar xzf solr-9.7.0.tgz solr-9.7.0/bin/install_solr_service.sh --strip-components=2</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装依赖（Red-Hat系统）"><a href="#安装依赖（Red-Hat系统）" class="headerlink" title="安装依赖（Red Hat系统）"></a>安装依赖（Red Hat系统）</h3><p>如果在Red Hat上安装，请确保在运行Solr安装脚本前安装<em>lsof</em>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> yum install lsof</span><br></pre></td></tr></table></figure>
+
+<h3 id="执行安装脚本"><a href="#执行安装脚本" class="headerlink" title="执行安装脚本"></a>执行安装脚本</h3><p>安装脚本必须以root权限运行：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本安装</span></span><br><span class="line"><span class="built_in">sudo</span> bash ./install_solr_service.sh solr-9.7.0.tgz</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等效的完整参数版本</span></span><br><span class="line"><span class="built_in">sudo</span> bash ./install_solr_service.sh solr-9.7.0.tgz -i /opt -d /var/solr -u solr -s solr -p 8983</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装选项说明"><a href="#安装选项说明" class="headerlink" title="安装选项说明"></a>安装选项说明</h3><table>
+<thead>
+<tr>
+<th>选项</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-i</code></td>
+<td>安装目录</td>
+<td><code>/opt</code></td>
+</tr>
+<tr>
+<td><code>-d</code></td>
+<td>数据目录</td>
+<td><code>/var/solr</code></td>
+</tr>
+<tr>
+<td><code>-u</code></td>
+<td>系统用户</td>
+<td><code>solr</code></td>
+</tr>
+<tr>
+<td><code>-s</code></td>
+<td>服务名称</td>
+<td><code>solr</code></td>
+</tr>
+<tr>
+<td><code>-p</code></td>
+<td>端口号</td>
+<td><code>8983</code></td>
+</tr>
+<tr>
+<td><code>-n</code></td>
+<td>不立即启动服务</td>
+<td>立即启动</td>
+</tr>
+</tbody></table>
+<p>查看所有可用选项：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bash ./install_solr_service.sh --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="验证安装"><a href="#验证安装" class="headerlink" title="验证安装"></a>验证安装</h3><p>脚本完成后，Solr将作为服务安装并在服务器后台运行（端口8983）。验证安装：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> service solr status</span><br></pre></td></tr></table></figure>
+
+<h2 id="安装脚本执行步骤详解"><a href="#安装脚本执行步骤详解" class="headerlink" title="安装脚本执行步骤详解"></a>安装脚本执行步骤详解</h2><h3 id="Solr-Home目录"><a href="#Solr-Home目录" class="headerlink" title="Solr Home目录"></a>Solr Home目录</h3><p>Solr home目录（不要与Solr安装目录混淆）是Solr管理包含索引文件的核心目录的位置。</p>
+<ul>
+<li><strong>默认位置</strong>：<code>/var/solr/data</code></li>
+<li><strong>自定义位置</strong>：使用<code>-d</code>选项时为指定位置的<code>data</code>子目录</li>
+<li><strong>重要文件</strong>：如果不在ZooKeeper中存储<code>solr.xml</code>，home目录必须包含<code>solr.xml</code>文件</li>
+</ul>
+<h3 id="环境覆盖包含文件"><a href="#环境覆盖包含文件" class="headerlink" title="环境覆盖包含文件"></a>环境覆盖包含文件</h3><p>服务安装脚本创建特定环境的包含文件，用于覆盖<code>bin/solr</code>脚本使用的默认值。</p>
+<p><strong>包含文件路径</strong>：</p>
+<ul>
+<li>默认路径：<code>/etc/default/solr.in.sh</code></li>
+<li>自定义服务：<code>/etc/default/&#123;服务名&#125;.in.sh</code></li>
+</ul>
+<p><strong>最小配置要求</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SOLR_PID_DIR=/var/solr</span><br><span class="line">SOLR_HOME=/var/solr/data</span><br></pre></td></tr></table></figure>
+
+<p><strong>关键变量说明</strong>：</p>
+<ul>
+<li><code>SOLR_PID_DIR</code>：控制脚本写入包含Solr服务器进程ID文件的目录</li>
+<li><code>SOLR_HOME</code>：Solr home目录位置</li>
+</ul>
+<h3 id="日志设置"><a href="#日志设置" class="headerlink" title="日志设置"></a>日志设置</h3><p>Solr使用Apache Log4J进行日志记录。安装脚本将<code>/opt/solr/server/resources/log4j2.xml</code>复制到<code>/var/solr/log4j2.xml</code>。</p>
+<p>验证日志配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查包含文件中的日志设置</span></span><br><span class="line">grep -E <span class="string">&quot;LOG4J_PROPS|SOLR_LOGS_DIR&quot;</span> /etc/default/solr.in.sh</span><br></pre></td></tr></table></figure>
+
+<p><strong>标准日志配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">LOG4J_PROPS=/var/solr/log4j2.xml</span><br><span class="line">SOLR_LOGS_DIR=/var/solr/logs</span><br></pre></td></tr></table></figure>
+
+<h3 id="init-d脚本"><a href="#init-d脚本" class="headerlink" title="init.d脚本"></a>init.d脚本</h3><p>安装脚本创建一个基本的init.d脚本来帮助您开始使用。</p>
+<p><strong>脚本位置</strong>：</p>
+<ul>
+<li>默认：<code>/etc/init.d/solr</code></li>
+<li>自定义服务：<code>/etc/init.d/&#123;服务名&#125;</code></li>
+</ul>
+<p><strong>关键变量设置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SOLR_INSTALL_DIR=/opt/solr</span><br><span class="line">SOLR_INCLUDE=/etc/default/solr.in.sh</span><br><span class="line">RUNAS=solr</span><br></pre></td></tr></table></figure>
+
+<p><strong>支持的命令</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">service solr start    <span class="comment"># 启动服务</span></span><br><span class="line">service solr stop     <span class="comment"># 停止服务</span></span><br><span class="line">service solr restart  <span class="comment"># 重启服务</span></span><br><span class="line">service solr status   <span class="comment"># 查看状态</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="进度检查"><a href="#进度检查" class="headerlink" title="进度检查"></a>进度检查</h3><p>在继续下一步之前，请验证以下命令能正常工作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> service solr restart</span><br><span class="line"><span class="built_in">sudo</span> service solr status</span><br></pre></td></tr></table></figure>
+
+<p><strong>正常状态输出示例</strong>：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">Solr process PID running on port 8983</span><br><span class="line">&#123;</span><br><span class="line">  &quot;version&quot;:&quot;9.7.0 - ubuntu - 2024-12-17 19:36:58&quot;,</span><br><span class="line">  &quot;startTime&quot;:&quot;2024-12-19T19:25:46.853Z&quot;,</span><br><span class="line">  &quot;uptime&quot;:&quot;0 days, 0 hours, 0 minutes, 8 seconds&quot;,</span><br><span class="line">  &quot;memory&quot;:&quot;85.4 MB (%17.4) of 490.7 MB&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>如果<code>status</code>命令不成功，请查看<code>/var/solr/logs/solr.log</code>中的错误信息。</p>
+<h2 id="生产环境细调配置"><a href="#生产环境细调配置" class="headerlink" title="生产环境细调配置"></a>生产环境细调配置</h2><h3 id="ConcurrentMergeScheduler动态默认值"><a href="#ConcurrentMergeScheduler动态默认值" class="headerlink" title="ConcurrentMergeScheduler动态默认值"></a>ConcurrentMergeScheduler动态默认值</h3><p>合并调度器在<code>solrconfig.xml</code>中配置，默认为<code>ConcurrentMergeScheduler</code>。此调度器使用多个线程在后台合并Lucene段。</p>
+<h4 id="默认设置"><a href="#默认设置" class="headerlink" title="默认设置"></a>默认设置</h4><ul>
+<li><strong>maxThreadCount</strong>：设置为4或JVM可用处理器数的一半（取较大值）</li>
+<li><strong>maxMergeCount</strong>：设置为<code>maxThreadCount+5</code></li>
+</ul>
+<h4 id="机械硬盘优化建议"><a href="#机械硬盘优化建议" class="headerlink" title="机械硬盘优化建议"></a>机械硬盘优化建议</h4><p>如果使用机械硬盘，最好在SolrConfig.xml的IndexConfig部分明确设置<code>maxThreadCount</code>和<code>maxMergeCount</code>值，以使用适合您硬件的值。</p>
+<h3 id="内存和GC设置"><a href="#内存和GC设置" class="headerlink" title="内存和GC设置"></a>内存和GC设置</h3><h4 id="堆内存配置"><a href="#堆内存配置" class="headerlink" title="堆内存配置"></a>堆内存配置</h4><p>默认情况下，<code>bin/solr</code>脚本将最大Java堆大小设置为512M（-Xmx512m），这对于Solr入门来说是合适的。对于生产环境，您需要根据搜索应用程序的内存要求增加最大堆大小；生产服务器通常使用8到16GB的值。</p>
+<p><strong>设置堆内存</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在包含文件中设置</span></span><br><span class="line">SOLR_HEAP=<span class="string">&quot;8g&quot;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>重要提示</strong>：除非您知道需要，否则不要分配非常大的Java堆。有关详细信息，请参阅选择内存堆设置。</p>
+</blockquote>
+<h4 id="垃圾收集优化"><a href="#垃圾收集优化" class="headerlink" title="垃圾收集优化"></a>垃圾收集优化</h4><p>Solr控制脚本附带一组预配置的Garbage First垃圾收集设置，这些设置已被证明适用于许多不同的工作负载。但是，这些设置可能不适用于您对Solr的特定使用。</p>
+<p><strong>自定义GC设置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在包含文件中设置GC调优参数</span></span><br><span class="line">GC_TUNE=<span class="string">&quot;-XX:+UseG1GC -XX:MaxGCPauseMillis=200 -XX:G1HeapRegionSize=16m&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>推荐参考资料</strong>：</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/solr/ShawnHeisey">Shawn Heisey的GC指南</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.oracle.com/technetwork/articles/java/g1gc-1984535.html">Oracle G1GC文档</a></li>
+</ol>
+<h4 id="内存不足处理"><a href="#内存不足处理" class="headerlink" title="内存不足处理"></a>内存不足处理</h4><p><code>bin/solr</code>脚本使用<code>-XX:+CrashOnOutOfMemoryError</code> JVM选项在<code>OutOfMemoryError</code>异常时使Solr崩溃。这种行为是推荐的。在SolrCloud模式下，ZooKeeper将立即收到节点遇到不可恢复错误的通知。</p>
+<h3 id="SolrCloud生产配置"><a href="#SolrCloud生产配置" class="headerlink" title="SolrCloud生产配置"></a>SolrCloud生产配置</h3><h4 id="ZooKeeper集群配置"><a href="#ZooKeeper集群配置" class="headerlink" title="ZooKeeper集群配置"></a>ZooKeeper集群配置</h4><p>要在SolrCloud模式下运行Solr，需要在包含文件中设置<code>ZK_HOST</code>变量指向您的ZooKeeper集群。生产环境不支持运行嵌入式ZooKeeper。</p>
+<p><strong>基本ZooKeeper配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 三个ZooKeeper主机示例</span></span><br><span class="line">ZK_HOST=zk1,zk2,zk3</span><br></pre></td></tr></table></figure>
+
+<p>设置<code>ZK_HOST</code>变量后，Solr将以”cloud”模式启动。</p>
+<h4 id="ZooKeeper-chroot"><a href="#ZooKeeper-chroot" class="headerlink" title="ZooKeeper chroot"></a>ZooKeeper chroot</h4><p>如果您使用的ZooKeeper实例被其他系统共享，建议使用ZooKeeper的chroot支持隔离SolrCloud znode树。</p>
+<p><strong>chroot配置示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ZK_HOST=zk1,zk2,zk3/solr</span><br></pre></td></tr></table></figure>
+
+<p><strong>首次使用chroot前的准备</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建根路径</span></span><br><span class="line">bin/solr zk mkroot /solr -z &lt;ZK_node&gt;:&lt;ZK_PORT&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="未知核心删除"><a href="#未知核心删除" class="headerlink" title="未知核心删除"></a>未知核心删除</h4><p>当Solr从文件系统加载核心时，它会检查ZooKeeper中的相应集群状态。如果没有相应条目存在，核心将被跳过并记录警告。</p>
+<p><strong>自动删除孤立文件</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOLR_DELETE_UNKNOWN_CORES=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Solr主机名配置"><a href="#Solr主机名配置" class="headerlink" title="Solr主机名配置"></a>Solr主机名配置</h3><p>使用包含文件中的<code>SOLR_HOST</code>变量设置Solr服务器的主机名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOLR_HOST=solr1.example.com</span><br></pre></td></tr></table></figure>
+
+<p>设置Solr服务器的主机名是推荐的，特别是在SolrCloud模式下运行时，因为这决定了节点在ZooKeeper注册时的地址。</p>
+<h3 id="管理界面环境横幅"><a href="#管理界面环境横幅" class="headerlink" title="管理界面环境横幅"></a>管理界面环境横幅</h3><p>为了防止意外对错误的集群进行更改，您可以在管理界面中配置视觉指示，显示您当前是否使用生产环境。</p>
+<p><strong>配置环境标识</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在solr.in.sh中设置</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.environment=prod&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>允许的值</strong>：<code>dev</code>、<code>test</code>、<code>stage</code>或<code>prod</code></p>
+<p><strong>自定义标签和颜色示例</strong>：</p>
+<ul>
+<li><code>prod</code>（默认标签是’Production’，默认颜色是红色调）</li>
+<li><code>test,label=Functional+test</code>（覆盖标签，保持默认黄色）</li>
+<li><code>dev,label=MyDev,color=blue</code>（覆盖标签和颜色）</li>
+<li><code>stage,color=#ff8888</code>（自定义颜色代码）</li>
+</ul>
+<h3 id="solrconfig-xml设置覆盖"><a href="#solrconfig-xml设置覆盖" class="headerlink" title="solrconfig.xml设置覆盖"></a>solrconfig.xml设置覆盖</h3><p>Solr允许使用启动时传递的Java系统属性覆盖配置属性，使用<code>-Dproperty=value</code>语法。</p>
+<p><strong>配置文件中的可覆盖属性示例</strong>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">autoSoftCommit</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">maxTime</span>&gt;</span>$&#123;solr.autoSoftCommit.maxTime:3000&#125;<span class="tag">&lt;/<span class="name">maxTime</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">autoSoftCommit</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>覆盖示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接启动时覆盖</span></span><br><span class="line">bin/solr start -Dsolr.autoSoftCommit.maxTime=10000</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境推荐：在包含文件中设置</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.autoSoftCommit.maxTime=10000&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Ulimit设置（-nix操作系统）"><a href="#Ulimit设置（-nix操作系统）" class="headerlink" title="Ulimit设置（*nix操作系统）"></a>Ulimit设置（*nix操作系统）</h3><h4 id="重要设置检查"><a href="#重要设置检查" class="headerlink" title="重要设置检查"></a>重要设置检查</h4><p>查看当前ulimit设置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ulimit</span> -a</span><br></pre></td></tr></table></figure>
+
+<h4 id="关键设置建议"><a href="#关键设置建议" class="headerlink" title="关键设置建议"></a>关键设置建议</h4><p>以下四个设置特别重要，应设置得很高，如果可能的话设置为无限：</p>
+<table>
+<thead>
+<tr>
+<th>设置</th>
+<th>命令</th>
+<th>推荐最小值</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>最大进程数</strong></td>
+<td><code>ulimit -u</code></td>
+<td>65,000</td>
+<td>进程限制</td>
+</tr>
+<tr>
+<td><strong>文件句柄数</strong></td>
+<td><code>ulimit -n</code></td>
+<td>65,000</td>
+<td>所有副本的文件句柄</td>
+</tr>
+<tr>
+<td><strong>虚拟内存</strong></td>
+<td><code>ulimit -v</code></td>
+<td>unlimited</td>
+<td>用于MMapping索引</td>
+</tr>
+<tr>
+<td><strong>最大内存大小</strong></td>
+<td><code>ulimit -m</code></td>
+<td>unlimited</td>
+<td>MMap使用</td>
+</tr>
+</tbody></table>
+<p><strong>系统级设置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 如果系统支持，也应设置为无限</span></span><br><span class="line">sysctl vm.max_map_count=262144</span><br></pre></td></tr></table></figure>
+
+<h4 id="永久设置"><a href="#永久设置" class="headerlink" title="永久设置"></a>永久设置</h4><p>我们强烈建议永久提高这些设置。具体过程因操作系统而异。一些系统需要编辑配置文件并重启服务器。</p>
+<blockquote>
+<p><strong>警告</strong>：每次升级内核或操作系统时检查这些限制。这些操作可能将它们重置为默认值。</p>
+</blockquote>
+<blockquote>
+<p><strong>警告</strong>：如果超过这些限制，Solr报告的问题会因负责超过限制的特定操作而异。已报告的错误包括”too many open files”、”connection error”和”max processes exceeded”，以及SolrCloud恢复失败。</p>
+</blockquote>
+<h3 id="避免交换（-nix操作系统）"><a href="#避免交换（-nix操作系统）" class="headerlink" title="避免交换（*nix操作系统）"></a>避免交换（*nix操作系统）</h3><p>运行像Solr这样的Java应用程序时，让操作系统将内存交换到磁盘是非常糟糕的情况。我们通常更喜欢硬崩溃，以便其他健康的Solr节点可以接管，而不是让Solr节点交换，导致糟糕的性能、超时和不稳定的系统。</p>
+<h4 id="禁用交换"><a href="#禁用交换" class="headerlink" title="禁用交换"></a>禁用交换</h4><p><strong>临时禁用</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> swapoff -a</span><br></pre></td></tr></table></figure>
+
+<p><strong>永久禁用</strong>：确保您有足够的物理RAM，然后查阅Linux系统文档了解禁用交换的正确程序。</p>
+<h4 id="降低交换积极性"><a href="#降低交换积极性" class="headerlink" title="降低交换积极性"></a>降低交换积极性</h4><p><strong>检查当前设置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/sys/vm/swappiness</span><br></pre></td></tr></table></figure>
+
+<p><strong>永久更改</strong>：编辑<code>/etc/sysctl.conf</code>文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vm.swappiness = 1</span><br></pre></td></tr></table></figure>
+
+<p><strong>临时更改</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> 1 &gt; /proc/sys/vm/swappiness</span><br></pre></td></tr></table></figure>
+
+<h2 id="安全考虑"><a href="#安全考虑" class="headerlink" title="安全考虑"></a>安全考虑</h2><h3 id="网络绑定安全"><a href="#网络绑定安全" class="headerlink" title="网络绑定安全"></a>网络绑定安全</h3><p>管理员应该仔细考虑其安全设置，这是迁移到生产环境的重要步骤。虽然Solr提供了开箱即用的安全功能，但正确的网络配置至关重要：</p>
+<ul>
+<li><strong>防火墙保护</strong>：强烈建议始终使用防火墙保护Solr</li>
+<li><strong>最小暴露</strong>：不应不必要地将Solr暴露给外部世界</li>
+<li><strong>接口限制</strong>：建议Solr仅监听严格必需的网络接口</li>
+</ul>
+<p><strong>默认安全配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认只监听回环接口</span></span><br><span class="line">SOLR_JETTY_HOST=<span class="string">&quot;127.0.0.1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境通常需要设置为</span></span><br><span class="line">SOLR_JETTY_HOST=<span class="string">&quot;0.0.0.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>嵌入式ZooKeeper配置</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">SOLR_ZK_EMBEDDED_HOST=<span class="string">&quot;0.0.0.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="运行多个Solr节点"><a href="#运行多个Solr节点" class="headerlink" title="运行多个Solr节点"></a>运行多个Solr节点</h2><h3 id="何时考虑多节点"><a href="#何时考虑多节点" class="headerlink" title="何时考虑多节点"></a>何时考虑多节点</h3><p><code>bin/solr</code>脚本能够在一台机器上运行多个实例，但对于典型安装，这不是推荐的设置。每个额外实例都需要额外的CPU和内存资源。单个实例很容易处理多个索引。</p>
+<h4 id="例外情况"><a href="#例外情况" class="headerlink" title="例外情况"></a>例外情况</h4><p>对于每个建议，都有例外。上述建议的例外主要适用于讨论极端可扩展性的情况：</p>
+<p><strong>运行多个Solr节点的最佳理由</strong>：</p>
+<ul>
+<li><strong>减少极大堆的需求</strong>：当Java堆变得非常大时，可能导致极长的垃圾收集暂停</li>
+<li><strong>避免32GB限制</strong>：Java在32GB以下可以使用压缩指针，超过时需要更大的指针</li>
+</ul>
+<p><strong>临界点指导</strong>：</p>
+<ul>
+<li>堆大小达到16-32GB时，可能是考虑拆分节点的时候</li>
+<li>如果需要超过31GB的堆，考虑多节点通常比单节点&gt;32GB堆性能更好</li>
+</ul>
+<h3 id="多节点配置要求"><a href="#多节点配置要求" class="headerlink" title="多节点配置要求"></a>多节点配置要求</h3><p>如果您的用例需要多个实例，至少需要：</p>
+<ol>
+<li><strong>独立的Solr home目录</strong>：每个要运行的节点</li>
+<li><strong>不同物理磁盘</strong>：理想情况下，避免多个节点在访问磁盘文件时相互竞争</li>
+<li><strong>不同包含文件</strong>：每个节点需要不同的包含文件</li>
+<li><strong>独立的init.d脚本</strong>：如果使用<code>/etc/init.d/solr</code>脚本</li>
+</ol>
+<h3 id="多节点安装示例"><a href="#多节点安装示例" class="headerlink" title="多节点安装示例"></a>多节点安装示例</h3><p><strong>安装第二个服务</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> bash ./install_solr_service.sh solr-9.7.0.tgz -s solr2 -p 8984</span><br></pre></td></tr></table></figure>
+
+<p>上述命令将：</p>
+<ul>
+<li>添加名为<code>solr2</code>的服务，运行在端口8984</li>
+<li>使用<code>/var/solr2</code>存储可写文件</li>
+<li>仍由<code>solr</code>用户拥有和运行</li>
+<li>使用<code>/opt</code>中的Solr发行版文件</li>
+</ul>
+<p><strong>验证第二个服务</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> service solr2 restart</span><br><span class="line"><span class="built_in">sudo</span> service solr2 status</span><br></pre></td></tr></table></figure>
+
+<h2 id="生产环境最佳实践总结"><a href="#生产环境最佳实践总结" class="headerlink" title="生产环境最佳实践总结"></a>生产环境最佳实践总结</h2><h3 id="1-硬件配置建议"><a href="#1-硬件配置建议" class="headerlink" title="1. 硬件配置建议"></a>1. 硬件配置建议</h3><h4 id="CPU配置"><a href="#CPU配置" class="headerlink" title="CPU配置"></a>CPU配置</h4><ul>
+<li><strong>最小配置</strong>：4核心处理器</li>
+<li><strong>推荐配置</strong>：8核心以上</li>
+<li><strong>高负载环境</strong>：16核心以上</li>
+</ul>
+<h4 id="内存配置"><a href="#内存配置" class="headerlink" title="内存配置"></a>内存配置</h4><ul>
+<li><strong>最小配置</strong>：8GB RAM</li>
+<li><strong>推荐配置</strong>：16GB-32GB RAM</li>
+<li><strong>堆内存设置</strong>：通常为系统内存的50%-75%</li>
+</ul>
+<h4 id="存储配置"><a href="#存储配置" class="headerlink" title="存储配置"></a>存储配置</h4><ul>
+<li><strong>推荐</strong>：SSD存储用于索引文件</li>
+<li><strong>备选</strong>：高性能机械磁盘（15K RPM）</li>
+<li><strong>RAID配置</strong>：RAID 10用于性能和冗余</li>
+</ul>
+<h3 id="2-操作系统优化"><a href="#2-操作系统优化" class="headerlink" title="2. 操作系统优化"></a>2. 操作系统优化</h3><h4 id="文件系统建议"><a href="#文件系统建议" class="headerlink" title="文件系统建议"></a>文件系统建议</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 推荐的挂载选项（ext4）</span></span><br><span class="line">/dev/sdb1 /var/solr ext4 defaults,noatime,nodiratime 0 2</span><br></pre></td></tr></table></figure>
+
+<h4 id="网络优化"><a href="#网络优化" class="headerlink" title="网络优化"></a>网络优化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加网络缓冲区大小</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;net.core.rmem_max = 16777216&#x27;</span> &gt;&gt; /etc/sysctl.conf</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&#x27;net.core.wmem_max = 16777216&#x27;</span> &gt;&gt; /etc/sysctl.conf</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-监控配置"><a href="#3-监控配置" class="headerlink" title="3. 监控配置"></a>3. 监控配置</h3><h4 id="JMX监控"><a href="#JMX监控" class="headerlink" title="JMX监控"></a>JMX监控</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用JMX</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dcom.sun.management.jmxremote&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dcom.sun.management.jmxremote.port=18983&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dcom.sun.management.jmxremote.authenticate=false&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dcom.sun.management.jmxremote.ssl=false&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="健康检查脚本"><a href="#健康检查脚本" class="headerlink" title="健康检查脚本"></a>健康检查脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># solr-health-check.sh</span></span><br><span class="line">SOLR_URL=<span class="string">&quot;http://localhost:8983/solr/admin/info/system&quot;</span></span><br><span class="line">response=$(curl -s -o /dev/null -w <span class="string">&quot;%&#123;http_code&#125;&quot;</span> <span class="variable">$SOLR_URL</span>)</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$response</span> = <span class="string">&quot;200&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Solr is healthy&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 0</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Solr health check failed with response code: <span class="variable">$response</span>&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-备份和恢复策略"><a href="#4-备份和恢复策略" class="headerlink" title="4. 备份和恢复策略"></a>4. 备份和恢复策略</h3><h4 id="自动备份脚本"><a href="#自动备份脚本" class="headerlink" title="自动备份脚本"></a>自动备份脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># solr-backup.sh</span></span><br><span class="line">BACKUP_DIR=<span class="string">&quot;/backup/solr&quot;</span></span><br><span class="line">DATE=$(<span class="built_in">date</span> +%Y%m%d_%H%M%S)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> collection <span class="keyword">in</span> $(curl -s <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=LIST&amp;wt=json&quot;</span> | jq -r <span class="string">&#x27;.collections[]&#x27;</span>); <span class="keyword">do</span></span><br><span class="line">    curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=BACKUP&amp;name=<span class="variable">$&#123;collection&#125;</span>_<span class="variable">$&#123;DATE&#125;</span>&amp;location=<span class="variable">$&#123;BACKUP_DIR&#125;</span>&amp;collection=<span class="variable">$&#123;collection&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-升级策略"><a href="#5-升级策略" class="headerlink" title="5. 升级策略"></a>5. 升级策略</h3><h4 id="零停机升级步骤"><a href="#零停机升级步骤" class="headerlink" title="零停机升级步骤"></a>零停机升级步骤</h4><ol>
+<li><strong>备份当前配置和数据</strong></li>
+<li><strong>在测试环境验证新版本</strong></li>
+<li><strong>逐个节点滚动升级</strong></li>
+<li><strong>验证集群健康状态</strong></li>
+<li><strong>回滚方案准备</strong></li>
+</ol>
+<p>通过遵循本指南，您应该能够成功地在生产环境中部署和管理Apache Solr，确保高性能、高可用性和安全性。记住，生产部署是一个持续的过程，需要定期监控、调优和维护。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83/">生产环境</a>
+  
+    <a class="article-tag" href="/tags/Linux%E6%9C%8D%E5%8A%A1/">Linux服务</a>
+  
+    <a class="article-tag" href="/tags/JVM%E8%B0%83%E4%BC%98/">JVM调优</a>
+  
+    <a class="article-tag" href="/tags/%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE/">系统配置</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/11/Solr%E9%83%A8%E7%BD%B2%EF%BC%9APrometheus%E5%92%8CGrafana%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：Prometheus和Grafana监控系统完整搭建指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/04/09/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%9F%BA%E7%A1%80%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：基础认证插件配置与使用指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：生产环境部署完整指南与最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">服务安装脚本概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E5%AE%89%E8%A3%85%E8%A7%84%E5%88%92"><span class="nav-number">1.1.1.</span> <span class="nav-text">预安装规划</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84%E8%A7%84%E5%88%92"><span class="nav-number">1.2.</span> <span class="nav-text">目录结构规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E5%AE%89%E8%A3%85%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.1.</span> <span class="nav-text">Solr安装目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AF%E5%86%99%E6%96%87%E4%BB%B6%E5%88%86%E7%A6%BB%E7%9B%AE%E5%BD%95"><span class="nav-number">1.2.2.</span> <span class="nav-text">可写文件分离目录</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BASolr%E7%94%A8%E6%88%B7"><span class="nav-number">1.3.</span> <span class="nav-text">创建Solr用户</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">用户配置选项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8CSolr%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC"><span class="nav-number">1.4.</span> <span class="nav-text">运行Solr安装脚本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E5%92%8C%E6%8F%90%E5%8F%96%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC"><span class="nav-number">1.4.1.</span> <span class="nav-text">下载和提取安装脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E4%BE%9D%E8%B5%96%EF%BC%88Red-Hat%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">安装依赖（Red Hat系统）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC"><span class="nav-number">1.4.3.</span> <span class="nav-text">执行安装脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E9%80%89%E9%A1%B9%E8%AF%B4%E6%98%8E"><span class="nav-number">1.4.4.</span> <span class="nav-text">安装选项说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E5%AE%89%E8%A3%85"><span class="nav-number">1.4.5.</span> <span class="nav-text">验证安装</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.5.</span> <span class="nav-text">安装脚本执行步骤详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr-Home%E7%9B%AE%E5%BD%95"><span class="nav-number">1.5.1.</span> <span class="nav-text">Solr Home目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E8%A6%86%E7%9B%96%E5%8C%85%E5%90%AB%E6%96%87%E4%BB%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">环境覆盖包含文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.5.3.</span> <span class="nav-text">日志设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init-d%E8%84%9A%E6%9C%AC"><span class="nav-number">1.5.4.</span> <span class="nav-text">init.d脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9B%E5%BA%A6%E6%A3%80%E6%9F%A5"><span class="nav-number">1.5.5.</span> <span class="nav-text">进度检查</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E7%BB%86%E8%B0%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.</span> <span class="nav-text">生产环境细调配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ConcurrentMergeScheduler%E5%8A%A8%E6%80%81%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">1.6.1.</span> <span class="nav-text">ConcurrentMergeScheduler动态默认值</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">默认设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%BA%E6%A2%B0%E7%A1%AC%E7%9B%98%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">机械硬盘优化建议</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%92%8CGC%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">内存和GC设置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A0%86%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">堆内存配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E4%BC%98%E5%8C%96"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">垃圾收集优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%B8%8D%E8%B6%B3%E5%A4%84%E7%90%86"><span class="nav-number">1.6.2.3.</span> <span class="nav-text">内存不足处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud%E7%94%9F%E4%BA%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.</span> <span class="nav-text">SolrCloud生产配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">ZooKeeper集群配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper-chroot"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">ZooKeeper chroot</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%AA%E7%9F%A5%E6%A0%B8%E5%BF%83%E5%88%A0%E9%99%A4"><span class="nav-number">1.6.3.3.</span> <span class="nav-text">未知核心删除</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E4%B8%BB%E6%9C%BA%E5%90%8D%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.4.</span> <span class="nav-text">Solr主机名配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%E7%8E%AF%E5%A2%83%E6%A8%AA%E5%B9%85"><span class="nav-number">1.6.5.</span> <span class="nav-text">管理界面环境横幅</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#solrconfig-xml%E8%AE%BE%E7%BD%AE%E8%A6%86%E7%9B%96"><span class="nav-number">1.6.6.</span> <span class="nav-text">solrconfig.xml设置覆盖</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ulimit%E8%AE%BE%E7%BD%AE%EF%BC%88-nix%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="nav-number">1.6.7.</span> <span class="nav-text">Ulimit设置（*nix操作系统）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E8%AE%BE%E7%BD%AE%E6%A3%80%E6%9F%A5"><span class="nav-number">1.6.7.1.</span> <span class="nav-text">重要设置检查</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%AE%BE%E7%BD%AE%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.7.2.</span> <span class="nav-text">关键设置建议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B0%B8%E4%B9%85%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.7.3.</span> <span class="nav-text">永久设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%81%BF%E5%85%8D%E4%BA%A4%E6%8D%A2%EF%BC%88-nix%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%EF%BC%89"><span class="nav-number">1.6.8.</span> <span class="nav-text">避免交换（*nix操作系统）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E4%BA%A4%E6%8D%A2"><span class="nav-number">1.6.8.1.</span> <span class="nav-text">禁用交换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%8D%E4%BD%8E%E4%BA%A4%E6%8D%A2%E7%A7%AF%E6%9E%81%E6%80%A7"><span class="nav-number">1.6.8.2.</span> <span class="nav-text">降低交换积极性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.7.</span> <span class="nav-text">安全考虑</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%91%E5%AE%9A%E5%AE%89%E5%85%A8"><span class="nav-number">1.7.1.</span> <span class="nav-text">网络绑定安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E5%A4%9A%E4%B8%AASolr%E8%8A%82%E7%82%B9"><span class="nav-number">1.8.</span> <span class="nav-text">运行多个Solr节点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E8%80%83%E8%99%91%E5%A4%9A%E8%8A%82%E7%82%B9"><span class="nav-number">1.8.1.</span> <span class="nav-text">何时考虑多节点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BE%8B%E5%A4%96%E6%83%85%E5%86%B5"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">例外情况</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E9%85%8D%E7%BD%AE%E8%A6%81%E6%B1%82"><span class="nav-number">1.8.2.</span> <span class="nav-text">多节点配置要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.8.3.</span> <span class="nav-text">多节点安装示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">生产环境最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%A1%AC%E4%BB%B6%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.1.</span> <span class="nav-text">1. 硬件配置建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#CPU%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">CPU配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.1.2.</span> <span class="nav-text">内存配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AD%98%E5%82%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.1.3.</span> <span class="nav-text">存储配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.2.</span> <span class="nav-text">2. 操作系统优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.2.1.</span> <span class="nav-text">文件系统建议</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.2.2.</span> <span class="nav-text">网络优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9B%91%E6%8E%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.3.</span> <span class="nav-text">3. 监控配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JMX%E7%9B%91%E6%8E%A7"><span class="nav-number">1.9.3.1.</span> <span class="nav-text">JMX监控</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC"><span class="nav-number">1.9.3.2.</span> <span class="nav-text">健康检查脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D%E7%AD%96%E7%95%A5"><span class="nav-number">1.9.4.</span> <span class="nav-text">4. 备份和恢复策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC"><span class="nav-number">1.9.4.1.</span> <span class="nav-text">自动备份脚本</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%8D%87%E7%BA%A7%E7%AD%96%E7%95%A5"><span class="nav-number">1.9.5.</span> <span class="nav-text">5. 升级策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%9B%B6%E5%81%9C%E6%9C%BA%E5%8D%87%E7%BA%A7%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.9.5.1.</span> <span class="nav-text">零停机升级步骤</span></a></li></ol></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

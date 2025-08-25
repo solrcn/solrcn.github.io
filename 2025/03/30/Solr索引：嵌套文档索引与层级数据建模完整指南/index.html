@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr索引：嵌套文档索引与层级数据建模完整指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="嵌套文档Solr索引层级数据父子关系数据建模" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析Solr嵌套文档索引机制，包括父子文档关系建模、模式配置要求、更新维护策略，以及高效的层级数据查询与检索方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：嵌套文档索引与层级数据建模完整指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/30/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95%E4%B8%8E%E5%B1%82%E7%BA%A7%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析Solr嵌套文档索引机制，包括父子文档关系建模、模式配置要求、更新维护策略，以及高效的层级数据查询与检索方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:59:31.120Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="嵌套文档">
+<meta property="article:tag" content="Solr索引">
+<meta property="article:tag" content="层级数据">
+<meta property="article:tag" content="父子关系">
+<meta property="article:tag" content="数据建模">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr索引：嵌套文档索引与层级数据建模完整指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr索引：嵌套文档索引与层级数据建模完整指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/30/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95%E4%B8%8E%E5%B1%82%E7%BA%A7%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-03-29T16:00:00.000Z" itemprop="datePublished">三月 30, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr索引：嵌套文档索引与层级数据建模完整指南"><a href="#Solr索引：嵌套文档索引与层级数据建模完整指南" class="headerlink" title="Solr索引：嵌套文档索引与层级数据建模完整指南"></a>Solr索引：嵌套文档索引与层级数据建模完整指南</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Solr支持索引嵌套文档，并提供高效的搜索和检索方法。嵌套文档可以用来绑定博客文章（父文档）与评论（子文档），或者将主要产品线建模为父文档，多种类型的子文档代表个别SKU（具有独特的尺寸&#x2F;颜色）和支持文档。</p>
+<p>顶级父文档及其所有子文档被称为”根”文档（或以前的”块文档”），这解释了相关功能的一些术语。</p>
+<p>在查询时，块连接查询解析器可以搜索这些关系，[child]文档转换器可以将子文档（或其他”后代”文档）附加到结果文档。在性能方面，索引文档间的关系通常比等效的”查询时连接”产生更快的查询，因为关系已存储在索引中，无需计算。</p>
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="文档层次结构"><a href="#文档层次结构" class="headerlink" title="文档层次结构"></a>文档层次结构</h3><ul>
+<li><strong>根文档（Root Document）</strong>：顶层父文档</li>
+<li><strong>父文档（Parent Document）</strong>：包含子文档的文档</li>
+<li><strong>子文档（Child Document）</strong>：嵌套在父文档中的文档</li>
+<li><strong>后代文档（Descendant Document）</strong>：子文档的子文档</li>
+</ul>
+<h3 id="重要考虑事项"><a href="#重要考虑事项" class="headerlink" title="重要考虑事项"></a>重要考虑事项</h3><p><strong>重索引注意事项</strong>：<br>除了就地更新外，如果嵌套文档树有更新，Solr必须内部重新索引整个嵌套文档树。对于某些应用程序，这可能导致大量额外的索引开销，与查询时的性能提升相比，可能不值得采用其他建模方法。</p>
+<h2 id="索引语法示例：伪字段"><a href="#索引语法示例：伪字段" class="headerlink" title="索引语法示例：伪字段"></a>索引语法示例：伪字段</h2><h3 id="深度嵌套文档示例"><a href="#深度嵌套文档示例" class="headerlink" title="深度嵌套文档示例"></a>深度嵌套文档示例</h3><p>以下示例展示了如何索引两个根”产品”文档，每个包含两种不同类型的子文档（在”伪字段”中指定）：”skus”和”manuals”。</p>
+<p><strong>JSON格式</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span><span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!prod&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Swingline Stapler&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;description_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;The Cadillac of office staplers ...&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;skus&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!S21&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RED&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">42</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;manuals&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!D41&quot;</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Red Swingline Brochure&quot;</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;...&quot;</span></span><br><span class="line">                            <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br><span class="line">             <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">             <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!S31&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BLACK&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">3</span></span><br><span class="line">             <span class="punctuation">&#125;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;manuals&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!D51&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Quick Reference Guide&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;How to use your stapler ...&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!D61&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Warranty Details&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">42</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;... lifetime guarantee ...&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br><span class="line"> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P22!prod&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Mont Blanc Fountain Pen&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;description_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;A Premium Writing Instrument ...&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;skus&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P22!S22&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RED&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">89</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;manuals&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P22!D42&quot;</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Red Mont Blanc Brochure&quot;</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">                              <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;...&quot;</span></span><br><span class="line">                            <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br><span class="line">             <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">             <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P22!S32&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BLACK&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">67</span></span><br><span class="line">             <span class="punctuation">&#125;</span> <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;manuals&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P22!D52&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;How To Use A Pen&quot;</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">42</span><span class="punctuation">,</span></span><br><span class="line">                  <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Start by removing the cap ...&quot;</span></span><br><span class="line">                <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br><span class="line"> <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>XML格式</strong>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!prod<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Swingline Stapler<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;description_t&quot;</span>&gt;</span>The Cadillac of office staplers ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;skus&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!S21<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;color_s&quot;</span>&gt;</span>RED<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price_i&quot;</span>&gt;</span>42<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manuals&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!D41<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Red Swingline Brochure<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!S31<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;color_s&quot;</span>&gt;</span>BLACK<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price_i&quot;</span>&gt;</span>3<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manuals&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!D51<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Quick Reference Guide<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>How to use your stapler ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!D61<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Warranty Details<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>42<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>... lifetime guarantee ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P22!prod<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Mont Blanc Fountain Pen<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;description_t&quot;</span>&gt;</span>A Premium Writing Instrument ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;skus&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P22!S22<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;color_s&quot;</span>&gt;</span>RED<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price_i&quot;</span>&gt;</span>89<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manuals&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P22!D42<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Red Mont Blanc Brochure<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P22!S32<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;color_s&quot;</span>&gt;</span>BLACK<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price_i&quot;</span>&gt;</span>67<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manuals&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P22!D52<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>How To Use A Pen<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>42<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>Start by removing the cap ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重要提示</strong>：使用<code>/update/json/docs</code>便利路径时要小心，因为它默认会自动扁平化复杂的JSON文档。要索引嵌套JSON文档，请确保使用<code>/update</code>。</p>
+<h2 id="模式配置"><a href="#模式配置" class="headerlink" title="模式配置"></a>模式配置</h2><h3 id="必需字段配置"><a href="#必需字段配置" class="headerlink" title="必需字段配置"></a>必需字段配置</h3><h4 id="root-字段（必需）"><a href="#root-字段（必需）" class="headerlink" title="_root_字段（必需）"></a>_root_字段（必需）</h4><p>索引嵌套文档需要名为<code>_root_</code>的索引字段：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;_root_&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重要提醒</strong>：不要将此字段添加到已有数据的索引中！您必须重新索引。</p>
+<ul>
+<li>Solr会自动在所有文档中填充此字段，值为其根文档的<code>id</code>值</li>
+<li>此字段必须被索引（<code>indexed=&quot;true&quot;</code>），但不需要存储或使用文档值</li>
+<li>如果要使用<code>uniqueBlock(_root_)</code>字段类型限制，则应启用docValues</li>
+</ul>
+<h4 id="nest-path-字段（推荐）"><a href="#nest-path-字段（推荐）" class="headerlink" title="_nest_path_字段（推荐）"></a>_nest_path_字段（推荐）</h4><p>最好定义<code>_nest_path_</code>，它增加了功能和易用性：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;_nest_path_&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.NestPathField&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;_nest_path_&quot;</span> <span class="attr">type</span>=<span class="string">&quot;_nest_path_&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Solr会自动为任何子文档（但不是根文档）填充此字段</li>
+<li>此字段使Solr能够正确记录和重构文档的命名和嵌套关系</li>
+<li>如果此字段不存在，<code>[child]</code>转换器将返回所有后代子文档作为扁平列表</li>
+</ul>
+<h4 id="nest-parent-字段（可选）"><a href="#nest-parent-字段（可选）" class="headerlink" title="_nest_parent_字段（可选）"></a>_nest_parent_字段（可选）</h4><p>您可能想要定义<code>_nest_parent_</code>来存储父ID：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;_nest_parent_&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>Solr会自动在子文档中填充此字段，但不会在根文档中填充</li>
+</ul>
+<h3 id="字段配置考虑事项"><a href="#字段配置考虑事项" class="headerlink" title="字段配置考虑事项"></a>字段配置考虑事项</h3><p><strong>重要原则</strong>：</p>
+<ol>
+<li><strong>统一字段配置</strong>：所有字段名在模式中只能配置一种方式——不同类型的子文档不能将同一字段名配置为不同方式</li>
+<li><strong>避免必需字段</strong>：对于不是所有文档类型都需要的字段名，使用<code>required</code>可能不可行</li>
+<li><strong>全局唯一ID</strong>：即使是子文档也需要全局唯一的<code>id</code></li>
+</ol>
+<h3 id="SolrCloud注意事项"><a href="#SolrCloud注意事项" class="headerlink" title="SolrCloud注意事项"></a>SolrCloud注意事项</h3><p><strong>强烈建议</strong>：在SolrCloud中使用基于前缀的compositeId，为嵌套文档树中的所有文档使用共同前缀。这使得更容易对单个子文档应用原子更新。</p>
+<h2 id="更新、删除和分片拆分的完整性维护"><a href="#更新、删除和分片拆分的完整性维护" class="headerlink" title="更新、删除和分片拆分的完整性维护"></a>更新、删除和分片拆分的完整性维护</h2><h3 id="原子更新支持"><a href="#原子更新支持" class="headerlink" title="原子更新支持"></a>原子更新支持</h3><p>嵌套文档树可以通过原子更新来修改，以操作嵌套树中的任何文档，甚至添加新的子文档。这与更新任何普通文档没有不同——Solr内部删除旧的嵌套文档树并添加新修改的文档树。</p>
+<h3 id="SolrCloud中的路由更新"><a href="#SolrCloud中的路由更新" class="headerlink" title="SolrCloud中的路由更新"></a>SolrCloud中的路由更新</h3><p><strong>重要考虑</strong>：当SolrCloud接收文档更新时，集合的文档路由规则用于确定哪个分片应该基于文档的<code>id</code>处理更新。</p>
+<p>当发送指定子文档<code>id</code>的更新时，这默认不会工作：发送文档到正确分片的依据是子文档所在块的”根”文档的<code>id</code>，而不是被更新子文档的<code>id</code>。</p>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li><strong>使用_route_参数</strong>：客户端可以在每次更新时指定<code>_route_</code>参数，值为根文档的<code>id</code></li>
+<li><strong>使用前缀路由</strong>：使用默认<code>compositeId</code>路由器的”前缀路由”功能，确保块中的所有子&#x2F;后代文档使用与根级文档相同的<code>id</code>前缀</li>
+</ol>
+<h3 id="删除操作"><a href="#删除操作" class="headerlink" title="删除操作"></a>删除操作</h3><ul>
+<li><strong>删除整个嵌套文档树</strong>：使用根文档的<code>id</code>进行delete-by-ID</li>
+<li><strong>删除子文档</strong>：delete-by-ID不适用于子文档，应使用delete-by-query或原子更新</li>
+</ul>
+<p><strong>重要警告</strong>：使用delete-by-query API时，必须小心确保删除查询的结构确保不会留下被删除文档的任何后代子文档。</p>
+<h3 id="分片拆分"><a href="#分片拆分" class="headerlink" title="分片拆分"></a>分片拆分</h3><p>分片拆分时，子文档独立传输和路由。如果使用默认的<code>router.field</code>，这会为您正确处理。如果您的集合有自定义<code>router.field</code>，则必须确保层次结构中的所有文档对该字段都有相同的值。</p>
+<h2 id="匿名子文档索引"><a href="#匿名子文档索引" class="headerlink" title="匿名子文档索引"></a>匿名子文档索引</h2><p>虽然不推荐，但也可以”匿名”索引子文档：</p>
+<p><strong>JSON格式</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span><span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!prod&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Swingline Stapler&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;type_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PRODUCT&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;description_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;The Cadillac of office staplers ...&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;_childDocuments_&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">       <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!S21&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;type_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SKU&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RED&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">42</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;_childDocuments_&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">             <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!D41&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;type_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MANUAL&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;name_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Red Swingline Brochure&quot;</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;pages_i&quot;</span><span class="punctuation">:</span><span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">               <span class="attr">&quot;content_t&quot;</span><span class="punctuation">:</span> <span class="string">&quot;...&quot;</span></span><br><span class="line">             <span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br><span class="line">       <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">       <span class="punctuation">&#123;</span> <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;P11!S31&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;type_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;SKU&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;color_s&quot;</span><span class="punctuation">:</span> <span class="string">&quot;BLACK&quot;</span><span class="punctuation">,</span></span><br><span class="line">         <span class="attr">&quot;price_i&quot;</span><span class="punctuation">:</span> <span class="number">3</span></span><br><span class="line">       <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span> <span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>XML格式</strong>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!prod<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;type_s&quot;</span>&gt;</span>PRODUCT<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Swingline Stapler<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;description_t&quot;</span>&gt;</span>The Cadillac of office staplers ...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!S21<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;type_s&quot;</span>&gt;</span>SKU<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;color_s&quot;</span>&gt;</span>RED<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price_i&quot;</span>&gt;</span>42<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>P11!D41<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;type_s&quot;</span>&gt;</span>MANUAL<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;name_s&quot;</span>&gt;</span>Red Swingline Brochure<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;pages_i&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_t&quot;</span>&gt;</span>...<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="匿名索引的限制"><a href="#匿名索引的限制" class="headerlink" title="匿名索引的限制"></a>匿名索引的限制</h3><p>这种简化方法在较旧版本的Solr中很常见，仍然可以与不包含除<code>_root_</code>之外的任何其他嵌套相关字段的”仅根”模式一起使用。</p>
+<p><strong>不应该使用的情况</strong>：当模式包含<code>_nest_path_</code>字段时不应使用此方法，因为该字段的存在会触发各种查询时功能的假设和行为变化。</p>
+<h2 id="实际应用案例"><a href="#实际应用案例" class="headerlink" title="实际应用案例"></a>实际应用案例</h2><h3 id="电商产品目录"><a href="#电商产品目录" class="headerlink" title="电商产品目录"></a>电商产品目录</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;PROD001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;智能手机&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;brand&quot;</span><span class="punctuation">:</span> <span class="string">&quot;TechBrand&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="string">&quot;电子产品&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;variants&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;VAR001&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;黑色&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;storage&quot;</span><span class="punctuation">:</span> <span class="string">&quot;128GB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">3999</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inventory&quot;</span><span class="punctuation">:</span> <span class="number">50</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;VAR002&quot;</span><span class="punctuation">,</span> </span><br><span class="line">      <span class="attr">&quot;color&quot;</span><span class="punctuation">:</span> <span class="string">&quot;白色&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;storage&quot;</span><span class="punctuation">:</span> <span class="string">&quot;256GB&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;price&quot;</span><span class="punctuation">:</span> <span class="number">4499</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;inventory&quot;</span><span class="punctuation">:</span> <span class="number">30</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;reviews&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REV001&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rating&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;comment&quot;</span><span class="punctuation">:</span> <span class="string">&quot;很好的手机&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;用户A&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;date&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-03-01&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="博客文章与评论"><a href="#博客文章与评论" class="headerlink" title="博客文章与评论"></a>博客文章与评论</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;POST001&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Solr嵌套文档详解&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;技术博主&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;这是一篇关于Solr嵌套文档的详细介绍...&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;publishDate&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-03-30&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;comments&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;COMM001&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;读者甲&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;写得很好！&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;date&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-03-31&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;replies&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;REPLY001&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;author&quot;</span><span class="punctuation">:</span> <span class="string">&quot;作者&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;content&quot;</span><span class="punctuation">:</span> <span class="string">&quot;谢谢支持！&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;date&quot;</span><span class="punctuation">:</span> <span class="string">&quot;2025-04-01&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="查询嵌套文档"><a href="#查询嵌套文档" class="headerlink" title="查询嵌套文档"></a>查询嵌套文档</h2><h3 id="使用Block-Join查询解析器"><a href="#使用Block-Join查询解析器" class="headerlink" title="使用Block Join查询解析器"></a>使用Block Join查询解析器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;!parent which=&quot;type:product&quot;&#125; color:red</span><br></pre></td></tr></table></figure>
+
+<h3 id="使用Child文档转换器"><a href="#使用Child文档转换器" class="headerlink" title="使用Child文档转换器"></a>使用Child文档转换器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q=*:*&amp;fl=*,[child parentFilter=&quot;type:product&quot;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能优化建议"><a href="#性能优化建议" class="headerlink" title="性能优化建议"></a>性能优化建议</h2><h3 id="索引优化"><a href="#索引优化" class="headerlink" title="索引优化"></a>索引优化</h3><ol>
+<li><strong>合理设计层次结构</strong>：避免过深的嵌套层级</li>
+<li><strong>批量更新</strong>：一次性更新整个文档树而不是频繁的部分更新</li>
+<li><strong>字段选择</strong>：只存储和索引必要的字段</li>
+<li><strong>ID设计</strong>：使用有意义的ID前缀便于路由和调试</li>
+</ol>
+<h3 id="查询优化"><a href="#查询优化" class="headerlink" title="查询优化"></a>查询优化</h3><ol>
+<li><strong>使用appropriate过滤器</strong>：在block join查询中使用高效的父&#x2F;子过滤器</li>
+<li><strong>限制返回字段</strong>：使用fl参数只返回需要的字段</li>
+<li><strong>缓存策略</strong>：合理配置查询和过滤器缓存</li>
+</ol>
+<h3 id="内存管理"><a href="#内存管理" class="headerlink" title="内存管理"></a>内存管理</h3><ol>
+<li><strong>监控内存使用</strong>：嵌套文档会增加内存消耗</li>
+<li><strong>合理分片</strong>：根据数据量和查询模式设计分片策略</li>
+<li><strong>定期优化</strong>：在适当时候进行索引优化</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ol>
+<li><p><strong>路由错误</strong>：子文档更新发送到错误的分片</p>
+<ul>
+<li>解决方案：使用_route_参数或前缀路由</li>
+</ul>
+</li>
+<li><p><strong>完整性违反</strong>：删除父文档但子文档仍存在</p>
+<ul>
+<li>解决方案：确保删除查询包含所有相关文档</li>
+</ul>
+</li>
+<li><p><strong>性能问题</strong>：频繁的部分更新导致重索引开销</p>
+<ul>
+<li>解决方案：批量更新或使用就地更新</li>
+</ul>
+</li>
+</ol>
+<h3 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h3><ol>
+<li><strong>检查_root_字段</strong>：确认所有文档都有正确的根文档ID</li>
+<li><strong>验证_nest_path_</strong>：检查路径信息是否正确记录</li>
+<li><strong>监控更新操作</strong>：跟踪更新的分片分布</li>
+<li><strong>使用调试模式</strong>：在查询中启用debugQuery了解查询执行</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Solr的嵌套文档功能为处理层次化数据提供了强大而灵活的解决方案。正确的模式设计、合理的索引策略和高效的查询方法是成功实施的关键。虽然嵌套文档在更新时有一些开销，但对于读多写少的应用场景，它们提供了优秀的查询性能和数据一致性保障。</p>
+<p>通过遵循本指南中的最佳实践和注意事项，您可以充分利用Solr嵌套文档的优势，构建高效的层次化数据索引和搜索系统。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3/">嵌套文档</a>
+  
+    <a class="article-tag" href="/tags/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+  
+    <a class="article-tag" href="/tags/%E5%B1%82%E7%BA%A7%E6%95%B0%E6%8D%AE/">层级数据</a>
+  
+    <a class="article-tag" href="/tags/%E7%88%B6%E5%AD%90%E5%85%B3%E7%B3%BB/">父子关系</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1/">数据建模</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/31/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E9%83%A8%E5%88%86%E6%96%87%E6%A1%A3%E6%9B%B4%E6%96%B0%E4%B8%8E%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr索引：部分文档更新与原子操作完整指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/29/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E8%AF%AD%E8%A8%80%E5%88%86%E6%9E%90%E4%B8%8E%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr索引：语言分析与文本处理机制详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95%E4%B8%8E%E5%B1%82%E7%BA%A7%E6%95%B0%E6%8D%AE%E5%BB%BA%E6%A8%A1%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr索引：嵌套文档索引与层级数据建模完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84"><span class="nav-number">1.2.1.</span> <span class="nav-text">文档层次结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E8%80%83%E8%99%91%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.2.2.</span> <span class="nav-text">重要考虑事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%AF%AD%E6%B3%95%E7%A4%BA%E4%BE%8B%EF%BC%9A%E4%BC%AA%E5%AD%97%E6%AE%B5"><span class="nav-number">1.3.</span> <span class="nav-text">索引语法示例：伪字段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.1.</span> <span class="nav-text">深度嵌套文档示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">模式配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BF%85%E9%9C%80%E5%AD%97%E6%AE%B5%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">必需字段配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#root-%E5%AD%97%E6%AE%B5%EF%BC%88%E5%BF%85%E9%9C%80%EF%BC%89"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">_root_字段（必需）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nest-path-%E5%AD%97%E6%AE%B5%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">_nest_path_字段（推荐）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#nest-parent-%E5%AD%97%E6%AE%B5%EF%BC%88%E5%8F%AF%E9%80%89%EF%BC%89"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">_nest_parent_字段（可选）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E9%85%8D%E7%BD%AE%E8%80%83%E8%99%91%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.4.2.</span> <span class="nav-text">字段配置考虑事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.4.3.</span> <span class="nav-text">SolrCloud注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E3%80%81%E5%88%A0%E9%99%A4%E5%92%8C%E5%88%86%E7%89%87%E6%8B%86%E5%88%86%E7%9A%84%E5%AE%8C%E6%95%B4%E6%80%A7%E7%BB%B4%E6%8A%A4"><span class="nav-number">1.5.</span> <span class="nav-text">更新、删除和分片拆分的完整性维护</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0%E6%94%AF%E6%8C%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">原子更新支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrCloud%E4%B8%AD%E7%9A%84%E8%B7%AF%E7%94%B1%E6%9B%B4%E6%96%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">SolrCloud中的路由更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.3.</span> <span class="nav-text">删除操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E7%89%87%E6%8B%86%E5%88%86"><span class="nav-number">1.5.4.</span> <span class="nav-text">分片拆分</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E5%AD%90%E6%96%87%E6%A1%A3%E7%B4%A2%E5%BC%95"><span class="nav-number">1.6.</span> <span class="nav-text">匿名子文档索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8C%BF%E5%90%8D%E7%B4%A2%E5%BC%95%E7%9A%84%E9%99%90%E5%88%B6"><span class="nav-number">1.6.1.</span> <span class="nav-text">匿名索引的限制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E6%A1%88%E4%BE%8B"><span class="nav-number">1.7.</span> <span class="nav-text">实际应用案例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%B5%E5%95%86%E4%BA%A7%E5%93%81%E7%9B%AE%E5%BD%95"><span class="nav-number">1.7.1.</span> <span class="nav-text">电商产品目录</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%9A%E5%AE%A2%E6%96%87%E7%AB%A0%E4%B8%8E%E8%AF%84%E8%AE%BA"><span class="nav-number">1.7.2.</span> <span class="nav-text">博客文章与评论</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3"><span class="nav-number">1.8.</span> <span class="nav-text">查询嵌套文档</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Block-Join%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.8.1.</span> <span class="nav-text">使用Block Join查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Child%E6%96%87%E6%A1%A3%E8%BD%AC%E6%8D%A2%E5%99%A8"><span class="nav-number">1.8.2.</span> <span class="nav-text">使用Child文档转换器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.</span> <span class="nav-text">性能优化建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.1.</span> <span class="nav-text">索引优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.2.</span> <span class="nav-text">查询优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.9.3.</span> <span class="nav-text">内存管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.10.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.10.1.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number">1.10.2.</span> <span class="nav-text">调试技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

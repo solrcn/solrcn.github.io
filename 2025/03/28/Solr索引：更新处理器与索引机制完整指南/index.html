@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr索引：更新处理器与索引机制完整指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="索引操作Solr索引更新处理器文档处理数据更新" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析Solr更新处理器的工作原理，包含XML、JSON、CSV格式的索引更新操作，以及提交、优化、删除等核心功能的详细配置与实例演示">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：更新处理器与索引机制完整指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/28/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析Solr更新处理器的工作原理，包含XML、JSON、CSV格式的索引更新操作，以及提交、优化、删除等核心功能的详细配置与实例演示">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-27T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:56:08.462Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="索引操作">
+<meta property="article:tag" content="Solr索引">
+<meta property="article:tag" content="更新处理器">
+<meta property="article:tag" content="文档处理">
+<meta property="article:tag" content="数据更新">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr索引：更新处理器与索引机制完整指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr索引：更新处理器与索引机制完整指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/28/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-03-27T16:00:00.000Z" itemprop="datePublished">三月 28, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr索引：更新处理器与索引机制完整指南"><a href="#Solr索引：更新处理器与索引机制完整指南" class="headerlink" title="Solr索引：更新处理器与索引机制完整指南"></a>Solr索引：更新处理器与索引机制完整指南</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>更新处理器（Update Handlers）是专门用于向索引添加、删除和更新文档的请求处理器。除了支持导入富文档的插件外，Solr原生支持XML、CSV和JSON格式的结构化文档索引。</p>
+<p>推荐使用基于路径的配置方式来设置请求处理器，这种方式将名称映射到请求URL中的路径。当然，如果请求分发器配置得当，也可以使用<code>qt</code>（查询类型）参数来指定请求处理器。</p>
+<h2 id="统一更新请求处理器"><a href="#统一更新请求处理器" class="headerlink" title="统一更新请求处理器"></a>统一更新请求处理器</h2><p>Solr提供了一个统一的更新请求处理器，支持XML、CSV、JSON和JavaBin格式的更新请求。它会根据ContentStream的Content-Type自动委托给适当的ContentStreamLoader。</p>
+<p>如果需要在文档加载后但在索引之前（甚至在模式检查之前）对文档进行预处理，Solr为更新请求处理器提供了文档预处理插件，称为更新请求处理器（Update Request Processors），支持默认和自定义配置链。</p>
+<h2 id="UpdateRequestHandler配置"><a href="#UpdateRequestHandler配置" class="headerlink" title="UpdateRequestHandler配置"></a>UpdateRequestHandler配置</h2><p>默认配置文件已经配置了更新请求处理器：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/update&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.UpdateRequestHandler&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="XML格式索引更新"><a href="#XML格式索引更新" class="headerlink" title="XML格式索引更新"></a>XML格式索引更新</h2><h3 id="添加文档"><a href="#添加文档" class="headerlink" title="添加文档"></a>添加文档</h3><p>索引更新命令可以作为XML消息发送到更新处理器，使用<code>Content-type: application/xml</code>或<code>Content-type: text/xml</code>。</p>
+<p>更新处理器识别的XML模式非常简单：</p>
+<ul>
+<li><code>&lt;add&gt;</code>元素引入一个或多个要添加的文档</li>
+<li><code>&lt;doc&gt;</code>元素引入构成文档的字段</li>
+<li><code>&lt;field&gt;</code>元素提供特定字段的内容</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;authors&quot;</span>&gt;</span>Patrick Eagar<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;subject&quot;</span>&gt;</span>Sports<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;dd&quot;</span>&gt;</span>796.35<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;numpages&quot;</span>&gt;</span>128<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;desc&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;price&quot;</span>&gt;</span>12.40<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span>&gt;</span>Summer of the all-rounder: Test and championship cricket in England 1982<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;isbn&quot;</span>&gt;</span>0002166313<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;yearpub&quot;</span>&gt;</span>1982<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;publisher&quot;</span>&gt;</span>Collins<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="add命令的可选属性"><a href="#add命令的可选属性" class="headerlink" title="add命令的可选属性"></a>add命令的可选属性</h3><p><strong>commitWithin</strong>：</p>
+<ul>
+<li>可选参数，默认值：none</li>
+<li>在指定的毫秒数内添加文档</li>
+</ul>
+<p><strong>overwrite</strong>：</p>
+<ul>
+<li>可选参数，默认值：true</li>
+<li>指示是否检查唯一键约束以覆盖同一文档的先前版本</li>
+</ul>
+<p>如果文档模式定义了唯一键，默认情况下<code>/update</code>操作会覆盖（即替换）索引中具有相同唯一键的任何文档。如果没有定义唯一键，索引性能会更快，因为不需要检查现有文档。</p>
+<p>如果您有唯一键字段，但确信可以安全地绕过唯一性检查（例如，批量构建索引，索引代码保证不会多次添加同一文档），可以在添加文档时指定<code>overwrite=&quot;false&quot;</code>选项。</p>
+<h3 id="XML更新命令"><a href="#XML更新命令" class="headerlink" title="XML更新命令"></a>XML更新命令</h3><h4 id="提交和优化操作"><a href="#提交和优化操作" class="headerlink" title="提交和优化操作"></a>提交和优化操作</h4><p><strong>commit操作</strong>：<br><code>&lt;commit&gt;</code>操作将自上次提交以来加载的所有文档写入磁盘上的一个或多个段文件。在发出提交之前，新索引的内容对搜索不可见。提交操作会打开新的搜索器，并触发已配置的事件监听器。</p>
+<p>可以使用<code>&lt;commit/&gt;</code>消息显式发出提交，也可以通过<code>solrconfig.xml</code>中的<code>&lt;autocommit&gt;</code>参数触发。</p>
+<p><strong>optimize操作</strong>：<br><code>&lt;optimize&gt;</code>操作请求Solr合并内部数据结构。对于大型索引，优化需要一些时间才能完成，但通过将许多小段文件合并为较大的段，可以提高搜索性能。</p>
+<p><strong>警告</strong>：只应该在静态索引上考虑使用optimize，即可以作为常规更新过程一部分进行优化的索引（比如每天更新一次）。需要NRT功能的应用程序不应使用optimize。</p>
+<p><strong>可选属性</strong>：</p>
+<ul>
+<li><strong>waitSearcher</strong>（默认：true）：阻塞直到新搜索器打开并注册为主查询搜索器，使更改可见</li>
+<li><strong>expungeDeletes</strong>（默认：false）：合并删除文档超过10%的段，在过程中清除删除的文档</li>
+<li><strong>maxSegments</strong>（默认：none）：尽力将段合并到不超过此数量的段，但不保证能达到目标</li>
+</ul>
+<p>示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">commit</span> <span class="attr">waitSearcher</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">commit</span> <span class="attr">waitSearcher</span>=<span class="string">&quot;false&quot;</span> <span class="attr">expungeDeletes</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">optimize</span> <span class="attr">waitSearcher</span>=<span class="string">&quot;false&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="删除操作"><a href="#删除操作" class="headerlink" title="删除操作"></a>删除操作</h4><p>可以通过两种方式删除索引中的文档：</p>
+<ol>
+<li><strong>按ID删除</strong>：删除具有指定ID的文档，只能在模式中定义了UniqueID字段时使用</li>
+<li><strong>按查询删除</strong>：删除匹配指定查询的所有文档</li>
+</ol>
+<p>示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">delete</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">id</span>&gt;</span>0002166313<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">id</span>&gt;</span>0031745983<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">query</span>&gt;</span>subject:sport<span class="tag">&lt;/<span class="name">query</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">query</span>&gt;</span>publisher:penguin<span class="tag">&lt;/<span class="name">query</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重要提示</strong>：某些查询（包括许多<code>&#123;!join&#125;</code>和<code>&#123;!graph&#125;</code>查询）在删除操作中不受支持，会返回400错误。</p>
+<h4 id="回滚操作"><a href="#回滚操作" class="headerlink" title="回滚操作"></a>回滚操作</h4><p>回滚命令回滚自上次提交以来对索引所做的所有添加和删除。它既不调用事件监听器，也不创建新的搜索器。语法简单：<code>&lt;rollback/&gt;</code>。</p>
+<h4 id="分组操作"><a href="#分组操作" class="headerlink" title="分组操作"></a>分组操作</h4><p>可以通过用<code>&lt;update&gt;</code>元素包围来在单个XML文件中发布多个命令：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">update</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">doc</span>&gt;</span><span class="comment">&lt;!-- doc 1 content --&gt;</span><span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">doc</span>&gt;</span><span class="comment">&lt;!-- doc 2 content --&gt;</span><span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">delete</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">id</span>&gt;</span>0002166313<span class="tag">&lt;/<span class="name">id</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">delete</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用curl执行更新"><a href="#使用curl执行更新" class="headerlink" title="使用curl执行更新"></a>使用curl执行更新</h3><p>可以使用<code>curl</code>实用程序执行上述任何命令：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/my_collection/update -H <span class="string">&quot;Content-Type: text/xml&quot;</span> --data-binary <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&lt;add&gt;</span></span><br><span class="line"><span class="string">  &lt;doc&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;authors&quot;&gt;Patrick Eagar&lt;/field&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;subject&quot;&gt;Sports&lt;/field&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;dd&quot;&gt;796.35&lt;/field&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;isbn&quot;&gt;0002166313&lt;/field&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;yearpub&quot;&gt;1982&lt;/field&gt;</span></span><br><span class="line"><span class="string">    &lt;field name=&quot;publisher&quot;&gt;Collins&lt;/field&gt;</span></span><br><span class="line"><span class="string">  &lt;/doc&gt;</span></span><br><span class="line"><span class="string">&lt;/add&gt;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>对于包含在文件中的XML消息，可以使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/my_collection/update -H <span class="string">&quot;Content-Type: text/xml&quot;</span> --data-binary @myfile.xml</span><br></pre></td></tr></table></figure>
+
+<p>为了最小化curl内存使用，可以使用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/my_collection/update -H <span class="string">&quot;Content-Type: text/xml&quot;</span> -T <span class="string">&quot;myfile.xml&quot;</span> -X POST</span><br></pre></td></tr></table></figure>
+
+<h3 id="XSLT转换XML索引更新"><a href="#XSLT转换XML索引更新" class="headerlink" title="XSLT转换XML索引更新"></a>XSLT转换XML索引更新</h3><p>脚本模块提供了独立的XSLT更新请求处理器，允许通过使用<code>&lt;tr&gt;</code>参数应用XSL转换来索引任意XML。</p>
+<p>必须在configset的<code>conf/xslt</code>目录中有XSLT样式表，能够将传入数据转换为预期的<code>&lt;add&gt;&lt;doc/&gt;&lt;/add&gt;</code>格式，并使用<code>tr</code>参数指定样式表的名称。</p>
+<h4 id="XSLT配置示例"><a href="#XSLT配置示例" class="headerlink" title="XSLT配置示例"></a>XSLT配置示例</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/update/xslt&quot;</span></span></span><br><span class="line"><span class="tag">                     <span class="attr">class</span>=<span class="string">&quot;solr.scripting.xslt.XSLTUpdateRequestHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;xsltCacheLifetimeSeconds&quot;</span>&gt;</span>5<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="JSON格式索引更新"><a href="#JSON格式索引更新" class="headerlink" title="JSON格式索引更新"></a>JSON格式索引更新</h2><p>Solr可以接受符合定义结构的JSON，也可以接受任意格式的JSON文档。</p>
+<h3 id="Solr样式JSON"><a href="#Solr样式JSON" class="headerlink" title="Solr样式JSON"></a>Solr样式JSON</h3><p>JSON格式的更新请求可以使用<code>Content-Type: application/json</code>或<code>Content-Type: text/json</code>发送到Solr的<code>/update</code>处理器。</p>
+<p>JSON格式的更新可以采用3种基本形式：</p>
+<h4 id="添加单个JSON文档"><a href="#添加单个JSON文档" class="headerlink" title="添加单个JSON文档"></a>添加单个JSON文档</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> <span class="string">&#x27;http://localhost:8983/solr/my_collection/update/json/docs&#x27;</span> --data-binary <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;id&quot;: &quot;1&quot;,</span></span><br><span class="line"><span class="string">  &quot;title&quot;: &quot;Doc 1&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="添加多个JSON文档"><a href="#添加多个JSON文档" class="headerlink" title="添加多个JSON文档"></a>添加多个JSON文档</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> <span class="string">&#x27;http://localhost:8983/solr/my_collection/update&#x27;</span> --data-binary <span class="string">&#x27;</span></span><br><span class="line"><span class="string">[</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;id&quot;: &quot;1&quot;,</span></span><br><span class="line"><span class="string">    &quot;title&quot;: &quot;Doc 1&quot;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;id&quot;: &quot;2&quot;,</span></span><br><span class="line"><span class="string">    &quot;title&quot;: &quot;Doc 2&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="发送JSON更新命令"><a href="#发送JSON更新命令" class="headerlink" title="发送JSON更新命令"></a>发送JSON更新命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> <span class="string">&#x27;http://localhost:8983/solr/my_collection/update&#x27;</span> --data-binary <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;add&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;doc&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;id&quot;: &quot;DOC1&quot;,</span></span><br><span class="line"><span class="string">      &quot;my_field&quot;: 2.3,</span></span><br><span class="line"><span class="string">      &quot;my_multivalued_field&quot;: [ &quot;aaa&quot;, &quot;bbb&quot; ]</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;add&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;commitWithin&quot;: 5000,</span></span><br><span class="line"><span class="string">    &quot;overwrite&quot;: false,</span></span><br><span class="line"><span class="string">    &quot;doc&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;f1&quot;: &quot;v1&quot;,</span></span><br><span class="line"><span class="string">      &quot;f1&quot;: &quot;v2&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &quot;commit&quot;: &#123;&#125;,</span></span><br><span class="line"><span class="string">  &quot;optimize&quot;: &#123; &quot;waitSearcher&quot;:false &#125;,</span></span><br><span class="line"><span class="string">  &quot;delete&quot;: &#123; &quot;id&quot;:&quot;ID&quot; &#125;,</span></span><br><span class="line"><span class="string">  &quot;delete&quot;: &#123; &quot;query&quot;:&quot;QUERY&quot; &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="JSON更新便利路径"><a href="#JSON更新便利路径" class="headerlink" title="JSON更新便利路径"></a>JSON更新便利路径</h3><p>Solr提供了几个额外的JSON特定请求处理器路径：</p>
+<table>
+<thead>
+<tr>
+<th>路径</th>
+<th>默认参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/update/json</code></td>
+<td><code>stream.contentType=application/json</code></td>
+</tr>
+<tr>
+<td><code>/update/json/docs</code></td>
+<td><code>stream.contentType=application/json</code><br/><code>json.command=false</code></td>
+</tr>
+</tbody></table>
+<h2 id="CSV格式索引更新"><a href="#CSV格式索引更新" class="headerlink" title="CSV格式索引更新"></a>CSV格式索引更新</h2><p>CSV格式的更新请求可以使用<code>Content-Type: application/csv</code>或<code>Content-Type: text/csv</code>发送到Solr的<code>/update</code>处理器。</p>
+<p>示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost:8983/solr/my_collection/update?commit=true&#x27;</span> --data-binary @example/exampledocs/books.csv -H <span class="string">&#x27;Content-type:application/csv&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="CSV更新参数"><a href="#CSV更新参数" class="headerlink" title="CSV更新参数"></a>CSV更新参数</h3><p>CSV处理器允许在URL中以<code>f._parameter_._optional_fieldname_=_value_</code>的形式指定许多参数：</p>
+<p><strong>主要参数</strong>：</p>
+<ul>
+<li><strong>separator</strong>（默认：<code>,</code>）：用作字段分隔符的字符</li>
+<li><strong>trim</strong>（默认：<code>false</code>）：如果为true，从值中删除前导和尾随空格</li>
+<li><strong>header</strong>（默认：<code>true</code>）：如果输入的第一行包含字段名称，设置为true</li>
+<li><strong>fieldnames</strong>：要使用的字段名称的逗号分隔列表</li>
+<li><strong>literal.<em>field_name</em></strong>：指定字段名称的文字值</li>
+<li><strong>skip</strong>：要跳过的字段名称的逗号分隔列表</li>
+<li><strong>skipLines</strong>（默认：<code>0</code>）：CSV数据开始前要丢弃的输入流行数</li>
+<li><strong>encapsulator</strong>：可选地用于包围值以保留字符的字符</li>
+<li><strong>escape</strong>：用于转义CSV分隔符或其他保留字符的字符</li>
+<li><strong>keepEmpty</strong>（默认：<code>false</code>）：保持并索引零长度（空）字段</li>
+<li><strong>map</strong>：将一个值映射到另一个值</li>
+<li><strong>overwrite</strong>（默认：<code>true</code>）：基于模式中声明的uniqueKey字段检查并覆盖重复文档</li>
+<li><strong>commit</strong>：数据摄取后发出提交</li>
+<li><strong>commitWithin</strong>：在指定毫秒数内添加文档</li>
+<li><strong>rowid</strong>：将rowid（行号）映射到由参数值指定的字段</li>
+<li><strong>rowidOffset</strong>（默认：<code>0</code>）：在将rowid添加到文档之前添加给定偏移量</li>
+</ul>
+<h3 id="索引制表符分隔文件"><a href="#索引制表符分隔文件" class="headerlink" title="索引制表符分隔文件"></a>索引制表符分隔文件</h3><p>同样的功能也可以用于索引制表符分隔文件（TSV文件）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&#x27;http://localhost:8983/solr/my_collection/update/csv?commit=true&amp;separator=%09&amp;escape=%5c&#x27;</span> --data-binary @/tmp/result.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="CSV更新便利路径"><a href="#CSV更新便利路径" class="headerlink" title="CSV更新便利路径"></a>CSV更新便利路径</h3><table>
+<thead>
+<tr>
+<th>路径</th>
+<th>默认参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/update/csv</code></td>
+<td><code>stream.contentType=application/csv</code></td>
+</tr>
+</tbody></table>
+<h2 id="性能优化建议"><a href="#性能优化建议" class="headerlink" title="性能优化建议"></a>性能优化建议</h2><ol>
+<li><strong>批量操作</strong>：尽可能批量处理文档，而不是逐个处理</li>
+<li><strong>commitWithin设置</strong>：合理设置commitWithin值，平衡实时性和性能</li>
+<li><strong>避免频繁optimize</strong>：只在必要时使用optimize操作</li>
+<li><strong>字段存储策略</strong>：根据查询需求合理配置字段的存储和索引属性</li>
+<li><strong>内存管理</strong>：对于大文件，使用流式处理方法</li>
+</ol>
+<h2 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h2><p>Solr返回的响应格式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;responseHeader&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;QTime&quot;</span>&gt;</span>127<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>状态字段在失败情况下为非零值。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>更新处理器是Solr索引系统的核心组件，支持多种数据格式和操作类型。正确配置和使用更新处理器对于构建高效的Solr搜索应用程序至关重要。通过理解各种更新操作的语法和参数，可以有效地管理索引内容，确保数据的准确性和系统的高性能。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C/">索引操作</a>
+  
+    <a class="article-tag" href="/tags/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+  
+    <a class="article-tag" href="/tags/%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8/">更新处理器</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86/">文档处理</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E6%9B%B4%E6%96%B0/">数据更新</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/29/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E8%AF%AD%E8%A8%80%E5%88%86%E6%9E%90%E4%B8%8E%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr索引：语言分析与文本处理机制详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/22/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E7%BE%A4%E5%8D%87%E7%BA%A7%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：集群升级完整指南与最佳实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E4%B8%8E%E7%B4%A2%E5%BC%95%E6%9C%BA%E5%88%B6%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr索引：更新处理器与索引机制完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">统一更新请求处理器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UpdateRequestHandler%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">UpdateRequestHandler配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XML%E6%A0%BC%E5%BC%8F%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="nav-number">1.4.</span> <span class="nav-text">XML格式索引更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%96%87%E6%A1%A3"><span class="nav-number">1.4.1.</span> <span class="nav-text">添加文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#add%E5%91%BD%E4%BB%A4%E7%9A%84%E5%8F%AF%E9%80%89%E5%B1%9E%E6%80%A7"><span class="nav-number">1.4.2.</span> <span class="nav-text">add命令的可选属性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XML%E6%9B%B4%E6%96%B0%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">XML更新命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E5%92%8C%E4%BC%98%E5%8C%96%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">提交和优化操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">删除操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9B%9E%E6%BB%9A%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">回滚操作</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E6%93%8D%E4%BD%9C"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">分组操作</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8curl%E6%89%A7%E8%A1%8C%E6%9B%B4%E6%96%B0"><span class="nav-number">1.4.4.</span> <span class="nav-text">使用curl执行更新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#XSLT%E8%BD%AC%E6%8D%A2XML%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="nav-number">1.4.5.</span> <span class="nav-text">XSLT转换XML索引更新</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#XSLT%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">XSLT配置示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JSON%E6%A0%BC%E5%BC%8F%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="nav-number">1.5.</span> <span class="nav-text">JSON格式索引更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E6%A0%B7%E5%BC%8FJSON"><span class="nav-number">1.5.1.</span> <span class="nav-text">Solr样式JSON</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%8D%95%E4%B8%AAJSON%E6%96%87%E6%A1%A3"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">添加单个JSON文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%A4%9A%E4%B8%AAJSON%E6%96%87%E6%A1%A3"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">添加多个JSON文档</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%91%E9%80%81JSON%E6%9B%B4%E6%96%B0%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">发送JSON更新命令</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON%E6%9B%B4%E6%96%B0%E4%BE%BF%E5%88%A9%E8%B7%AF%E5%BE%84"><span class="nav-number">1.5.2.</span> <span class="nav-text">JSON更新便利路径</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CSV%E6%A0%BC%E5%BC%8F%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0"><span class="nav-number">1.6.</span> <span class="nav-text">CSV格式索引更新</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CSV%E6%9B%B4%E6%96%B0%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">CSV更新参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%88%B6%E8%A1%A8%E7%AC%A6%E5%88%86%E9%9A%94%E6%96%87%E4%BB%B6"><span class="nav-number">1.6.2.</span> <span class="nav-text">索引制表符分隔文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CSV%E6%9B%B4%E6%96%B0%E4%BE%BF%E5%88%A9%E8%B7%AF%E5%BE%84"><span class="nav-number">1.6.3.</span> <span class="nav-text">CSV更新便利路径</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.7.</span> <span class="nav-text">性能优化建议</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.8.</span> <span class="nav-text">错误处理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.9.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

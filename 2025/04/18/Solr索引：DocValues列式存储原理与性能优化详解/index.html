@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr索引：docvalues列式存储原理与性能优化详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能优化DocValues分面搜索Solr列式存储排序索引结构" />
+  
+  
+  
+  
+  <meta name="description" content="Solr索引：DocValues列式存储原理与性能优化详解概述DocValues是Solr内部记录字段值的一种高效方式，专门针对排序、分面搜索等场景进行优化，相比传统的倒排索引在特定用途上更加高效。 DocValues采用列式存储结构，在索引时构建文档到值的映射关系，为现代搜索应用的核心功能提供了强有力的性能支撑。 DocValues存在的必要性传统倒排索引的局限性Solr的标准索引构建方式是倒排">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：DocValues列式存储原理与性能优化详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/04/18/Solr%E7%B4%A2%E5%BC%95%EF%BC%9ADocValues%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr索引：DocValues列式存储原理与性能优化详解概述DocValues是Solr内部记录字段值的一种高效方式，专门针对排序、分面搜索等场景进行优化，相比传统的倒排索引在特定用途上更加高效。 DocValues采用列式存储结构，在索引时构建文档到值的映射关系，为现代搜索应用的核心功能提供了强有力的性能支撑。 DocValues存在的必要性传统倒排索引的局限性Solr的标准索引构建方式是倒排">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:34:46.956Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="DocValues">
+<meta property="article:tag" content="分面搜索">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="列式存储">
+<meta property="article:tag" content="排序">
+<meta property="article:tag" content="索引结构">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr索引：DocValues列式存储原理与性能优化详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr索引：DocValues列式存储原理与性能优化详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/04/18/Solr%E7%B4%A2%E5%BC%95%EF%BC%9ADocValues%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-04-17T16:00:00.000Z" itemprop="datePublished">四月 18, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr索引：DocValues列式存储原理与性能优化详解"><a href="#Solr索引：DocValues列式存储原理与性能优化详解" class="headerlink" title="Solr索引：DocValues列式存储原理与性能优化详解"></a>Solr索引：DocValues列式存储原理与性能优化详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>DocValues是Solr内部记录字段值的一种高效方式，专门针对排序、分面搜索等场景进行优化，相比传统的倒排索引在特定用途上更加高效。</p>
+<p>DocValues采用列式存储结构，在索引时构建文档到值的映射关系，为现代搜索应用的核心功能提供了强有力的性能支撑。</p>
+<h2 id="DocValues存在的必要性"><a href="#DocValues存在的必要性" class="headerlink" title="DocValues存在的必要性"></a>DocValues存在的必要性</h2><h3 id="传统倒排索引的局限性"><a href="#传统倒排索引的局限性" class="headerlink" title="传统倒排索引的局限性"></a>传统倒排索引的局限性</h3><p>Solr的标准索引构建方式是<strong>倒排索引</strong>：</p>
+<ul>
+<li>建立索引中所有文档发现的词项列表</li>
+<li>每个词项旁边是包含该词项的文档列表</li>
+<li>记录词项在文档中的出现次数</li>
+</ul>
+<p>这种结构使<strong>搜索极其快速</strong>，但对于现代搜索的其他核心功能存在效率问题：</p>
+<h3 id="排序、分面、高亮的性能瓶颈"><a href="#排序、分面、高亮的性能瓶颈" class="headerlink" title="排序、分面、高亮的性能瓶颈"></a>排序、分面、高亮的性能瓶颈</h3><p>以分面搜索为例，分面引擎必须：</p>
+<ol>
+<li>查找结果集中每个文档出现的每个词项</li>
+<li>提取文档ID以构建分面列表</li>
+<li>在内存中维护这些信息</li>
+</ol>
+<p>这个过程可能非常缓慢（取决于文档数量、词项数量等）。</p>
+<h2 id="DocValues解决方案"><a href="#DocValues解决方案" class="headerlink" title="DocValues解决方案"></a>DocValues解决方案</h2><h3 id="Lucene-4-0的创新"><a href="#Lucene-4-0的创新" class="headerlink" title="Lucene 4.0的创新"></a>Lucene 4.0的创新</h3><p>Lucene 4.0引入了全新的DocValues方法：</p>
+<ul>
+<li><strong>面向列的字段</strong>结构</li>
+<li>在<strong>索引时</strong>构建文档到值的映射</li>
+<li><strong>缓解内存需求</strong>，减轻fieldCache压力</li>
+<li><strong>显著提升</strong>分面、排序、分组的查询速度</li>
+</ul>
+<h3 id="核心优势"><a href="#核心优势" class="headerlink" title="核心优势"></a>核心优势</h3><ol>
+<li><strong>内存优化</strong>：减少fieldCache的内存占用</li>
+<li><strong>查询加速</strong>：快速的文档值查找</li>
+<li><strong>列式访问</strong>：更适合分析类查询</li>
+<li><strong>索引时预计算</strong>：避免查询时的实时计算</li>
+</ol>
+<h2 id="启用DocValues"><a href="#启用DocValues" class="headerlink" title="启用DocValues"></a>启用DocValues</h2><h3 id="默认启用策略"><a href="#默认启用策略" class="headerlink" title="默认启用策略"></a>默认启用策略</h3><p>对于<strong>schemaVersion &gt;&#x3D; 1.7</strong>，大部分支持的字段类型默认启用DocValues：</p>
+<h4 id="基础字段类型"><a href="#基础字段类型" class="headerlink" title="基础字段类型"></a>基础字段类型</h4><ul>
+<li><strong>数值字段</strong>（除<code>DenseVectorField</code>外）</li>
+<li><strong>布尔字段</strong></li>
+<li><strong>字符串字段</strong></li>
+<li><strong>日期字段</strong></li>
+<li><strong>UUID字段</strong></li>
+<li><strong>枚举字段</strong></li>
+</ul>
+<h4 id="排序相关字段"><a href="#排序相关字段" class="headerlink" title="排序相关字段"></a>排序相关字段</h4><ul>
+<li><code>CollationField</code></li>
+<li><code>ICUCollationField</code></li>
+<li><code>SortableTextField</code></li>
+<li><code>SortableBinaryField</code></li>
+</ul>
+<h4 id="空间字段"><a href="#空间字段" class="headerlink" title="空间字段"></a>空间字段</h4><ul>
+<li><code>LatLonPointSpacialField</code>（注意：不是<code>PointType</code>）</li>
+</ul>
+<h3 id="手动启用配置"><a href="#手动启用配置" class="headerlink" title="手动启用配置"></a>手动启用配置</h3><p>对于<strong>schemaVersion &lt;&#x3D; 1.6</strong>或需要显式配置的场景：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;manu_exact&quot;</span> </span></span><br><span class="line"><span class="tag">       <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> </span></span><br><span class="line"><span class="tag">       <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> </span></span><br><span class="line"><span class="tag">       <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> </span></span><br><span class="line"><span class="tag">       <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="重要提醒"><a href="#重要提醒" class="headerlink" title="重要提醒"></a>重要提醒</h3><p><strong>重新索引要求</strong>：</p>
+<ul>
+<li>更改schema中的字段定义后</li>
+<li><strong>必须完全重新索引</strong>所有内容</li>
+<li>才能成功使用DocValues功能</li>
+</ul>
+<h2 id="字段类型与Lucene-DocValue类型映射"><a href="#字段类型与Lucene-DocValue类型映射" class="headerlink" title="字段类型与Lucene DocValue类型映射"></a>字段类型与Lucene DocValue类型映射</h2><h3 id="字符串和UUID字段"><a href="#字符串和UUID字段" class="headerlink" title="字符串和UUID字段"></a>字符串和UUID字段</h3><p><strong>字段类型</strong>：<code>StrField</code>, <code>UUIDField</code></p>
+<ul>
+<li><strong>单值字段</strong>：使用<code>SORTED</code>类型</li>
+<li><strong>多值字段</strong>：使用<code>SORTED_SET</code>类型<ul>
+<li>条目按排序顺序保存</li>
+<li>自动去除重复值</li>
+</ul>
+</li>
+</ul>
+<h3 id="布尔字段"><a href="#布尔字段" class="headerlink" title="布尔字段"></a>布尔字段</h3><p><strong>字段类型</strong>：<code>BoolField</code></p>
+<ul>
+<li><strong>单值字段</strong>：使用<code>SORTED</code>类型</li>
+<li><strong>多值字段</strong>：使用<code>SORTED_SET</code>类型<ul>
+<li>条目按排序顺序保存</li>
+<li>自动去除重复值</li>
+</ul>
+</li>
+</ul>
+<h3 id="数值和日期字段（现代版本）"><a href="#数值和日期字段（现代版本）" class="headerlink" title="数值和日期字段（现代版本）"></a>数值和日期字段（现代版本）</h3><p><strong>字段类型</strong>：<code>*PointField</code>数值字段、日期字段、<code>EnumFieldType</code>、<code>CurrencyFieldType</code></p>
+<ul>
+<li><strong>单值字段</strong>：使用<code>NUMERIC</code>类型</li>
+<li><strong>多值字段</strong>：使用<code>SORTED_NUMERIC</code>类型<ul>
+<li>条目按排序顺序保存</li>
+<li><strong>保留重复值</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="数值和日期字段（已废弃版本）"><a href="#数值和日期字段（已废弃版本）" class="headerlink" title="数值和日期字段（已废弃版本）"></a>数值和日期字段（已废弃版本）</h3><p><strong>字段类型</strong>：已废弃的<code>Trie*</code>数值字段、日期字段、<code>EnumField</code>、<code>CurrencyField</code></p>
+<ul>
+<li><strong>单值字段</strong>：使用<code>NUMERIC</code>类型</li>
+<li><strong>多值字段</strong>：使用<code>SORTED_SET</code>类型<ul>
+<li>条目按排序顺序保存</li>
+<li>自动去除重复值</li>
+</ul>
+</li>
+</ul>
+<h2 id="高级配置：DocValuesFormat"><a href="#高级配置：DocValuesFormat" class="headerlink" title="高级配置：DocValuesFormat"></a>高级配置：DocValuesFormat</h2><h3 id="默认实现"><a href="#默认实现" class="headerlink" title="默认实现"></a>默认实现</h3><p>默认的DocValuesFormat采用混合策略：</p>
+<ul>
+<li>部分数据加载到内存</li>
+<li>部分数据保存在磁盘</li>
+</ul>
+<h3 id="自定义格式"><a href="#自定义格式" class="headerlink" title="自定义格式"></a>自定义格式</h3><p>可以指定替代的DocValuesFormat实现：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;string_in_mem_dv&quot;</span> </span></span><br><span class="line"><span class="tag">           <span class="attr">class</span>=<span class="string">&quot;solr.StrField&quot;</span> </span></span><br><span class="line"><span class="tag">           <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span> </span></span><br><span class="line"><span class="tag">           <span class="attr">docValuesFormat</span>=<span class="string">&quot;Direct&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong><code>Direct</code>格式</strong>：将所有数据保存在内存中</p>
+<h3 id="重要警告"><a href="#重要警告" class="headerlink" title="重要警告"></a>重要警告</h3><p><strong>版本兼容性风险</strong>：</p>
+<ul>
+<li>Lucene索引向后兼容性仅支持默认编解码器</li>
+<li>自定义<code>docValuesFormat</code>可能影响升级兼容性</li>
+<li>升级时可能需要：<ul>
+<li>切换回默认编解码器并优化索引</li>
+<li>或完全重建索引</li>
+</ul>
+</li>
+</ul>
+<h2 id="DocValues的实际应用"><a href="#DocValues的实际应用" class="headerlink" title="DocValues的实际应用"></a>DocValues的实际应用</h2><h3 id="自动使用场景"><a href="#自动使用场景" class="headerlink" title="自动使用场景"></a>自动使用场景</h3><p>当字段设置<code>docValues=&quot;true&quot;</code>时，DocValues将在以下场景自动使用：</p>
+<ol>
+<li><strong>排序操作</strong>：<code>sort</code>参数</li>
+<li><strong>分面搜索</strong>：faceting查询</li>
+<li><strong>函数查询</strong>：function queries</li>
+</ol>
+<h3 id="搜索时检索DocValues"><a href="#搜索时检索DocValues" class="headerlink" title="搜索时检索DocValues"></a>搜索时检索DocValues</h3><h4 id="useDocValuesAsStored参数"><a href="#useDocValuesAsStored参数" class="headerlink" title="useDocValuesAsStored参数"></a>useDocValuesAsStored参数</h4><p>对于<strong>schemaVersion &gt;&#x3D; 1.6</strong>，默认<code>useDocValuesAsStored=&quot;true&quot;</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 自动返回DocValues字段 --&gt;</span></span><br><span class="line">?fl=*  <span class="comment">&lt;!-- 包含非存储的DocValues字段 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>当<code>useDocValuesAsStored=&quot;false&quot;</code>时：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 需要显式指定字段名 --&gt;</span></span><br><span class="line">?fl=id,title,price  <span class="comment">&lt;!-- 显式请求DocValues字段 --&gt;</span></span><br><span class="line">?fl=*  <span class="comment">&lt;!-- 不包含DocValues字段 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="性能考虑"><a href="#性能考虑" class="headerlink" title="性能考虑"></a>性能考虑</h4><p><strong>DocValues vs 存储字段</strong>：</p>
+<ul>
+<li><strong>存储字段</strong>：需要磁盘读取和解压缩</li>
+<li><strong>DocValues字段</strong>：仅需要内存访问</li>
+<li><strong>纯DocValues查询</strong>：性能可能显著提升</li>
+</ul>
+<h4 id="多值字段的特殊行为"><a href="#多值字段的特殊行为" class="headerlink" title="多值字段的特殊行为"></a>多值字段的特殊行为</h4><p>使用DocValues检索多值字段时：</p>
+<ol>
+<li><strong>排序顺序</strong>：返回排序顺序（非插入顺序）</li>
+<li><strong>去重处理</strong>：可能去除重复值（取决于DocValue类型）</li>
+</ol>
+<p><strong>示例</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">插入顺序: [4, 5, 2, 4, 1]</span><br><span class="line">DocValues返回: [1, 2, 4, 5]  // SORTED_SET类型</span><br></pre></td></tr></table></figure>
+
+<p><strong>保持插入顺序</strong>：需要将多值字段设置为<code>stored=&quot;true&quot;</code>（需要重新索引）</p>
+<h2 id="禁用DocValues"><a href="#禁用DocValues" class="headerlink" title="禁用DocValues"></a>禁用DocValues</h2><h3 id="显式禁用"><a href="#显式禁用" class="headerlink" title="显式禁用"></a>显式禁用</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;field_a&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;false&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="禁用考虑因素"><a href="#禁用考虑因素" class="headerlink" title="禁用考虑因素"></a>禁用考虑因素</h3><p>虽然DocValues通常有益，但在某些情况下可能需要禁用：</p>
+<ol>
+<li><strong>存储空间约束</strong>：DocValues增加索引大小</li>
+<li><strong>写入性能优先</strong>：索引时间可能增加</li>
+<li><strong>特殊用例</strong>：仅需要搜索，不需要排序&#x2F;分面</li>
+</ol>
+<h2 id="最佳实践建议"><a href="#最佳实践建议" class="headerlink" title="最佳实践建议"></a>最佳实践建议</h2><h3 id="1-字段设计策略"><a href="#1-字段设计策略" class="headerlink" title="1. 字段设计策略"></a>1. 字段设计策略</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 推荐：分离不同用途的字段 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span> <span class="attr">type</span>=<span class="string">&quot;text_general&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;true&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title_sort&quot;</span> <span class="attr">type</span>=<span class="string">&quot;string&quot;</span> <span class="attr">indexed</span>=<span class="string">&quot;false&quot;</span> <span class="attr">stored</span>=<span class="string">&quot;false&quot;</span> <span class="attr">docValues</span>=<span class="string">&quot;true&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-性能优化"><a href="#2-性能优化" class="headerlink" title="2. 性能优化"></a>2. 性能优化</h3><p><strong>查询优化</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"># 仅使用DocValues字段时性能最佳</span><br><span class="line">fl=id,title_sort,price,category</span><br><span class="line"></span><br><span class="line"># 避免混合存储字段和DocValues字段</span><br><span class="line">fl=*  # 可能降低性能</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-内存管理"><a href="#3-内存管理" class="headerlink" title="3. 内存管理"></a>3. 内存管理</h3><p><strong>监控要点</strong>：</p>
+<ul>
+<li>DocValues内存使用情况</li>
+<li>查询响应时间变化</li>
+<li>索引大小增长</li>
+</ul>
+<h3 id="4-升级迁移"><a href="#4-升级迁移" class="headerlink" title="4. 升级迁移"></a>4. 升级迁移</h3><p><strong>升级计划</strong>：</p>
+<ol>
+<li>测试环境验证DocValues效果</li>
+<li>评估索引重建的影响</li>
+<li>制定分步迁移策略</li>
+<li>监控性能指标变化</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ol>
+<li><p><strong>查询结果顺序异常</strong>：</p>
+<ul>
+<li>检查是否混淆了存储字段和DocValues字段</li>
+<li>确认多值字段的排序行为</li>
+</ul>
+</li>
+<li><p><strong>内存使用增加</strong>：</p>
+<ul>
+<li>检查DocValuesFormat配置</li>
+<li>考虑调整JVM堆内存设置</li>
+</ul>
+</li>
+<li><p><strong>索引构建缓慢</strong>：</p>
+<ul>
+<li>评估是否所有字段都需要DocValues</li>
+<li>考虑分批构建索引</li>
+</ul>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>DocValues是现代Solr搜索应用的核心技术，通过列式存储显著提升了排序、分面搜索和函数查询的性能。正确理解和配置DocValues对于构建高性能搜索应用至关重要。</p>
+<p>虽然DocValues带来了显著的性能优势，但也需要权衡存储空间和索引时间的成本。通过合理的字段设计和配置策略，可以最大化DocValues的收益，为用户提供快速、高效的搜索体验。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Apache-Solr/">Apache Solr</a>
+      , 
+    
+      <a class="article-category" href="/categories/Apache-Solr/%E7%B4%A2%E5%BC%95%E7%AE%A1%E7%90%86/">索引管理</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/DocValues/">DocValues</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/">分面搜索</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8/">列式存储</a>
+  
+    <a class="article-tag" href="/tags/%E6%8E%92%E5%BA%8F/">排序</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E7%BB%93%E6%9E%84/">索引结构</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/19/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E6%9E%9A%E4%B8%BE%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%B8%8E%E9%A2%84%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr索引：枚举字段类型与预定义排序完整指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/04/17/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%A4%96%E9%83%A8%E6%96%87%E4%BB%B6%E5%A4%84%E7%90%86%E4%B8%8E%E9%A2%84%E5%88%86%E6%9E%90%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr索引：外部文件处理与预分析字段类型详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E7%B4%A2%E5%BC%95%EF%BC%9ADocValues%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E5%8E%9F%E7%90%86%E4%B8%8E%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr索引：DocValues列式存储原理与性能优化详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DocValues%E5%AD%98%E5%9C%A8%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-number">1.2.</span> <span class="nav-text">DocValues存在的必要性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E5%80%92%E6%8E%92%E7%B4%A2%E5%BC%95%E7%9A%84%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">传统倒排索引的局限性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E3%80%81%E5%88%86%E9%9D%A2%E3%80%81%E9%AB%98%E4%BA%AE%E7%9A%84%E6%80%A7%E8%83%BD%E7%93%B6%E9%A2%88"><span class="nav-number">1.2.2.</span> <span class="nav-text">排序、分面、高亮的性能瓶颈</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DocValues%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.3.</span> <span class="nav-text">DocValues解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Lucene-4-0%E7%9A%84%E5%88%9B%E6%96%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">Lucene 4.0的创新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%BC%98%E5%8A%BF"><span class="nav-number">1.3.2.</span> <span class="nav-text">核心优势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8DocValues"><span class="nav-number">1.4.</span> <span class="nav-text">启用DocValues</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.1.</span> <span class="nav-text">默认启用策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">基础字段类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E7%9B%B8%E5%85%B3%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">排序相关字段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E5%AD%97%E6%AE%B5"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">空间字段</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%8A%A8%E5%90%AF%E7%94%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.2.</span> <span class="nav-text">手动启用配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E6%8F%90%E9%86%92"><span class="nav-number">1.4.3.</span> <span class="nav-text">重要提醒</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%B8%8ELucene-DocValue%E7%B1%BB%E5%9E%8B%E6%98%A0%E5%B0%84"><span class="nav-number">1.5.</span> <span class="nav-text">字段类型与Lucene DocValue类型映射</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%92%8CUUID%E5%AD%97%E6%AE%B5"><span class="nav-number">1.5.1.</span> <span class="nav-text">字符串和UUID字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%83%E5%B0%94%E5%AD%97%E6%AE%B5"><span class="nav-number">1.5.2.</span> <span class="nav-text">布尔字段</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E5%92%8C%E6%97%A5%E6%9C%9F%E5%AD%97%E6%AE%B5%EF%BC%88%E7%8E%B0%E4%BB%A3%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-number">1.5.3.</span> <span class="nav-text">数值和日期字段（现代版本）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%80%BC%E5%92%8C%E6%97%A5%E6%9C%9F%E5%AD%97%E6%AE%B5%EF%BC%88%E5%B7%B2%E5%BA%9F%E5%BC%83%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-number">1.5.4.</span> <span class="nav-text">数值和日期字段（已废弃版本）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%EF%BC%9ADocValuesFormat"><span class="nav-number">1.6.</span> <span class="nav-text">高级配置：DocValuesFormat</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.6.1.</span> <span class="nav-text">默认实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.6.2.</span> <span class="nav-text">自定义格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E8%AD%A6%E5%91%8A"><span class="nav-number">1.6.3.</span> <span class="nav-text">重要警告</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DocValues%E7%9A%84%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8"><span class="nav-number">1.7.</span> <span class="nav-text">DocValues的实际应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.7.1.</span> <span class="nav-text">自动使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E6%97%B6%E6%A3%80%E7%B4%A2DocValues"><span class="nav-number">1.7.2.</span> <span class="nav-text">搜索时检索DocValues</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#useDocValuesAsStored%E5%8F%82%E6%95%B0"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">useDocValuesAsStored参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%80%83%E8%99%91"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">性能考虑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5%E7%9A%84%E7%89%B9%E6%AE%8A%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">多值字段的特殊行为</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A6%81%E7%94%A8DocValues"><span class="nav-number">1.8.</span> <span class="nav-text">禁用DocValues</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%98%BE%E5%BC%8F%E7%A6%81%E7%94%A8"><span class="nav-number">1.8.1.</span> <span class="nav-text">显式禁用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A6%81%E7%94%A8%E8%80%83%E8%99%91%E5%9B%A0%E7%B4%A0"><span class="nav-number">1.8.2.</span> <span class="nav-text">禁用考虑因素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.9.</span> <span class="nav-text">最佳实践建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AD%97%E6%AE%B5%E8%AE%BE%E8%AE%A1%E7%AD%96%E7%95%A5"><span class="nav-number">1.9.1.</span> <span class="nav-text">1. 字段设计策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.2.</span> <span class="nav-text">2. 性能优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86"><span class="nav-number">1.9.3.</span> <span class="nav-text">3. 内存管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%8D%87%E7%BA%A7%E8%BF%81%E7%A7%BB"><span class="nav-number">1.9.4.</span> <span class="nav-text">4. 升级迁移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.10.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.10.1.</span> <span class="nav-text">常见问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
