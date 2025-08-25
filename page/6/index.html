@@ -149,7 +149,7 @@ var themeMenus = {};
         
           <section id="main">
   
-    <article id="post-solr如何按照年月日facet分层查询"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Solr教程-练习一-索引Techproducts数据"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -157,7 +157,7 @@ var themeMenus = {};
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2013/01/18/solr%E5%A6%82%E4%BD%95%E6%8C%89%E7%85%A7%E5%B9%B4%E6%9C%88%E6%97%A5facet%E5%88%86%E5%B1%82%E6%9F%A5%E8%AF%A2/">Solr如何按照年月日facet分层查询</a>
+      <a class="article-title" href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/">Solr教程：练习一 - 索引Techproducts数据</a>
     </h1>
   
 
@@ -165,8 +165,8 @@ var themeMenus = {};
     
     <div class="article-meta">
       
-	Posted on <a href="/2013/01/18/solr%E5%A6%82%E4%BD%95%E6%8C%89%E7%85%A7%E5%B9%B4%E6%9C%88%E6%97%A5facet%E5%88%86%E5%B1%82%E6%9F%A5%E8%AF%A2/" class="article-date">
-	  <time datetime="2013-01-17T16:16:15.000Z" itemprop="datePublished">一月 18, 2013</time>
+	Posted on <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/" class="article-date">
+	  <time datetime="2024-11-14T16:00:00.000Z" itemprop="datePublished">十一月 15, 2024</time>
 	</a>
 
       
@@ -177,20 +177,31 @@ var themeMenus = {};
 
           
             <div class="entry-summary" style="margin-left:0;">
-            这里假设我们的时间字段是 timestamp
-在 schema.xml 配置如下：
-1&lt;field name=&quot;timestamp&quot; type=&quot;date&quot; indexed=&quot;true&quot; stored=&quot;true&quot; default=&quot;NOW+8HOUR&quot; multiValued=&quot;false&quot;/&gt;
+            本练习将指导您启动Solr、创建集合、索引基本文档并执行搜索操作。
+启动Solr云模式1. 启动Solr云模式使用以下命令启动Solr云模式：
+1bin/solr start -e cloud
 
-查询参数如下：
-1facet=true&amp;facet.date=timestamp&amp;facet.date.start=NOW/DAY-1DAY&amp;facet.date.end=NOW/DAY%2B1DAY&amp;facet.date.gap=%2B1DAY
+2. 按照交互式提示操作
+选择2个节点（默认）
+接受默认端口（8983和7574）
+将集合命名为”techproducts”
+选择”sample_techproducts_configs”配置
 
-参数解释facet&#x3D;true 开启分层检索
-facet.date&#...
+索引Techproducts数据使用post工具索引示例文档：
+1bin/solr post -c techproducts example/exampledocs/*
+
+这个命令会索引example&#x2F;exampledocs目录下的所有文档，包括各种格式的文件。
+基本搜索技术1. 搜索所有文档1q=*:*
+
+这将返回集合中的所有文档。
+2. 搜索单个词条1q=foundation
+
+搜索包...
           
 
         
           <p class="article-more-link">
-            <a href="/2013/01/18/solr%E5%A6%82%E4%BD%95%E6%8C%89%E7%85%A7%E5%B9%B4%E6%9C%88%E6%97%A5facet%E5%88%86%E5%B1%82%E6%9F%A5%E8%AF%A2/#more">阅读全文</a>
+            <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/#more">阅读全文</a>
           </p>
         </div>
       
@@ -199,16 +210,22 @@ facet.date&#...
       
 	<span class="ico-folder"></span>
     
-      <a class="article-category" href="/categories/Solr%E7%AD%94%E7%96%91/">Solr答疑</a>
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
       
     
 
       
   <span class="ico-tags"></span>
   
-    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
   
-    <a class="article-tag" href="/tags/SolrQuerySyntax/">SolrQuerySyntax</a>
+    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95/">索引</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2/">搜索</a>
+  
+    <a class="article-tag" href="/tags/Techproducts/">Techproducts</a>
   
 
       
@@ -224,7 +241,7 @@ facet.date&#...
     
 
   
-    <article id="post-solr记录时间不准"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Solr教程-入门指南概览"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -232,7 +249,7 @@ facet.date&#...
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2013/01/17/solr%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E4%B8%8D%E5%87%86/">solr记录时间不准</a>
+      <a class="article-title" href="/2024/11/10/Solr%E6%95%99%E7%A8%8B-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%E6%A6%82%E8%A7%88/">Solr教程：入门指南概览</a>
     </h1>
   
 
@@ -240,8 +257,8 @@ facet.date&#...
     
     <div class="article-meta">
       
-	Posted on <a href="/2013/01/17/solr%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E4%B8%8D%E5%87%86/" class="article-date">
-	  <time datetime="2013-01-17T15:39:51.000Z" itemprop="datePublished">一月 17, 2013</time>
+	Posted on <a href="/2024/11/10/Solr%E6%95%99%E7%A8%8B-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%E6%A6%82%E8%A7%88/" class="article-date">
+	  <time datetime="2024-11-09T16:00:00.000Z" itemprop="datePublished">十一月 10, 2024</time>
 	</a>
 
       
@@ -252,16 +269,54 @@ facet.date&#...
 
           
             <div class="entry-summary" style="margin-left:0;">
-            Solr记录时间不准的解决方案问题描述下面的配置可以自动添加当前时间到timestamp字段，这是按照格林威治时间记录的，我们在东8区：
-1&lt;field name=&quot;timestamp&quot; type=&quot;date&quot; indexed=&quot;true&quot; stored=&quot;true&quot; default=&quot;NOW&quot; multiValued=&quot;false&quot;/&gt;
+            本教程旨在帮助用户快速上手Apache Solr，涵盖从基础到高级的多个练习模块。
+教程概述本教程包含三个主要练习和多个高级主题：
+主要练习
+练习一（Techproducts）：
 
-解决方案下面这样配置记录的就是北京时间：
-1&lt;field name=&quot;timestamp&quot; type=&quot;date&quot; indexed=&quot;true&quot; stored=&quot;true&quot; default=&quot;NOW+8HOUR&quot;...
+启动Solr
+创建集合
+索引基本文档
+执行搜索操作
+
+
+练习二（Films）：
+
+使用不同的数据集
+探索分面（facets）请求
+
+
+练习三（DIY）：
+
+使用您自己的数据
+开始实施规划
+
+
+
+高级练习
+ParamSets：参数集管理
+向量搜索：AI驱动的搜索功能
+SolrCloud：分布式搜索集群
+部署到AWS：云端部署实践
+
+前置要求
+满足系统要求
+下载Apache Solr发行版（推荐9.9版本）
+
+关键步骤
+解压Solr发行版
+逐步完成教程练习
+探索空间查询功能
+实验索引和搜索功能
+
+本教程旨在提供Solr核心功能的全面介绍，从基础设置到高级特性，帮助用户快速掌握这个搜索平台。
+清理和后续步骤
+包...
           
 
         
           <p class="article-more-link">
-            <a href="/2013/01/17/solr%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E4%B8%8D%E5%87%86/#more">阅读全文</a>
+            <a href="/2024/11/10/Solr%E6%95%99%E7%A8%8B-%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97%E6%A6%82%E8%A7%88/#more">阅读全文</a>
           </p>
         </div>
       
@@ -270,18 +325,20 @@ facet.date&#...
       
 	<span class="ico-folder"></span>
     
-      <a class="article-category" href="/categories/Solr%E7%AD%94%E7%96%91/">Solr答疑</a>
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
       
     
 
       
   <span class="ico-tags"></span>
   
+    <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
+  
+    <a class="article-tag" href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/">入门指南</a>
+  
+    <a class="article-tag" href="/tags/Apache-Solr/">Apache Solr</a>
+  
     <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
-  
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
-  
-    <a class="article-tag" href="/tags/schema/">schema</a>
   
 
       
@@ -297,7 +354,7 @@ facet.date&#...
     
 
   
-    <article id="post-lucenesolr架构"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Apache-Solr-8-正式结束生命周期-升级指南"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -305,7 +362,7 @@ facet.date&#...
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2013/01/15/lucenesolr%E6%9E%B6%E6%9E%84/">Lucene/Solr架构</a>
+      <a class="article-title" href="/2024/10/25/Apache-Solr-8-%E6%AD%A3%E5%BC%8F%E7%BB%93%E6%9D%9F%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/">Apache Solr 8 正式结束生命周期：升级 Solr 9 刻不容缓</a>
     </h1>
   
 
@@ -313,8 +370,8 @@ facet.date&#...
     
     <div class="article-meta">
       
-	Posted on <a href="/2013/01/15/lucenesolr%E6%9E%B6%E6%9E%84/" class="article-date">
-	  <time datetime="2013-01-15T07:37:07.000Z" itemprop="datePublished">一月 15, 2013</time>
+	Posted on <a href="/2024/10/25/Apache-Solr-8-%E6%AD%A3%E5%BC%8F%E7%BB%93%E6%9D%9F%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2024-10-24T16:00:00.000Z" itemprop="datePublished">十月 25, 2024</time>
 	</a>
 
       
@@ -325,17 +382,259 @@ facet.date&#...
 
           
             <div class="entry-summary" style="margin-left:0;">
-            
-Lucene&#x2F;Solr 索引架构
+            Apache Solr 8 正式结束生命周期2024年10月25日，Apache Solr 项目管理委员会正式宣布，Apache Solr 8 已达到生命周期终点（End of Life）。随着 Apache Lucene 10 的发布，Lucene 和 Solr PMC 将无法再为 Solr 8 提供新的版本发布。Solr 8.11.4 将成为 Solr 8 系列的最终版本。
+原文动态翻译Apache Solr 项目委员会宣布：
+Solr 8 已达到生命周期终点。随着 Lucene 10 的发布，Lucene 和 Solr 项目管理委员会将无法继续为 Solr 8 提供新的发布版本。
+关键信息：
 
-Just like all request handlers, update handlers can be mapped to a specific URL and have their own set of default or invariant parameters.
-Each update handler can have it’s own Update Processor Chain that can do Document-level operations prior to indexing, or even redirect indexing to a different server or create multiple documents (or zero) from a single one.
-All of the...
+最终版本：Solr 8.11.4 为 Solr 8 系列的最后一个版本
+停止支持：不再提供安全补丁、bug 修复或功能更新
+升级建议：强烈建议用户升级到 Solr 9，并开始为即将到来的...
           
 
         
           <p class="article-more-link">
-            <a href="/2013/01/15/lucenesolr%E6%9E%B6%E6%9E%84/#more">阅读全文</a>
+            <a href="/2024/10/25/Apache-Solr-8-%E6%AD%A3%E5%BC%8F%E7%BB%93%E6%9D%9F%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F-%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/">生命周期</a>
+  
+    <a class="article-tag" href="/tags/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/">升级指南</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Apache-Solr-安全漏洞通告-CVE-2024-45216与CVE-2024-45217"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/">Apache Solr 重要安全更新：PKI 认证绕过与配置集信任漏洞修复</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/" class="article-date">
+	  <time datetime="2024-10-13T16:00:00.000Z" itemprop="datePublished">十月 14, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr 重要安全漏洞通告2024年10月14日，Apache Solr 安全团队公开披露了两个重要安全漏洞：CVE-2024-45216 和 CVE-2024-45217。这两个漏洞分别涉及 PKI 认证插件的绕过问题和配置集备份恢复过程中的隐式信任问题，对分布式 Solr 集群的安全性构成重大威胁。
+原文动态翻译Apache Solr 项目披露了两个重要安全漏洞：
+CVE-2024-45216：PKI 认证插件认证绕过漏洞
+影响范围：使用 PKI 认证插件的 Solr 实例
+风险等级：高风险
+漏洞描述：攻击者可能绕过 PKI 认证插件的认证机制，获得未授权访问
+CVSS 评分：待更新
+
+CVE-2024-45217：配置集备份恢复隐式信任漏洞
+影响范围：使用备份恢复功能的 Solr 集群
+风险等级：中高风险  
+漏洞描述：在备份恢复过程中，系统对配置集存在隐式信任，...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/10/14/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E/">安全漏洞</a>
+  
+    <a class="article-tag" href="/tags/CVE%E9%80%9A%E5%91%8A/">CVE通告</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8%E4%BF%AE%E5%A4%8D/">安全修复</a>
+  
+    <a class="article-tag" href="/tags/PKI%E8%AE%A4%E8%AF%81/">PKI认证</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Apache-Solr-9-7-0-发布-DocValues默认启用与向量相似度查询"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/09/09/Apache-Solr-9-7-0-%E5%8F%91%E5%B8%83-DocValues%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%9F%A5%E8%AF%A2/">Apache Solr 9.7.0 发布：DocValues 默认启用与向量相似度查询</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/09/09/Apache-Solr-9-7-0-%E5%8F%91%E5%B8%83-DocValues%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%9F%A5%E8%AF%A2/" class="article-date">
+	  <time datetime="2024-09-08T16:00:00.000Z" itemprop="datePublished">九月 9, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr 9.7.0 重要功能增强版本2024年9月9日，Apache Solr 项目发布了 9.7.0 版本，这是一个带来重要架构改进的版本。此版本的最大亮点是 DocValues 的默认启用，以及新增的 vectorSimilarity 查询解析器，标志着 Solr 在列式存储和向量搜索领域的重大进展。
+原文动态翻译Apache Solr 9.7.0 现已可用。此版本的主要亮点包括：
+
+DocValues 默认启用：所有字段类型默认启用 DocValues，显著提升查询和聚合性能
+全新 vectorSimilarity 查询解析器：原生支持向量相似度搜索，增强 AI 搜索能力
+Prometheus 监控指标改进：更丰富和标准化的监控指标输出
+性能优化：多项针对大规模数据处理的性能改进
+认证和 CLI 改进：增强了安全认证机制和命令行工具的易用性
+多项稳定性修复：修复...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/09/09/Apache-Solr-9-7-0-%E5%8F%91%E5%B8%83-DocValues%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%9F%A5%E8%AF%A2/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/DocValues/">DocValues</a>
+  
+    <a class="article-tag" href="/tags/%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2/">向量查询</a>
+  
+    <a class="article-tag" href="/tags/Prometheus%E7%9B%91%E6%8E%A7/">Prometheus监控</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr概念：搜索功能与查询语法"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/08/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">Solr概念：搜索功能与查询语法</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/08/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" class="article-date">
+	  <time datetime="2024-08-14T16:00:00.000Z" itemprop="datePublished">八月 15, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            搜索是Solr的核心功能，掌握搜索原理和查询语法是构建高效搜索应用的关键。
+搜索处理流程搜索组件架构12345678910111213用户查询    ↓请求处理器 (Request Handler)    ↓查询解析器 (Query Parser)    ↓查询执行引擎    ↓结果排序和过滤    ↓响应格式化 (Response Writer)    ↓返回结果给用户
+
+核心搜索组件1. 请求处理器（Request Handler）定义搜索查询的处理逻辑：
+12345678&lt;!-- solrconfig.xml中的请求处理器配置 --&gt;&lt;requestHandler name=&quot;/select&quot; class=&quot;solr.SearchHandler&quot;&gt;  &lt;lst name=&quot;defaults&quot...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/08/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/#more">阅读全文</a>
           </p>
         </div>
       
@@ -349,159 +648,19 @@ All of the...
     
 
       
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-solr入门之一-如何启动"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2013/01/10/solr%E5%85%A5%E9%97%A8%E4%B9%8B%E4%B8%80-%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8/">Solr部署如何启动</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2013/01/10/solr%E5%85%A5%E9%97%A8%E4%B9%8B%E4%B8%80-%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8/" class="article-date">
-	  <time datetime="2013-01-10T07:04:27.000Z" itemprop="datePublished">一月 10, 2013</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            我刚接触 solr，我要怎么启动，这是群里的朋友问得比较多的问题。
-solr 最新版本下载地址：http://www.apache.org/dyn/closer.cgi/lucene/solr/
-1、准备环境建立一个 solr 目录，把 solr 压缩包 example 目录下的内容复制到该目录
-2、把各种 jar 包准备好用 winrar 打开 webapps 目录下的 solr.war 文件
-把下载的 solr 压缩包 contrib 目录中所有 jar 文件放到 solr.war 包里的 WEB-INF\lib 目录下
-3、启动 Solr运行 java -jar start.jar 启动，solr 将运行在 8983 端口
-4、访问 Solr用浏览器访问 http://localhost:8983/solr，注意 solr 管理界面不兼容 IE 浏览器。
-相关资源SolrClo...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2013/01/10/solr%E5%85%A5%E9%97%A8%E4%B9%8B%E4%B8%80-%E5%A6%82%E4%BD%95%E5%90%AF%E5%8A%A8/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
-      
-    
-
-      
   <span class="ico-tags"></span>
   
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
   
-    <a class="article-tag" href="/tags/solr%E5%85%A5%E9%97%A8/">solr入门</a>
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/">搜索功能</a>
   
-    <a class="article-tag" href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/">新手必看</a>
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">查询解析器</a>
   
-
-      
-            
-      
-    </footer>
-  </div>
+    <a class="article-tag" href="/tags/%E9%AB%98%E7%BA%A7%E6%90%9C%E7%B4%A2/">高级搜索</a>
   
-</article>
-
-<!-- Table of Contents -->
-
-    
-
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/">搜索优化</a>
   
-    <article id="post-取消document唯一性检查disable-unique-document-check"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/27/%E5%8F%96%E6%B6%88document%E5%94%AF%E4%B8%80%E6%80%A7%E6%A3%80%E6%9F%A5disable-unique-document-check/">取消document唯一性检查(Disable unique document check)</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2012/12/27/%E5%8F%96%E6%B6%88document%E5%94%AF%E4%B8%80%E6%80%A7%E6%A3%80%E6%9F%A5disable-unique-document-check/" class="article-date">
-	  <time datetime="2012-12-27T08:56:36.000Z" itemprop="datePublished">十二月 27, 2012</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            取消唯一性检查的方法默认情况下，索引的时候 Solr 会检查主键是否有重复的，以避免不同的 document 使用相同的主键。
-如果你确认你的 document 不会有重复的主键，可以通过以下方式取消检查：
-
-将参数 allowDups=true 加到 URL 上
-对于 CSV 文档，使用 overwrite=false
-
-详细说明使用 allowDups 参数在更新文档时，可以在 URL 中添加 allowDups=true 参数：
-1http://localhost:8983/solr/collection1/update?allowDups=true
-
-使用 overwrite 参数对于 CSV 格式的文档导入：
-1http://localhost:8983/solr/collection1/update/csv?overwrite=false
-
-性能考虑取消唯一性检查可以提高...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2012/12/27/%E5%8F%96%E6%B6%88document%E5%94%AF%E4%B8%80%E6%80%A7%E6%A3%80%E6%9F%A5disable-unique-document-check/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E6%8A%80%E5%B7%A7/">Solr技巧</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
-  
-    <a class="article-tag" href="/tags/solrconfig/">solrconfig</a>
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">查询语法</a>
   
 
       
@@ -517,7 +676,7 @@ solr 最新版本下载地址：http://www.apache.org/dyn/closer.cgi/lucene/solr
     
 
   
-    <article id="post-solr各组件之间的关系图中英文对照版"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Solr概念：索引原理与优化"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -525,7 +684,7 @@ solr 最新版本下载地址：http://www.apache.org/dyn/closer.cgi/lucene/solr
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/27/solr%E5%90%84%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%B8%AD%E8%8B%B1%E6%96%87%E5%AF%B9%E7%85%A7%E7%89%88/">Solr各组件之间的关系图中英文对照版</a>
+      <a class="article-title" href="/2024/07/25/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BC%98%E5%8C%96/">Solr概念：索引原理与优化</a>
     </h1>
   
 
@@ -533,8 +692,8 @@ solr 最新版本下载地址：http://www.apache.org/dyn/closer.cgi/lucene/solr
     
     <div class="article-meta">
       
-	Posted on <a href="/2012/12/27/solr%E5%90%84%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%B8%AD%E8%8B%B1%E6%96%87%E5%AF%B9%E7%85%A7%E7%89%88/" class="article-date">
-	  <time datetime="2012-12-27T06:25:15.000Z" itemprop="datePublished">十二月 27, 2012</time>
+	Posted on <a href="/2024/07/25/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BC%98%E5%8C%96/" class="article-date">
+	  <time datetime="2024-07-24T16:00:00.000Z" itemprop="datePublished">七月 25, 2024</time>
 	</a>
 
       
@@ -545,37 +704,21 @@ solr 最新版本下载地址：http://www.apache.org/dyn/closer.cgi/lucene/solr
 
           
             <div class="entry-summary" style="margin-left:0;">
-            Solr 4 组件关系图为了帮助大家更好地理解 Solr 的架构，我们提供了 Solr 4 主要组件关系图的中英文对照版本。这些图展示了 Solr 内部各个组件之间的关系和数据流向。
-英文版
-中文版
-组件说明主要组件介绍IndexWriter（索引写入器）
+            索引是Solr搜索功能的核心，理解索引原理和优化策略对构建高性能搜索应用至关重要。
+索引基本概念什么是索引？**索引（Indexing）**是将内容添加到Solr索引中使其可搜索的过程：
 
-负责将文档写入 Lucene 索引
-管理索引的创建和更新操作
-处理文档的添加、删除和修改
+数据转换：将原始文档转换为可搜索的数据结构
+倒排索引：创建从词条到文档的映射关系
+优化存储：以高效的方式存储和组织数据
 
-IndexSearcher（索引搜索器）
+索引的核心组件123456789101112Solr索引结构├── 文档（Documents）│   ├── 字段1（Field1）│   ├── 字段2（Field2）│   └── ...├── 倒排索引（Inverted Index）│   ├── 词条→文档ID列表│   ├── 词频统计│   └── 位置信息└── 存储结构（Stored Fields）    ├── 原始字段值    └── 压缩数据
 
-负责搜索操作的执行
-处理查询请求并返回结果
-管理搜索相关的缓存
-
-Request Handler（请求处理器）
-
-处理不同类型的 HTTP 请求
-包括搜索请求、更新请求、管理请求等
-可以自定义不同的处理器来满足特定需求
-
-Query Parser（查询解析器）
-
-将用户输入的查询字符串解析为 Lucene 查询对象
-支持多种查询语法（如 DisMax、eDisMax 等）
-可以处理复杂的查询逻辑...
+文档和字段结构文档组成Solr索引由文档（Documents...
           
 
         
           <p class="article-more-link">
-            <a href="/2012/12/27/solr%E5%90%84%E7%BB%84%E4%BB%B6%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB%E5%9B%BE%E4%B8%AD%E8%8B%B1%E6%96%87%E5%AF%B9%E7%85%A7%E7%89%88/#more">阅读全文</a>
+            <a href="/2024/07/25/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BC%98%E5%8C%96/#more">阅读全文</a>
           </p>
         </div>
       
@@ -591,7 +734,17 @@ Query Parser（查询解析器）
       
   <span class="ico-tags"></span>
   
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/">索引原理</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/">索引优化</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/">数据导入</a>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">性能调优</a>
+  
+    <a class="article-tag" href="/tags/Lucene%E7%B4%A2%E5%BC%95/">Lucene索引</a>
   
 
       
@@ -607,7 +760,7 @@ Query Parser（查询解析器）
     
 
   
-    <article id="post-solrcloud和multicore的区别"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-Solr官方文档翻译-控制脚本参考指南"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -615,7 +768,7 @@ Query Parser（查询解析器）
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/27/solrcloud%E5%92%8Cmulticore%E7%9A%84%E5%8C%BA%E5%88%AB/">SolrCloud和MultiCore的区别</a>
+      <a class="article-title" href="/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/">Solr概念：控制脚本与系统管理</a>
     </h1>
   
 
@@ -623,8 +776,8 @@ Query Parser（查询解析器）
     
     <div class="article-meta">
       
-	Posted on <a href="/2012/12/27/solrcloud%E5%92%8Cmulticore%E7%9A%84%E5%8C%BA%E5%88%AB/" class="article-date">
-	  <time datetime="2012-12-27T06:19:17.000Z" itemprop="datePublished">十二月 27, 2012</time>
+	Posted on <a href="/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2024-07-07T16:00:00.000Z" itemprop="datePublished">七月 8, 2024</time>
 	</a>
 
       
@@ -635,21 +788,963 @@ Query Parser（查询解析器）
 
           
             <div class="entry-summary" style="margin-left:0;">
-            首先我们初步理解一下概念
-SolrCloud 模式下有 Cluster，Node，Collection，Shard，LeaderCore，ReplicationCore 几个概念，这里我引用一下同事对官方概念的翻译：
+            Solr 控制脚本参考指南控制脚本概述Apache Solr 提供了一个强大的控制脚本 bin/solr，它是管理 Solr 实例的主要命令行工具。这个脚本提供了完整的服务器生命周期管理、集合和核心操作、ZooKeeper 管理、认证配置等功能，是 Solr 运维管理的核心工具。
+脚本基本语法123456789# 基本语法bin/solr [command] [options]# 查看帮助信息bin/solr -hbin/solr --help# 查看特定命令的帮助bin/solr [command] -h
 
-Cluster 群集：群集是一组作为一个单元管理的 Solr 节点。整个群集必须使用同一套 schema 和 solrconfig
-Node 节点：一个运行 Solr 的 JVM 实例
-Shard 碎片：一个分区通过指定的复制因子（replication factor）被存储在多个节点上。所有这些节点共同形成一个碎片。一个节点可能由多个碎片组成。
-Leader 负责人：每个碎片（shard）都有一个节点标识作为它的领导。所有的写操作经过领导节点写入指定的分区。
-Replication Factor 复制因子：群集维护的最少数量的文件副本
-
-补充说明Collection...
+服务器管理命令1. 启动服务器（start）基本启动1234567891011# 默认启动（端口 8983）bin/solr start# 后台启动bin/solr start -force# 指定端口启动bin/solr start -p 8984# 指定 Solr 主目录b...
           
 
         
           <p class="article-more-link">
-            <a href="/2012/12/27/solrcloud%E5%92%8Cmulticore%E7%9A%84%E5%8C%BA%E5%88%AB/#more">阅读全文</a>
+            <a href="/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/">系统管理</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC/">控制脚本</a>
+  
+    <a class="article-tag" href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/">命令行工具</a>
+  
+    <a class="article-tag" href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/">运维工具</a>
+  
+    <a class="article-tag" href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/">自动化部署</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr概念：文档字段与模式设计"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/07/05/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/">Solr概念：文档字段与模式设计</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/07/05/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" class="article-date">
+	  <time datetime="2024-07-04T16:00:00.000Z" itemprop="datePublished">七月 5, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            在Solr中，理解文档、字段和模式设计是构建高效搜索应用的基础。本文深入介绍这些核心概念。
+基本理念Solr的工作原理可以比作书籍索引的增强版本：
+
+索引信息：将大量信息组织成可快速检索的结构
+快速检索：通过查询快速找到特定的信息片段
+精确定位：像书籍索引一样，帮助您准确找到所需内容
+
+这种理念使得Solr能够处理海量数据，同时提供毫秒级的搜索响应。
+文档结构什么是文档？**文档（Document）**是Solr中信息的基本单位：
+
+数据容器：包含一组相关信息的逻辑单元
+业务实体：可以代表一篇文章、一个产品、一条记录等
+搜索目标：用户搜索时返回的基本结果单位
+
+文档示例12345678910&#123;  &quot;id&quot;: &quot;book_001&quot;,  &quot;title&quot;: &quot;Apache Solr实战指南&quot;,  &q...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/07/05/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84/">文档结构</a>
+  
+    <a class="article-tag" href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/">字段类型</a>
+  
+    <a class="article-tag" href="/tags/%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/">模式设计</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1/">索引设计</a>
+  
+    <a class="article-tag" href="/tags/Schema/">Schema</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr概念：Apache Solr简介与核心特性"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/06/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9AApache%20Solr%E7%AE%80%E4%BB%8B%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7/">Solr概念：Apache Solr简介与核心特性</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/06/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9AApache%20Solr%E7%AE%80%E4%BB%8B%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7/" class="article-date">
+	  <time datetime="2024-06-14T16:00:00.000Z" itemprop="datePublished">六月 15, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr是构建在Apache Lucene之上的开源搜索服务器，专为强大的文档检索和分析应用而设计。
+什么是Apache Solr？Apache Solr是一个开源搜索服务器，具有以下基本特征：
+
+基于Apache Lucene构建：利用Lucene强大的全文索引和搜索能力
+强大的文档检索：专为高效的文档检索和分析应用设计
+多种数据类型支持：处理非结构化、半结构化和混合数据类型
+Apache 2.0许可证：提供广泛的可扩展性，支持商业和非商业用途
+
+核心特性1. 高级搜索功能Solr提供了丰富的搜索特性：
+
+复杂查询语法：支持各种复杂的搜索表达式
+分面搜索：提供分类和过滤功能，帮助用户精确定位信息
+结果折叠和聚类：智能组织搜索结果
+流式处理和数学表达式：支持实时分析和复杂计算
+
+2. 相关性和文本分析先进的文本处理能力：
+
+高级文本分析：深度理解文档内容
+分词和词干提取...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/06/15/Solr%E6%A6%82%E5%BF%B5%EF%BC%9AApache%20Solr%E7%AE%80%E4%BB%8B%E4%B8%8E%E6%A0%B8%E5%BF%83%E7%89%B9%E6%80%A7/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/Apache-Solr/">Apache Solr</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
+  
+    <a class="article-tag" href="/tags/%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2/">开源搜索</a>
+  
+    <a class="article-tag" href="/tags/Lucene/">Lucene</a>
+  
+    <a class="article-tag" href="/tags/%E4%BC%81%E4%B8%9A%E6%90%9C%E7%B4%A2/">企业搜索</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr官方文档翻译-生产环境部署指南"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/06/12/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">Solr概念：生产环境部署与优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/06/12/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2024-06-11T16:00:00.000Z" itemprop="datePublished">六月 12, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr 生产环境部署指南生产部署概述将 Apache Solr 部署到生产环境需要超越基本安装和配置，涉及系统优化、安全加固、性能调优、监控告警等多个维度。本指南提供了将 Solr 成功部署到生产环境的全面指导，确保系统的稳定性、安全性和高性能。
+安装和服务配置1. 使用服务脚本安装推荐的安装方式123456# 下载 Solr 安装包wget https://archive.apache.org/dist/lucene/solr/9.7.0/solr-9.7.0.tgz# 解压并运行安装脚本tar -xzf solr-9.7.0.tgzsudo bash solr-9.7.0/bin/install_solr_service.sh solr-9.7.0.tgz
+
+安装脚本的优势：
+
+系统服务集成：自动创建 systemd 服务单元
+用户权限分离：创建专用的 “solr” 用户运行服...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/06/12/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/">运维工具</a>
+  
+    <a class="article-tag" href="/tags/%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2/">生产部署</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">安全配置</a>
+  
+    <a class="article-tag" href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98/">系统调优</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Apache-Solr-9-6-1-发布-核心加载与副本管理优化"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/05/29/Apache-Solr-9-6-1-%E5%8F%91%E5%B8%83-%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86%E4%BC%98%E5%8C%96/">Apache Solr 9.6.1 发布：核心加载与副本管理优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/05/29/Apache-Solr-9-6-1-%E5%8F%91%E5%B8%83-%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86%E4%BC%98%E5%8C%96/" class="article-date">
+	  <time datetime="2024-05-28T16:00:00.000Z" itemprop="datePublished">五月 29, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr 9.6.1 稳定性维护版本2024年5月29日，Apache Solr 项目发布了 9.6.1 维护版本，这是一个专注于关键稳定性改进的版本。此版本解决了核心加载时间限制、副本标记机制以及 SolrJ 和 TLS 相关的重要问题，显著提升了大规模部署的可靠性。
+原文动态翻译Apache Solr 9.6.1 现已可用。此维护版本的主要修复包括：
+
+核心加载时间限制移除：不再将核心加载时间硬性限制在 60 秒内
+副本标记改进：优化了副本状态标记和管理机制
+SolrJ 性能和稳定性修复：多项 Java 客户端库的改进
+TLS 连接稳定性提升：解决了 TLS 连接相关的稳定性问题
+其他关键 Bug 修复：修复了影响生产环境稳定性的多个问题
+
+分布式完善分析1. 核心加载时间限制移除的意义重要性评估：★★★★★
+移除 60 秒核心加载限制对分布式系统的重大改进：
+大规...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/05/29/Apache-Solr-9-6-1-%E5%8F%91%E5%B8%83-%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD%E4%B8%8E%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86%E4%BC%98%E5%8C%96/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/%E7%BB%B4%E6%8A%A4%E7%89%88%E6%9C%AC/">维护版本</a>
+  
+    <a class="article-tag" href="/tags/%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD/">核心加载</a>
+  
+    <a class="article-tag" href="/tags/%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86/">副本管理</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr官方文档翻译-Docker容器化部署指南"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/05/25/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Docker%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/">Solr概念：Docker容器化部署实践</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/05/25/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Docker%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2024-05-24T16:00:00.000Z" itemprop="datePublished">五月 25, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr Docker 容器化部署指南Docker 部署概述Docker 容器化部署已经成为现代应用部署的标准方式，Apache Solr 提供了官方的 Docker 镜像，支持从简单的单节点部署到复杂的分布式 SolrCloud 集群。这种部署方式具有环境一致性、资源隔离、快速扩展等优势。
+Solr Docker 镜像类型Apache Solr 提供两种官方 Docker 镜像：
+1. 完整版镜像1solr:&lt;version&gt;
+
+特点：
+
+包含完整的 Solr 发行版
+集成所有标准插件和工具
+镜像体积较大但功能完整
+适合功能需求复杂的部署
+
+2. 精简版镜像1solr:&lt;version&gt;-slim
+
+特点：
+
+移除了非核心组件和工具
+镜像体积更小，启动更快
+适合资源受限或简单部署场景
+保留核心搜索和索引功能
+
+基础部署模式1. 单节点 Solr 服务器快速启...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/05/25/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Docker%E5%AE%B9%E5%99%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E6%8C%87%E5%8D%97/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/Docker%E9%83%A8%E7%BD%B2/">Docker部署</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/">容器化</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2/">分布式部署</a>
+  
+    <a class="article-tag" href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr官方文档翻译-Solr搜索功能详解"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/05/05/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Solr%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/">Solr概念：搜索功能与查询解析器</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/05/05/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Solr%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2024-05-04T16:00:00.000Z" itemprop="datePublished">五月 5, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Solr 搜索功能详解搜索过程概述Solr 的搜索功能是通过一系列可配置的组件来实现的，这些组件协同工作以处理查询请求并返回相关结果。理解这个过程对于有效使用 Solr 至关重要。
+请求处理器（Request Handlers）请求处理器 是定义搜索查询逻辑的插件，它们控制着查询请求的整个处理流程。请求处理器可以：
+
+配置默认参数 - 为查询设置默认的搜索参数
+选择查询解析器 - 确定如何解释用户的查询语句
+定义搜索组件 - 指定参与查询处理的各种组件
+控制响应格式 - 决定搜索结果的返回格式
+
+请求处理器可以在 solrconfig.xml 中进行配置，也可以由用户在查询时选择特定的处理器。
+查询解析器Solr 支持多种查询解析器，每种都有其特定的用途和优势：
+1. 标准查询解析器（Standard&#x2F;Lucene Query Parser）特点：
+
+基于 Lucene 的...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/05/05/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-Solr%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/">搜索功能</a>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">查询解析器</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0/">搜索参数</a>
+  
+    <a class="article-tag" href="/tags/%E9%AB%98%E7%BA%A7%E6%90%9C%E7%B4%A2/">高级搜索</a>
+  
+    <a class="article-tag" href="/tags/DisMax/">DisMax</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Apache-Solr-9-6-0-发布-HTTP客户端现代化与异步API增强"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/04/27/Apache-Solr-9-6-0-%E5%8F%91%E5%B8%83-HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%B0%E4%BB%A3%E5%8C%96%E4%B8%8E%E5%BC%82%E6%AD%A5API%E5%A2%9E%E5%BC%BA/">Apache Solr 9.6.0 发布：HTTP 客户端现代化与异步 API 增强</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/04/27/Apache-Solr-9-6-0-%E5%8F%91%E5%B8%83-HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%B0%E4%BB%A3%E5%8C%96%E4%B8%8E%E5%BC%82%E6%AD%A5API%E5%A2%9E%E5%BC%BA/" class="article-date">
+	  <time datetime="2024-04-26T16:00:00.000Z" itemprop="datePublished">四月 27, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr 9.6.0 重要功能更新发布2024年4月27日，Apache Solr 项目发布了 9.6.0 版本，这是一个带来重要架构改进的版本。此版本的亮点是引入了基于 Java 标准库的新 HTTP 客户端，显著提升了异步请求处理能力，并优化了分布式集群的管理效率。
+原文动态翻译Apache Solr 9.6.0 现已可用。此版本的主要亮点包括：
+
+升级 Lucene 至 9.10.0：集成最新的 Lucene 搜索引擎核心
+全新 HttpJdkSolrClient：基于 java.net.http.HttpClient 的现代化 HTTP 客户端
+改进的异步请求 API：更强大和灵活的异步请求处理能力
+非活跃分片清理：自动清理非活跃分片，优化存储使用
+分布式 IDF 可配置：允许禁用分布式逆文档频率计算
+多项性能优化：针对高负载场景的性能改进
+
+分布式完善分析1....
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/04/27/Apache-Solr-9-6-0-%E5%8F%91%E5%B8%83-HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%8E%B0%E4%BB%A3%E5%8C%96%E4%B8%8E%E5%BC%82%E6%AD%A5API%E5%A2%9E%E5%BC%BA/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF/">HTTP客户端</a>
+  
+    <a class="article-tag" href="/tags/%E5%BC%82%E6%AD%A5API/">异步API</a>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr官方文档翻译-搜索相关性概念与优化"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/04/10/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BC%98%E5%8C%96/">Solr概念：搜索相关性与优化策略</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/04/10/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BC%98%E5%8C%96/" class="article-date">
+	  <time datetime="2024-04-09T16:00:00.000Z" itemprop="datePublished">四月 10, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            搜索相关性什么是相关性？相关性是查询响应满足搜索信息用户需求的程度。
+这个定义看似简单，但在实际应用中，相关性的概念因搜索的上下文而大不相同。相关性不是一个绝对的概念，而是高度依赖于用户的具体需求和搜索场景的。
+精确度与召回率在讨论搜索相关性时，有两个重要的评估指标：
+精确度（Precision）精确度 是返回文档中实际相关的文档所占的百分比。
+
+公式：精确度 &#x3D; 返回的相关文档数 &#x2F; 返回的总文档数
+高精确度意味着返回的结果中，大部分都是用户真正需要的
+精确度关注的是 “返回的结果有多准确”
+
+召回率（Recall）召回率 是在所有相关文档中，实际被返回的文档所占的百分比。
+
+公式：召回率 &#x3D; 返回的相关文档数 &#x2F; 所有相关文档数
+高召回率意味着系统找到了大部分或全部的相关文档
+召回率关注的是 “有多少相关内容被遗漏了”
+
+精确度与召回率的平...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/04/10/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E6%A6%82%E5%BF%B5%E4%B8%8E%E4%BC%98%E5%8C%96/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7/">搜索相关性</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E8%B4%A8%E9%87%8F/">搜索质量</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/">搜索优化</a>
+  
+    <a class="article-tag" href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%8F%AC%E5%9B%9E%E7%8E%87/">精确度召回率</a>
+  
+    <a class="article-tag" href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">排序算法</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Solr官方文档翻译-文档字段与模式设计"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/03/20/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/">Solr概念：文档字段与模式设计基础</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/03/20/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" class="article-date">
+	  <time datetime="2024-03-19T16:00:00.000Z" itemprop="datePublished">三月 20, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            文档、字段与模式设计Solr 的基本前提Solr 的基本前提很简单：你向它提供大量信息，然后你可以向它提问并找到你想要的信息片段。
+这个过程包含两个主要部分：
+
+索引（或更新） - 添加信息的过程
+查询 - 向信息提问的过程
+
+当您向 Solr 添加信息时，信息会根据您设计的方式进行组织，以便在您想要找到它时，能够快速准确地找到正确的信息片段。
+Solr 如何组织信息Solr 以三种主要方式组织信息：文档、字段和字段类型。
+文档文档 是描述某事物的一组数据。在 Solr 中，文档是您可以索引和搜索的基本信息单位。对于求职网站，文档可能代表单个简历。对于在线购物网站，文档可能代表您销售的每种产品。对于法律数据库，文档可能代表单个案例。
+字段字段 是文档中的特定信息片段。继续上面的例子，求职网站上的简历文档的字段可能包括技能、日期范围、以前的职位、教育等。产品文档的字段可能包括价格、制造...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/03/20/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%A6%82%E8%BF%B0/">Solr概述</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%A6%82%E5%BF%B5/">Solr概念</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84/">文档结构</a>
+  
+    <a class="article-tag" href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/">字段类型</a>
+  
+    <a class="article-tag" href="/tags/%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/">模式设计</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1/">索引设计</a>
+  
+    <a class="article-tag" href="/tags/Schema/">Schema</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-Apache-Solr-9-5-0-发布-节点级熔断机制与TLS优化"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2024/02/12/Apache-Solr-9-5-0-%E5%8F%91%E5%B8%83-%E8%8A%82%E7%82%B9%E7%BA%A7%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6%E4%B8%8ETLS%E4%BC%98%E5%8C%96/">Apache Solr 9.5.0 发布：节点级熔断机制与 TLS 优化</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/02/12/Apache-Solr-9-5-0-%E5%8F%91%E5%B8%83-%E8%8A%82%E7%82%B9%E7%BA%A7%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6%E4%B8%8ETLS%E4%BC%98%E5%8C%96/" class="article-date">
+	  <time datetime="2024-02-11T16:00:00.000Z" itemprop="datePublished">二月 12, 2024</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            Apache Solr 9.5.0 系统保护与安全增强版本2024年2月12日，Apache Solr 项目发布了 9.5.0 版本，这是一个专注于系统保护机制和安全增强的重要更新。本版本引入了创新的节点级熔断机制，为大规模分布式部署提供了更强的自我保护能力。
+原文动态翻译Apache Solr 9.5.0 现已可用。此版本的主要亮点包括：
+
+节点级内存和 CPU 熔断机制：提供系统级的资源保护，防止节点过载
+集合和副本属性替换功能：支持动态配置参数的替换和管理
+TLS 密钥库自动重新加载：增强安全证书的动态管理能力
+链路追踪支持改进：提升分布式请求的可观测性
+OpenAPI 规范生成：自动生成标准化的 API 文档
+
+分布式完善分析1. 节点级熔断机制的革命性意义重要性评估：★★★★★
+这是 Solr 分布式架构中最重要的保护机制创新：
+系统级自我保护：
+
+内存熔断器：当节点内存使...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2024/02/12/Apache-Solr-9-5-0-%E5%8F%91%E5%B8%83-%E8%8A%82%E7%82%B9%E7%BA%A7%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6%E4%B8%8ETLS%E4%BC%98%E5%8C%96/#more">阅读全文</a>
+          </p>
+        </div>
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6/">熔断机制</a>
+  
+    <a class="article-tag" href="/tags/TLS%E4%BC%98%E5%8C%96/">TLS优化</a>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/">性能监控</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+</article>
+
+<!-- Table of Contents -->
+
+    
+
+  
+    <article id="post-快速启动solr"  class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" itemprop="name">
+      <a class="article-title" href="/2018/02/05/%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8solr/">快速启动SOLR</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2018/02/05/%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8solr/" class="article-date">
+	  <time datetime="2018-02-05T03:23:55.000Z" itemprop="datePublished">二月 5, 2018</time>
+	</a>
+
+      
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        
+
+          
+            <div class="entry-summary" style="margin-left:0;">
+            快速启动Solr脚本这是一个用于快速启动Solr 7.2.1的shell脚本。
+脚本内容12345678910111213141516171819202122232425#!/bin/shsolrversion=7.2.1if [ ! -z $1 ]; then    solrversion=$1fiecho &quot;setup solr-$solrversion&quot;if [ -d solr-$solrversion ]; then    rm -rf solr-$solrversionfiwget -O solr-$solrversion.tgz http://archive.apache.org/dist/lucene/solr/$solrversion/solr-$solrversion.tgztar zxf solr-$solrversion.tgzcd solr...
+          
+
+        
+          <p class="article-more-link">
+            <a href="/2018/02/05/%E5%BF%AB%E9%80%9F%E5%90%AF%E5%8A%A8solr/#more">阅读全文</a>
           </p>
         </div>
       
@@ -663,11 +1758,6 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
     
 
       
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
-  
-
       
             
       
@@ -681,7 +1771,7 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
     
 
   
-    <article id="post-用好collection对solrj入库进行优化"  class="article article-type-post" itemscope itemprop="blogPost" >
+    <article id="post-关于maxwarmingsearchers告警和设置"  class="article article-type-post" itemscope itemprop="blogPost" >
   <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
     
     
@@ -689,7 +1779,7 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
         
   
     <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/25/%E7%94%A8%E5%A5%BDcollection%E5%AF%B9solrj%E5%85%A5%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96/">用好Collection&lt;SolrInputDocument&gt;对solrj入库进行优化</a>
+      <a class="article-title" href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/">关于maxWarmingSearchers告警和设置</a>
     </h1>
   
 
@@ -697,8 +1787,8 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
     
     <div class="article-meta">
       
-	Posted on <a href="/2012/12/25/%E7%94%A8%E5%A5%BDcollection%E5%AF%B9solrj%E5%85%A5%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96/" class="article-date">
-	  <time datetime="2012-12-25T05:29:51.000Z" itemprop="datePublished">十二月 25, 2012</time>
+	Posted on <a href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/" class="article-date">
+	  <time datetime="2017-08-28T10:12:39.000Z" itemprop="datePublished">八月 28, 2017</time>
 	</a>
 
       
@@ -709,88 +1799,29 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
 
           
             <div class="entry-summary" style="margin-left:0;">
-            今天一个朋友找我说他进行入库测试：1 个 collection，2 个 shard，30 多个字段，一个小时才入库 4 万条左右。
-如果每条记录都很大这也是有可能的，不过我还是先让他贴代码出来看一下，他的入库代码：
-1234567891011121314public static void addIndex(String record) throws SolrServerException, IOException &#123;    String[] records = record.split(&quot;\\\\+\\&quot;, -1);    SolrInputDocument doc = new SolrInputDocument();    doc.addField(&quot;id&quot;, uuid(), 1.0f);    doc.addField(&quo...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2012/12/25/%E7%94%A8%E5%A5%BDcollection%E5%AF%B9solrj%E5%85%A5%E5%BA%93%E8%BF%9B%E8%A1%8C%E4%BC%98%E5%8C%96/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E6%8A%80%E5%B7%A7/">Solr技巧</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
-  
-
-      
             
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-简单说一下solr的数据查询和存储"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/25/%E7%AE%80%E5%8D%95%E8%AF%B4%E4%B8%80%E4%B8%8Bsolr%E7%9A%84%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E5%92%8C%E5%AD%98%E5%82%A8/">简单说一下solr的数据查询和存储</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2012/12/25/%E7%AE%80%E5%8D%95%E8%AF%B4%E4%B8%80%E4%B8%8Bsolr%E7%9A%84%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E5%92%8C%E5%AD%98%E5%82%A8/" class="article-date">
-	  <time datetime="2012-12-25T05:17:08.000Z" itemprop="datePublished">十二月 25, 2012</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            一个朋友在群里问为什么在 analyzer 里看到的和从索引里面查出来的不一样，在过滤器里面配置了：
-1&lt;charFilter class=&quot;solr.HTMLStripCharFilterFactory&quot;/&gt;
-
-并且在 analyzer 里面调试确实去除了 HTML，但是在查询索引的时候 HTML 又出来了。
-刚接触的同学可能对于 Solr&#x2F;Lucene 的数据存储不是特别清楚，简单的说，Solr 数据分两部分：存储和索引
-索引过程数据提交到 Solr 后，按照配置进行索引和存储两部分处理，存储带 HTML，索引不带 HTML（因为 filter 可以过滤索引数据，不能过滤存储数据）
-
-查询过程查询请求提交到 Solr 后先经过 analyzer 处理，然后到索引里面查询数据，如果找到记录从存储返回原文
+**理解：**把maxWarmingSearchers理解成一个提交队列，上一个提交没完成下一个提交就进入了，大概是下面这样的情况:
 
 
+希望提交的数据马上可见，于是设置add之后马上提交
+
+数据增量频率很高，每秒都有增量
+
+服务器配置有限，每提交一次需要2秒;
+
+
+
+**实验：**那么问题来了，一分钟进行了60次提交，但是服务器需要120秒才能反应过来，接下来会发生这样的情况：
+
+
+设置maxWarmingSearchers值为120：不会出现Error opening new searcher. exceeded limit of maxWarmingSearchers提示，但是120个提交积压在“提交队列”里面，数据依然不可见，因为下一分钟还有同样数据的增量和数据挤压，很快就会出现错误提示，如果将这个值无限放大，服务器会无法响应
+
+设置maxWarmingSearchers值...
           
 
         
           <p class="article-more-link">
-            <a href="/2012/12/25/%E7%AE%80%E5%8D%95%E8%AF%B4%E4%B8%80%E4%B8%8Bsolr%E7%9A%84%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E5%92%8C%E5%AD%98%E5%82%A8/#more">阅读全文</a>
+            <a href="/2017/08/28/%E5%85%B3%E4%BA%8Emaxwarmingsearchers%E5%91%8A%E8%AD%A6%E5%92%8C%E8%AE%BE%E7%BD%AE/#more">阅读全文</a>
           </p>
         </div>
       
@@ -799,236 +1830,14 @@ Replication Factor 复制因子：群集维护的最少数量的文件副本
       
 	<span class="ico-folder"></span>
     
-      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+      <a class="article-category" href="/categories/Solr%E8%BF%9B%E9%98%B6/">Solr进阶</a>
       
     
 
       
   <span class="ico-tags"></span>
   
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-关于评分修改"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/12/11/%E5%85%B3%E4%BA%8E%E8%AF%84%E5%88%86%E4%BF%AE%E6%94%B9/">关于Solr评分修改</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2012/12/11/%E5%85%B3%E4%BA%8E%E8%AF%84%E5%88%86%E4%BF%AE%E6%94%B9/" class="article-date">
-	  <time datetime="2012-12-11T15:59:10.000Z" itemprop="datePublished">十二月 11, 2012</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            经常有朋友在群里问，Solr 要修改打分机制怎么改？
-大多数回答：Similarity 是个不错的方案。但是具体怎么弄很少有明确的描述，官方 wiki 也只是说可以自定义，具体如何做，没有例子。
-
-
-Solr 4.0 内置的评分方法首先，Solr 4.0 本身提供了多种评分方法：
-
-org.apache.solr.search.similarities.BM25SimilarityFactory
-org.apache.solr.search.similarities.DefaultSimilarityFactory  
-org.apache.solr.search.similarities.DFRSimilarityFactory
-org.apache.solr.search.similarities.IBSimilarityFactory
-org.apache.solr.searc...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2012/12/11/%E5%85%B3%E4%BA%8E%E8%AF%84%E5%88%86%E4%BF%AE%E6%94%B9/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E7%AD%94%E7%96%91/">Solr答疑</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-最近再测试solrcloud模式"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/11/21/%E6%9C%80%E8%BF%91%E5%86%8D%E6%B5%8B%E8%AF%95solrcloud%E6%A8%A1%E5%BC%8F/">SolrCloud分布式检索时显示每个shard的响应速度</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2012/11/21/%E6%9C%80%E8%BF%91%E5%86%8D%E6%B5%8B%E8%AF%95solrcloud%E6%A8%A1%E5%BC%8F/" class="article-date">
-	  <time datetime="2012-11-21T07:56:21.000Z" itemprop="datePublished">十一月 21, 2012</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            想看看每个 shards 返回的时间，来方便设置 HttpShardHandlerFactory。
-使用参数可以使用 shards.info 参数来查看每个 shard 的响应信息。
-参数详解当在查询中添加 shards.info=true 参数时，Solr 会在响应中返回每个 shard 的详细信息，包括：
-
-响应时间
-处理的文档数量
-查询执行状态
-
-配置示例1http://localhost:8983/solr/collection1/select?q=*:*&amp;shards.info=true
-
-响应格式返回的响应中会包含类似以下的信息：
-12345678&lt;lst name=&quot;shards.info&quot;&gt;  &lt;lst name=&quot;shard1&quot;&gt;    &lt;long name=&quot;numFound&...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2012/11/21/%E6%9C%80%E8%BF%91%E5%86%8D%E6%B5%8B%E8%AF%95solrcloud%E6%A8%A1%E5%BC%8F/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E6%8A%80%E5%B7%A7/">Solr技巧</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
-  
-
-      
-            
-      
-    </footer>
-  </div>
-  
-</article>
-
-<!-- Table of Contents -->
-
-    
-
-  
-    <article id="post-solr4-no-servers-hosting-shard-问题"  class="article article-type-post" itemscope itemprop="blogPost" >
-  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 class="thumb" itemprop="name">
-      <a class="article-title" href="/2012/10/31/solr4-no-servers-hosting-shard-%E9%97%AE%E9%A2%98/">SolrCloud分布式检索时忽略宕机的Shard</a>
-    </h1>
-  
-
-      </header>
-    
-    <div class="article-meta">
-      
-	Posted on <a href="/2012/10/31/solr4-no-servers-hosting-shard-%E9%97%AE%E9%A2%98/" class="article-date">
-	  <time datetime="2012-10-31T07:14:38.000Z" itemprop="datePublished">十月 31, 2012</time>
-	</a>
-
-      
-    </div>
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-
-          
-            <div class="entry-summary" style="margin-left:0;">
-            问题描述当SolrCloud集群中有shard宕机时，会出现以下错误：
-1234&lt;lst name=&quot;error&quot;&gt;    &lt;str name=&quot;msg&quot;&gt;no servers hosting shard:&lt;/str&gt;    &lt;int name=&quot;code&quot;&gt;503&lt;/int&gt;&lt;/lst&gt;
-
-解决方案加入下面参数，只从存活的shards获取数据：
-1shards.tolerant=true
-
-配置示例12345678&lt;requestHandler name=&quot;/select&quot; class=&quot;solr.SearchHandler&quot;&gt;    &lt;lst name=&quot;defaults&quot;...
-          
-
-        
-          <p class="article-more-link">
-            <a href="/2012/10/31/solr4-no-servers-hosting-shard-%E9%97%AE%E9%A2%98/#more">阅读全文</a>
-          </p>
-        </div>
-      
-    </div>
-    <footer class="entry-meta entry-footer">
-      
-	<span class="ico-folder"></span>
-    
-      <a class="article-category" href="/categories/Solr%E6%8A%80%E5%B7%A7/">Solr技巧</a>
-      
-    
-
-      
-  <span class="ico-tags"></span>
-  
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
+    <a class="article-tag" href="/tags/%E6%8A%80%E6%9C%AF/">技术</a>
   
 
       
@@ -1048,7 +1857,7 @@ org.apache.solr.searc...
 
   <nav id="page-nav">
     
-    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span>
+    <a class="extend prev" rel="prev" href="/page/5/">上一页</a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><span class="page-number current">6</span><a class="page-number" href="/page/7/">7</a><a class="page-number" href="/page/8/">8</a><a class="extend next" rel="next" href="/page/7/">下一页</a>
   </nav>
 
 </section>
@@ -1103,7 +1912,7 @@ org.apache.solr.searc...
   <div class="widget-wrap">
     <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
-      <a href="/tags/5%E5%88%86%E9%92%9F%E6%95%99%E7%A8%8B/" style="font-size: 10px;">5分钟教程</a> <a href="/tags/A-B%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">A/B测试</a> <a href="/tags/AI%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">AI搜索</a> <a href="/tags/AI%E9%9B%86%E6%88%90/" style="font-size: 10px;">AI集成</a> <a href="/tags/API%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">API操作</a> <a href="/tags/API%E6%96%87%E6%A1%A3/" style="font-size: 10px;">API文档</a> <a href="/tags/API%E7%AB%AF%E7%82%B9/" style="font-size: 10px;">API端点</a> <a href="/tags/API%E7%AE%A1%E7%90%86/" style="font-size: 10px;">API管理</a> <a href="/tags/AWS%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">AWS部署</a> <a href="/tags/Admin-UI/" style="font-size: 10px;">Admin UI</a> <a href="/tags/Apache-Solr/" style="font-size: 10.91px;">Apache Solr</a> <a href="/tags/CVE%E9%80%9A%E5%91%8A/" style="font-size: 10.91px;">CVE通告</a> <a href="/tags/CharFilter/" style="font-size: 10px;">CharFilter</a> <a href="/tags/Collections-API/" style="font-size: 10px;">Collections API</a> <a href="/tags/Config-API/" style="font-size: 10.91px;">Config API</a> <a href="/tags/Configsets-API/" style="font-size: 10px;">Configsets API</a> <a href="/tags/ContentStream/" style="font-size: 10px;">ContentStream</a> <a href="/tags/CopyField/" style="font-size: 10px;">CopyField</a> <a href="/tags/CoreAdmin-API/" style="font-size: 10px;">CoreAdmin API</a> <a href="/tags/DIY/" style="font-size: 10px;">DIY</a> <a href="/tags/DirectoryFactory/" style="font-size: 10px;">DirectoryFactory</a> <a href="/tags/DisMax/" style="font-size: 10px;">DisMax</a> <a href="/tags/DocValues/" style="font-size: 10px;">DocValues</a> <a href="/tags/Docker%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">Docker部署</a> <a href="/tags/EC2%E5%AE%9E%E4%BE%8B/" style="font-size: 10px;">EC2实例</a> <a href="/tags/Facets/" style="font-size: 10px;">Facets</a> <a href="/tags/Films%E6%95%B0%E6%8D%AE%E9%9B%86/" style="font-size: 10px;">Films数据集</a> <a href="/tags/FilterCache/" style="font-size: 10px;">FilterCache</a> <a href="/tags/HTML%E6%B8%85%E7%90%86/" style="font-size: 10px;">HTML清理</a> <a href="/tags/HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF/" style="font-size: 10px;">HTTP客户端</a> <a href="/tags/InitParams/" style="font-size: 10px;">InitParams</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/Lucene/" style="font-size: 10.91px;">Lucene</a> <a href="/tags/Lucene%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">Lucene索引</a> <a href="/tags/NRT/" style="font-size: 10px;">NRT</a> <a href="/tags/PKI%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">PKI认证</a> <a href="/tags/ParamSets/" style="font-size: 10px;">ParamSets</a> <a href="/tags/Prometheus%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">Prometheus监控</a> <a href="/tags/QueryResultCache/" style="font-size: 10px;">QueryResultCache</a> <a href="/tags/REST-API/" style="font-size: 11.82px;">REST API</a> <a href="/tags/RequestHandler/" style="font-size: 10px;">RequestHandler</a> <a href="/tags/Schema/" style="font-size: 10.91px;">Schema</a> <a href="/tags/Schema-Factory/" style="font-size: 10px;">Schema Factory</a> <a href="/tags/Schema%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">Schema配置</a> <a href="/tags/SearchComponent/" style="font-size: 10px;">SearchComponent</a> <a href="/tags/Solr/" style="font-size: 19.09px;">Solr</a> <a href="/tags/SolrCloud/" style="font-size: 19.09px;">SolrCloud</a> <a href="/tags/SolrCore/" style="font-size: 10px;">SolrCore</a> <a href="/tags/SolrQuerySyntax/" style="font-size: 10px;">SolrQuerySyntax</a> <a href="/tags/Solr%E5%85%A5%E9%97%A8/" style="font-size: 14.55px;">Solr入门</a> <a href="/tags/Solr%E6%95%99%E7%A8%8B/" style="font-size: 16.36px;">Solr教程</a> <a href="/tags/Solr%E6%96%B0%E9%97%BB/" style="font-size: 17.27px;">Solr新闻</a> <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" style="font-size: 13.64px;">Solr查询</a> <a href="/tags/Solr%E6%A6%82%E5%BF%B5/" style="font-size: 17.27px;">Solr概念</a> <a href="/tags/Solr%E7%B4%A2%E5%BC%95/" style="font-size: 13.64px;">Solr索引</a> <a href="/tags/Solr%E9%83%A8%E7%BD%B2/" style="font-size: 13.64px;">Solr部署</a> <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" style="font-size: 20px;">Solr配置</a> <a href="/tags/TLS%E4%BC%98%E5%8C%96/" style="font-size: 10px;">TLS优化</a> <a href="/tags/Techproducts/" style="font-size: 10px;">Techproducts</a> <a href="/tags/TextField/" style="font-size: 10px;">TextField</a> <a href="/tags/Token%E6%B5%81/" style="font-size: 10px;">Token流</a> <a href="/tags/Web%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">Web界面</a> <a href="/tags/ZooKeeper/" style="font-size: 11.82px;">ZooKeeper</a> <a href="/tags/commit/" style="font-size: 10px;">commit</a> <a href="/tags/configoverlay/" style="font-size: 10px;">configoverlay</a> <a href="/tags/core-properties/" style="font-size: 10px;">core.properties</a> <a href="/tags/dataDir/" style="font-size: 10px;">dataDir</a> <a href="/tags/jar/" style="font-size: 10px;">jar</a> <a href="/tags/lib%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">lib目录</a> <a href="/tags/paramsets/" style="font-size: 10px;">paramsets</a> <a href="/tags/schema/" style="font-size: 10px;">schema</a> <a href="/tags/schema-xml/" style="font-size: 10px;">schema.xml</a> <a href="/tags/solr-xml/" style="font-size: 10px;">solr.xml</a> <a href="/tags/solrconfig/" style="font-size: 10px;">solrconfig</a> <a href="/tags/solrconfig-xml/" style="font-size: 10.91px;">solrconfig.xml</a> <a href="/tags/solr%E5%85%A5%E9%97%A8/" style="font-size: 15.45px;">solr入门</a> <a href="/tags/solr%E7%8B%AC%E5%AE%B6/" style="font-size: 18.18px;">solr独家</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/transaction-log/" style="font-size: 10px;">transaction log</a> <a href="/tags/%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" style="font-size: 10px;">专业术语</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" style="font-size: 10.91px;">事务日志</a> <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 10px;">云原生</a> <a href="/tags/%E4%BA%91%E7%AB%AF%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">云端搜索</a> <a href="/tags/%E4%BC%81%E4%B8%9A%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">企业搜索</a> <a href="/tags/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">使用说明</a> <a href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" style="font-size: 10px;">入门指南</a> <a href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">全局配置</a> <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" style="font-size: 10px;">内存管理</a> <a href="/tags/%E5%86%85%E5%AE%B9%E6%B5%81/" style="font-size: 10px;">内容流</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10px;">内置处理器</a> <a href="/tags/%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/" style="font-size: 10px;">减少函数</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10.91px;">分布式搜索</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">分布式部署</a> <a href="/tags/%E5%88%86%E6%9E%90%E5%99%A8/" style="font-size: 11.82px;">分析器</a> <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" style="font-size: 12.73px;">分析组件</a> <a href="/tags/%E5%88%86%E7%89%87%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">分片维护</a> <a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/" style="font-size: 10.91px;">分词器</a> <a href="/tags/%E5%88%86%E9%9D%A2/" style="font-size: 10px;">分面</a> <a href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">分面搜索</a> <a href="/tags/%E5%88%AB%E5%90%8D/" style="font-size: 10px;">别名</a> <a href="/tags/%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" style="font-size: 10px;">别名管理</a> <a href="/tags/%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86/" style="font-size: 10px;">副本管理</a> <a href="/tags/%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">动态模式</a> <a href="/tags/%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">动态配置</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/" style="font-size: 10px;">升级指南</a> <a href="/tags/%E5%8F%82%E6%95%B0%E7%AE%A1%E7%90%86/" style="font-size: 10px;">参数管理</a> <a href="/tags/%E5%8F%82%E6%95%B0%E9%9B%86/" style="font-size: 10px;">参数集</a> <a href="/tags/%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/" style="font-size: 10px;">参考手册</a> <a href="/tags/%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">召回率</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">向量搜索</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">向量查询</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">命令行工具</a> <a href="/tags/%E5%9D%97%E8%BF%9E%E6%8E%A5/" style="font-size: 10px;">块连接</a> <a href="/tags/%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D/" style="font-size: 10px;">备份恢复</a> <a href="/tags/%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">复制字段</a> <a href="/tags/%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">多值字段</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E6%98%A0%E5%B0%84/" style="font-size: 10px;">字段映射</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/" style="font-size: 11.82px;">字段类型</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">字符过滤器</a> <a href="/tags/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">学习路径</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 11.82px;">安全</a> <a href="/tags/%E5%AE%89%E5%85%A8%E4%BF%AE%E5%A4%8D/" style="font-size: 10.91px;">安全修复</a> <a href="/tags/%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E/" style="font-size: 10.91px;">安全漏洞</a> <a href="/tags/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">安全配置</a> <a href="/tags/%E5%AE%9E%E6%96%BD%E8%A7%84%E5%88%92/" style="font-size: 10px;">实施规划</a> <a href="/tags/%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" style="font-size: 10px;">审计日志</a> <a href="/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/" style="font-size: 10px;">容器化</a> <a href="/tags/%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3/" style="font-size: 10px;">嵌套文档</a> <a href="/tags/%E5%BA%93%E6%96%87%E4%BB%B6/" style="font-size: 10px;">库文件</a> <a href="/tags/%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">开源搜索</a> <a href="/tags/%E5%BC%82%E6%AD%A5API/" style="font-size: 10px;">异步API</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8/" style="font-size: 10px;">异步调用</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" style="font-size: 10px;">快速入门</a> <a href="/tags/%E6%80%A7%E8%83%BD/" style="font-size: 10px;">性能</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 16.36px;">性能优化</a> <a href="/tags/%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">性能监控</a> <a href="/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 11.82px;">性能调优</a> <a href="/tags/%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">托管模式</a> <a href="/tags/%E6%89%98%E7%AE%A1%E8%B5%84%E6%BA%90/" style="font-size: 10px;">托管资源</a> <a href="/tags/%E6%89%B9%E9%87%8F%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">批量数据</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8C%87%E5%8D%97%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">指南说明</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" style="font-size: 10px;">排序算法</a> <a href="/tags/%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC/" style="font-size: 10px;">控制脚本</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">推荐系统</a> <a href="/tags/%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5/" style="font-size: 10.91px;">提交策略</a> <a href="/tags/%E6%8F%92%E4%BB%B6/" style="font-size: 10.91px;">插件</a> <a href="/tags/%E6%8F%92%E4%BB%B6%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">插件系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">搜索</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/" style="font-size: 11.82px;">搜索优化</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/" style="font-size: 10.91px;">搜索功能</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0/" style="font-size: 10px;">搜索参数</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" style="font-size: 18.18px;">搜索引擎</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7/" style="font-size: 10.91px;">搜索相关性</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">搜索组件</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E8%B4%A8%E9%87%8F/" style="font-size: 10.91px;">搜索质量</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4/" style="font-size: 10px;">数据保护</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/" style="font-size: 10px;">数据导入</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90/" style="font-size: 10px;">数据源</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">数据目录</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">数据索引</a> <a href="/tags/%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" style="font-size: 10px;">文件管理</a> <a href="/tags/%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90/" style="font-size: 10px;">文本分析</a> <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">文本预处理</a> <a href="/tags/%E6%96%87%E6%A1%A3%E5%88%86%E6%9E%90/" style="font-size: 10px;">文档分析</a> <a href="/tags/%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84/" style="font-size: 10.91px;">文档结构</a> <a href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/" style="font-size: 14.55px;">新手必看</a> <a href="/tags/%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" style="font-size: 10px;">日志记录</a> <a href="/tags/%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" style="font-size: 10px;">映射函数</a> <a href="/tags/%E6%98%A0%E5%B0%84%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">映射过滤器</a> <a href="/tags/%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87/" style="font-size: 10px;">术语词汇</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">机器学习</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E5%85%A5%E9%97%A8/" style="font-size: 10px;">查询入门</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/" style="font-size: 11.82px;">查询解析器</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">查询语法</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD/" style="font-size: 10.91px;">查询预热</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD/" style="font-size: 10px;">核心加载</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8F%91%E7%8E%B0/" style="font-size: 10px;">核心发现</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/" style="font-size: 11.82px;">核心管理</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">核心维护</a> <a href="/tags/%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89/" style="font-size: 10px;">概念定义</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82/" style="font-size: 10px;">模式工厂</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" style="font-size: 10.91px;">模式设计</a> <a href="/tags/%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">熔断机制</a> <a href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/" style="font-size: 16.36px;">版本发布</a> <a href="/tags/%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">生产部署</a> <a href="/tags/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" style="font-size: 10px;">生命周期</a> <a href="/tags/%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" style="font-size: 10px;">用户体验</a> <a href="/tags/%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">用户界面</a> <a href="/tags/%E7%9B%91%E5%90%AC%E5%99%A8/" style="font-size: 10px;">监听器</a> <a href="/tags/%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">监控工具</a> <a href="/tags/%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%BF%AE%E5%A4%8D/" style="font-size: 10px;">稳定性修复</a> <a href="/tags/%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">管理界面</a> <a href="/tags/%E7%B1%BB%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">类路径</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6/" style="font-size: 10px;">精确度</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">精确度召回率</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD/" style="font-size: 10px;">系统功能</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" style="font-size: 10.91px;">系统管理</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98/" style="font-size: 10px;">系统调优</a> <a href="/tags/%E7%B4%A2%E5%BC%95/" style="font-size: 11.82px;">索引</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" style="font-size: 10px;">索引优化</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE/" style="font-size: 10px;">索引位置</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" style="font-size: 10px;">索引原理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%A4%84%E7%90%86/" style="font-size: 10px;">索引处理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">索引操作</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0/" style="font-size: 10px;">索引更新</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%A0%BC%E5%BC%8F/" style="font-size: 10.91px;">索引格式</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1/" style="font-size: 10.91px;">索引设计</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E8%81%9A%E5%90%88/" style="font-size: 10px;">统计聚合</a> <a href="/tags/%E7%BB%B4%E6%8A%A4%E7%89%88%E6%9C%AC/" style="font-size: 10px;">维护版本</a> <a href="/tags/%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96/" style="font-size: 10.91px;">缓存优化</a> <a href="/tags/%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8/" style="font-size: 10px;">编解码器</a> <a href="/tags/%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/" style="font-size: 10px;">聚合函数</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">自动化部署</a> <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">自定义数据</a> <a href="/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F/" style="font-size: 10.91px;">表达式</a> <a href="/tags/%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">认证</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 14.55px;">请求处理器</a> <a href="/tags/%E8%B7%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83/" style="font-size: 10px;">跨数据中心</a> <a href="/tags/%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10.91px;">过滤器</a> <a href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/" style="font-size: 10.91px;">运维工具</a> <a href="/tags/%E8%BF%9C%E7%A8%8B%E6%B5%81/" style="font-size: 10px;">远程流</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 12.73px;">配置</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/" style="font-size: 10px;">配置优化</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 10.91px;">配置文件</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/" style="font-size: 11.82px;">配置管理</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86/" style="font-size: 10px;">配置集</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/" style="font-size: 10px;">配置集管理</a> <a href="/tags/%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10.91px;">隐式请求处理器</a> <a href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/" style="font-size: 12.73px;">集合管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6/" style="font-size: 10px;">集群插件</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86/" style="font-size: 10.91px;">集群管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">集群部署</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 10px;">高可用</a> <a href="/tags/%E9%AB%98%E7%BA%A7%E6%90%9C%E7%B4%A2/" style="font-size: 10.91px;">高级搜索</a>
+      <a href="/tags/5%E5%88%86%E9%92%9F%E6%95%99%E7%A8%8B/" style="font-size: 10px;">5分钟教程</a> <a href="/tags/A-B%E6%B5%8B%E8%AF%95/" style="font-size: 10px;">A/B测试</a> <a href="/tags/AI%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">AI搜索</a> <a href="/tags/AI%E9%9B%86%E6%88%90/" style="font-size: 10px;">AI集成</a> <a href="/tags/API%E6%8E%A5%E5%8F%A3/" style="font-size: 10px;">API接口</a> <a href="/tags/API%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">API操作</a> <a href="/tags/API%E6%96%87%E6%A1%A3/" style="font-size: 10px;">API文档</a> <a href="/tags/API%E7%AB%AF%E7%82%B9/" style="font-size: 10px;">API端点</a> <a href="/tags/API%E7%AE%A1%E7%90%86/" style="font-size: 10px;">API管理</a> <a href="/tags/API%E8%AE%BE%E8%AE%A1/" style="font-size: 10px;">API设计</a> <a href="/tags/AWS%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">AWS部署</a> <a href="/tags/Admin-UI/" style="font-size: 10px;">Admin UI</a> <a href="/tags/Analyzers/" style="font-size: 10px;">Analyzers</a> <a href="/tags/Apache-Solr/" style="font-size: 10.63px;">Apache Solr</a> <a href="/tags/CSV-Updates/" style="font-size: 10px;">CSV Updates</a> <a href="/tags/CVE%E9%80%9A%E5%91%8A/" style="font-size: 10.63px;">CVE通告</a> <a href="/tags/CharFilter/" style="font-size: 10px;">CharFilter</a> <a href="/tags/CharFilters/" style="font-size: 10px;">CharFilters</a> <a href="/tags/Collections-API/" style="font-size: 10px;">Collections API</a> <a href="/tags/Config-API/" style="font-size: 11.25px;">Config API</a> <a href="/tags/ConfigSet/" style="font-size: 10px;">ConfigSet</a> <a href="/tags/Configsets-API/" style="font-size: 10px;">Configsets API</a> <a href="/tags/ContentStream/" style="font-size: 10px;">ContentStream</a> <a href="/tags/CopyField/" style="font-size: 10px;">CopyField</a> <a href="/tags/CoreAdmin-API/" style="font-size: 10px;">CoreAdmin API</a> <a href="/tags/DIY/" style="font-size: 10px;">DIY</a> <a href="/tags/Data-Import/" style="font-size: 10px;">Data Import</a> <a href="/tags/DirectoryFactory/" style="font-size: 10px;">DirectoryFactory</a> <a href="/tags/DisMax/" style="font-size: 10.63px;">DisMax</a> <a href="/tags/DocValues/" style="font-size: 10px;">DocValues</a> <a href="/tags/Docker%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">Docker部署</a> <a href="/tags/EC2%E5%AE%9E%E4%BE%8B/" style="font-size: 10px;">EC2实例</a> <a href="/tags/Faceting/" style="font-size: 10px;">Faceting</a> <a href="/tags/Facets/" style="font-size: 10px;">Facets</a> <a href="/tags/Field-Properties/" style="font-size: 10px;">Field Properties</a> <a href="/tags/Field-Types/" style="font-size: 10px;">Field Types</a> <a href="/tags/Fields/" style="font-size: 10px;">Fields</a> <a href="/tags/Films%E6%95%B0%E6%8D%AE%E9%9B%86/" style="font-size: 10px;">Films数据集</a> <a href="/tags/FilterCache/" style="font-size: 10px;">FilterCache</a> <a href="/tags/GIS/" style="font-size: 10px;">GIS</a> <a href="/tags/Groovy/" style="font-size: 10px;">Groovy</a> <a href="/tags/HTMLStrip/" style="font-size: 10px;">HTMLStrip</a> <a href="/tags/HTML%E6%B8%85%E7%90%86/" style="font-size: 10px;">HTML清理</a> <a href="/tags/HTTP%E5%AE%A2%E6%88%B7%E7%AB%AF/" style="font-size: 10px;">HTTP客户端</a> <a href="/tags/HTTP%E7%BC%93%E5%AD%98/" style="font-size: 10px;">HTTP缓存</a> <a href="/tags/Highlighting/" style="font-size: 10px;">Highlighting</a> <a href="/tags/InitParams/" style="font-size: 10px;">InitParams</a> <a href="/tags/JRuby/" style="font-size: 10px;">JRuby</a> <a href="/tags/JSON-Updates/" style="font-size: 10px;">JSON Updates</a> <a href="/tags/JVM%E4%BC%98%E5%8C%96/" style="font-size: 10px;">JVM优化</a> <a href="/tags/JVM%E4%BF%A1%E6%81%AF/" style="font-size: 10px;">JVM信息</a> <a href="/tags/JavaScript/" style="font-size: 10px;">JavaScript</a> <a href="/tags/KNN/" style="font-size: 10px;">KNN</a> <a href="/tags/Lucene/" style="font-size: 10.63px;">Lucene</a> <a href="/tags/Lucene%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">Lucene索引</a> <a href="/tags/Lucene%E8%AF%AD%E6%B3%95/" style="font-size: 10px;">Lucene语法</a> <a href="/tags/MappingCharFilter/" style="font-size: 10px;">MappingCharFilter</a> <a href="/tags/NRT/" style="font-size: 10px;">NRT</a> <a href="/tags/NoSQL/" style="font-size: 10px;">NoSQL</a> <a href="/tags/PKI%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">PKI认证</a> <a href="/tags/Package-Manager/" style="font-size: 10px;">Package Manager</a> <a href="/tags/ParamSets/" style="font-size: 10px;">ParamSets</a> <a href="/tags/PatternReplace/" style="font-size: 10px;">PatternReplace</a> <a href="/tags/Plugins/" style="font-size: 10px;">Plugins</a> <a href="/tags/Prometheus%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">Prometheus监控</a> <a href="/tags/Python/" style="font-size: 10px;">Python</a> <a href="/tags/QParserPlugin/" style="font-size: 10px;">QParserPlugin</a> <a href="/tags/QueryResultCache/" style="font-size: 10px;">QueryResultCache</a> <a href="/tags/REST-API/" style="font-size: 11.88px;">REST API</a> <a href="/tags/RealTime-Get/" style="font-size: 10px;">RealTime Get</a> <a href="/tags/RequestDispatcher/" style="font-size: 10px;">RequestDispatcher</a> <a href="/tags/RequestHandler/" style="font-size: 10px;">RequestHandler</a> <a href="/tags/Schema/" style="font-size: 11.25px;">Schema</a> <a href="/tags/Schema-Factory/" style="font-size: 10px;">Schema Factory</a> <a href="/tags/Schema%E8%AE%BE%E8%AE%A1/" style="font-size: 10.63px;">Schema设计</a> <a href="/tags/Schema%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">Schema配置</a> <a href="/tags/SearchComponent/" style="font-size: 10px;">SearchComponent</a> <a href="/tags/Solr/" style="font-size: 20px;">Solr</a> <a href="/tags/SolrCloud/" style="font-size: 19.38px;">SolrCloud</a> <a href="/tags/SolrCore/" style="font-size: 10px;">SolrCore</a> <a href="/tags/SolrQuerySyntax/" style="font-size: 10px;">SolrQuerySyntax</a> <a href="/tags/Solr%E5%85%A5%E9%97%A8/" style="font-size: 13.13px;">Solr入门</a> <a href="/tags/Solr%E6%95%99%E7%A8%8B/" style="font-size: 14.38px;">Solr教程</a> <a href="/tags/Solr%E6%96%B0%E9%97%BB/" style="font-size: 15.63px;">Solr新闻</a> <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" style="font-size: 18.13px;">Solr查询</a> <a href="/tags/Solr%E6%A6%82%E5%BF%B5/" style="font-size: 15.63px;">Solr概念</a> <a href="/tags/Solr%E7%B4%A2%E5%BC%95/" style="font-size: 12.5px;">Solr索引</a> <a href="/tags/Solr%E9%83%A8%E7%BD%B2/" style="font-size: 17.5px;">Solr部署</a> <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" style="font-size: 18.75px;">Solr配置</a> <a href="/tags/SpellCheckComponent/" style="font-size: 10px;">SpellCheckComponent</a> <a href="/tags/Stemming/" style="font-size: 10px;">Stemming</a> <a href="/tags/Stop-Words/" style="font-size: 10px;">Stop Words</a> <a href="/tags/SuggestComponent/" style="font-size: 10px;">SuggestComponent</a> <a href="/tags/Synonyms/" style="font-size: 10px;">Synonyms</a> <a href="/tags/System-Info-API/" style="font-size: 10px;">System Info API</a> <a href="/tags/TLS%E4%BC%98%E5%8C%96/" style="font-size: 10px;">TLS优化</a> <a href="/tags/Techproducts/" style="font-size: 10px;">Techproducts</a> <a href="/tags/Text-Analysis/" style="font-size: 10.63px;">Text Analysis</a> <a href="/tags/Text-Processing/" style="font-size: 10.63px;">Text Processing</a> <a href="/tags/TextField/" style="font-size: 10px;">TextField</a> <a href="/tags/Token-Filters/" style="font-size: 10px;">Token Filters</a> <a href="/tags/Tokenization/" style="font-size: 10px;">Tokenization</a> <a href="/tags/Tokenizers/" style="font-size: 10px;">Tokenizers</a> <a href="/tags/Token%E6%B5%81/" style="font-size: 10px;">Token流</a> <a href="/tags/URP/" style="font-size: 10px;">URP</a> <a href="/tags/Update-Handlers/" style="font-size: 10px;">Update Handlers</a> <a href="/tags/Update-Request-Processors/" style="font-size: 10px;">Update Request Processors</a> <a href="/tags/Web%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">Web界面</a> <a href="/tags/XML-Updates/" style="font-size: 10px;">XML Updates</a> <a href="/tags/ZooKeeper/" style="font-size: 11.25px;">ZooKeeper</a> <a href="/tags/commit/" style="font-size: 10px;">commit</a> <a href="/tags/configoverlay/" style="font-size: 10px;">configoverlay</a> <a href="/tags/core-properties/" style="font-size: 10px;">core.properties</a> <a href="/tags/dataDir/" style="font-size: 10px;">dataDir</a> <a href="/tags/eDisMax/" style="font-size: 10px;">eDisMax</a> <a href="/tags/jar/" style="font-size: 10px;">jar</a> <a href="/tags/lib%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">lib目录</a> <a href="/tags/paramsets/" style="font-size: 10px;">paramsets</a> <a href="/tags/schema/" style="font-size: 10px;">schema</a> <a href="/tags/schema-xml/" style="font-size: 10px;">schema.xml</a> <a href="/tags/solr-xml/" style="font-size: 10px;">solr.xml</a> <a href="/tags/solrconfig/" style="font-size: 10px;">solrconfig</a> <a href="/tags/solrconfig-xml/" style="font-size: 11.88px;">solrconfig.xml</a> <a href="/tags/solr%E5%85%A5%E9%97%A8/" style="font-size: 13.75px;">solr入门</a> <a href="/tags/solr%E7%8B%AC%E5%AE%B6/" style="font-size: 16.25px;">solr独家</a> <a href="/tags/tomcat/" style="font-size: 10px;">tomcat</a> <a href="/tags/transaction-log/" style="font-size: 10px;">transaction log</a> <a href="/tags/v2-API/" style="font-size: 10px;">v2 API</a> <a href="/tags/%E4%B8%93%E4%B8%9A%E6%9C%AF%E8%AF%AD/" style="font-size: 10px;">专业术语</a> <a href="/tags/%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97/" style="font-size: 10.63px;">事务日志</a> <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 10px;">云原生</a> <a href="/tags/%E4%BA%91%E7%AB%AF%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">云端搜索</a> <a href="/tags/%E4%BC%81%E4%B8%9A%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">企业搜索</a> <a href="/tags/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">使用说明</a> <a href="/tags/%E5%81%9C%E7%94%A8%E8%AF%8D/" style="font-size: 10px;">停用词</a> <a href="/tags/%E5%85%A5%E9%97%A8%E6%8C%87%E5%8D%97/" style="font-size: 10px;">入门指南</a> <a href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">全局配置</a> <a href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" style="font-size: 10.63px;">内存管理</a> <a href="/tags/%E5%86%85%E5%AE%B9%E6%B5%81/" style="font-size: 10px;">内容流</a> <a href="/tags/%E5%86%85%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10px;">内置处理器</a> <a href="/tags/%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/" style="font-size: 10px;">减少函数</a> <a href="/tags/%E5%87%BD%E6%95%B0%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">函数查询</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10.63px;">分布式搜索</a> <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">分布式部署</a> <a href="/tags/%E5%88%86%E6%9E%90%E5%99%A8/" style="font-size: 11.25px;">分析器</a> <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" style="font-size: 11.88px;">分析组件</a> <a href="/tags/%E5%88%86%E6%9E%90%E9%93%BE/" style="font-size: 10px;">分析链</a> <a href="/tags/%E5%88%86%E7%89%87%E7%AE%A1%E7%90%86/" style="font-size: 10px;">分片管理</a> <a href="/tags/%E5%88%86%E7%89%87%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">分片维护</a> <a href="/tags/%E5%88%86%E8%AF%8D/" style="font-size: 10px;">分词</a> <a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/" style="font-size: 10.63px;">分词器</a> <a href="/tags/%E5%88%86%E9%9D%A2/" style="font-size: 10px;">分面</a> <a href="/tags/%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2/" style="font-size: 10.63px;">分面搜索</a> <a href="/tags/%E5%88%AB%E5%90%8D/" style="font-size: 10px;">别名</a> <a href="/tags/%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" style="font-size: 10px;">别名管理</a> <a href="/tags/%E5%89%AF%E6%9C%AC%E6%94%BE%E7%BD%AE/" style="font-size: 10px;">副本放置</a> <a href="/tags/%E5%89%AF%E6%9C%AC%E7%AE%A1%E7%90%86/" style="font-size: 10.63px;">副本管理</a> <a href="/tags/%E5%8A%A8%E6%80%81%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">动态字段</a> <a href="/tags/%E5%8A%A8%E6%80%81%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">动态模式</a> <a href="/tags/%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE/" style="font-size: 10.63px;">动态配置</a> <a href="/tags/%E5%8C%85%E7%AE%A1%E7%90%86/" style="font-size: 10px;">包管理</a> <a href="/tags/%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97/" style="font-size: 10px;">升级指南</a> <a href="/tags/%E5%8F%82%E6%95%B0%E7%AE%A1%E7%90%86/" style="font-size: 10px;">参数管理</a> <a href="/tags/%E5%8F%82%E6%95%B0%E9%9B%86/" style="font-size: 10.63px;">参数集</a> <a href="/tags/%E5%8F%82%E8%80%83%E6%89%8B%E5%86%8C/" style="font-size: 10px;">参考手册</a> <a href="/tags/%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">变量配置</a> <a href="/tags/%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">召回率</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">向量搜索</a> <a href="/tags/%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">向量查询</a> <a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">命令行工具</a> <a href="/tags/%E5%94%AF%E4%B8%80%E9%94%AE/" style="font-size: 10px;">唯一键</a> <a href="/tags/%E5%9C%B0%E7%90%86%E4%BD%8D%E7%BD%AE%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">地理位置搜索</a> <a href="/tags/%E5%9D%90%E6%A0%87%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">坐标查询</a> <a href="/tags/%E5%9D%97%E8%BF%9E%E6%8E%A5/" style="font-size: 10px;">块连接</a> <a href="/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/" style="font-size: 10px;">垃圾回收</a> <a href="/tags/%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D/" style="font-size: 10.63px;">备份恢复</a> <a href="/tags/%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">复制字段</a> <a href="/tags/%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5/" style="font-size: 10px;">多值字段</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E5%A2%9E%E5%BC%BA/" style="font-size: 10px;">字段增强</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E6%98%A0%E5%B0%84/" style="font-size: 10.63px;">字段映射</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/" style="font-size: 11.88px;">字段类型</a> <a href="/tags/%E5%AD%97%E6%AE%B5%E9%85%8D%E7%BD%AE/" style="font-size: 10.63px;">字段配置</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">字符过滤器</a> <a href="/tags/%E5%AD%97%E7%AC%A6%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">字符预处理</a> <a href="/tags/%E5%AD%A6%E4%B9%A0%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">学习路径</a> <a href="/tags/%E5%AE%89%E5%85%A8/" style="font-size: 11.25px;">安全</a> <a href="/tags/%E5%AE%89%E5%85%A8%E4%BF%AE%E5%A4%8D/" style="font-size: 10.63px;">安全修复</a> <a href="/tags/%E5%AE%89%E5%85%A8%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">安全机制</a> <a href="/tags/%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E/" style="font-size: 10.63px;">安全漏洞</a> <a href="/tags/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/" style="font-size: 10px;">安全配置</a> <a href="/tags/%E5%AE%9E%E6%96%BD%E8%A7%84%E5%88%92/" style="font-size: 10px;">实施规划</a> <a href="/tags/%E5%AE%9E%E6%97%B6%E8%8E%B7%E5%8F%96/" style="font-size: 10px;">实时获取</a> <a href="/tags/%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" style="font-size: 10px;">审计日志</a> <a href="/tags/%E5%AE%B9%E5%99%A8%E5%8C%96/" style="font-size: 10px;">容器化</a> <a href="/tags/%E5%B1%9E%E6%80%A7%E6%9B%BF%E6%8D%A2/" style="font-size: 10px;">属性替换</a> <a href="/tags/%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3/" style="font-size: 10px;">嵌套文档</a> <a href="/tags/%E5%B8%83%E5%B0%94%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">布尔查询</a> <a href="/tags/%E5%BA%93%E6%96%87%E4%BB%B6/" style="font-size: 10px;">库文件</a> <a href="/tags/%E5%BB%BA%E8%AE%AE%E5%99%A8/" style="font-size: 10px;">建议器</a> <a href="/tags/%E5%BC%80%E6%BA%90%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">开源搜索</a> <a href="/tags/%E5%BC%82%E6%AD%A5API/" style="font-size: 10px;">异步API</a> <a href="/tags/%E5%BC%82%E6%AD%A5%E8%B0%83%E7%94%A8/" style="font-size: 10px;">异步调用</a> <a href="/tags/%E5%BF%AB%E7%85%A7%E7%AE%A1%E7%90%86/" style="font-size: 10px;">快照管理</a> <a href="/tags/%E5%BF%AB%E9%80%9F%E5%85%A5%E9%97%A8/" style="font-size: 10px;">快速入门</a> <a href="/tags/%E6%80%A7%E8%83%BD/" style="font-size: 10px;">性能</a> <a href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/" style="font-size: 15px;">性能优化</a> <a href="/tags/%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/" style="font-size: 10.63px;">性能监控</a> <a href="/tags/%E6%80%A7%E8%83%BD%E7%AE%A1%E7%90%86/" style="font-size: 10px;">性能管理</a> <a href="/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/" style="font-size: 11.25px;">性能调优</a> <a href="/tags/%E6%89%98%E7%AE%A1%E6%A8%A1%E5%BC%8F/" style="font-size: 10px;">托管模式</a> <a href="/tags/%E6%89%98%E7%AE%A1%E8%B5%84%E6%BA%90/" style="font-size: 10px;">托管资源</a> <a href="/tags/%E6%89%A9%E5%AE%B9%E7%BC%A9%E5%AE%B9/" style="font-size: 10px;">扩容缩容</a> <a href="/tags/%E6%89%A9%E5%B1%95%E5%8A%9F%E8%83%BD/" style="font-size: 10px;">扩展功能</a> <a href="/tags/%E6%89%A9%E5%B1%95%E6%80%A7/" style="font-size: 10px;">扩展性</a> <a href="/tags/%E6%89%B9%E9%87%8F%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">批量数据</a> <a href="/tags/%E6%8A%80%E6%9C%AF/" style="font-size: 10px;">技术</a> <a href="/tags/%E6%8A%A5%E5%91%8A%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">报告系统</a> <a href="/tags/%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5/" style="font-size: 10px;">拼写检查</a> <a href="/tags/%E6%8C%87%E5%8D%97%E8%AF%B4%E6%98%8E/" style="font-size: 10px;">指南说明</a> <a href="/tags/%E6%8C%87%E6%A0%87%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">指标监控</a> <a href="/tags/%E6%8E%88%E6%9D%83/" style="font-size: 10px;">授权</a> <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" style="font-size: 10px;">排序算法</a> <a href="/tags/%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC/" style="font-size: 10px;">控制脚本</a> <a href="/tags/%E6%8E%A8%E8%8D%90%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">推荐系统</a> <a href="/tags/%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5/" style="font-size: 10.63px;">提交策略</a> <a href="/tags/%E6%8F%92%E4%BB%B6/" style="font-size: 10.63px;">插件</a> <a href="/tags/%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" style="font-size: 10px;">插件开发</a> <a href="/tags/%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86/" style="font-size: 10px;">插件管理</a> <a href="/tags/%E6%8F%92%E4%BB%B6%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">插件系统</a> <a href="/tags/%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">搜索</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/" style="font-size: 12.5px;">搜索优化</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD/" style="font-size: 10.63px;">搜索功能</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%8F%82%E6%95%B0/" style="font-size: 10px;">搜索参数</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%BB%BA%E8%AE%AE/" style="font-size: 10px;">搜索建议</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/" style="font-size: 16.88px;">搜索引擎</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7/" style="font-size: 10.63px;">搜索相关性</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">搜索组件</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C/" style="font-size: 10px;">搜索结果</a> <a href="/tags/%E6%90%9C%E7%B4%A2%E8%B4%A8%E9%87%8F/" style="font-size: 10.63px;">搜索质量</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4/" style="font-size: 10px;">数据保护</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E5%B8%83/" style="font-size: 10px;">数据分布</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%88%86%E6%9E%90/" style="font-size: 10.63px;">数据分析</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5/" style="font-size: 10.63px;">数据导入</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90/" style="font-size: 10px;">数据源</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95/" style="font-size: 10px;">数据目录</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%B4%A2%E5%BC%95/" style="font-size: 10px;">数据索引</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">数据预处理</a> <a href="/tags/%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86/" style="font-size: 10px;">文件管理</a> <a href="/tags/%E6%96%87%E6%9C%AC%E5%88%86%E6%9E%90/" style="font-size: 10px;">文本分析</a> <a href="/tags/%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86/" style="font-size: 10px;">文本处理</a> <a href="/tags/%E6%96%87%E6%9C%AC%E9%A2%84%E5%A4%84%E7%90%86/" style="font-size: 10px;">文本预处理</a> <a href="/tags/%E6%96%87%E6%A1%A3%E5%88%86%E6%9E%90/" style="font-size: 10px;">文档分析</a> <a href="/tags/%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86/" style="font-size: 10.63px;">文档处理</a> <a href="/tags/%E6%96%87%E6%A1%A3%E7%BB%93%E6%9E%84/" style="font-size: 10.63px;">文档结构</a> <a href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/" style="font-size: 13.13px;">新手必看</a> <a href="/tags/%E6%97%A5%E5%BF%97%E8%AE%B0%E5%BD%95/" style="font-size: 10px;">日志记录</a> <a href="/tags/%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" style="font-size: 10px;">映射函数</a> <a href="/tags/%E6%98%A0%E5%B0%84%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10px;">映射过滤器</a> <a href="/tags/%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10px;">更新处理器</a> <a href="/tags/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/" style="font-size: 10px;">更新日志</a> <a href="/tags/%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87/" style="font-size: 10px;">术语词汇</a> <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" style="font-size: 10px;">机器学习</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E4%BC%98%E5%8C%96/" style="font-size: 10px;">查询优化</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E5%85%A5%E9%97%A8/" style="font-size: 10px;">查询入门</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E5%BB%BA%E8%AE%AE/" style="font-size: 10px;">查询建议</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/" style="font-size: 13.75px;">查询解析器</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" style="font-size: 10.63px;">查询语法</a> <a href="/tags/%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD/" style="font-size: 10.63px;">查询预热</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8A%A0%E8%BD%BD/" style="font-size: 10px;">核心加载</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E5%8F%91%E7%8E%B0/" style="font-size: 10px;">核心发现</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/" style="font-size: 11.25px;">核心管理</a> <a href="/tags/%E6%A0%B8%E5%BF%83%E7%BB%B4%E6%8A%A4/" style="font-size: 10px;">核心维护</a> <a href="/tags/%E6%A6%82%E5%BF%B5%E5%AE%9A%E4%B9%89/" style="font-size: 10px;">概念定义</a> <a href="/tags/%E6%A8%A1%E5%9D%97%E5%8C%96/" style="font-size: 10px;">模块化</a> <a href="/tags/%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F/" style="font-size: 10px;">模块系统</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E5%B7%A5%E5%8E%82/" style="font-size: 10px;">模式工厂</a> <a href="/tags/%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" style="font-size: 10.63px;">模式设计</a> <a href="/tags/%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F/" style="font-size: 10px;">正则表达式</a> <a href="/tags/%E7%81%B5%E6%B4%BB%E6%80%A7/" style="font-size: 10px;">灵活性</a> <a href="/tags/%E7%83%AD%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">热部署</a> <a href="/tags/%E7%86%94%E6%96%AD%E6%9C%BA%E5%88%B6/" style="font-size: 10px;">熔断机制</a> <a href="/tags/%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/" style="font-size: 10px;">版本升级</a> <a href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/" style="font-size: 14.38px;">版本发布</a> <a href="/tags/%E7%8E%B0%E4%BB%A3%E5%8C%96%E6%8E%A5%E5%8F%A3/" style="font-size: 10px;">现代化接口</a> <a href="/tags/%E7%94%9F%E4%BA%A7%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">生产部署</a> <a href="/tags/%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" style="font-size: 10px;">生命周期</a> <a href="/tags/%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/" style="font-size: 10px;">用户体验</a> <a href="/tags/%E7%94%A8%E6%88%B7%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">用户界面</a> <a href="/tags/%E7%9B%91%E5%90%AC%E5%99%A8/" style="font-size: 10px;">监听器</a> <a href="/tags/%E7%9B%91%E6%8E%A7%E5%B7%A5%E5%85%B7/" style="font-size: 10px;">监控工具</a> <a href="/tags/%E7%9B%B8%E4%BC%BC%E5%BA%A6%E7%AE%97%E6%B3%95/" style="font-size: 10px;">相似度算法</a> <a href="/tags/%E7%9B%B8%E5%85%B3%E6%80%A7%E6%8F%90%E5%8D%87/" style="font-size: 10px;">相关性提升</a> <a href="/tags/%E7%9B%B8%E5%85%B3%E6%80%A7%E8%AE%A1%E7%AE%97/" style="font-size: 10px;">相关性计算</a> <a href="/tags/%E7%9B%B8%E5%85%B3%E6%80%A7%E8%AF%84%E5%88%86/" style="font-size: 10px;">相关性评分</a> <a href="/tags/%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%BF%AE%E5%A4%8D/" style="font-size: 10px;">稳定性修复</a> <a href="/tags/%E7%A9%BA%E9%97%B4%E6%90%9C%E7%B4%A2/" style="font-size: 10px;">空间搜索</a> <a href="/tags/%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2/" style="font-size: 10px;">管理界面</a> <a href="/tags/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E5%99%A8/" style="font-size: 10px;">类加载器</a> <a href="/tags/%E7%B1%BB%E8%B7%AF%E5%BE%84/" style="font-size: 10px;">类路径</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6/" style="font-size: 10px;">精确度</a> <a href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%8F%AC%E5%9B%9E%E7%8E%87/" style="font-size: 10px;">精确度召回率</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%8A%9F%E8%83%BD/" style="font-size: 10px;">系统功能</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7/" style="font-size: 10px;">系统属性</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E6%9E%B6%E6%9E%84/" style="font-size: 10px;">系统架构</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E7%9B%91%E6%8E%A7/" style="font-size: 10px;">系统监控</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" style="font-size: 10.63px;">系统管理</a> <a href="/tags/%E7%B3%BB%E7%BB%9F%E8%B0%83%E4%BC%98/" style="font-size: 10px;">系统调优</a> <a href="/tags/%E7%B4%A2%E5%BC%95/" style="font-size: 11.25px;">索引</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96/" style="font-size: 10.63px;">索引优化</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE/" style="font-size: 10px;">索引位置</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86/" style="font-size: 10px;">索引原理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E5%A4%84%E7%90%86/" style="font-size: 10px;">索引处理</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%93%8D%E4%BD%9C/" style="font-size: 10px;">索引操作</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%9B%B4%E6%96%B0/" style="font-size: 10px;">索引更新</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E6%A0%BC%E5%BC%8F/" style="font-size: 10.63px;">索引格式</a> <a href="/tags/%E7%B4%A2%E5%BC%95%E8%AE%BE%E8%AE%A1/" style="font-size: 10.63px;">索引设计</a> <a href="/tags/%E7%BB%9F%E8%AE%A1%E8%81%9A%E5%90%88/" style="font-size: 10px;">统计聚合</a> <a href="/tags/%E7%BB%B4%E6%8A%A4%E7%89%88%E6%9C%AC/" style="font-size: 10px;">维护版本</a> <a href="/tags/%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96/" style="font-size: 10.63px;">缓存优化</a> <a href="/tags/%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8/" style="font-size: 10px;">编解码器</a> <a href="/tags/%E8%81%9A%E5%90%88/" style="font-size: 10px;">聚合</a> <a href="/tags/%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/" style="font-size: 10px;">聚合函数</a> <a href="/tags/%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10px;">脚本更新处理器</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">自动化部署</a> <a href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90/" style="font-size: 10px;">自动完成</a> <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE/" style="font-size: 10px;">自定义数据</a> <a href="/tags/%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BB%84%E4%BB%B6/" style="font-size: 10px;">自定义组件</a> <a href="/tags/%E8%87%AA%E6%96%87%E6%A1%A3%E5%8C%96/" style="font-size: 10px;">自文档化</a> <a href="/tags/%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86/" style="font-size: 10px;">节点管理</a> <a href="/tags/%E8%8C%83%E5%9B%B4%E6%9F%A5%E8%AF%A2/" style="font-size: 10px;">范围查询</a> <a href="/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F/" style="font-size: 10.63px;">表达式</a> <a href="/tags/%E8%AE%A4%E8%AF%81/" style="font-size: 10px;">认证</a> <a href="/tags/%E8%AF%84%E5%88%86%E5%87%BD%E6%95%B0/" style="font-size: 10px;">评分函数</a> <a href="/tags/%E8%AF%8D%E5%B9%B2%E5%8C%96/" style="font-size: 10px;">词干化</a> <a href="/tags/%E8%AF%AD%E8%A8%80%E5%A4%84%E7%90%86/" style="font-size: 10px;">语言处理</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0API/" style="font-size: 10px;">请求参数API</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86/" style="font-size: 10px;">请求处理</a> <a href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 13.13px;">请求处理器</a> <a href="/tags/%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1/" style="font-size: 10.63px;">负载均衡</a> <a href="/tags/%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD/" style="font-size: 10px;">资源加载</a> <a href="/tags/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/" style="font-size: 10.63px;">资源管理</a> <a href="/tags/%E8%B7%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83/" style="font-size: 10px;">跨数据中心</a> <a href="/tags/%E8%BF%87%E6%BB%A4%E5%99%A8/" style="font-size: 10.63px;">过滤器</a> <a href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/" style="font-size: 10.63px;">运维工具</a> <a href="/tags/%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86/" style="font-size: 10.63px;">运维管理</a> <a href="/tags/%E8%BF%9C%E7%A8%8B%E6%B5%81/" style="font-size: 10px;">远程流</a> <a href="/tags/%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6/" style="font-size: 10px;">速率限制</a> <a href="/tags/%E9%85%8D%E7%BD%AE/" style="font-size: 11.88px;">配置</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96/" style="font-size: 10px;">配置优化</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" style="font-size: 10.63px;">配置文件</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/" style="font-size: 11.88px;">配置管理</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86/" style="font-size: 10.63px;">配置集</a> <a href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/" style="font-size: 10px;">配置集管理</a> <a href="/tags/%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" style="font-size: 10.63px;">隐式请求处理器</a> <a href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/" style="font-size: 12.5px;">集合管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E5%8D%87%E7%BA%A7/" style="font-size: 10px;">集群升级</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6/" style="font-size: 10px;">集群插件</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81/" style="font-size: 10px;">集群状态</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86/" style="font-size: 11.88px;">集群管理</a> <a href="/tags/%E9%9B%86%E7%BE%A4%E9%83%A8%E7%BD%B2/" style="font-size: 10px;">集群部署</a> <a href="/tags/%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA/" style="font-size: 10px;">高亮显示</a> <a href="/tags/%E9%AB%98%E5%8F%AF%E7%94%A8/" style="font-size: 10.63px;">高可用</a> <a href="/tags/%E9%AB%98%E7%BA%A7%E6%90%9C%E7%B4%A2/" style="font-size: 10.63px;">高级搜索</a>
     </div>
   </div>
 
@@ -1113,7 +1922,7 @@ org.apache.solr.searc...
     <h3 class="widget-title">归档</h3>
 
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a><span class="archive-list-count">20</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/08/">八月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">七月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">五月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">三月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">五月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">十二月 2012</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">1</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/07/">七月 2025</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/03/">三月 2025</a><span class="archive-list-count">21</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/02/">二月 2025</a><span class="archive-list-count">39</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2025/01/">一月 2025</a><span class="archive-list-count">32</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/12/">十二月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/11/">十一月 2024</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/10/">十月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/09/">九月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/08/">八月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/07/">七月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/06/">六月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/05/">五月 2024</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/04/">四月 2024</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/03/">三月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2024/02/">二月 2024</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/02/">二月 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/08/">八月 2017</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/08/">八月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/05/">五月 2014</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2014/03/">三月 2014</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/07/">七月 2013</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/06/">六月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/03/">三月 2013</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/02/">二月 2013</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2013/01/">一月 2013</a><span class="archive-list-count">12</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/12/">十二月 2012</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/11/">十一月 2012</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2012/10/">十月 2012</a><span class="archive-list-count">1</span></li></ul>
     </div>
   </div>
 

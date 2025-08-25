@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：jvm参数优化配置指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="内存管理SolrCloudSolr部署JVM优化垃圾回收" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析SolrCloud JVM参数优化配置，包括内存堆设置、垃圾回收器选择、性能监控等关键JVM优化策略和最佳实践。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：JVM参数优化配置指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/21/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJVM%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析SolrCloud JVM参数优化配置，包括内存堆设置、垃圾回收器选择、性能监控等关键JVM优化策略和最佳实践。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-20T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:30:18.494Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="内存管理">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="JVM优化">
+<meta property="article:tag" content="垃圾回收">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：JVM参数优化配置指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：JVM参数优化配置指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/21/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJVM%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-03-20T16:00:00.000Z" itemprop="datePublished">三月 21, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>优化JVM可以是充分利用Solr安装的关键因素。虽然配置JVM是一个复杂的话题，完整讨论超出了本文档的范围，但幸运的是，大多数现代JVM都能够很好地使用默认设置充分利用可用资源。</p>
+<p>以下章节包含一些在默认设置对您的情况不是最优时可能有用的提示。有关改善Solr性能的更多一般信息，请参阅Solr Wiki中的<a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/solr/SolrPerformanceFactors">Solr性能因子</a>。</p>
+<span id="more"></span>
+
+<h2 id="内存堆设置选择"><a href="#内存堆设置选择" class="headerlink" title="内存堆设置选择"></a>内存堆设置选择</h2><p>最重要的JVM配置设置控制分配给JVM的堆：<code>-Xms</code>设置JVM内存堆的初始大小，<code>-Xmx</code>设置堆的最大大小。将这两个选项设置为相同值是一种常见做法。</p>
+<h3 id="堆大小确定原则"><a href="#堆大小确定原则" class="headerlink" title="堆大小确定原则"></a>堆大小确定原则</h3><p>堆大小至关重要，遗憾的是没有”一刀切”的解决方案，您必须使用您的数据和应用程序进行测试。确定正确大小的最佳方法是分析位于日志目录中的垃圾回收（GC）日志。有各种工具可以帮助分析这些日志，特别是显示GC完成后使用的内存量：</p>
+<ul>
+<li><strong><a target="_blank" rel="noopener" href="http://www.tagtraum.com/gcviewer.html">GCViewer</a></strong>：可视化GC日志分析工具</li>
+<li><strong><a target="_blank" rel="noopener" href="https://gceasy.io/">GCEasy</a></strong>：在线GC日志分析服务</li>
+<li><strong>jconsole</strong>：大多数Java运行时分发的监控工具，可用于检查Solr运行时的内存消耗</li>
+</ul>
+<p>这将显示所需的绝对最小内存量；添加25-50%的”余量”是一个合理的起点。</p>
+<h3 id="关键配置要点"><a href="#关键配置要点" class="headerlink" title="关键配置要点"></a>关键配置要点</h3><h4 id="1-内存余量重要性"><a href="#1-内存余量重要性" class="headerlink" title="1. 内存余量重要性"></a>1. 内存余量重要性</h4><p>使用太少”余量”运行Solr会导致持续GC消耗过多资源。因此建议保持25-50%的余量。</p>
+<h4 id="2-MMapDirectory内存使用"><a href="#2-MMapDirectory内存使用" class="headerlink" title="2. MMapDirectory内存使用"></a>2. MMapDirectory内存使用</h4><p>Solr广泛使用MMapDirectory，它使用<strong>不是</strong>为JVM保留的RAM来处理大部分Lucene索引。因此，应该尽可能多地为操作系统保留内存用于此目的。</p>
+<h4 id="3-堆大小平衡"><a href="#3-堆大小平衡" class="headerlink" title="3. 堆大小平衡"></a>3. 堆大小平衡</h4><p>分配的堆应该在保持良好性能的同时尽可能小。8-16GB是很常见的，有时会使用更大的堆。当堆增长到更大尺寸时，在投入生产之前进行广泛测试是必要的。</p>
+<h4 id="4-垃圾回收器选择"><a href="#4-垃圾回收器选择" class="headerlink" title="4. 垃圾回收器选择"></a>4. 垃圾回收器选择</h4><p>在使用支持G1GC的JVM（Java 9及更高版本）时，当前首选G1GC垃圾回收器。</p>
+<h4 id="5-多JVM架构考虑"><a href="#5-多JVM架构考虑" class="headerlink" title="5. 多JVM架构考虑"></a>5. 多JVM架构考虑</h4><p>现代硬件可以配置数百GB的物理RAM和多个CPU。在这些情况下，运行多个JVM通常更好，每个JVM都为其堆分配有限的内存量。实现这一点的一种方法是将Solr作为<a target="_blank" rel="noopener" href="https://hub.docker.com/_/solr?tab=tags">Docker容器</a>运行。</p>
+<h4 id="6-持续监控的必要性"><a href="#6-持续监控的必要性" class="headerlink" title="6. 持续监控的必要性"></a>6. 持续监控的必要性</h4><p>定期重新分析GC日志和&#x2F;或使用指标报告进行监控是良好的实践，以查看内存使用是否由于应用程序、文档数量等的更改而发生变化。</p>
+<h4 id="7-OutOfMemoryError处理"><a href="#7-OutOfMemoryError处理" class="headerlink" title="7. OutOfMemoryError处理"></a>7. OutOfMemoryError处理</h4><p>Solr将使用一个选项运行，该选项在OutOfMemoryError异常时导致JVM崩溃。这将在系统资源耗尽时强制停止Solr，而不是在不确定状态下继续。您还可以通过<code>solr.in.sh</code>中的值在OOME时请求堆转储。</p>
+<h4 id="8-“Stop-the-World”暂停控制"><a href="#8-“Stop-the-World”暂停控制" class="headerlink" title="8. “Stop the World”暂停控制"></a>8. “Stop the World”暂停控制</h4><p>所有当前（Java 11）垃圾回收器都可能遇到”stop the world”回收，这会暂停JVM直到完成。如果通过监控发现这些垃圾回收频繁且超出应用程序可以容忍的范围，应该考虑额外的调优。</p>
+<p><strong>性能指标标准</strong>：</p>
+<ul>
+<li>“Stop the world”暂停超过5秒很少可以接受</li>
+<li>最好使暂停时间少于1秒</li>
+</ul>
+<p>请咨询您的JVM供应商文档以了解您特定情况下的细节，上述建议仅作为起点。</p>
+<h2 id="使用Server-HotSpot-VM"><a href="#使用Server-HotSpot-VM" class="headerlink" title="使用Server HotSpot VM"></a>使用Server HotSpot VM</h2><p>如果您使用Sun的JVM，在启动Solr时添加<code>-server</code>命令行选项。这告诉JVM它应该为长时间运行的服务器进程进行优化。</p>
+<p>如果您系统上的Java运行时是JRE而不是完整的JDK发行版（包括<code>javac</code>和其他开发工具），那么它可能不支持<code>-server</code> JVM选项。</p>
+<p><strong>验证方法</strong>：<br>运行<code>java -help</code>并在显示的使用消息中查找<code>-server</code>作为可用选项来测试这一点。</p>
+<h2 id="检查JVM设置"><a href="#检查JVM设置" class="headerlink" title="检查JVM设置"></a>检查JVM设置</h2><h3 id="System-Request-Handler"><a href="#System-Request-Handler" class="headerlink" title="System Request Handler"></a>System Request Handler</h3><p>查看服务器正在使用的JVM设置以及其他有用信息的好方法是使用<code>admin</code>请求处理程序：<code>/solr/admin/info/system</code>。此请求处理程序将显示大量服务器统计信息和设置。</p>
+<p><strong>使用示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/admin/info/system</span><br></pre></td></tr></table></figure>
+
+<h3 id="Java-Properties界面"><a href="#Java-Properties界面" class="headerlink" title="Java Properties界面"></a>Java Properties界面</h3><p>许多系统环境变量包括Java设置，这些可以在管理界面的主仪表板上看到。</p>
+<p>但是，Java Properties界面提供了对运行Solr的JVM的所有属性的便捷访问，包括：</p>
+<ul>
+<li>类路径</li>
+<li>文件编码</li>
+<li>JVM内存设置  </li>
+<li>操作系统信息</li>
+<li>更多系统属性</li>
+</ul>
+<p>在管理界面中，可在左侧菜单中的<strong>Java Properties</strong>中找到。</p>
+<h2 id="JVM优化最佳实践"><a href="#JVM优化最佳实践" class="headerlink" title="JVM优化最佳实践"></a>JVM优化最佳实践</h2><h3 id="内存配置策略"><a href="#内存配置策略" class="headerlink" title="内存配置策略"></a>内存配置策略</h3><h4 id="1-初始内存配置"><a href="#1-初始内存配置" class="headerlink" title="1. 初始内存配置"></a>1. 初始内存配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础配置示例</span></span><br><span class="line">-Xms8g -Xmx8g</span><br></pre></td></tr></table></figure>
+
+<p><strong>配置原则</strong>：</p>
+<ul>
+<li>将<code>-Xms</code>和<code>-Xmx</code>设置为相同值</li>
+<li>开始时设置相对保守的值（8-16GB）</li>
+<li>根据实际负载逐步调整</li>
+</ul>
+<h4 id="2-不同规模的内存配置"><a href="#2-不同规模的内存配置" class="headerlink" title="2. 不同规模的内存配置"></a>2. 不同规模的内存配置</h4><p><strong>小型部署（&lt; 1GB索引）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xms2g -Xmx2g</span><br></pre></td></tr></table></figure>
+
+<p><strong>中型部署（1-10GB索引）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xms8g -Xmx8g</span><br></pre></td></tr></table></figure>
+
+<p><strong>大型部署（&gt;10GB索引）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Xms16g -Xmx16g</span><br></pre></td></tr></table></figure>
+
+<p><strong>超大型部署（&gt;100GB索引）</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 考虑多实例部署</span></span><br><span class="line">-Xms12g -Xmx12g  <span class="comment"># 每个实例</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="垃圾回收器配置"><a href="#垃圾回收器配置" class="headerlink" title="垃圾回收器配置"></a>垃圾回收器配置</h3><h4 id="G1GC配置（推荐）"><a href="#G1GC配置（推荐）" class="headerlink" title="G1GC配置（推荐）"></a>G1GC配置（推荐）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Java 9+推荐配置</span></span><br><span class="line">-XX:+UseG1GC</span><br><span class="line">-XX:MaxGCPauseMillis=250</span><br><span class="line">-XX:G1HeapRegionSize=16m</span><br><span class="line">-XX:G1ReservePercent=25</span><br><span class="line">-XX:G1MixedGCCountTarget=8</span><br><span class="line">-XX:G1MixedGCLiveThresholdPercent=90</span><br></pre></td></tr></table></figure>
+
+<h4 id="传统配置（较老版本Java）"><a href="#传统配置（较老版本Java）" class="headerlink" title="传统配置（较老版本Java）"></a>传统配置（较老版本Java）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Java 8及以下版本</span></span><br><span class="line">-XX:+UseConcMarkSweepGC</span><br><span class="line">-XX:+CMSIncrementalMode</span><br><span class="line">-XX:CMSInitiatingOccupancyFraction=75</span><br><span class="line">-XX:+UseCMSInitiatingOccupancyOnly</span><br></pre></td></tr></table></figure>
+
+<h3 id="GC日志配置"><a href="#GC日志配置" class="headerlink" title="GC日志配置"></a>GC日志配置</h3><h4 id="Java-9-日志配置"><a href="#Java-9-日志配置" class="headerlink" title="Java 9+日志配置"></a>Java 9+日志配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">-Xlog:gc*:gc.log:<span class="keyword">time</span>,level,tags</span><br><span class="line">-XX:+UseStringDeduplication</span><br></pre></td></tr></table></figure>
+
+<h4 id="Java-8日志配置"><a href="#Java-8日志配置" class="headerlink" title="Java 8日志配置"></a>Java 8日志配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">-XX:+PrintGC</span><br><span class="line">-XX:+PrintGCDetails</span><br><span class="line">-XX:+PrintGCTimeStamps</span><br><span class="line">-XX:+PrintGCDateStamps</span><br><span class="line">-Xloggc:gc.log</span><br><span class="line">-XX:+UseGCLogFileRotation</span><br><span class="line">-XX:NumberOfGCLogFiles=9</span><br><span class="line">-XX:GCLogFileSize=20M</span><br></pre></td></tr></table></figure>
+
+<h3 id="性能调优参数"><a href="#性能调优参数" class="headerlink" title="性能调优参数"></a>性能调优参数</h3><h4 id="常用性能参数"><a href="#常用性能参数" class="headerlink" title="常用性能参数"></a>常用性能参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 服务器模式</span></span><br><span class="line">-server</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预分配内存</span></span><br><span class="line">-XX:+AlwaysPreTouch</span><br><span class="line"></span><br><span class="line"><span class="comment"># 优化字符串操作</span></span><br><span class="line">-XX:+OptimizeStringConcat</span><br><span class="line"></span><br><span class="line"><span class="comment"># 压缩普通对象指针（64位JVM）</span></span><br><span class="line">-XX:+UseCompressedOops</span><br><span class="line">-XX:+UseCompressedClassPointers</span><br><span class="line"></span><br><span class="line"><span class="comment"># 优化锁竞争</span></span><br><span class="line">-XX:+UseBiasedLocking</span><br><span class="line"></span><br><span class="line"><span class="comment"># 大页内存支持</span></span><br><span class="line">-XX:+UseLargePages</span><br></pre></td></tr></table></figure>
+
+<h4 id="内存管理参数"><a href="#内存管理参数" class="headerlink" title="内存管理参数"></a>内存管理参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 堆外内存限制</span></span><br><span class="line">-XX:MaxDirectMemorySize=2g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 元空间设置（Java 8+）</span></span><br><span class="line">-XX:MetaspaceSize=128m</span><br><span class="line">-XX:MaxMetaspaceSize=512m</span><br><span class="line"></span><br><span class="line"><span class="comment"># 永久代设置（Java 7及以下）</span></span><br><span class="line"><span class="comment"># -XX:PermSize=128m</span></span><br><span class="line"><span class="comment"># -XX:MaxPermSize=512m</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="监控和调试参数"><a href="#监控和调试参数" class="headerlink" title="监控和调试参数"></a>监控和调试参数</h3><h4 id="JVM监控参数"><a href="#JVM监控参数" class="headerlink" title="JVM监控参数"></a>JVM监控参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># JMX远程监控</span></span><br><span class="line">-Dcom.sun.management.jmxremote</span><br><span class="line">-Dcom.sun.management.jmxremote.port=9999</span><br><span class="line">-Dcom.sun.management.jmxremote.authenticate=<span class="literal">false</span></span><br><span class="line">-Dcom.sun.management.jmxremote.ssl=<span class="literal">false</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 飞行记录器（Java 8+）</span></span><br><span class="line">-XX:+FlightRecorder</span><br><span class="line">-XX:StartFlightRecording=duration=60s,filename=solr_startup.jfr</span><br></pre></td></tr></table></figure>
+
+<h4 id="故障诊断参数"><a href="#故障诊断参数" class="headerlink" title="故障诊断参数"></a>故障诊断参数</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># OutOfMemoryError时生成堆转储</span></span><br><span class="line">-XX:+HeapDumpOnOutOfMemoryError</span><br><span class="line">-XX:HeapDumpPath=/var/log/solr/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 崩溃时生成错误文件</span></span><br><span class="line">-XX:ErrorFile=/var/log/solr/hs_err_pid%p.log</span><br></pre></td></tr></table></figure>
+
+<h2 id="环境特定优化"><a href="#环境特定优化" class="headerlink" title="环境特定优化"></a>环境特定优化</h2><h3 id="容器化环境"><a href="#容器化环境" class="headerlink" title="容器化环境"></a>容器化环境</h3><h4 id="Docker配置"><a href="#Docker配置" class="headerlink" title="Docker配置"></a>Docker配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Docker内存限制感知</span></span><br><span class="line">-XX:+UseContainerSupport</span><br><span class="line">-XX:InitialRAMPercentage=50.0</span><br><span class="line">-XX:MaxRAMPercentage=80.0</span><br><span class="line">-XX:MinRAMPercentage=50.0</span><br></pre></td></tr></table></figure>
+
+<h4 id="Kubernetes配置"><a href="#Kubernetes配置" class="headerlink" title="Kubernetes配置"></a>Kubernetes配置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">resources:</span></span><br><span class="line">  <span class="attr">requests:</span></span><br><span class="line">    <span class="attr">memory:</span> <span class="string">&quot;8Gi&quot;</span></span><br><span class="line">  <span class="attr">limits:</span>  </span><br><span class="line">    <span class="attr">memory:</span> <span class="string">&quot;16Gi&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">env:</span></span><br><span class="line"><span class="bullet">-</span> <span class="attr">name:</span> <span class="string">JAVA_OPTS</span></span><br><span class="line">  <span class="attr">value:</span> <span class="string">&quot;-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="高并发环境"><a href="#高并发环境" class="headerlink" title="高并发环境"></a>高并发环境</h3><h4 id="线程池优化"><a href="#线程池优化" class="headerlink" title="线程池优化"></a>线程池优化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ForkJoinPool通用并行度</span></span><br><span class="line">-Djava.util.concurrent.ForkJoinPool.common.parallelism=8</span><br><span class="line"></span><br><span class="line"><span class="comment"># 编译线程数</span></span><br><span class="line">-XX:CICompilerCount=4</span><br></pre></td></tr></table></figure>
+
+<h4 id="网络优化"><a href="#网络优化" class="headerlink" title="网络优化"></a>网络优化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># TCP相关设置</span></span><br><span class="line">-Djava.net.preferIPv4Stack=<span class="literal">true</span></span><br><span class="line">-Djava.security.egd=file:/dev/./urandom</span><br></pre></td></tr></table></figure>
+
+<h2 id="性能监控和调优"><a href="#性能监控和调优" class="headerlink" title="性能监控和调优"></a>性能监控和调优</h2><h3 id="关键监控指标"><a href="#关键监控指标" class="headerlink" title="关键监控指标"></a>关键监控指标</h3><h4 id="GC性能指标"><a href="#GC性能指标" class="headerlink" title="GC性能指标"></a>GC性能指标</h4><ul>
+<li><strong>GC频率</strong>：Full GC不应过于频繁（建议&lt;1次&#x2F;小时）</li>
+<li><strong>GC暂停时间</strong>：应保持在可接受范围内（&lt;1秒）</li>
+<li><strong>堆利用率</strong>：应在合理范围内（60-80%）</li>
+<li><strong>GC吞吐量</strong>：应保持较高水平（&gt;95%）</li>
+</ul>
+<h4 id="内存使用指标"><a href="#内存使用指标" class="headerlink" title="内存使用指标"></a>内存使用指标</h4><ul>
+<li><strong>堆内存使用</strong>：监控峰值和平均使用情况</li>
+<li><strong>非堆内存使用</strong>：关注元空间&#x2F;永久代使用</li>
+<li><strong>直接内存使用</strong>：监控堆外内存使用情况</li>
+</ul>
+<h3 id="调优流程"><a href="#调优流程" class="headerlink" title="调优流程"></a>调优流程</h3><h4 id="1-建立基线"><a href="#1-建立基线" class="headerlink" title="1. 建立基线"></a>1. 建立基线</h4><ul>
+<li>记录默认配置下的性能表现</li>
+<li>收集关键性能指标</li>
+<li>建立性能基准测试</li>
+</ul>
+<h4 id="2-逐步优化"><a href="#2-逐步优化" class="headerlink" title="2. 逐步优化"></a>2. 逐步优化</h4><ul>
+<li>一次只调整一个参数</li>
+<li>进行充分的测试验证</li>
+<li>记录每次调整的效果</li>
+</ul>
+<h4 id="3-压力测试"><a href="#3-压力测试" class="headerlink" title="3. 压力测试"></a>3. 压力测试</h4><ul>
+<li>使用实际数据进行测试</li>
+<li>模拟生产环境负载</li>
+<li>验证极限情况下的表现</li>
+</ul>
+<h4 id="4-持续监控"><a href="#4-持续监控" class="headerlink" title="4. 持续监控"></a>4. 持续监控</h4><ul>
+<li>建立监控告警机制</li>
+<li>定期审查性能指标</li>
+<li>根据负载变化调整配置</li>
+</ul>
+<h2 id="常见问题排查"><a href="#常见问题排查" class="headerlink" title="常见问题排查"></a>常见问题排查</h2><h3 id="内存问题"><a href="#内存问题" class="headerlink" title="内存问题"></a>内存问题</h3><h4 id="OutOfMemoryError-Java-heap-space"><a href="#OutOfMemoryError-Java-heap-space" class="headerlink" title="OutOfMemoryError: Java heap space"></a>OutOfMemoryError: Java heap space</h4><p><strong>症状</strong>：JVM堆内存不足<br><strong>解决方案</strong>：</p>
+<ol>
+<li>增加堆内存大小（<code>-Xmx</code>）</li>
+<li>优化查询减少内存使用</li>
+<li>考虑分片或分布式架构</li>
+</ol>
+<h4 id="OutOfMemoryError-Metaspace"><a href="#OutOfMemoryError-Metaspace" class="headerlink" title="OutOfMemoryError: Metaspace"></a>OutOfMemoryError: Metaspace</h4><p><strong>症状</strong>：元空间内存不足<br><strong>解决方案</strong>：</p>
+<ol>
+<li>增加元空间大小（<code>-XX:MaxMetaspaceSize</code>）</li>
+<li>检查类加载器泄露</li>
+<li>优化类加载机制</li>
+</ol>
+<h3 id="GC问题"><a href="#GC问题" class="headerlink" title="GC问题"></a>GC问题</h3><h4 id="频繁Full-GC"><a href="#频繁Full-GC" class="headerlink" title="频繁Full GC"></a>频繁Full GC</h4><p><strong>症状</strong>：Full GC执行过于频繁<br><strong>解决方案</strong>：</p>
+<ol>
+<li>调整堆大小比例</li>
+<li>优化GC参数</li>
+<li>检查内存泄露</li>
+</ol>
+<h4 id="GC暂停时间过长"><a href="#GC暂停时间过长" class="headerlink" title="GC暂停时间过长"></a>GC暂停时间过长</h4><p><strong>症状</strong>：GC导致应用暂停时间过长<br><strong>解决方案</strong>：</p>
+<ol>
+<li>调整GC暂停时间目标</li>
+<li>考虑使用不同GC算法</li>
+<li>优化堆大小设置</li>
+</ol>
+<h2 id="不同场景的推荐配置"><a href="#不同场景的推荐配置" class="headerlink" title="不同场景的推荐配置"></a>不同场景的推荐配置</h2><h3 id="搜索优化配置"><a href="#搜索优化配置" class="headerlink" title="搜索优化配置"></a>搜索优化配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 适用于查询密集型应用</span></span><br><span class="line">-Xms12g -Xmx12g</span><br><span class="line">-XX:+UseG1GC  </span><br><span class="line">-XX:MaxGCPauseMillis=200</span><br><span class="line">-XX:G1HeapRegionSize=16m</span><br><span class="line">-XX:+UseStringDeduplication</span><br><span class="line">-XX:+AlwaysPreTouch</span><br></pre></td></tr></table></figure>
+
+<h3 id="索引优化配置"><a href="#索引优化配置" class="headerlink" title="索引优化配置"></a>索引优化配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 适用于索引密集型应用</span></span><br><span class="line">-Xms16g -Xmx16g</span><br><span class="line">-XX:+UseG1GC</span><br><span class="line">-XX:MaxGCPauseMillis=500</span><br><span class="line">-XX:G1MixedGCCountTarget=16</span><br><span class="line">-XX:+UseLargePages</span><br><span class="line">-XX:MaxDirectMemorySize=4g</span><br></pre></td></tr></table></figure>
+
+<h3 id="平衡负载配置"><a href="#平衡负载配置" class="headerlink" title="平衡负载配置"></a>平衡负载配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 适用于混合负载应用</span></span><br><span class="line">-Xms10g -Xmx10g</span><br><span class="line">-XX:+UseG1GC</span><br><span class="line">-XX:MaxGCPauseMillis=300</span><br><span class="line">-XX:G1ReservePercent=20</span><br><span class="line">-XX:+UseStringDeduplication</span><br><span class="line">-XX:+OptimizeStringConcat</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>JVM优化是一个持续的过程，需要根据具体的应用场景、数据规模和性能要求进行调整。关键原则包括：</p>
+<ol>
+<li><strong>渐进式优化</strong>：从保守配置开始，逐步优化</li>
+<li><strong>监控驱动</strong>：基于实际监控数据进行调优决策</li>
+<li><strong>测试验证</strong>：任何配置变更都需要充分测试</li>
+<li><strong>持续改进</strong>：定期评估和调整JVM配置</li>
+</ol>
+<p>通过遵循这些最佳实践和配置指南，可以显著提升SolrCloud的性能表现和稳定性，确保系统在各种负载条件下都能提供优质的搜索服务。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/">内存管理</a>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/JVM%E4%BC%98%E5%8C%96/">JVM优化</a>
+  
+    <a class="article-tag" href="/tags/%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6/">垃圾回收</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/22/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E7%BE%A4%E5%8D%87%E7%BA%A7%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：集群升级完整指南与最佳实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/20/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E6%8C%87%E6%A0%87%E7%9B%91%E6%8E%A7%E6%8A%A5%E5%91%8A%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：指标监控报告系统配置与最佳实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E5%A0%86%E8%AE%BE%E7%BD%AE%E9%80%89%E6%8B%A9"><span class="nav-number">2.</span> <span class="nav-text">内存堆设置选择</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%A4%A7%E5%B0%8F%E7%A1%AE%E5%AE%9A%E5%8E%9F%E5%88%99"><span class="nav-number">2.1.</span> <span class="nav-text">堆大小确定原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE%E8%A6%81%E7%82%B9"><span class="nav-number">2.2.</span> <span class="nav-text">关键配置要点</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98%E4%BD%99%E9%87%8F%E9%87%8D%E8%A6%81%E6%80%A7"><span class="nav-number">2.2.1.</span> <span class="nav-text">1. 内存余量重要性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-MMapDirectory%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8"><span class="nav-number">2.2.2.</span> <span class="nav-text">2. MMapDirectory内存使用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%A0%86%E5%A4%A7%E5%B0%8F%E5%B9%B3%E8%A1%A1"><span class="nav-number">2.2.3.</span> <span class="nav-text">3. 堆大小平衡</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E9%80%89%E6%8B%A9"><span class="nav-number">2.2.4.</span> <span class="nav-text">4. 垃圾回收器选择</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5-%E5%A4%9AJVM%E6%9E%B6%E6%9E%84%E8%80%83%E8%99%91"><span class="nav-number">2.2.5.</span> <span class="nav-text">5. 多JVM架构考虑</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#6-%E6%8C%81%E7%BB%AD%E7%9B%91%E6%8E%A7%E7%9A%84%E5%BF%85%E8%A6%81%E6%80%A7"><span class="nav-number">2.2.6.</span> <span class="nav-text">6. 持续监控的必要性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#7-OutOfMemoryError%E5%A4%84%E7%90%86"><span class="nav-number">2.2.7.</span> <span class="nav-text">7. OutOfMemoryError处理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#8-%E2%80%9CStop-the-World%E2%80%9D%E6%9A%82%E5%81%9C%E6%8E%A7%E5%88%B6"><span class="nav-number">2.2.8.</span> <span class="nav-text">8. “Stop the World”暂停控制</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Server-HotSpot-VM"><span class="nav-number">3.</span> <span class="nav-text">使用Server HotSpot VM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%9F%A5JVM%E8%AE%BE%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">检查JVM设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#System-Request-Handler"><span class="nav-number">4.1.</span> <span class="nav-text">System Request Handler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Java-Properties%E7%95%8C%E9%9D%A2"><span class="nav-number">4.2.</span> <span class="nav-text">Java Properties界面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM%E4%BC%98%E5%8C%96%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">5.</span> <span class="nav-text">JVM优化最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">5.1.</span> <span class="nav-text">内存配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%88%9D%E5%A7%8B%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.1.</span> <span class="nav-text">1. 初始内存配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E4%B8%8D%E5%90%8C%E8%A7%84%E6%A8%A1%E7%9A%84%E5%86%85%E5%AD%98%E9%85%8D%E7%BD%AE"><span class="nav-number">5.1.2.</span> <span class="nav-text">2. 不同规模的内存配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">5.2.</span> <span class="nav-text">垃圾回收器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#G1GC%E9%85%8D%E7%BD%AE%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89"><span class="nav-number">5.2.1.</span> <span class="nav-text">G1GC配置（推荐）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E9%85%8D%E7%BD%AE%EF%BC%88%E8%BE%83%E8%80%81%E7%89%88%E6%9C%ACJava%EF%BC%89"><span class="nav-number">5.2.2.</span> <span class="nav-text">传统配置（较老版本Java）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.3.</span> <span class="nav-text">GC日志配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-9-%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.3.1.</span> <span class="nav-text">Java 9+日志配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java-8%E6%97%A5%E5%BF%97%E9%85%8D%E7%BD%AE"><span class="nav-number">5.3.2.</span> <span class="nav-text">Java 8日志配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%8F%82%E6%95%B0"><span class="nav-number">5.4.</span> <span class="nav-text">性能调优参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%80%A7%E8%83%BD%E5%8F%82%E6%95%B0"><span class="nav-number">5.4.1.</span> <span class="nav-text">常用性能参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E5%8F%82%E6%95%B0"><span class="nav-number">5.4.2.</span> <span class="nav-text">内存管理参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E8%AF%95%E5%8F%82%E6%95%B0"><span class="nav-number">5.5.</span> <span class="nav-text">监控和调试参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E7%9B%91%E6%8E%A7%E5%8F%82%E6%95%B0"><span class="nav-number">5.5.1.</span> <span class="nav-text">JVM监控参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E8%AF%8A%E6%96%AD%E5%8F%82%E6%95%B0"><span class="nav-number">5.5.2.</span> <span class="nav-text">故障诊断参数</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E7%89%B9%E5%AE%9A%E4%BC%98%E5%8C%96"><span class="nav-number">6.</span> <span class="nav-text">环境特定优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E5%99%A8%E5%8C%96%E7%8E%AF%E5%A2%83"><span class="nav-number">6.1.</span> <span class="nav-text">容器化环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Docker%E9%85%8D%E7%BD%AE"><span class="nav-number">6.1.1.</span> <span class="nav-text">Docker配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kubernetes%E9%85%8D%E7%BD%AE"><span class="nav-number">6.1.2.</span> <span class="nav-text">Kubernetes配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E5%B9%B6%E5%8F%91%E7%8E%AF%E5%A2%83"><span class="nav-number">6.2.</span> <span class="nav-text">高并发环境</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BA%BF%E7%A8%8B%E6%B1%A0%E4%BC%98%E5%8C%96"><span class="nav-number">6.2.1.</span> <span class="nav-text">线程池优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%BC%98%E5%8C%96"><span class="nav-number">6.2.2.</span> <span class="nav-text">网络优化</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E4%BC%98"><span class="nav-number">7.</span> <span class="nav-text">性能监控和调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E7%9B%91%E6%8E%A7%E6%8C%87%E6%A0%87"><span class="nav-number">7.1.</span> <span class="nav-text">关键监控指标</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E6%80%A7%E8%83%BD%E6%8C%87%E6%A0%87"><span class="nav-number">7.1.1.</span> <span class="nav-text">GC性能指标</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E4%BD%BF%E7%94%A8%E6%8C%87%E6%A0%87"><span class="nav-number">7.1.2.</span> <span class="nav-text">内存使用指标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E4%BC%98%E6%B5%81%E7%A8%8B"><span class="nav-number">7.2.</span> <span class="nav-text">调优流程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E5%BB%BA%E7%AB%8B%E5%9F%BA%E7%BA%BF"><span class="nav-number">7.2.1.</span> <span class="nav-text">1. 建立基线</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%80%90%E6%AD%A5%E4%BC%98%E5%8C%96"><span class="nav-number">7.2.2.</span> <span class="nav-text">2. 逐步优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E5%8E%8B%E5%8A%9B%E6%B5%8B%E8%AF%95"><span class="nav-number">7.2.3.</span> <span class="nav-text">3. 压力测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-%E6%8C%81%E7%BB%AD%E7%9B%91%E6%8E%A7"><span class="nav-number">7.2.4.</span> <span class="nav-text">4. 持续监控</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E6%8E%92%E6%9F%A5"><span class="nav-number">8.</span> <span class="nav-text">常见问题排查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%85%E5%AD%98%E9%97%AE%E9%A2%98"><span class="nav-number">8.1.</span> <span class="nav-text">内存问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#OutOfMemoryError-Java-heap-space"><span class="nav-number">8.1.1.</span> <span class="nav-text">OutOfMemoryError: Java heap space</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#OutOfMemoryError-Metaspace"><span class="nav-number">8.1.2.</span> <span class="nav-text">OutOfMemoryError: Metaspace</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC%E9%97%AE%E9%A2%98"><span class="nav-number">8.2.</span> <span class="nav-text">GC问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A2%91%E7%B9%81Full-GC"><span class="nav-number">8.2.1.</span> <span class="nav-text">频繁Full GC</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#GC%E6%9A%82%E5%81%9C%E6%97%B6%E9%97%B4%E8%BF%87%E9%95%BF"><span class="nav-number">8.2.2.</span> <span class="nav-text">GC暂停时间过长</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%9C%BA%E6%99%AF%E7%9A%84%E6%8E%A8%E8%8D%90%E9%85%8D%E7%BD%AE"><span class="nav-number">9.</span> <span class="nav-text">不同场景的推荐配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">9.1.</span> <span class="nav-text">搜索优化配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">9.2.</span> <span class="nav-text">索引优化配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E8%B4%9F%E8%BD%BD%E9%85%8D%E7%BD%AE"><span class="nav-number">9.3.</span> <span class="nav-text">平衡负载配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">10.</span> <span class="nav-text">总结</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

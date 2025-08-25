@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：高亮显示功能详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr查询高亮显示Highlighting文本处理搜索结果" />
+  
+  
+  
+  
+  <meta name="description" content="Solr中的高亮显示功能允许匹配用户查询的文档片段包含在查询响应中。 这些片段包含在查询响应的特殊部分（highlighting部分），客户端使用包含的格式化线索来决定如何向用户呈现片段。片段是包含查询匹配的文档字段的一部分，有时也称为”摘要”或”段落”。 高亮显示是高度可配置的，可能比Solr的任何其他部分都更加灵活。有许多参数分别用于片段大小、格式化、排序、备用&#x2F;替代行为以及其他难以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：高亮显示功能详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/06/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr中的高亮显示功能允许匹配用户查询的文档片段包含在查询响应中。 这些片段包含在查询响应的特殊部分（highlighting部分），客户端使用包含的格式化线索来决定如何向用户呈现片段。片段是包含查询匹配的文档字段的一部分，有时也称为”摘要”或”段落”。 高亮显示是高度可配置的，可能比Solr的任何其他部分都更加灵活。有许多参数分别用于片段大小、格式化、排序、备用&#x2F;替代行为以及其他难以">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T14:45:41.115Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="高亮显示">
+<meta property="article:tag" content="Highlighting">
+<meta property="article:tag" content="文本处理">
+<meta property="article:tag" content="搜索结果">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：高亮显示功能详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：高亮显示功能详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/06/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-05T16:00:00.000Z" itemprop="datePublished">三月 6, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Solr中的高亮显示功能允许匹配用户查询的文档片段包含在查询响应中。</p>
+<p>这些片段包含在查询响应的特殊部分（<code>highlighting</code>部分），客户端使用包含的格式化线索来决定如何向用户呈现片段。片段是包含查询匹配的文档字段的一部分，有时也称为”摘要”或”段落”。</p>
+<p>高亮显示是高度可配置的，可能比Solr的任何其他部分都更加灵活。有许多参数分别用于片段大小、格式化、排序、备用&#x2F;替代行为以及其他难以分类的选项。尽管如此，高亮显示使用起来非常简单。</p>
+<h2 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h2><p>高亮显示要求你在模式中定义一个<code>uniqueKey</code>。</p>
+<h3 id="通用高亮显示参数"><a href="#通用高亮显示参数" class="headerlink" title="通用高亮显示参数"></a>通用高亮显示参数</h3><p>你需要设置<code>hl</code>参数，通常还需要<code>hl.fl</code>参数来启用返回高亮显示结果。下表记录了这些参数和其他一些支持的参数。注意许多高亮显示参数支持字段级覆盖，如：<code>f._title_txt_.hl.snippets</code>。</p>
+<h4 id="hl"><a href="#hl" class="headerlink" title="hl"></a>hl</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<p>使用此参数启用或禁用高亮显示。如果要使用高亮显示，必须将此设置为<code>true</code>。</p>
+<h4 id="hl-method"><a href="#hl-method" class="headerlink" title="hl.method"></a>hl.method</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>unified</code></td>
+</tr>
+</tbody></table>
+<p>要使用的高亮显示实现&#x2F;引擎。可接受的值有：<code>unified</code>、<code>original</code>、<code>fastVector</code>。</p>
+<p>参见下面的”选择高亮显示器”部分了解可用高亮显示器之间差异的更多详情。</p>
+<h4 id="hl-fl"><a href="#hl-fl" class="headerlink" title="hl.fl"></a>hl.fl</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>df</code>的值</td>
+</tr>
+</tbody></table>
+<p>指定要高亮显示的字段列表，用逗号或空格分隔。这些字段必须是”存储的”。可以使用通配符<code>*</code>（星号）来匹配字段模式，如<code>text_*</code>甚至<code>*</code>来在所有可能的字段上高亮显示。使用<code>*</code>时，考虑添加<code>hl.requireFieldMatch=true</code>。</p>
+<p>注意这里列出的字段应该与查询中引用的字段有兼容的文本分析（在模式中定义）才能被高亮显示。可能需要修改<code>hl.q</code>和<code>hl.qparser</code>和&#x2F;或修改文本分析。</p>
+<p>以下示例使用本地参数语法和eDisMax查询解析器来高亮显示<code>hl.fl</code>中的字段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;hl.fl=field1 field2&amp;hl.q=&#123;!edismax qf=$hl.fl v=$q&#125;&amp;hl.qparser=lucene&amp;hl.requireFieldMatch=true</span><br></pre></td></tr></table></figure>
+
+<p>默认值是<code>df</code>参数的值，该参数本身没有默认值。</p>
+<h4 id="hl-q"><a href="#hl-q" class="headerlink" title="hl.q"></a>hl.q</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>q</code>的值</td>
+</tr>
+</tbody></table>
+<p>用于高亮显示的查询。此参数允许你高亮显示不同于用于搜索文档的词或字段。设置此参数时，可能还需要设置<code>hl.qparser</code>。</p>
+<p>默认值是<code>q</code>参数的值（已解析）。</p>
+<h4 id="hl-qparser"><a href="#hl-qparser" class="headerlink" title="hl.qparser"></a>hl.qparser</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><em>见描述</em></td>
+</tr>
+</tbody></table>
+<p>用于<code>hl.q</code>查询的查询解析器。只在设置<code>hl.q</code>时适用。</p>
+<p>默认值是<code>defType</code>参数的值，该参数默认为<code>lucene</code>。</p>
+<h4 id="hl-requireFieldMatch"><a href="#hl-requireFieldMatch" class="headerlink" title="hl.requireFieldMatch"></a>hl.requireFieldMatch</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<p>如果为<code>false</code>，所有查询词都将在每个要高亮显示的字段（<code>hl.fl</code>）中高亮显示，无论解析的查询引用什么字段。如果设置为<code>true</code>，只有与被高亮显示字段对齐的查询词才会被高亮显示。</p>
+<p>如果查询引用的字段与被高亮显示的字段不同且它们有不同的文本分析，查询可能不会高亮显示应该高亮显示的查询词，反之亦然。使用的分析是被高亮显示字段（<code>hl.fl</code>）的分析，而不是查询字段的分析。</p>
+<h4 id="hl-queryFieldPattern"><a href="#hl-queryFieldPattern" class="headerlink" title="hl.queryFieldPattern"></a>hl.queryFieldPattern</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>none</code></td>
+</tr>
+</tbody></table>
+<p>类似于<code>hl.requireFieldMatch</code>但允许多个字段匹配，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">q=fieldA:one OR fieldB:two OR fieldC:three</span><br><span class="line">hl.fl=fieldA</span><br><span class="line">hl.queryFieldPattern=fieldA,fieldB</span><br></pre></td></tr></table></figure>
+
+<p>也允许<code>hl.fl</code>字段在查询中不存在，例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">q=fieldA:one OR fieldB:two</span><br><span class="line">hl.fl=fieldZ</span><br><span class="line">hl.queryFieldPattern=fieldA</span><br></pre></td></tr></table></figure>
+
+<p>如果同时指定<code>hl.queryFieldPattern</code>和<code>hl.requireFieldMatch=true</code>，则<code>hl.queryFieldPattern</code>会被静默忽略。</p>
+<h4 id="hl-usePhraseHighlighter"><a href="#hl-usePhraseHighlighter" class="headerlink" title="hl.usePhraseHighlighter"></a>hl.usePhraseHighlighter</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<p>如果设置为<code>true</code>，Solr将准确地作为短语高亮显示短语查询（和其他高级位置敏感查询）。如果为<code>false</code>，短语的部分将在任何地方高亮显示，而不是只在形成给定短语时。</p>
+<h4 id="hl-highlightMultiTerm"><a href="#hl-highlightMultiTerm" class="headerlink" title="hl.highlightMultiTerm"></a>hl.highlightMultiTerm</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<p>如果设置为<code>true</code>，Solr将高亮显示通配符查询（和其他<code>MultiTermQuery</code>子类）。如果为<code>false</code>，它们根本不会被高亮显示。</p>
+<h4 id="hl-snippets"><a href="#hl-snippets" class="headerlink" title="hl.snippets"></a>hl.snippets</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>1</code></td>
+</tr>
+</tbody></table>
+<p>指定每个字段生成的最大高亮显示片段数。可能生成从零到此值的任何数量的片段。</p>
+<h4 id="hl-fragsize"><a href="#hl-fragsize" class="headerlink" title="hl.fragsize"></a>hl.fragsize</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>100</code></td>
+</tr>
+</tbody></table>
+<p>指定要考虑高亮显示的片段的近似大小（字符数）。使用<code>0</code>表示不应考虑片段化，应使用整个字段值。</p>
+<h4 id="hl-tag-pre"><a href="#hl-tag-pre" class="headerlink" title="hl.tag.pre"></a>hl.tag.pre</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>&lt;em&gt;</code></td>
+</tr>
+</tbody></table>
+<p>（原始高亮显示器为<code>hl.simple.pre</code>）指定在高亮显示词前使用的”标签”。这可以是任何字符串，但最常是HTML或XML标签。</p>
+<h4 id="hl-tag-post"><a href="#hl-tag-post" class="headerlink" title="hl.tag.post"></a>hl.tag.post</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>&lt;/em&gt;</code></td>
+</tr>
+</tbody></table>
+<p>（原始高亮显示器为<code>hl.simple.post</code>）指定在高亮显示词后使用的”标签”。这可以是任何字符串，但最常是HTML或XML标签。</p>
+<h4 id="hl-encoder"><a href="#hl-encoder" class="headerlink" title="hl.encoder"></a>hl.encoder</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><em>空</em></td>
+</tr>
+</tbody></table>
+<p>如果为空，则存储的文本将返回而不经过高亮显示器的任何转义&#x2F;编码。如果设置为<code>html</code>，则特殊HTML&#x2F;XML字符将被编码（例如，<code>&amp;</code>变成<code>&amp;amp;</code>）。片段前后字符永远不会被编码。</p>
+<h4 id="hl-maxAnalyzedChars"><a href="#hl-maxAnalyzedChars" class="headerlink" title="hl.maxAnalyzedChars"></a>hl.maxAnalyzedChars</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>51200</code></td>
+</tr>
+</tbody></table>
+<p>查找高亮显示的字符限制，超过此限制不会进行高亮显示。这主要只是基于分析的偏移源的性能考虑，因为它是最慢的。参见”模式选项和性能考虑”。</p>
+<p>还有更多参数根据所选择的高亮显示器（通过<code>hl.method</code>）而受支持。</p>
+<h3 id="查询响应中的高亮显示"><a href="#查询响应中的高亮显示" class="headerlink" title="查询响应中的高亮显示"></a>查询响应中的高亮显示</h3><p>在查询响应中，Solr在与文档分离的部分中包含高亮显示数据。由客户端决定如何处理此响应并向用户显示高亮显示。</p>
+<p>使用Solr包含的示例文档，我们可以看看这是如何工作的：</p>
+<p>响应如下查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/select?hl=on&amp;q=apple&amp;hl.fl=manu&amp;fl=id,name,manu,cat</span><br></pre></td></tr></table></figure>
+
+<p>我们得到这样的响应（为节省空间略有截断）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;response&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;numFound&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;start&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;docs&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;MA147LL/A&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Apple 60 GB iPod with Video Playback Black&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;manu&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Apple Computer Inc.&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;cat&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;electronics&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;music&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;highlighting&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;MA147LL/A&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;manu&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;&lt;em&gt;Apple&lt;/em&gt; Computer Inc.&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意两个部分<code>docs</code>和<code>highlighting</code>。<code>docs</code>部分包含查询的<code>fl</code>参数请求的文档字段（只有”id”、”name”、”manu”和”cat”）。</p>
+<p><code>highlighting</code>部分包括每个文档的ID和包含高亮显示部分的字段。在这个例子中，我们使用<code>hl.fl</code>参数说我们希望在”manu”字段中高亮显示查询词。当该字段中有查询词的匹配时，它将为列表中的每个文档ID包含。</p>
+<h2 id="选择高亮显示器"><a href="#选择高亮显示器" class="headerlink" title="选择高亮显示器"></a>选择高亮显示器</h2><p>Solr提供一个<code>HighlightComponent</code>（一个<code>SearchComponent</code>），它在搜索处理器的默认组件列表中。它在多个实际高亮显示实现&#x2F;引擎（或简称”高亮显示器”）上提供了某种统一的API，这些引擎执行高亮显示的业务。</p>
+<p>多个高亮显示器支持许多参数，有时实现细节和语义会有所不同，所以在切换高亮显示器时不要期望完全相同的结果。你应该使用<code>hl.method</code>参数选择高亮显示器。</p>
+<p>有三个可用的高亮显示器可以在运行时用<code>hl.method</code>参数选择，按一般推荐顺序：</p>
+<h3 id="统一高亮显示器"><a href="#统一高亮显示器" class="headerlink" title="统一高亮显示器"></a>统一高亮显示器</h3><p><strong><code>hl.method=unified</code></strong></p>
+<p>统一高亮显示器是最新的高亮显示器（从Solr 6.4开始），在可用选项中最突出的是性能最好和最准确的。它可以处理典型要求和其他可能通过插件&#x2F;扩展的要求。我们建议你首选使用这个高亮显示器。</p>
+<p>UH非常准确地高亮显示查询，因此忠实于底层Lucene查询实际匹配的内容。其他高亮显示器更自由地高亮显示词（过度高亮显示）。对于深奥&#x2F;自定义查询，此高亮显示器比其他高亮显示器更有可能支持它。</p>
+<p>此高亮显示器的一个强大优势是你可以选择配置Solr在底层索引中放入更多信息来加速大文档的高亮显示；支持多种配置，甚至在每个字段的基础上。其他高亮显示器对偏移源的灵活性很少或没有。</p>
+<p>有一些不选择此高亮显示器的原因：段落评分不考虑查询中的加权。一些用户想要更多&#x2F;更好的段落断开灵活性。”替代”回退选项更原始。</p>
+<h3 id="原始高亮显示器"><a href="#原始高亮显示器" class="headerlink" title="原始高亮显示器"></a>原始高亮显示器</h3><p><strong><code>hl.method=original</code></strong></p>
+<p>原始高亮显示器，有时称为”标准高亮显示器”或”默认高亮显示器”，是Lucene的原始高亮显示器——一个可敬的选项，具有高度的定制选项。其查询准确性对大多数需求来说足够好，虽然不如统一高亮显示器那样好&#x2F;完美。</p>
+<p>原始高亮显示器通常会即时分析存储的文本以进行高亮显示。如果可用，它将使用完整的词向量。如果文本不是”存储的”但在文档值中（<code>docValues=&quot;true&quot;</code>），此高亮显示器可以与其一起工作。</p>
+<p>此高亮显示器不足的地方是性能；它通常比统一高亮显示器慢一倍。尽管是最可定制的，它没有基于BreakIterator的片段器（其他所有都有），这可能对某些语言构成挑战。</p>
+<h3 id="FastVector高亮显示器"><a href="#FastVector高亮显示器" class="headerlink" title="FastVector高亮显示器"></a>FastVector高亮显示器</h3><p><strong><code>hl.method=fastVector</code></strong></p>
+<p>FastVector高亮显示器要求字段上的完整词向量选项（<code>termVectors</code>、<code>termPositions</code>和<code>termOffsets</code>），并以此为目标进行优化。它几乎与原始高亮显示器一样可配置，有一些变化。</p>
+<p>此高亮显示器显著支持多色高亮显示，这样不同的查询词可以在片段中用不同的标记表示，通常表达为具有唯一颜色的HTML标签。</p>
+<p>此高亮显示器的查询表示不如原始或统一高亮显示器先进：例如，它不能很好地与<code>surround</code>解析器一起工作，并且有多个与包含停用词的查询相关的报告错误。</p>
+<p>FastVector和原始高亮显示器都可以在搜索请求中结合使用，以用一个高亮显示某些字段，用另一个高亮显示其他字段。相比之下，统一高亮显示器只能独占选择。</p>
+<p>统一高亮显示器完全通过搜索参数配置。相比之下，原始和FastVector高亮显示器的某些设置在<code>solrconfig.xml</code>中设置。”techproducts”配置集中有后者的强大示例。</p>
+<h3 id="模式选项和性能考虑"><a href="#模式选项和性能考虑" class="headerlink" title="模式选项和性能考虑"></a>模式选项和性能考虑</h3><p>高亮显示内部的基础是检测匹配查询的单个词的偏移量。一些高亮显示器可以通过模式中定义的分析链运行存储的文本，一些可以从词条中查找它们，一些可以从词向量中查找它们。这些选择有不同的权衡：</p>
+<ul>
+<li><p><strong>分析</strong>：由统一和原始高亮显示器支持。如果你不专门配置下面的其他选项，高亮显示器将即时分析存储的文本（在高亮显示期间）来计算偏移量。</p>
+<p>这种方法的好处是你的索引不会因为对高亮显示不是严格必要的任何额外数据而变大。</p>
+<p>缺点是高亮显示速度与要处理的文本量大致成线性关系，一个大因素是分析链的复杂性。</p>
+<p>对于”短”文本，这是一个好选择。或者也许它不短，但你优先考虑较小的索引和索引速度而不是高亮显示性能。</p>
+</li>
+<li><p><strong>词条</strong>：由统一高亮显示器支持。将<code>storeOffsetsWithPositions</code>设置为<code>true</code>。这向索引添加了适量的额外数据，但它极大地加速了高亮显示，特别是与对较长文本字段的分析相比。</p>
+<p>但是，通配符查询将回退到分析，除非添加”轻”词向量。</p>
+<ul>
+<li><p><strong>带词向量（轻）</strong>：仅由统一高亮显示器支持。要启用此模式，将<code>termVectors</code>设置为<code>true</code>，但不在被高亮显示的字段上设置其他词向量相关选项。</p>
+<p>这比仅<code>storeOffsetsWithPositions</code>向索引添加了更多数据，但不如启用所有额外词向量选项那样多。词向量仅在使用通配符查询时由高亮显示器访问，将防止回退到存储文本的分析。</p>
+<p>这绝对是在大文本字段上高亮显示通配符查询的最快选项。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>词向量（完整）</strong>：由统一、FastVector和原始高亮显示器支持。将<code>termVectors</code>、<code>termPositions</code>和<code>termOffsets</code>设置为<code>true</code>，对于高级用例可能还要设置<code>termPayloads</code>。</p>
+<p>这向索引添加了大量权重——类似于压缩存储文本的大小。如果你使用统一高亮显示器，那么这不是推荐的配置，因为它比带轻词向量的词条更慢更重。但是，如果完整词向量已经需要用于另一个用例，这可能是有意义的。</p>
+</li>
+</ul>
+<h2 id="统一高亮显示器-1"><a href="#统一高亮显示器-1" class="headerlink" title="统一高亮显示器"></a>统一高亮显示器</h2><p>统一高亮显示器支持以下附加参数，除了前面列出的参数：</p>
+<h4 id="hl-offsetSource"><a href="#hl-offsetSource" class="headerlink" title="hl.offsetSource"></a>hl.offsetSource</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><em>见描述</em></td>
+</tr>
+</tbody></table>
+<p>默认情况下，统一高亮显示器通常会选择正确的偏移源（见上文）。但是，它可能是模糊的，例如在从一个偏移源迁移到另一个尚未完成的偏移源期间。</p>
+<p>偏移源可以显式配置为以下之一：<code>ANALYSIS</code>、<code>POSTINGS</code>、<code>POSTINGS_WITH_TERM_VECTORS</code>或<code>TERM_VECTORS</code>。</p>
+<h4 id="hl-fragAlignRatio"><a href="#hl-fragAlignRatio" class="headerlink" title="hl.fragAlignRatio"></a>hl.fragAlignRatio</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>0.33</code></td>
+</tr>
+</tbody></table>
+<p>此参数影响段落中第一个匹配（即高亮显示的文本）的位置。</p>
+<p>默认值<code>0.33</code>意味着将匹配对齐到左三分之一。值<code>0.0</code>意味着将匹配对齐到左边，而<code>1.0</code>将其对齐到右边。此设置是尽力而为的提示，因为有各种因素。当有大量文本要高亮显示时，降低此数字可以大大提高性能。</p>
+<h4 id="hl-fragsizeIsMinimum"><a href="#hl-fragsizeIsMinimum" class="headerlink" title="hl.fragsizeIsMinimum"></a>hl.fragsizeIsMinimum</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<p>当为<code>true</code>时，<code>hl.fragsize</code>参数被视为（软）最小片段大小；只要有足够的文本，片段至少是这个大小。当为<code>false</code>时，它是一个最优目标——高亮显示器平均会产生此长度的高亮显示。<code>false</code>设置较慢，特别是当有大量文本且<code>hl.bs.type=SENTENCE</code>时。</p>
+<h4 id="hl-tag-ellipsis"><a href="#hl-tag-ellipsis" class="headerlink" title="hl.tag.ellipsis"></a>hl.tag.ellipsis</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><em>见描述</em></td>
+</tr>
+</tbody></table>
+<p>默认情况下，每个片段作为单独的值返回（与其他高亮显示器一样）。设置此参数以返回一个字符串，此文本作为分隔符。<em>注意：这可能在将来被移除。</em></p>
+<h4 id="hl-defaultSummary"><a href="#hl-defaultSummary" class="headerlink" title="hl.defaultSummary"></a>hl.defaultSummary</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<p>如果为<code>true</code>，如果无法生成适当的高亮显示片段，则使用文本的前导部分作为片段。</p>
+<h4 id="hl-score-k1"><a href="#hl-score-k1" class="headerlink" title="hl.score.k1"></a>hl.score.k1</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>1.2</code></td>
+</tr>
+</tbody></table>
+<p>指定BM25词频标准化参数’k1’。例如，可以将其设置为<code>0</code>以仅基于匹配的查询词数对段落进行排名。</p>
+<h4 id="hl-score-b"><a href="#hl-score-b" class="headerlink" title="hl.score.b"></a>hl.score.b</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>0.75</code></td>
+</tr>
+</tbody></table>
+<p>指定BM25长度标准化参数’b’。例如，可以将其设置为”0”以在排名时完全忽略段落的长度。</p>
+<h4 id="hl-score-pivot"><a href="#hl-score-pivot" class="headerlink" title="hl.score.pivot"></a>hl.score.pivot</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>87</code></td>
+</tr>
+</tbody></table>
+<p>指定BM25平均段落长度（字符数）。</p>
+<h3 id="断点迭代器参数"><a href="#断点迭代器参数" class="headerlink" title="断点迭代器参数"></a>断点迭代器参数</h3><p>以下参数用于配置断点迭代器，用于将文档分割为段落：</p>
+<ul>
+<li><code>hl.bs.language</code>：指定断点迭代器语言</li>
+<li><code>hl.bs.country</code>：指定断点迭代器国家</li>
+<li><code>hl.bs.variant</code>：指定断点迭代器变体</li>
+<li><code>hl.bs.type</code>：指定断点迭代器类型（<code>SEPARATOR</code>、<code>SENTENCE</code>、<code>WORD</code>、<code>CHARACTER</code>、<code>LINE</code>或<code>WHOLE</code>）</li>
+<li><code>hl.bs.separator</code>：指定分割文本的字符（仅在<code>hl.bs.type=SEPARATOR</code>时使用）</li>
+</ul>
+<h4 id="hl-weightMatches"><a href="#hl-weightMatches" class="headerlink" title="hl.weightMatches"></a>hl.weightMatches</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<p>告诉UH使用Lucene的”权重匹配”API而不是进行<code>SpanQuery</code>转换。这是反映查询的最准确的高亮显示模式。此外，短语将作为整体而不是逐词高亮显示。目前，当高亮显示许多字段时，此设置会大大减慢统一高亮显示器。</p>
+<p>如果<code>hl.usePhraseHighlighter</code>或<code>hl.multiTermQuery</code>设置为<code>false</code>，那么此设置实际上是<code>false</code>，无论你将其设置为什么。</p>
+<h2 id="原始高亮显示器-1"><a href="#原始高亮显示器-1" class="headerlink" title="原始高亮显示器"></a>原始高亮显示器</h2><p>原始高亮显示器除了前面列出的参数外，还支持以下附加参数：</p>
+<h4 id="hl-mergeContiguous"><a href="#hl-mergeContiguous" class="headerlink" title="hl.mergeContiguous"></a>hl.mergeContiguous</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>false</code></td>
+</tr>
+</tbody></table>
+<p>指示Solr将连续片段折叠成单个片段。值<code>true</code>表示连续片段将被折叠成单个片段。</p>
+<h4 id="hl-maxMultiValuedToExamine"><a href="#hl-maxMultiValuedToExamine" class="headerlink" title="hl.maxMultiValuedToExamine"></a>hl.maxMultiValuedToExamine</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>Integer.MAX_VALUE</code></td>
+</tr>
+</tbody></table>
+<p>指定在停止之前检查多值字段中最大条目数。如果在找到任何匹配之前达到限制，这可能返回零结果。</p>
+<p>如果与<code>maxMultiValuedToMatch</code>一起使用，首先达到的任何限制将决定何时停止查找。</p>
+<h4 id="hl-maxMultiValuedToMatch"><a href="#hl-maxMultiValuedToMatch" class="headerlink" title="hl.maxMultiValuedToMatch"></a>hl.maxMultiValuedToMatch</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>Integer.MAX_VALUE</code></td>
+</tr>
+</tbody></table>
+<p>指定在停止之前在多值字段中找到的最大匹配数。</p>
+<p>如果也定义了<code>hl.maxMultiValuedToExamine</code>，首先达到的任何限制将决定何时停止查找。</p>
+<h4 id="hl-alternateField"><a href="#hl-alternateField" class="headerlink" title="hl.alternateField"></a>hl.alternateField</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td>无</td>
+</tr>
+</tbody></table>
+<p>指定如果Solr无法生成片段（即，因为没有词匹配）时用作备份默认摘要的字段。</p>
+<h4 id="hl-maxAlternateFieldLength"><a href="#hl-maxAlternateFieldLength" class="headerlink" title="hl.maxAlternateFieldLength"></a>hl.maxAlternateFieldLength</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>0</code></td>
+</tr>
+</tbody></table>
+<p>指定要返回的字段的最大字符数。任何小于或等于<code>0</code>的值意味着字段的长度是无限的。</p>
+<p>此参数仅与<code>hl.alternateField</code>参数结合使用。</p>
+<h4 id="hl-highlightAlternate"><a href="#hl-highlightAlternate" class="headerlink" title="hl.highlightAlternate"></a>hl.highlightAlternate</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<p>如果设置为<code>true</code>且<code>hl.alternateFieldName</code>处于活动状态，Solr将显示整个替代字段，高亮显示出现的地方。如果使用<code>hl.maxAlternateFieldLength=N</code>，Solr返回围绕最佳匹配片段的最多N个字符。</p>
+<p>如果设置为<code>false</code>，或者如果替代字段中也没有匹配，则替代字段将显示而不高亮显示。</p>
+<h3 id="格式化参数"><a href="#格式化参数" class="headerlink" title="格式化参数"></a>格式化参数</h3><ul>
+<li><code>hl.formatter</code>：选择高亮显示输出的格式化器。目前，唯一合法值是<code>simple</code></li>
+<li><code>hl.simple.pre</code>、<code>hl.simple.post</code>：指定使用<code>simple</code>格式化器时高亮显示词前后应出现的文本</li>
+</ul>
+<h3 id="片段化参数"><a href="#片段化参数" class="headerlink" title="片段化参数"></a>片段化参数</h3><ul>
+<li><code>hl.fragmenter</code>：为高亮显示的文本指定文本片段生成器（<code>gap</code>或<code>regex</code>）</li>
+<li><code>hl.regex.slop</code>：使用regex片段化器时的松弛因子</li>
+<li><code>hl.regex.pattern</code>：指定片段化的正则表达式</li>
+<li><code>hl.regex.maxAnalyzedChars</code>：使用regex片段化器时分析的最大字符数</li>
+</ul>
+<h3 id="其他参数"><a href="#其他参数" class="headerlink" title="其他参数"></a>其他参数</h3><ul>
+<li><code>hl.preserveMulti</code>：如果为<code>true</code>，多值字段将按照在索引中保存的顺序返回所有值</li>
+<li><code>hl.payloads</code>：当<code>hl.usePhraseHighlighter</code>为<code>true</code>且索引字段有负载时的内存优化选项</li>
+</ul>
+<p>原始高亮显示器具有插件架构，可以在<code>solrconfig.xml</code>中注册新功能。”techproducts”配置集明确显示了这些设置中的大多数。你可以使用它作为指南来提供你自己的组件，包括<code>SolrFormatter</code>、<code>SolrEncoder</code>和<code>SolrFragmenter</code>。</p>
+<h2 id="FastVector高亮显示器-1"><a href="#FastVector高亮显示器-1" class="headerlink" title="FastVector高亮显示器"></a>FastVector高亮显示器</h2><p>FastVector高亮显示器（FVH）可以与原始高亮显示器结合使用，如果不是所有字段都应该用FVH高亮显示。在这种模式下，设置<code>hl.method=original</code>，并为所有应该使用FVH的字段设置<code>f.yourTermVecField.hl.method=fastVector</code>。要记住的一个烦恼是原始高亮显示器使用<code>hl.simple.pre</code>，而FVH（和其他高亮显示器）使用<code>hl.tag.pre</code>。</p>
+<p>除了上面的通用高亮显示器参数，FVH还支持原始高亮显示器的以下参数：</p>
+<ul>
+<li><code>hl.alternateField</code></li>
+<li><code>hl.maxAlternateFieldLength</code></li>
+<li><code>hl.highlightAlternate</code></li>
+</ul>
+<h3 id="FVH特有参数"><a href="#FVH特有参数" class="headerlink" title="FVH特有参数"></a>FVH特有参数</h3><h4 id="hl-fragListBuilder"><a href="#hl-fragListBuilder" class="headerlink" title="hl.fragListBuilder"></a>hl.fragListBuilder</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>weighted</code></td>
+</tr>
+</tbody></table>
+<p>片段化算法。<code>weighted</code> fragListBuilder使用IDF权重来排序片段。</p>
+<p>其他选项是<code>single</code>（将整个字段内容作为一个片段返回）或<code>simple</code>。</p>
+<h4 id="hl-fragmentsBuilder"><a href="#hl-fragmentsBuilder" class="headerlink" title="hl.fragmentsBuilder"></a>hl.fragmentsBuilder</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>default</code></td>
+</tr>
+</tbody></table>
+<p>片段构建器负责格式化片段，默认使用<code>&lt;em&gt;</code>和<code>&lt;/em&gt;</code>标记（如果未定义<code>hl.tag.pre</code>和<code>hl.tag.post</code>）。</p>
+<p>另一个预配置选择是<code>colored</code>，这是如何使用片段构建器将HTML插入到片段中以进行彩色高亮显示的示例。</p>
+<h4 id="hl-boundaryScanner"><a href="#hl-boundaryScanner" class="headerlink" title="hl.boundaryScanner"></a>hl.boundaryScanner</h4><p>参见下面的”FastVector高亮显示器的边界扫描器”。</p>
+<h4 id="hl-phraseLimit"><a href="#hl-phraseLimit" class="headerlink" title="hl.phraseLimit"></a>hl.phraseLimit</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><code>5000</code></td>
+</tr>
+</tbody></table>
+<p>在寻找最高分短语时分析的最大短语数。</p>
+<h4 id="hl-multiValuedSeparatorChar"><a href="#hl-multiValuedSeparatorChar" class="headerlink" title="hl.multiValuedSeparatorChar"></a>hl.multiValuedSeparatorChar</h4><table>
+<thead>
+<tr>
+<th>必需性</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>可选</td>
+<td><em>空格字符</em></td>
+</tr>
+</tbody></table>
+<p>用于多值字段中分隔一个值与下一个值的文本。默认是” “（空格）。</p>
+<h3 id="使用边界扫描器"><a href="#使用边界扫描器" class="headerlink" title="使用边界扫描器"></a>使用边界扫描器</h3><p>FastVector高亮显示器偶尔会截断高亮显示的词。为防止这种情况，在<code>solrconfig.xml</code>中实现边界扫描器，然后使用<code>hl.boundaryScanner</code>参数为高亮显示指定边界扫描器。</p>
+<p>Solr支持两个边界扫描器：<code>breakIterator</code>和<code>simple</code>。</p>
+<h4 id="breakIterator边界扫描器"><a href="#breakIterator边界扫描器" class="headerlink" title="breakIterator边界扫描器"></a>breakIterator边界扫描器</h4><p><code>breakIterator</code>边界扫描器通过考虑区域设置和边界类型开箱即用地提供出色的性能。在大多数情况下，你会希望使用<code>breakIterator</code>边界扫描器。</p>
+<h4 id="simple边界扫描器"><a href="#simple边界扫描器" class="headerlink" title="simple边界扫描器"></a>simple边界扫描器</h4><p><code>simple</code>边界扫描器扫描指定最大字符值（<code>hl.bs.maxScan</code>）和常见分隔符如标点符号（<code>hl.bs.chars</code>）的词边界。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Solr的高亮显示功能为搜索结果提供了强大的可视化增强，通过多种高亮显示器选项和丰富的配置参数，可以满足不同场景的需求。统一高亮显示器是推荐的首选，提供最佳的性能和准确性，而原始高亮显示器和FastVector高亮显示器则在特定场景下有各自的优势。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA/">高亮显示</a>
+  
+    <a class="article-tag" href="/tags/Highlighting/">Highlighting</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%9C%AC%E5%A4%84%E7%90%86/">文本处理</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E7%BB%93%E6%9E%9C/">搜索结果</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/07/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%A0%87%E5%87%86%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr查询：标准查询解析器详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/05/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr查询：分面搜索功能详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%8F%82%E6%95%B0"><span class="nav-number">1.1.</span> <span class="nav-text">通用高亮显示参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hl"><span class="nav-number">1.1.1.</span> <span class="nav-text">hl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-method"><span class="nav-number">1.1.2.</span> <span class="nav-text">hl.method</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fl"><span class="nav-number">1.1.3.</span> <span class="nav-text">hl.fl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-q"><span class="nav-number">1.1.4.</span> <span class="nav-text">hl.q</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-qparser"><span class="nav-number">1.1.5.</span> <span class="nav-text">hl.qparser</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-requireFieldMatch"><span class="nav-number">1.1.6.</span> <span class="nav-text">hl.requireFieldMatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-queryFieldPattern"><span class="nav-number">1.1.7.</span> <span class="nav-text">hl.queryFieldPattern</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-usePhraseHighlighter"><span class="nav-number">1.1.8.</span> <span class="nav-text">hl.usePhraseHighlighter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-highlightMultiTerm"><span class="nav-number">1.1.9.</span> <span class="nav-text">hl.highlightMultiTerm</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-snippets"><span class="nav-number">1.1.10.</span> <span class="nav-text">hl.snippets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fragsize"><span class="nav-number">1.1.11.</span> <span class="nav-text">hl.fragsize</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-tag-pre"><span class="nav-number">1.1.12.</span> <span class="nav-text">hl.tag.pre</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-tag-post"><span class="nav-number">1.1.13.</span> <span class="nav-text">hl.tag.post</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-encoder"><span class="nav-number">1.1.14.</span> <span class="nav-text">hl.encoder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-maxAnalyzedChars"><span class="nav-number">1.1.15.</span> <span class="nav-text">hl.maxAnalyzedChars</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%93%8D%E5%BA%94%E4%B8%AD%E7%9A%84%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA"><span class="nav-number">1.2.</span> <span class="nav-text">查询响应中的高亮显示</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">选择高亮显示器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8"><span class="nav-number">2.1.</span> <span class="nav-text">统一高亮显示器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8"><span class="nav-number">2.2.</span> <span class="nav-text">原始高亮显示器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FastVector%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8"><span class="nav-number">2.3.</span> <span class="nav-text">FastVector高亮显示器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E9%80%89%E9%A1%B9%E5%92%8C%E6%80%A7%E8%83%BD%E8%80%83%E8%99%91"><span class="nav-number">2.4.</span> <span class="nav-text">模式选项和性能考虑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8-1"><span class="nav-number">3.</span> <span class="nav-text">统一高亮显示器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-offsetSource"><span class="nav-number">3.0.1.</span> <span class="nav-text">hl.offsetSource</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fragAlignRatio"><span class="nav-number">3.0.2.</span> <span class="nav-text">hl.fragAlignRatio</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fragsizeIsMinimum"><span class="nav-number">3.0.3.</span> <span class="nav-text">hl.fragsizeIsMinimum</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-tag-ellipsis"><span class="nav-number">3.0.4.</span> <span class="nav-text">hl.tag.ellipsis</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-defaultSummary"><span class="nav-number">3.0.5.</span> <span class="nav-text">hl.defaultSummary</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-score-k1"><span class="nav-number">3.0.6.</span> <span class="nav-text">hl.score.k1</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-score-b"><span class="nav-number">3.0.7.</span> <span class="nav-text">hl.score.b</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-score-pivot"><span class="nav-number">3.0.8.</span> <span class="nav-text">hl.score.pivot</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%AD%E7%82%B9%E8%BF%AD%E4%BB%A3%E5%99%A8%E5%8F%82%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">断点迭代器参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-weightMatches"><span class="nav-number">3.1.1.</span> <span class="nav-text">hl.weightMatches</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E5%A7%8B%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8-1"><span class="nav-number">4.</span> <span class="nav-text">原始高亮显示器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-mergeContiguous"><span class="nav-number">4.0.1.</span> <span class="nav-text">hl.mergeContiguous</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-maxMultiValuedToExamine"><span class="nav-number">4.0.2.</span> <span class="nav-text">hl.maxMultiValuedToExamine</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-maxMultiValuedToMatch"><span class="nav-number">4.0.3.</span> <span class="nav-text">hl.maxMultiValuedToMatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-alternateField"><span class="nav-number">4.0.4.</span> <span class="nav-text">hl.alternateField</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-maxAlternateFieldLength"><span class="nav-number">4.0.5.</span> <span class="nav-text">hl.maxAlternateFieldLength</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-highlightAlternate"><span class="nav-number">4.0.6.</span> <span class="nav-text">hl.highlightAlternate</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%BC%E5%BC%8F%E5%8C%96%E5%8F%82%E6%95%B0"><span class="nav-number">4.1.</span> <span class="nav-text">格式化参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%87%E6%AE%B5%E5%8C%96%E5%8F%82%E6%95%B0"><span class="nav-number">4.2.</span> <span class="nav-text">片段化参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E5%8F%82%E6%95%B0"><span class="nav-number">4.3.</span> <span class="nav-text">其他参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#FastVector%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA%E5%99%A8-1"><span class="nav-number">5.</span> <span class="nav-text">FastVector高亮显示器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#FVH%E7%89%B9%E6%9C%89%E5%8F%82%E6%95%B0"><span class="nav-number">5.1.</span> <span class="nav-text">FVH特有参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fragListBuilder"><span class="nav-number">5.1.1.</span> <span class="nav-text">hl.fragListBuilder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-fragmentsBuilder"><span class="nav-number">5.1.2.</span> <span class="nav-text">hl.fragmentsBuilder</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-boundaryScanner"><span class="nav-number">5.1.3.</span> <span class="nav-text">hl.boundaryScanner</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-phraseLimit"><span class="nav-number">5.1.4.</span> <span class="nav-text">hl.phraseLimit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#hl-multiValuedSeparatorChar"><span class="nav-number">5.1.5.</span> <span class="nav-text">hl.multiValuedSeparatorChar</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%BE%B9%E7%95%8C%E6%89%AB%E6%8F%8F%E5%99%A8"><span class="nav-number">5.2.</span> <span class="nav-text">使用边界扫描器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#breakIterator%E8%BE%B9%E7%95%8C%E6%89%AB%E6%8F%8F%E5%99%A8"><span class="nav-number">5.2.1.</span> <span class="nav-text">breakIterator边界扫描器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#simple%E8%BE%B9%E7%95%8C%E6%89%AB%E6%8F%8F%E5%99%A8"><span class="nav-number">5.2.2.</span> <span class="nav-text">simple边界扫描器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

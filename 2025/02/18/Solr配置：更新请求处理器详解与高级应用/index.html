@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：更新请求处理器详解与高级应用 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloudSolrUpdate Request ProcessorsURP文档处理数据预处理" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析Solr更新请求处理器（URP）的工作原理、配置方法和实际应用，包含完整的处理器链配置、SolrCloud分布式处理和内置处理器详解。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：更新请求处理器详解与高级应用">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析Solr更新请求处理器（URP）的工作原理、配置方法和实际应用，包含完整的处理器链配置、SolrCloud分布式处理和内置处理器详解。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T13:05:52.985Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="Update Request Processors">
+<meta property="article:tag" content="URP">
+<meta property="article:tag" content="文档处理">
+<meta property="article:tag" content="数据预处理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：更新请求处理器详解与高级应用" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：更新请求处理器详解与高级应用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" class="article-date">
+	  <time datetime="2025-02-17T16:00:00.000Z" itemprop="datePublished">二月 18, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：更新请求处理器详解与高级应用"><a href="#Solr配置：更新请求处理器详解与高级应用" class="headerlink" title="Solr配置：更新请求处理器详解与高级应用"></a>Solr配置：更新请求处理器详解与高级应用</h1><p>每个Solr接收到的更新请求都会通过一系列插件处理，这些插件被称为更新请求处理器（Update Request Processors，简称URPs）。</p>
+<h2 id="URP概述与价值"><a href="#URP概述与价值" class="headerlink" title="URP概述与价值"></a>URP概述与价值</h2><p>更新请求处理器可以用于：</p>
+<ul>
+<li>向被索引的文档添加字段</li>
+<li>修改特定字段的值</li>
+<li>如果传入文档不满足特定条件则丢弃更新</li>
+<li>实现文档去重、数据验证、格式转换等功能</li>
+</ul>
+<p>实际上，Solr中很多功能都是通过更新请求处理器实现的，因此理解这些插件的工作原理和配置方法非常重要。</p>
+<h2 id="URP架构与生命周期"><a href="#URP架构与生命周期" class="headerlink" title="URP架构与生命周期"></a>URP架构与生命周期</h2><h3 id="处理器链创建"><a href="#处理器链创建" class="headerlink" title="处理器链创建"></a>处理器链创建</h3><p>更新请求处理器作为一个或多个处理器链（UpdateRequestProcessorChain）的一部分被创建。Solr创建一个默认的更新请求处理器链，包含几个实现基本Solr功能的处理器。除非用户选择配置和指定不同的自定义链，否则将使用此默认链处理每个更新请求。</p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><p>每个UpdateRequestProcessor都必须有对应的工厂类，该类继承自UpdateRequestProcessorFactory。这种设计提供两个好处：</p>
+<ol>
+<li><strong>线程安全性</strong>：更新请求处理器无需线程安全，因为它只被一个请求线程使用，请求完成后即被销毁</li>
+<li><strong>状态管理</strong>：工厂类可以接受配置参数并维护请求间可能需要的任何状态，工厂类必须线程安全</li>
+</ol>
+<h3 id="生命周期管理"><a href="#生命周期管理" class="headerlink" title="生命周期管理"></a>生命周期管理</h3><p>每个更新请求处理器链在Solr核心加载时构建并缓存，直到核心卸载。solrconfig.xml中指定的每个UpdateRequestProcessorFactory也会被实例化并使用配置进行初始化。</p>
+<p>当Solr接收更新请求时：</p>
+<ol>
+<li>查找用于此请求的更新链</li>
+<li>使用对应工厂创建链中指定的每个UpdateRequestProcessor新实例</li>
+<li>将更新请求解析为对应的UpdateCommand对象</li>
+<li>通过链运行这些命令</li>
+<li>每个UpdateRequestProcessor实例负责调用链中的下一个插件</li>
+<li>可以选择短路链（不调用下一个处理器）或抛出异常来终止处理</li>
+</ol>
+<p>注意：单个更新请求可能包含多个新文档或删除的批次，因此相应的processXXX方法会为每个单独的更新多次调用，但保证单个线程串行调用这些方法。</p>
+<h2 id="更新请求处理器配置"><a href="#更新请求处理器配置" class="headerlink" title="更新请求处理器配置"></a>更新请求处理器配置</h2><h3 id="默认更新请求处理器链"><a href="#默认更新请求处理器链" class="headerlink" title="默认更新请求处理器链"></a>默认更新请求处理器链</h3><p>如果solrconfig.xml中没有配置更新请求处理器链，Solr会自动创建默认链，按顺序包含以下处理器：</p>
+<ol>
+<li><strong>LogUpdateProcessorFactory</strong>：跟踪此请求期间处理的命令并记录它们</li>
+<li><strong>DistributedUpdateProcessorFactory</strong>：负责将更新请求分发到正确的节点，例如将请求路由到正确分片的leader并将更新从leader分发到每个副本（仅在SolrCloud模式下激活）</li>
+<li><strong>RunUpdateProcessorFactory</strong>：使用内部Solr API执行更新</li>
+</ol>
+<p>这些处理器都执行基本功能，因此任何自定义链通常都包含所有这些处理器。RunUpdateProcessorFactory通常是任何自定义链中的最后一个更新处理器。</p>
+<h3 id="自定义更新请求处理器链"><a href="#自定义更新请求处理器链" class="headerlink" title="自定义更新请求处理器链"></a>自定义更新请求处理器链</h3><p>以下示例演示如何在solrconfig.xml中配置自定义链：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateRequestProcessorChain</span> <span class="attr">name</span>=<span class="string">&quot;dedupe&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.processor.SignatureUpdateProcessorFactory&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;enabled&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;signatureField&quot;</span>&gt;</span>id<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;overwriteDupes&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fields&quot;</span>&gt;</span>name,features,cat<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;signatureClass&quot;</span>&gt;</span>solr.processor.Lookup3Signature<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">processor</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.LogUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RunUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateRequestProcessorChain</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>这个示例创建了名为”dedupe”的新更新处理器链，包含SignatureUpdateProcessorFactory、LogUpdateProcessorFactory和RunUpdateProcessorFactory。SignatureUpdateProcessorFactory进一步配置了不同参数，如”signatureField”、”overwriteDupes”等。</p>
+<p>注意：此链没有指定DistributedUpdateProcessorFactory。由于此处理器对Solr正常运行至关重要，Solr会在不包含它的任何链中，在RunUpdateProcessorFactory之前自动插入DistributedUpdateProcessorFactory。</p>
+<p><strong>重要提醒</strong>：不要忘记在solrconfig.xml中定义的任何链末尾添加RunUpdateProcessorFactory，否则该链处理的更新请求不会实际影响索引数据。</p>
+<h3 id="将单独的处理器配置为顶级插件"><a href="#将单独的处理器配置为顶级插件" class="headerlink" title="将单独的处理器配置为顶级插件"></a>将单独的处理器配置为顶级插件</h3><p>更新请求处理器也可以在solrconfig.xml中独立于链进行配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateProcessor</span> <span class="attr">class</span>=<span class="string">&quot;solr.processor.SignatureUpdateProcessorFactory&quot;</span> <span class="attr">name</span>=<span class="string">&quot;signature&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;enabled&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;signatureField&quot;</span>&gt;</span>id<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;overwriteDupes&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fields&quot;</span>&gt;</span>name,features,cat<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;signatureClass&quot;</span>&gt;</span>solr.processor.Lookup3Signature<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateProcessor</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">updateProcessor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RemoveBlankFieldUpdateProcessorFactory&quot;</span> <span class="attr">name</span>=<span class="string">&quot;remove_blanks&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>然后可以在solrconfig.xml的更新请求处理器链中引用它们：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateProcessorChain</span> <span class="attr">name</span>=<span class="string">&quot;custom&quot;</span> <span class="attr">processor</span>=<span class="string">&quot;remove_blanks,signature&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RunUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateProcessorChain</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="SolrCloud中的更新处理器"><a href="#SolrCloud中的更新处理器" class="headerlink" title="SolrCloud中的更新处理器"></a>SolrCloud中的更新处理器</h2><h3 id="分布式处理机制"><a href="#分布式处理机制" class="headerlink" title="分布式处理机制"></a>分布式处理机制</h3><p>在SolrCloud中，更新请求处理器的行为需要特别考虑：</p>
+<ul>
+<li><strong>DistributedUpdateProcessor之前的处理器</strong>：仅在首先接收客户端更新的节点上运行，无论该节点是leader还是副本</li>
+<li><strong>DistributedUpdateProcessor之后的处理器</strong>：仅在leader和副本节点上运行，不在转发节点上执行</li>
+</ul>
+<h3 id="处理流程示例"><a href="#处理流程示例" class="headerlink" title="处理流程示例"></a>处理流程示例</h3><p>假设3节点SolrCloud集群，节点A托管shard1的leader，节点B托管shard2的leader，节点C托管shard2的NRT副本。更新请求发送到节点A，然后转发到节点B，再分发到节点C：</p>
+<p><strong>节点A</strong>：运行SignatureUpdateProcessor（计算签名并放入”id”字段），然后LogUpdateProcessor，最后DistributedUpdateProcessor。此处理器确定更新实际属于节点B并转发到节点B。</p>
+<p><strong>节点B</strong>：接收更新并发现它是由另一个节点转发的。更新直接发送到DistributedUpdateProcessor，因为它已经在节点A上经过SignatureUpdateProcessor处理。</p>
+<p><strong>节点C</strong>：接收更新并发现它是由leader分发的。更新直接发送到DistributedUpdateProcessor进行一致性检查。</p>
+<h3 id="预处理器和后处理器配置"><a href="#预处理器和后处理器配置" class="headerlink" title="预处理器和后处理器配置"></a>预处理器和后处理器配置</h3><p>可以使用”post-processor”属性配置后处理器：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateProcessorChain</span> <span class="attr">name</span>=<span class="string">&quot;custom&quot;</span> <span class="attr">processor</span>=<span class="string">&quot;signature&quot;</span> <span class="attr">post-processor</span>=<span class="string">&quot;remove_blanks&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RunUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateProcessorChain</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重要警告</strong>：在恢复期间，自定义更新链后处理器永远不会在恢复的副本上调用缓冲的更新请求。因此，避免在自定义更新链中指定后处理器。</p>
+<h3 id="原子更新处理器工厂"><a href="#原子更新处理器工厂" class="headerlink" title="原子更新处理器工厂"></a>原子更新处理器工厂</h3><p>如果AtomicUpdateProcessorFactory在DistributedUpdateProcessor之前的更新链中，传入链的文档将是部分文档。由于DistributedUpdateProcessor负责在leader节点上将原子更新处理为完整文档，这意味着仅在转发节点上执行的预处理器只能操作部分文档。如果处理器必须处理完整文档，唯一选择是将其指定为后处理器。</p>
+<h2 id="使用自定义链"><a href="#使用自定义链" class="headerlink" title="使用自定义链"></a>使用自定义链</h2><h3 id="update-chain请求参数"><a href="#update-chain请求参数" class="headerlink" title="update.chain请求参数"></a>update.chain请求参数</h3><p>可以在任何更新请求中使用update.chain参数选择在solrconfig.xml中配置的自定义链：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/gettingstarted/update/json?update.chain=dedupe&amp;commit=true&quot;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;[</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot; : &quot;The Lightning Thief&quot;,</span></span><br><span class="line"><span class="string">    &quot;features&quot; : &quot;This is just a test&quot;,</span></span><br><span class="line"><span class="string">    &quot;cat&quot; : [&quot;book&quot;,&quot;hardcover&quot;]</span></span><br><span class="line"><span class="string">  &#125;,</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot; : &quot;The Lightning Thief&quot;,</span></span><br><span class="line"><span class="string">    &quot;features&quot; : &quot;This is just a test&quot;,</span></span><br><span class="line"><span class="string">    &quot;cat&quot; : [&quot;book&quot;,&quot;hardcover&quot;]</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="processor和post-processor请求参数"><a href="#processor和post-processor请求参数" class="headerlink" title="processor和post-processor请求参数"></a>processor和post-processor请求参数</h3><p>可以使用processor和post-processor请求参数动态构造自定义更新请求处理器链：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 作为预处理器执行</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/gettingstarted/update/json?processor=remove_blanks,signature&amp;commit=true&quot;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;[...]&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 作为预处理器和后处理器执行</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/gettingstarted/update/json?processor=remove_blanks&amp;post-processor=signature&amp;commit=true&quot;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;[...]&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置自定义链为默认值"><a href="#配置自定义链为默认值" class="headerlink" title="配置自定义链为默认值"></a>配置自定义链为默认值</h3><p>可以指定自定义链作为特定更新处理器的默认值，而不是在每个请求的请求参数中指定名称。</p>
+<p>通过initParams配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">initParams</span> <span class="attr">path</span>=<span class="string">&quot;/update/**&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;update.chain&quot;</span>&gt;</span>add-unknown-fields-to-the-schema<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">initParams</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>通过默认值配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/update/extract&quot;</span> <span class="attr">startup</span>=<span class="string">&quot;lazy&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.extraction.ExtractingRequestHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;update.chain&quot;</span>&gt;</span>add-unknown-fields-to-the-schema<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="内置更新请求处理器工厂"><a href="#内置更新请求处理器工厂" class="headerlink" title="内置更新请求处理器工厂"></a>内置更新请求处理器工厂</h2><h3 id="通用更新处理器工厂"><a href="#通用更新处理器工厂" class="headerlink" title="通用更新处理器工厂"></a>通用更新处理器工厂</h3><p><strong>AddSchemaFieldsUpdateProcessorFactory</strong><br>动态向模式添加字段，如果输入文档包含不匹配模式中任何字段或动态字段的字段。</p>
+<p><strong>AtomicUpdateProcessorFactory</strong><br>将常规字段值文档转换为原子更新文档。可以在运行时使用，无需在solrconfig.xml中定义。</p>
+<p><strong>ClassificationUpdateProcessorFactory</strong><br>使用Lucene的分类模块提供简单文档分类。</p>
+<p><strong>CloneFieldUpdateProcessorFactory</strong><br>将任何匹配源字段中找到的值克隆到配置的目标字段中。</p>
+<p><strong>DefaultValueUpdateProcessorFactory</strong><br>向fieldName中没有值的任何文档添加默认值的简单处理器。</p>
+<p><strong>DocBasedVersionConstraintsProcessorFactory</strong><br>帮助基于每个文档的版本号使用配置的versionField名称对文档实施版本约束。</p>
+<p><strong>DocExpirationUpdateProcessorFactory</strong><br>管理文档自动”过期”的更新处理器工厂。</p>
+<p><strong>FieldNameMutatingUpdateProcessorFactory</strong><br>通过用配置的替换替换所有与配置模式的匹配来修改字段名。</p>
+<p><strong>IgnoreCommitOptimizeUpdateProcessorFactory</strong><br>在SolrCloud模式下运行时，允许忽略客户端应用程序的提交和&#x2F;或优化请求。</p>
+<p><strong>IgnoreLargeDocumentProcessorFactory</strong><br>防止大小超过限制（以KB为单位）的大文档被索引。</p>
+<p><strong>NumFieldLimitingUpdateRequestProcessorFactory</strong><br>一旦核心超过可配置的”最大”字段数，就会使更新请求失败。</p>
+<p><strong>RegexpBoostProcessorFactory</strong><br>将”inputField”的内容与”boostFilename”中找到的正则表达式匹配，如果匹配将从文件返回相应的boost值并输出到”boostField”作为double值。</p>
+<p><strong>SignatureUpdateProcessorFactory</strong><br>使用定义的字段集为文档生成哈希”签名”。对于只索引”相似”文档的一个副本很有用。</p>
+<p><strong>ScriptUpdateProcessorFactory</strong><br>启用使用作为脚本实现的更新处理器的处理器。</p>
+<p><strong>TemplateUpdateProcessorFactory</strong><br>允许基于模板模式向文档添加新字段。此更新处理器也可以在运行时使用。</p>
+<p><strong>TimestampUpdateProcessorFactory</strong><br>向添加的任何在指定字段中没有值的文档添加新生成的”NOW”日期值的更新处理器。</p>
+<p><strong>URLClassifyProcessorFactory</strong><br>检查URL并输出到具有该URL特征的各种其他字段的更新处理器。</p>
+<p><strong>UUIDUpdateProcessorFactory</strong><br>向添加的任何在指定字段中没有值的文档添加新生成的UUID值的更新处理器。</p>
+<h3 id="字段变异更新处理器工厂"><a href="#字段变异更新处理器工厂" class="headerlink" title="字段变异更新处理器工厂"></a>字段变异更新处理器工厂</h3><p>这些工厂都提供在索引时修改文档中字段的功能：</p>
+<ul>
+<li><strong>ConcatFieldUpdateProcessorFactory</strong>：使用可配置分隔符连接多个值</li>
+<li><strong>CountFieldValuesUpdateProcessorFactory</strong>：用值数量的计数替换任何值列表</li>
+<li><strong>FieldLengthUpdateProcessorFactory</strong>：用CharSequences的长度替换字符序列值</li>
+<li><strong>FirstFieldValueUpdateProcessorFactory</strong>：只保留第一个值</li>
+<li><strong>HTMLStripFieldUpdateProcessorFactory</strong>：剥离所有HTML标记</li>
+<li><strong>IgnoreFieldUpdateProcessorFactory</strong>：忽略并删除匹配字段</li>
+<li><strong>LastFieldValueUpdateProcessorFactory</strong>：只保留最后一个值</li>
+<li><strong>MaxFieldValueUpdateProcessorFactory</strong>：保留最大值</li>
+<li><strong>MinFieldValueUpdateProcessorFactory</strong>：保留最小值</li>
+<li><strong>ParseBooleanFieldUpdateProcessorFactory</strong>：转换为Boolean值</li>
+<li><strong>ParseDateFieldUpdateProcessorFactory</strong>：转换为Date值</li>
+<li><strong>ParseNumericFieldUpdateProcessorFactory</strong>：各种数字类型转换</li>
+<li><strong>PreAnalyzedUpdateProcessorFactory</strong>：解析预分析字段</li>
+<li><strong>RegexReplaceProcessorFactory</strong>：正则表达式替换</li>
+<li><strong>RemoveBlankFieldUpdateProcessorFactory</strong>：删除空白值</li>
+<li><strong>TrimFieldUpdateProcessorFactory</strong>：修剪前后空白</li>
+<li><strong>TruncateFieldUpdateProcessorFactory</strong>：截断到最大字符长度</li>
+<li><strong>UniqFieldsUpdateProcessorFactory</strong>：删除重复值</li>
+</ul>
+<h3 id="运行时更新处理器"><a href="#运行时更新处理器" class="headerlink" title="运行时更新处理器"></a>运行时更新处理器</h3><p>这些处理器不需要在solrconfig.xml中进行任何配置，当它们的名称添加到随更新请求发送的处理器参数时会自动初始化。</p>
+<h4 id="AtomicUpdateProcessorFactory"><a href="#AtomicUpdateProcessorFactory" class="headerlink" title="AtomicUpdateProcessorFactory"></a>AtomicUpdateProcessorFactory</h4><p>使用参数<code>processor=atomic</code>调用。用于将普通更新操作转换为原子更新操作：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processor=atomic&amp;atomic.field1=add&amp;atomic.field2=<span class="built_in">set</span>&amp;atomic.field3=inc&amp;atomic.field4=remove</span><br></pre></td></tr></table></figure>
+
+<h4 id="TemplateUpdateProcessorFactory"><a href="#TemplateUpdateProcessorFactory" class="headerlink" title="TemplateUpdateProcessorFactory"></a>TemplateUpdateProcessorFactory</h4><p>使用参数<code>processor=template</code>调用。基于模板模式向文档添加新字段：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processor=template&amp;template.field=fullName:Mr. &#123;firstName&#125; &#123;lastName&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="UUIDUpdateProcessorFactory"><a href="#UUIDUpdateProcessorFactory" class="headerlink" title="UUIDUpdateProcessorFactory"></a>UUIDUpdateProcessorFactory</h4><p>使用参数<code>processor=uuid</code>调用。向文档添加生成的UUID：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">processor=uuid&amp;uuid.fieldName=somefield_name</span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="1-链设计原则"><a href="#1-链设计原则" class="headerlink" title="1. 链设计原则"></a>1. 链设计原则</h3><ul>
+<li>总是以RunUpdateProcessorFactory结尾</li>
+<li>考虑SolrCloud环境中的分布式处理</li>
+<li>合理安排预处理器和后处理器的顺序</li>
+</ul>
+<h3 id="2-性能优化"><a href="#2-性能优化" class="headerlink" title="2. 性能优化"></a>2. 性能优化</h3><ul>
+<li>在转发节点上执行计算密集型处理器以分散负载</li>
+<li>避免在后处理器中执行不必要的重复计算</li>
+<li>使用合适的字段选择器来限制处理器作用范围</li>
+</ul>
+<h3 id="3-错误处理"><a href="#3-错误处理" class="headerlink" title="3. 错误处理"></a>3. 错误处理</h3><ul>
+<li>实现适当的异常处理逻辑</li>
+<li>考虑使用permissive模式处理不完整数据</li>
+<li>建立监控和日志记录机制</li>
+</ul>
+<p>更新请求处理器是Solr数据处理管道中的核心组件，正确理解和配置这些处理器对于构建高效、可靠的搜索系统至关重要。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr/">Solr</a>
+      , 
+    
+      <a class="article-category" href="/categories/Solr/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/">配置管理</a>
+      , 
+    
+      <a class="article-category" href="/categories/Solr/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86/">更新处理</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/Update-Request-Processors/">Update Request Processors</a>
+  
+    <a class="article-tag" href="/tags/URP/">URP</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86/">文档处理</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E9%A2%84%E5%A4%84%E7%90%86/">数据预处理</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/18/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%AE%9E%E6%97%B6%E8%8E%B7%E5%8F%96%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3%E4%B8%8E%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：实时获取功能详解与配置指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E6%AE%B5%E4%B8%8E%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：索引段与合并策略深度优化指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：更新请求处理器详解与高级应用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#URP%E6%A6%82%E8%BF%B0%E4%B8%8E%E4%BB%B7%E5%80%BC"><span class="nav-number">1.1.</span> <span class="nav-text">URP概述与价值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#URP%E6%9E%B6%E6%9E%84%E4%B8%8E%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.2.</span> <span class="nav-text">URP架构与生命周期</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E9%93%BE%E5%88%9B%E5%BB%BA"><span class="nav-number">1.2.1.</span> <span class="nav-text">处理器链创建</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.2.2.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F%E7%AE%A1%E7%90%86"><span class="nav-number">1.2.3.</span> <span class="nav-text">生命周期管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">更新请求处理器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E9%93%BE"><span class="nav-number">1.3.1.</span> <span class="nav-text">默认更新请求处理器链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E9%93%BE"><span class="nav-number">1.3.2.</span> <span class="nav-text">自定义更新请求处理器链</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E5%8D%95%E7%8B%AC%E7%9A%84%E5%A4%84%E7%90%86%E5%99%A8%E9%85%8D%E7%BD%AE%E4%B8%BA%E9%A1%B6%E7%BA%A7%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.3.</span> <span class="nav-text">将单独的处理器配置为顶级插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SolrCloud%E4%B8%AD%E7%9A%84%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">SolrCloud中的更新处理器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%A4%84%E7%90%86%E6%9C%BA%E5%88%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">分布式处理机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E6%B5%81%E7%A8%8B%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.2.</span> <span class="nav-text">处理流程示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E5%90%8E%E5%A4%84%E7%90%86%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.3.</span> <span class="nav-text">预处理器和后处理器配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E5%B7%A5%E5%8E%82"><span class="nav-number">1.4.4.</span> <span class="nav-text">原子更新处理器工厂</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE"><span class="nav-number">1.5.</span> <span class="nav-text">使用自定义链</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#update-chain%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">update.chain请求参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#processor%E5%92%8Cpost-processor%E8%AF%B7%E6%B1%82%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">processor和post-processor请求参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%87%AA%E5%AE%9A%E4%B9%89%E9%93%BE%E4%B8%BA%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">1.5.3.</span> <span class="nav-text">配置自定义链为默认值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E7%BD%AE%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E5%B7%A5%E5%8E%82"><span class="nav-number">1.6.</span> <span class="nav-text">内置更新请求处理器工厂</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E5%B7%A5%E5%8E%82"><span class="nav-number">1.6.1.</span> <span class="nav-text">通用更新处理器工厂</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E6%AE%B5%E5%8F%98%E5%BC%82%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E5%B7%A5%E5%8E%82"><span class="nav-number">1.6.2.</span> <span class="nav-text">字段变异更新处理器工厂</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.6.3.</span> <span class="nav-text">运行时更新处理器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#AtomicUpdateProcessorFactory"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">AtomicUpdateProcessorFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#TemplateUpdateProcessorFactory"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">TemplateUpdateProcessorFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#UUIDUpdateProcessorFactory"><span class="nav-number">1.6.3.3.</span> <span class="nav-text">UUIDUpdateProcessorFactory</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.7.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%93%BE%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 链设计原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 性能优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.7.3.</span> <span class="nav-text">3. 错误处理</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

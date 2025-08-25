@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：集群节点管理命令详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloud集群管理Solr部署运维管理节点管理" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析SolrCloud集群和节点管理命令，包括集群状态查询、属性管理、副本平衡、节点迁移和角色管理等核心运维功能的完整指南。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：集群节点管理命令详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/15/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析SolrCloud集群和节点管理命令，包括集群状态查询、属性管理、副本平衡、节点迁移和角色管理等核心运维功能的完整指南。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:16:02.596Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="集群管理">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="运维管理">
+<meta property="article:tag" content="节点管理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：集群节点管理命令详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：集群节点管理命令详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/15/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-14T16:00:00.000Z" itemprop="datePublished">三月 15, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>集群是一组相互协调运行的Solr节点的集合。这些API命令可以在整个SolrCloud集群级别或单个节点上工作，为集群运维提供了强大的管理能力。</p>
+<span id="more"></span>
+
+<h2 id="CLUSTERSTATUS：集群状态查询"><a href="#CLUSTERSTATUS：集群状态查询" class="headerlink" title="CLUSTERSTATUS：集群状态查询"></a>CLUSTERSTATUS：集群状态查询</h2><p>获取集群状态，包括集合、分片、副本、配置名称以及集合别名和集群属性。</p>
+<p>此命令还会报告每个集合和分片的<code>健康状态</code>，以便更容易监控集合的运行状态。健康状态值定义如下，按从最佳到最差的顺序排列，基于活跃副本的百分比（<code>active</code>）：</p>
+<ul>
+<li><strong>GREEN</strong>：<code>active == 100%</code>，所有副本都处于活跃状态且存在分片领导者</li>
+<li><strong>YELLOW</strong>：<code>100% &gt; active &gt; 50%</code> 且存在分片领导者  </li>
+<li><strong>ORANGE</strong>：<code>50% &gt;= active &gt; 0%</code> 且存在分片领导者</li>
+<li><strong>RED</strong>：没有活跃副本或没有分片领导者</li>
+</ul>
+<p>集合健康状态报告为任意分片的最差状态，例如，对于所有分片都是GREEN但有一个YELLOW的集合，集合健康状态将报告为YELLOW。</p>
+<h3 id="API调用方式"><a href="#API调用方式" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=CLUSTERSTATUS</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET http://localhost:8983/api/cluster</span><br></pre></td></tr></table></figure>
+
+<h3 id="CLUSTERSTATUS-参数"><a href="#CLUSTERSTATUS-参数" class="headerlink" title="CLUSTERSTATUS 参数"></a>CLUSTERSTATUS 参数</h3><h4 id="collection"><a href="#collection" class="headerlink" title="collection"></a>collection</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：请求信息的集合或别名名称。如果省略，将返回集群中所有集合的信息。如果提供别名，将返回别名中集合的信息。</li>
+</ul>
+<h4 id="shard"><a href="#shard" class="headerlink" title="shard"></a>shard</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：请求信息的分片。可以指定多个分片名称，用逗号分隔。</li>
+</ul>
+<h4 id="route"><a href="#route" class="headerlink" title="route"></a><em>route</em></h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：如果你需要特定文档所属分片的详细信息但不知道它属于哪个分片，可以使用此参数。</li>
+</ul>
+<h4 id="aliases"><a href="#aliases" class="headerlink" title="aliases"></a>aliases</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：默认为下面指定的<code>includeAll</code>参数的默认值</li>
+</ul>
+<h4 id="liveNodes"><a href="#liveNodes" class="headerlink" title="liveNodes"></a>liveNodes</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：默认为下面指定的<code>includeAll</code>参数的默认值</li>
+<li><strong>说明</strong>：如果设置为true，返回集群中活跃节点的状态。</li>
+</ul>
+<h4 id="clusterProperties"><a href="#clusterProperties" class="headerlink" title="clusterProperties"></a>clusterProperties</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：默认为下面指定的<code>includeAll</code>参数的默认值</li>
+<li><strong>说明</strong>：如果设置为true，返回集群的属性。</li>
+</ul>
+<h4 id="roles"><a href="#roles" class="headerlink" title="roles"></a>roles</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：默认为下面指定的<code>includeAll</code>参数的默认值</li>
+<li><strong>说明</strong>：如果设置为true，返回集群内的角色。</li>
+</ul>
+<h4 id="includeAll"><a href="#includeAll" class="headerlink" title="includeAll"></a>includeAll</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：true</li>
+<li><strong>说明</strong>：如果设置为<code>true</code>，返回与活跃节点、集合、别名、集群属性、角色等相关的所有信息。如果设置为<code>false</code>，返回的信息基于其他指定的参数。</li>
+</ul>
+<h3 id="响应示例"><a href="#响应示例" class="headerlink" title="响应示例"></a>响应示例</h3><p><strong>输入：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=CLUSTERSTATUS</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;responseHeader&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;QTime&quot;</span><span class="punctuation">:</span> <span class="number">333</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;cluster&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;collections&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;collection1&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;shards&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;shard1&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;range&quot;</span><span class="punctuation">:</span> <span class="string">&quot;80000000-ffffffff&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;health&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GREEN&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;replicas&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;core_node1&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;core&quot;</span><span class="punctuation">:</span> <span class="string">&quot;collection1&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.1.1:8983_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;base_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://127.0.1.1:8983/solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;leader&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">              <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;core_node3&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;core&quot;</span><span class="punctuation">:</span> <span class="string">&quot;collection1&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.1.1:8900_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;base_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://127.0.1.1:8900/solr&quot;</span></span><br><span class="line">              <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;shard2&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;range&quot;</span><span class="punctuation">:</span> <span class="string">&quot;0-7fffffff&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;health&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GREEN&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;replicas&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">              <span class="attr">&quot;core_node2&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;core&quot;</span><span class="punctuation">:</span> <span class="string">&quot;collection1&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.1.1:7574_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;base_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://127.0.1.1:7574/solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;leader&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span></span><br><span class="line">              <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">              <span class="attr">&quot;core_node4&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;state&quot;</span><span class="punctuation">:</span> <span class="string">&quot;active&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;core&quot;</span><span class="punctuation">:</span> <span class="string">&quot;collection1&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;node_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.1.1:7500_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;base_url&quot;</span><span class="punctuation">:</span> <span class="string">&quot;http://127.0.1.1:7500/solr&quot;</span></span><br><span class="line">              <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;router&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;compositeId&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;replicationFactor&quot;</span><span class="punctuation">:</span> <span class="string">&quot;1&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;znodeVersion&quot;</span><span class="punctuation">:</span> <span class="number">11</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;autoCreated&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;configName&quot;</span><span class="punctuation">:</span> <span class="string">&quot;my_config&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;health&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GREEN&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;aliases&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;both_collections&quot;</span><span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;aliases&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;both_collections&quot;</span><span class="punctuation">:</span> <span class="string">&quot;collection1,collection2&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;roles&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;overseer&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;127.0.1.1:8983_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;127.0.1.1:7574_solr&quot;</span></span><br><span class="line">      <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;live_nodes&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="string">&quot;127.0.1.1:7574_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;127.0.1.1:7500_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;127.0.1.1:8983_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="string">&quot;127.0.1.1:8900_solr&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="CLUSTERPROP：集群属性管理"><a href="#CLUSTERPROP：集群属性管理" class="headerlink" title="CLUSTERPROP：集群属性管理"></a>CLUSTERPROP：集群属性管理</h2><p>添加、编辑或删除集群级属性。</p>
+<h3 id="API调用方式-1"><a href="#API调用方式-1" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=CLUSTERPROP&amp;name=urlScheme&amp;val=https</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API 创建或更新集群属性：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT http://localhost:8983/api/cluster/properties/urlScheme \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;value&quot;: &quot;https&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API 删除集群属性：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X DELETE http://localhost:8983/api/cluster/properties/urlScheme</span><br></pre></td></tr></table></figure>
+
+<h3 id="CLUSTERPROP-参数"><a href="#CLUSTERPROP-参数" class="headerlink" title="CLUSTERPROP 参数"></a>CLUSTERPROP 参数</h3><h4 id="name-v1"><a href="#name-v1" class="headerlink" title="name (v1)"></a>name (v1)</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：属性的名称。在v2请求中出现在路径中。支持的属性名称有<code>location</code>、<code>maxCoresPerNode</code>、<code>urlScheme</code>和<code>defaultShardPreferences</code>。如果启用了Jaeger追踪模块，属性<code>samplePercentage</code>也可用。其他属性可以设置（例如，如果你的自定义插件需要它们），但必须以前缀<code>ext.</code>开头。不以<code>ext.</code>开头的未知属性将被拒绝。</li>
+</ul>
+<h4 id="val-v1-value-v2"><a href="#val-v1-value-v2" class="headerlink" title="val (v1), value (v2)"></a>val (v1), value (v2)</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：属性的值。如果值为空或null，则取消设置该属性。</li>
+</ul>
+<h3 id="设置集群级默认值"><a href="#设置集群级默认值" class="headerlink" title="设置集群级默认值"></a>设置集群级默认值</h3><p>可以使用<code>defaults</code>参数为集合的某些属性设置集群级默认值。</p>
+<p><strong>设置&#x2F;更新默认值（仅V2 API）：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT -H <span class="string">&#x27;Content-type:application/json&#x27;</span> --data-binary <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;defaults&quot; : &#123;</span></span><br><span class="line"><span class="string">    &quot;collection&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;numShards&quot;: 2,</span></span><br><span class="line"><span class="string">      &quot;nrtReplicas&quot;: 1,</span></span><br><span class="line"><span class="string">      &quot;tlogReplicas&quot;: 1,</span></span><br><span class="line"><span class="string">      &quot;pullReplicas&quot;: 1</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster/properties</span><br></pre></td></tr></table></figure>
+
+<p><strong>取消设置单个默认值：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT -H <span class="string">&#x27;Content-type:application/json&#x27;</span> --data-binary <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;defaults&quot; : &#123;</span></span><br><span class="line"><span class="string">    &quot;collection&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;nrtReplicas&quot;: null</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster/properties</span><br></pre></td></tr></table></figure>
+
+<h3 id="默认分片偏好"><a href="#默认分片偏好" class="headerlink" title="默认分片偏好"></a>默认分片偏好</h3><p>使用<code>defaultShardPreferences</code>参数，你可以实现机架或可用区感知。首先，确保使用系统属性”标记”你的节点（例如，<code>-Drack=rack1</code>）。然后，将<code>defaultShardPreferences</code>的值设置为<code>node.sysprop:sysprop.YOUR_PROPERTY_NAME</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT -H <span class="string">&#x27;Content-type:application/json&#x27;</span> --data-binary <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;value&quot; : &quot;node.sysprop:sysprop.rack&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster/properties/defaultShardPreferences</span><br></pre></td></tr></table></figure>
+
+<p>此时，如果你在具有例如<code>rack=rack1</code>的节点上运行查询，Solr将尝试只命中来自<code>rack1</code>的副本。</p>
+<h3 id="集群属性操作示例"><a href="#集群属性操作示例" class="headerlink" title="集群属性操作示例"></a>集群属性操作示例</h3><p><strong>列出集群属性（仅V2 API）：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET http://localhost:8983/api/cluster/properties</span><br></pre></td></tr></table></figure>
+
+<p><strong>获取特定集群属性（仅V2 API）：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET http://localhost:8983/api/cluster/properties/urlScheme</span><br></pre></td></tr></table></figure>
+
+<h2 id="Balance-Replicas：副本平衡"><a href="#Balance-Replicas：副本平衡" class="headerlink" title="Balance Replicas：副本平衡"></a>Balance Replicas：副本平衡</h2><p>在给定的Solr节点集合中打乱副本，直到达到平衡状态。配置的副本放置插件将用于决定：</p>
+<ul>
+<li>哪些副本应该被移动以进行平衡</li>
+<li>这些副本应该放置在哪些节点上  </li>
+<li>集群何时达到”平衡状态”</li>
+</ul>
+<h3 id="API调用方式-2"><a href="#API调用方式-2" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cluster/replicas/balance \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;nodes&quot;: [&quot;localhost:8983_solr&quot;, &quot;localhost:8984_solr&quot;],</span></span><br><span class="line"><span class="string">    &quot;async&quot;: &quot;balance-replicas-1&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="nodes"><a href="#nodes" class="headerlink" title="nodes"></a>nodes</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：副本将在其上进行平衡的节点。不在此节点集合中的副本将不包括在平衡中。如果未提供此参数，将使用所有活跃数据节点。</li>
+</ul>
+<h4 id="waitForFinalState"><a href="#waitForFinalState" class="headerlink" title="waitForFinalState"></a>waitForFinalState</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：false</li>
+<li><strong>说明</strong>：如果为<code>true</code>，请求将仅在所有受影响的副本变为活跃时完成。如果为<code>false</code>，API将在最少必需的副本（如受影响的领导者副本）变为活跃时返回。</li>
+</ul>
+<h4 id="async"><a href="#async" class="headerlink" title="async"></a>async</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：用于跟踪此操作的请求ID，该操作将异步处理。</li>
+</ul>
+<blockquote>
+<p><strong>重要提示</strong>：此操作不会对源节点上的副本持有必要的锁。因此在此期间不要执行其他集合操作。</p>
+</blockquote>
+<h2 id="Migrate-Replicas：副本迁移"><a href="#Migrate-Replicas：副本迁移" class="headerlink" title="Migrate Replicas：副本迁移"></a>Migrate Replicas：副本迁移</h2><p>将给定源节点集合中的所有副本迁移出去。如果使用多个节点作为targetNode（显式或默认），则配置的副本放置插件将用于确定每个迁移副本应使用哪个targetNode。</p>
+<h3 id="API调用方式-3"><a href="#API调用方式-3" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cluster/replicas/migrate \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;sourceNodes&quot;: [&quot;localhost:8983_solr&quot;, &quot;localhost:8984_solr&quot;],</span></span><br><span class="line"><span class="string">    &quot;targetNodes&quot;: [&quot;localhost:8985_solr&quot;, &quot;localhost:8986_solr&quot;],</span></span><br><span class="line"><span class="string">    &quot;async&quot;: &quot;migrate-replicas-1&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明-1"><a href="#参数说明-1" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="sourceNodes"><a href="#sourceNodes" class="headerlink" title="sourceNodes"></a>sourceNodes</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：副本将从中迁移的节点。</li>
+</ul>
+<h4 id="targetNodes"><a href="#targetNodes" class="headerlink" title="targetNodes"></a>targetNodes</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：迁移副本将移动到的节点。如果未提供，API将使用所有未在<code>sourceNodes</code>中提供的活跃节点。如果有多个节点要迁移副本，则配置的PlacementPlugin副本将选择其中一个节点。</li>
+</ul>
+<h4 id="waitForFinalState-1"><a href="#waitForFinalState-1" class="headerlink" title="waitForFinalState"></a>waitForFinalState</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：false</li>
+<li><strong>说明</strong>：如果为<code>true</code>，请求将仅在所有受影响的副本变为活跃时完成。</li>
+</ul>
+<h4 id="async-1"><a href="#async-1" class="headerlink" title="async"></a>async</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：用于跟踪此异步处理操作的请求ID。</li>
+</ul>
+<h2 id="BALANCESHARDUNIQUE：平衡分片属性"><a href="#BALANCESHARDUNIQUE：平衡分片属性" class="headerlink" title="BALANCESHARDUNIQUE：平衡分片属性"></a>BALANCESHARDUNIQUE：平衡分片属性</h2><p>确保特定属性在构成集合的物理节点之间均匀分布。如果属性已存在于副本上，将尽力保留在那里。如果属性在分片上的任何副本上都不存在，则选择一个并添加该属性。</p>
+<h3 id="API调用方式-4"><a href="#API调用方式-4" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=BALANCESHARDUNIQUE&amp;collection=techproducts&amp;property=preferredLeader</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/collections/techproducts/balance-shard-unique \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;property&quot;: &quot;preferredLeader&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明-2"><a href="#参数说明-2" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="collection-1"><a href="#collection-1" class="headerlink" title="collection"></a>collection</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：要平衡属性的集合名称。</li>
+</ul>
+<h4 id="property"><a href="#property" class="headerlink" title="property"></a>property</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：要平衡的属性。如果未明确指定，文字<code>property.</code>将前缀到此属性。</li>
+</ul>
+<h4 id="onlyactivenodes"><a href="#onlyactivenodes" class="headerlink" title="onlyactivenodes"></a>onlyactivenodes</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：true</li>
+<li><strong>说明</strong>：通常，属性仅在活跃节点上实例化。如果此参数指定为<code>false</code>，则非活跃节点也包括在分发中。</li>
+</ul>
+<h4 id="shardUnique"><a href="#shardUnique" class="headerlink" title="shardUnique"></a>shardUnique</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>说明</strong>：某种安全阀。有一个预定义属性（<code>preferredLeader</code>）将此值默认为<code>true</code>。对于所有其他要平衡的属性，这必须设置为<code>true</code>或将返回错误消息。</li>
+</ul>
+<h2 id="REPLACENODE：替换节点"><a href="#REPLACENODE：替换节点" class="headerlink" title="REPLACENODE：替换节点"></a>REPLACENODE：替换节点</h2><blockquote>
+<p><strong>警告</strong>：此API的功能已被Migrate Replicas替代和增强，请考虑使用新API，因为此API可能在未来版本中移除。</p>
+</blockquote>
+<p>此命令在另一个节点上重新创建一个节点（源）中的副本。复制每个副本后，删除源节点中的副本。</p>
+<h3 id="API调用方式-5"><a href="#API调用方式-5" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=REPLACENODE&amp;sourceNode=source-node&amp;targetNode=target-node</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST <span class="string">&quot;http://localhost:8983/api/cluster/nodes/localhost:7574_solr/replace&quot;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;targetNodeName&quot;: &quot;localhost:8983_solr&quot;,</span></span><br><span class="line"><span class="string">    &quot;waitForFinalState&quot;: &quot;false&quot;,</span></span><br><span class="line"><span class="string">    &quot;async&quot;: &quot;async&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明-3"><a href="#参数说明-3" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="sourceNode"><a href="#sourceNode" class="headerlink" title="sourceNode"></a>sourceNode</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>说明</strong>：需要从中复制副本的源节点。</li>
+</ul>
+<h4 id="targetNode"><a href="#targetNode" class="headerlink" title="targetNode"></a>targetNode</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>说明</strong>：副本将被复制到的目标节点。如果未提供此参数，Solr将使用除<code>sourceNode</code>外的所有活跃节点。</li>
+</ul>
+<h4 id="parallel"><a href="#parallel" class="headerlink" title="parallel"></a>parallel</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：false</li>
+<li><strong>说明</strong>：如果此标志设置为<code>true</code>，所有副本将在单独的线程中创建。请记住，如果副本有非常大的索引，这可能导致非常高的网络和磁盘I&#x2F;O。</li>
+</ul>
+<h4 id="waitForFinalState-2"><a href="#waitForFinalState-2" class="headerlink" title="waitForFinalState"></a>waitForFinalState</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：false</li>
+<li><strong>说明</strong>：如果为<code>true</code>，请求将仅在所有受影响的副本变为活跃时完成。</li>
+</ul>
+<h4 id="timeout"><a href="#timeout" class="headerlink" title="timeout"></a>timeout</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>默认值</strong>：300秒</li>
+<li><strong>说明</strong>：等待新副本创建和领导者副本完全恢复的时间（秒）。</li>
+</ul>
+<h2 id="DELETENODE：删除节点副本"><a href="#DELETENODE：删除节点副本" class="headerlink" title="DELETENODE：删除节点副本"></a>DELETENODE：删除节点副本</h2><p>删除该节点中所有集合的所有副本。请注意，此操作后节点本身将仍作为活跃节点保留。</p>
+<h3 id="API调用方式-6"><a href="#API调用方式-6" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=DELETENODE&amp;node=nodeName</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST <span class="string">&quot;http://localhost:8983/api/cluster/nodes/localhost:7574_solr/clear/&quot;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;async&quot;: &quot;someAsyncId&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明-4"><a href="#参数说明-4" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="node"><a href="#node" class="headerlink" title="node"></a>node</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>说明</strong>：要移除的节点。</li>
+</ul>
+<h4 id="async-2"><a href="#async-2" class="headerlink" title="async"></a>async</h4><ul>
+<li><strong>类型</strong>：可选</li>
+<li><strong>说明</strong>：用于跟踪此异步处理操作的请求ID。</li>
+</ul>
+<h2 id="角色管理"><a href="#角色管理" class="headerlink" title="角色管理"></a>角色管理</h2><h3 id="ADDROLE：添加角色"><a href="#ADDROLE：添加角色" class="headerlink" title="ADDROLE：添加角色"></a>ADDROLE：添加角色</h3><p>将角色分配给集群中的给定节点。目前唯一支持的角色是<code>overseer</code>。</p>
+<p>使用此命令将特定节点专用作Overseer。多次调用以添加更多节点。这在Overseer可能过载的大型集群中很有用。如果可用，分配了’overseer’角色的节点列表中的一个将成为overseer。如果指定的节点都不运行，系统将将角色分配给任何其他节点。</p>
+<h3 id="API调用方式-7"><a href="#API调用方式-7" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=ADDROLE&amp;role=overseer&amp;node=localhost:8983_solr</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cluster \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-role&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;role&quot;: &quot;overseer&quot;,</span></span><br><span class="line"><span class="string">      &quot;node&quot;: &quot;localhost:8983_solr&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="REMOVEROLE：移除角色"><a href="#REMOVEROLE：移除角色" class="headerlink" title="REMOVEROLE：移除角色"></a>REMOVEROLE：移除角色</h3><p>移除分配的角色。此API用于撤消使用ADDROLE操作分配的角色。</p>
+<h3 id="API调用方式-8"><a href="#API调用方式-8" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=REMOVEROLE&amp;role=overseer&amp;node=localhost:8983_solr</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cluster \</span><br><span class="line">  -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;remove-role&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;role&quot;: &quot;overseer&quot;,</span></span><br><span class="line"><span class="string">      &quot;node&quot;: &quot;localhost:8983_solr&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数说明-5"><a href="#参数说明-5" class="headerlink" title="参数说明"></a>参数说明</h3><h4 id="role"><a href="#role" class="headerlink" title="role"></a>role</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>说明</strong>：角色的名称。目前仅支持<code>overseer</code>角色。</li>
+</ul>
+<h4 id="node-1"><a href="#node-1" class="headerlink" title="node"></a>node</h4><ul>
+<li><strong>类型</strong>：必需</li>
+<li><strong>说明</strong>：将分配&#x2F;移除角色的节点名称。可以在节点启动之前分配角色。</li>
+</ul>
+<h2 id="OVERSEERSTATUS：Overseer状态和统计"><a href="#OVERSEERSTATUS：Overseer状态和统计" class="headerlink" title="OVERSEERSTATUS：Overseer状态和统计"></a>OVERSEERSTATUS：Overseer状态和统计</h2><p>返回overseer的当前状态、各种overseer API的性能统计信息，以及每个操作类型的最后10个失败。</p>
+<h3 id="API调用方式-9"><a href="#API调用方式-9" class="headerlink" title="API调用方式"></a>API调用方式</h3><p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/collections?action=OVERSEERSTATUS</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET http://localhost:8983/api/cluster/overseer</span><br></pre></td></tr></table></figure>
+
+<h3 id="响应示例-1"><a href="#响应示例-1" class="headerlink" title="响应示例"></a>响应示例</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;responseHeader&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;QTime&quot;</span><span class="punctuation">:</span> <span class="number">33</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;leader&quot;</span><span class="punctuation">:</span> <span class="string">&quot;127.0.1.1:8983_solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;overseer_queue_size&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;overseer_work_queue_size&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;overseer_collection_queue_size&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;overseer_operations&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;createcollection&quot;</span><span class="punctuation">,</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;requests&quot;</span><span class="punctuation">:</span> <span class="number">2</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;errors&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;avgRequestsPerSecond&quot;</span><span class="punctuation">:</span> <span class="number">0.7467088842794136</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;5minRateRequestsPerSecond&quot;</span><span class="punctuation">:</span> <span class="number">7.525069023276674</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;15minRateRequestsPerSecond&quot;</span><span class="punctuation">:</span> <span class="number">10.271274280947182</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;avgTimePerRequest&quot;</span><span class="punctuation">:</span> <span class="number">0.5050685</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;medianRequestTime&quot;</span><span class="punctuation">:</span> <span class="number">0.5050685</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;75thPcRequestTime&quot;</span><span class="punctuation">:</span> <span class="number">0.519016</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;95thPcRequestTime&quot;</span><span class="punctuation">:</span> <span class="number">0.519016</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;99thPcRequestTime&quot;</span><span class="punctuation">:</span> <span class="number">0.519016</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;999thPcRequestTime&quot;</span><span class="punctuation">:</span> <span class="number">0.519016</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;collection_operations&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;splitshard&quot;</span><span class="punctuation">,</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;requests&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;errors&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;recent_failures&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;request&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;operation&quot;</span><span class="punctuation">:</span> <span class="string">&quot;splitshard&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;shard&quot;</span><span class="punctuation">:</span> <span class="string">&quot;shard2&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;collection&quot;</span><span class="punctuation">:</span> <span class="string">&quot;example1&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;response&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="string">&quot;Operation splitshard caused exception:&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="string">&quot;org.apache.solr.common.SolrException: No shard with the specified name exists: shard2&quot;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践建议"><a href="#最佳实践建议" class="headerlink" title="最佳实践建议"></a>最佳实践建议</h2><h3 id="集群监控"><a href="#集群监控" class="headerlink" title="集群监控"></a>集群监控</h3><ol>
+<li><strong>定期执行CLUSTERSTATUS</strong>：监控集群健康状态，特别关注RED和ORANGE状态的分片</li>
+<li><strong>设置监控告警</strong>：对集群状态变化设置自动告警机制</li>
+<li><strong>追踪性能指标</strong>：使用OVERSEERSTATUS监控Overseer性能</li>
+</ol>
+<h3 id="节点管理"><a href="#节点管理" class="headerlink" title="节点管理"></a>节点管理</h3><ol>
+<li><strong>平衡操作</strong>：在高负载期间避免执行副本平衡操作</li>
+<li><strong>迁移策略</strong>：使用Migrate Replicas替代REPLACENODE进行节点替换</li>
+<li><strong>异步操作</strong>：对大规模操作使用async参数避免超时</li>
+</ol>
+<h3 id="属性配置"><a href="#属性配置" class="headerlink" title="属性配置"></a>属性配置</h3><ol>
+<li><strong>默认分片偏好</strong>：在多机架环境中配置defaultShardPreferences提升性能</li>
+<li><strong>集群级默认值</strong>：合理设置collection默认值简化集合创建</li>
+<li><strong>自定义属性</strong>：使用ext.前缀添加自定义集群属性</li>
+</ol>
+<h3 id="安全考虑"><a href="#安全考虑" class="headerlink" title="安全考虑"></a>安全考虑</h3><ol>
+<li><strong>角色分离</strong>：在大型集群中专用Overseer节点</li>
+<li><strong>操作锁定</strong>：执行节点操作时避免并发集合操作</li>
+<li><strong>备份验证</strong>：节点替换前确保数据备份完整</li>
+</ol>
+<p>这些集群节点管理命令为SolrCloud提供了完整的运维管理能力，正确使用这些命令可以确保集群的高可用性和optimal性能。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86/">集群管理</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E8%BF%90%E7%BB%B4%E7%AE%A1%E7%90%86/">运维管理</a>
+  
+    <a class="article-tag" href="/tags/%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86/">节点管理</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/16/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：集合管理命令完整指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/14/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr查询：拼写检查功能详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CLUSTERSTATUS%EF%BC%9A%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E6%9F%A5%E8%AF%A2"><span class="nav-number">2.</span> <span class="nav-text">CLUSTERSTATUS：集群状态查询</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLUSTERSTATUS-%E5%8F%82%E6%95%B0"><span class="nav-number">2.2.</span> <span class="nav-text">CLUSTERSTATUS 参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collection"><span class="nav-number">2.2.1.</span> <span class="nav-text">collection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shard"><span class="nav-number">2.2.2.</span> <span class="nav-text">shard</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#route"><span class="nav-number">2.2.3.</span> <span class="nav-text">route</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#aliases"><span class="nav-number">2.2.4.</span> <span class="nav-text">aliases</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#liveNodes"><span class="nav-number">2.2.5.</span> <span class="nav-text">liveNodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#clusterProperties"><span class="nav-number">2.2.6.</span> <span class="nav-text">clusterProperties</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#roles"><span class="nav-number">2.2.7.</span> <span class="nav-text">roles</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#includeAll"><span class="nav-number">2.2.8.</span> <span class="nav-text">includeAll</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.3.</span> <span class="nav-text">响应示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CLUSTERPROP%EF%BC%9A%E9%9B%86%E7%BE%A4%E5%B1%9E%E6%80%A7%E7%AE%A1%E7%90%86"><span class="nav-number">3.</span> <span class="nav-text">CLUSTERPROP：集群属性管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-1"><span class="nav-number">3.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CLUSTERPROP-%E5%8F%82%E6%95%B0"><span class="nav-number">3.2.</span> <span class="nav-text">CLUSTERPROP 参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#name-v1"><span class="nav-number">3.2.1.</span> <span class="nav-text">name (v1)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#val-v1-value-v2"><span class="nav-number">3.2.2.</span> <span class="nav-text">val (v1), value (v2)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E9%9B%86%E7%BE%A4%E7%BA%A7%E9%BB%98%E8%AE%A4%E5%80%BC"><span class="nav-number">3.3.</span> <span class="nav-text">设置集群级默认值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E5%88%86%E7%89%87%E5%81%8F%E5%A5%BD"><span class="nav-number">3.4.</span> <span class="nav-text">默认分片偏好</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E5%B1%9E%E6%80%A7%E6%93%8D%E4%BD%9C%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.5.</span> <span class="nav-text">集群属性操作示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Balance-Replicas%EF%BC%9A%E5%89%AF%E6%9C%AC%E5%B9%B3%E8%A1%A1"><span class="nav-number">4.</span> <span class="nav-text">Balance Replicas：副本平衡</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-2"><span class="nav-number">4.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">4.2.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#nodes"><span class="nav-number">4.2.1.</span> <span class="nav-text">nodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#waitForFinalState"><span class="nav-number">4.2.2.</span> <span class="nav-text">waitForFinalState</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#async"><span class="nav-number">4.2.3.</span> <span class="nav-text">async</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Migrate-Replicas%EF%BC%9A%E5%89%AF%E6%9C%AC%E8%BF%81%E7%A7%BB"><span class="nav-number">5.</span> <span class="nav-text">Migrate Replicas：副本迁移</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-3"><span class="nav-number">5.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-1"><span class="nav-number">5.2.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sourceNodes"><span class="nav-number">5.2.1.</span> <span class="nav-text">sourceNodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#targetNodes"><span class="nav-number">5.2.2.</span> <span class="nav-text">targetNodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#waitForFinalState-1"><span class="nav-number">5.2.3.</span> <span class="nav-text">waitForFinalState</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#async-1"><span class="nav-number">5.2.4.</span> <span class="nav-text">async</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#BALANCESHARDUNIQUE%EF%BC%9A%E5%B9%B3%E8%A1%A1%E5%88%86%E7%89%87%E5%B1%9E%E6%80%A7"><span class="nav-number">6.</span> <span class="nav-text">BALANCESHARDUNIQUE：平衡分片属性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-4"><span class="nav-number">6.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-2"><span class="nav-number">6.2.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#collection-1"><span class="nav-number">6.2.1.</span> <span class="nav-text">collection</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#property"><span class="nav-number">6.2.2.</span> <span class="nav-text">property</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#onlyactivenodes"><span class="nav-number">6.2.3.</span> <span class="nav-text">onlyactivenodes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#shardUnique"><span class="nav-number">6.2.4.</span> <span class="nav-text">shardUnique</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REPLACENODE%EF%BC%9A%E6%9B%BF%E6%8D%A2%E8%8A%82%E7%82%B9"><span class="nav-number">7.</span> <span class="nav-text">REPLACENODE：替换节点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-5"><span class="nav-number">7.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-3"><span class="nav-number">7.2.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#sourceNode"><span class="nav-number">7.2.1.</span> <span class="nav-text">sourceNode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#targetNode"><span class="nav-number">7.2.2.</span> <span class="nav-text">targetNode</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#parallel"><span class="nav-number">7.2.3.</span> <span class="nav-text">parallel</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#waitForFinalState-2"><span class="nav-number">7.2.4.</span> <span class="nav-text">waitForFinalState</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#timeout"><span class="nav-number">7.2.5.</span> <span class="nav-text">timeout</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DELETENODE%EF%BC%9A%E5%88%A0%E9%99%A4%E8%8A%82%E7%82%B9%E5%89%AF%E6%9C%AC"><span class="nav-number">8.</span> <span class="nav-text">DELETENODE：删除节点副本</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-6"><span class="nav-number">8.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-4"><span class="nav-number">8.2.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#node"><span class="nav-number">8.2.1.</span> <span class="nav-text">node</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#async-2"><span class="nav-number">8.2.2.</span> <span class="nav-text">async</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%92%E8%89%B2%E7%AE%A1%E7%90%86"><span class="nav-number">9.</span> <span class="nav-text">角色管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ADDROLE%EF%BC%9A%E6%B7%BB%E5%8A%A0%E8%A7%92%E8%89%B2"><span class="nav-number">9.1.</span> <span class="nav-text">ADDROLE：添加角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-7"><span class="nav-number">9.2.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REMOVEROLE%EF%BC%9A%E7%A7%BB%E9%99%A4%E8%A7%92%E8%89%B2"><span class="nav-number">9.3.</span> <span class="nav-text">REMOVEROLE：移除角色</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-8"><span class="nav-number">9.4.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E-5"><span class="nav-number">9.5.</span> <span class="nav-text">参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#role"><span class="nav-number">9.5.1.</span> <span class="nav-text">role</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#node-1"><span class="nav-number">9.5.2.</span> <span class="nav-text">node</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#OVERSEERSTATUS%EF%BC%9AOverseer%E7%8A%B6%E6%80%81%E5%92%8C%E7%BB%9F%E8%AE%A1"><span class="nav-number">10.</span> <span class="nav-text">OVERSEERSTATUS：Overseer状态和统计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E8%B0%83%E7%94%A8%E6%96%B9%E5%BC%8F-9"><span class="nav-number">10.1.</span> <span class="nav-text">API调用方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%8D%E5%BA%94%E7%A4%BA%E4%BE%8B-1"><span class="nav-number">10.2.</span> <span class="nav-text">响应示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E5%BB%BA%E8%AE%AE"><span class="nav-number">11.</span> <span class="nav-text">最佳实践建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E7%9B%91%E6%8E%A7"><span class="nav-number">11.1.</span> <span class="nav-text">集群监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86"><span class="nav-number">11.2.</span> <span class="nav-text">节点管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%9E%E6%80%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">11.3.</span> <span class="nav-text">属性配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">11.4.</span> <span class="nav-text">安全考虑</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

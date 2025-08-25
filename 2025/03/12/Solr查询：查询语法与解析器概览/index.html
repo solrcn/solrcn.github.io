@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：查询语法与解析器概览 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="查询解析器搜索引擎Solr查询查询语法SolrQParserPlugin" />
+  
+  
+  
+  
+  <meta name="description" content="全面介绍Apache Solr查询语法与解析器体系，涵盖标准查询解析器、DisMax、eDisMax、函数查询、空间搜索等各种查询解析器的特性和使用场景，为开发者提供查询解析器选择指南。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：查询语法与解析器概览">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/12/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A6%82%E8%A7%88/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="全面介绍Apache Solr查询语法与解析器体系，涵盖标准查询解析器、DisMax、eDisMax、函数查询、空间搜索等各种查询解析器的特性和使用场景，为开发者提供查询解析器选择指南。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-11T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:05:15.367Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="查询解析器">
+<meta property="article:tag" content="搜索引擎">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="查询语法">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="QParserPlugin">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：查询语法与解析器概览" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：查询语法与解析器概览
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/12/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A6%82%E8%A7%88/" class="article-date">
+	  <time datetime="2025-03-11T16:00:00.000Z" itemprop="datePublished">三月 12, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr查询：查询语法与解析器概览"><a href="#Solr查询：查询语法与解析器概览" class="headerlink" title="Solr查询：查询语法与解析器概览"></a>Solr查询：查询语法与解析器概览</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p><strong>查询解析器</strong>将用户的搜索词转换为Lucene查询，以找到适当匹配的文档。</p>
+<p>Solr支持多种查询解析器，为搜索应用程序设计者在控制查询解析方式方面提供了极大的灵活性。</p>
+<p>本节解释如何指定查询解析器，并描述Solr中几个可用解析器支持的语法和功能。</p>
+<p>有一些查询参数对所有Solr解析器都是通用的；这些在通用查询参数部分中讨论。</p>
+<p>查询解析器也被称为<code>QParserPlugins</code>。它们都是QParserPlugin的子类。如果您有自定义解析需求，您可能希望扩展该类来创建自己的查询解析器。</p>
+<h2 id="查询解析器列表"><a href="#查询解析器列表" class="headerlink" title="查询解析器列表"></a>查询解析器列表</h2><h3 id="通用查询参数"><a href="#通用查询参数" class="headerlink" title="通用查询参数"></a>通用查询参数</h3><p>可以与所有查询解析器一起使用的查询参数。</p>
+<h3 id="标准查询解析器"><a href="#标准查询解析器" class="headerlink" title="标准查询解析器"></a>标准查询解析器</h3><p>标准Lucene查询解析器。</p>
+<h3 id="DisMax查询解析器"><a href="#DisMax查询解析器" class="headerlink" title="DisMax查询解析器"></a>DisMax查询解析器</h3><p>DisMax查询解析器。</p>
+<h3 id="扩展DisMax-eDisMax-查询解析器"><a href="#扩展DisMax-eDisMax-查询解析器" class="headerlink" title="扩展DisMax (eDisMax)查询解析器"></a>扩展DisMax (eDisMax)查询解析器</h3><p>扩展DisMax (eDisMax)查询解析器。</p>
+<h3 id="函数查询"><a href="#函数查询" class="headerlink" title="函数查询"></a>函数查询</h3><p>使用来自一个或多个数值字段的值生成相关性分数的参数。</p>
+<h3 id="本地参数"><a href="#本地参数" class="headerlink" title="本地参数"></a>本地参数</h3><p>如何向查询添加本地参数。</p>
+<h3 id="JSON请求API"><a href="#JSON请求API" class="headerlink" title="JSON请求API"></a>JSON请求API</h3><p>Solr的JSON请求API。</p>
+<h3 id="搜索嵌套文档"><a href="#搜索嵌套文档" class="headerlink" title="搜索嵌套文档"></a>搜索嵌套文档</h3><p>构建嵌套和分层查询。</p>
+<h3 id="块连接查询解析器"><a href="#块连接查询解析器" class="headerlink" title="块连接查询解析器"></a>块连接查询解析器</h3><p>专门用于搜索嵌套文档的查询解析器。</p>
+<h3 id="连接查询解析器"><a href="#连接查询解析器" class="headerlink" title="连接查询解析器"></a>连接查询解析器</h3><p>便于连接的查询解析器。</p>
+<h3 id="空间搜索"><a href="#空间搜索" class="headerlink" title="空间搜索"></a>空间搜索</h3><p>Solr的空间搜索功能。</p>
+<h3 id="密集向量搜索"><a href="#密集向量搜索" class="headerlink" title="密集向量搜索"></a>密集向量搜索</h3><p>Solr的密集检索功能。</p>
+<h3 id="其他解析器"><a href="#其他解析器" class="headerlink" title="其他解析器"></a>其他解析器</h3><p>专为特定情况使用而设计的更多解析器。</p>
+<h3 id="SQL查询"><a href="#SQL查询" class="headerlink" title="SQL查询"></a>SQL查询</h3><p>Solr的SQL语言支持。</p>
+<h3 id="查询界面"><a href="#查询界面" class="headerlink" title="查询界面"></a>查询界面</h3><p>基于表单的查询构建器。</p>
+<h3 id="SQL界面"><a href="#SQL界面" class="headerlink" title="SQL界面"></a>SQL界面</h3><p>带表格结果的SQL查询运行器。</p>
+<h2 id="查询解析器分类"><a href="#查询解析器分类" class="headerlink" title="查询解析器分类"></a>查询解析器分类</h2><p>根据使用场景和功能特性，Solr的查询解析器可以分为以下几类：</p>
+<h3 id="1-基础文本查询解析器"><a href="#1-基础文本查询解析器" class="headerlink" title="1. 基础文本查询解析器"></a>1. 基础文本查询解析器</h3><ul>
+<li><strong>标准查询解析器</strong>：基于Lucene的经典查询解析器，支持布尔运算符、字段查询、通配符等</li>
+<li><strong>DisMax查询解析器</strong>：简化的查询解析器，专为用户友好的搜索界面设计</li>
+<li><strong>eDisMax查询解析器</strong>：DisMax的增强版本，结合了标准解析器的功能和DisMax的易用性</li>
+</ul>
+<h3 id="2-特殊用途查询解析器"><a href="#2-特殊用途查询解析器" class="headerlink" title="2. 特殊用途查询解析器"></a>2. 特殊用途查询解析器</h3><ul>
+<li><strong>函数查询</strong>：基于数值计算的评分查询</li>
+<li><strong>空间搜索</strong>：地理位置和空间数据查询</li>
+<li><strong>密集向量搜索</strong>：基于向量相似性的搜索</li>
+</ul>
+<h3 id="3-结构化数据查询解析器"><a href="#3-结构化数据查询解析器" class="headerlink" title="3. 结构化数据查询解析器"></a>3. 结构化数据查询解析器</h3><ul>
+<li><strong>块连接查询解析器</strong>：用于嵌套文档的父子关系查询</li>
+<li><strong>连接查询解析器</strong>：实现类似SQL连接操作的查询</li>
+<li><strong>SQL查询</strong>：直接使用SQL语法进行查询</li>
+</ul>
+<h3 id="4-API接口和工具"><a href="#4-API接口和工具" class="headerlink" title="4. API接口和工具"></a>4. API接口和工具</h3><ul>
+<li><strong>JSON请求API</strong>：基于JSON格式的查询接口</li>
+<li><strong>查询界面</strong>：Web界面的查询构建工具</li>
+<li><strong>SQL界面</strong>：SQL查询的Web界面工具</li>
+</ul>
+<h2 id="选择合适的查询解析器"><a href="#选择合适的查询解析器" class="headerlink" title="选择合适的查询解析器"></a>选择合适的查询解析器</h2><h3 id="根据应用场景选择"><a href="#根据应用场景选择" class="headerlink" title="根据应用场景选择"></a>根据应用场景选择</h3><p><strong>简单搜索应用</strong></p>
+<ul>
+<li>推荐：DisMax或eDisMax</li>
+<li>特点：用户友好，容错性强，适合一般用户搜索</li>
+</ul>
+<p><strong>高级搜索需求</strong></p>
+<ul>
+<li>推荐：标准查询解析器</li>
+<li>特点：功能完整，支持复杂查询语法</li>
+</ul>
+<p><strong>地理位置搜索</strong></p>
+<ul>
+<li>推荐：空间搜索解析器</li>
+<li>特点：专门处理地理坐标和空间关系</li>
+</ul>
+<p><strong>相似性搜索</strong></p>
+<ul>
+<li>推荐：密集向量搜索</li>
+<li>特点：基于向量空间的相似性计算</li>
+</ul>
+<p><strong>企业级应用</strong></p>
+<ul>
+<li>推荐：SQL查询解析器</li>
+<li>特点：使用熟悉的SQL语法，便于数据分析</li>
+</ul>
+<h3 id="性能考虑"><a href="#性能考虑" class="headerlink" title="性能考虑"></a>性能考虑</h3><ol>
+<li><strong>查询复杂度</strong>：简单查询使用DisMax性能更好</li>
+<li><strong>缓存效果</strong>：标准解析器的查询更容易被缓存</li>
+<li><strong>内存使用</strong>：函数查询可能消耗更多内存</li>
+<li><strong>索引结构</strong>：空间搜索需要特殊的字段类型</li>
+</ol>
+<h3 id="开发和维护"><a href="#开发和维护" class="headerlink" title="开发和维护"></a>开发和维护</h3><ol>
+<li><strong>学习成本</strong>：DisMax最容易上手</li>
+<li><strong>调试难度</strong>：标准解析器查询更容易调试</li>
+<li><strong>扩展性</strong>：eDisMax提供最佳的功能扩展性</li>
+<li><strong>兼容性</strong>：标准解析器与Lucene完全兼容</li>
+</ol>
+<h2 id="查询解析器配置"><a href="#查询解析器配置" class="headerlink" title="查询解析器配置"></a>查询解析器配置</h2><h3 id="默认查询解析器设置"><a href="#默认查询解析器设置" class="headerlink" title="默认查询解析器设置"></a>默认查询解析器设置</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 在solrconfig.xml中配置默认查询解析器 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/select&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SearchHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;defType&quot;</span>&gt;</span>edismax<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;qf&quot;</span>&gt;</span>title^2.0 content^1.0<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;mm&quot;</span>&gt;</span>2<span class="symbol">&amp;lt;</span>-1 5<span class="symbol">&amp;lt;</span>-2 6<span class="symbol">&amp;lt;</span>90%<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="运行时指定解析器"><a href="#运行时指定解析器" class="headerlink" title="运行时指定解析器"></a>运行时指定解析器</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"># 使用defType参数指定查询解析器</span><br><span class="line">q=solr&amp;defType=edismax</span><br><span class="line"></span><br><span class="line"># 使用本地参数语法</span><br><span class="line">q=&#123;!edismax qf=title&#125;solr</span><br><span class="line"></span><br><span class="line"># 组合多个解析器</span><br><span class="line">q=&#123;!edismax qf=title&#125;solr AND &#123;!spatial&#125;distance:[0,10]</span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="1-解析器选择策略"><a href="#1-解析器选择策略" class="headerlink" title="1. 解析器选择策略"></a>1. 解析器选择策略</h3><ul>
+<li><strong>开发阶段</strong>：使用标准解析器进行功能测试</li>
+<li><strong>生产环境</strong>：根据用户类型选择合适解析器</li>
+<li><strong>混合使用</strong>：在同一应用中使用多种解析器</li>
+</ul>
+<h3 id="2-参数优化"><a href="#2-参数优化" class="headerlink" title="2. 参数优化"></a>2. 参数优化</h3><ul>
+<li><strong>合理设置查询字段权重</strong>：根据业务重要性调整<code>qf</code>参数</li>
+<li><strong>配置最小匹配规则</strong>：使用<code>mm</code>参数控制查询召回率</li>
+<li><strong>启用查询缓存</strong>：提高重复查询性能</li>
+</ul>
+<h3 id="3-错误处理"><a href="#3-错误处理" class="headerlink" title="3. 错误处理"></a>3. 错误处理</h3><ul>
+<li><strong>语法错误容忍</strong>：DisMax系列解析器自动处理语法错误</li>
+<li><strong>回退机制</strong>：设置查询失败时的备选方案</li>
+<li><strong>日志监控</strong>：记录查询解析错误和性能指标</li>
+</ul>
+<h3 id="4-安全考虑"><a href="#4-安全考虑" class="headerlink" title="4. 安全考虑"></a>4. 安全考虑</h3><ul>
+<li><strong>输入验证</strong>：对用户输入进行安全检查</li>
+<li><strong>权限控制</strong>：限制某些高级查询功能的使用</li>
+<li><strong>资源限制</strong>：防止复杂查询消耗过多资源</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Solr提供了丰富的查询解析器生态系统，每种解析器都针对特定的使用场景进行了优化。选择合适的查询解析器是构建高效搜索应用的关键。开发者应该：</p>
+<ol>
+<li><strong>了解各解析器特性</strong>：掌握不同解析器的优势和限制</li>
+<li><strong>根据需求选择</strong>：基于应用场景和用户需求选择最适合的解析器</li>
+<li><strong>合理配置参数</strong>：通过参数优化提升查询性能和用户体验</li>
+<li><strong>持续监控优化</strong>：根据实际使用情况调整解析器配置</li>
+</ol>
+<p>通过合理使用Solr的查询解析器体系，可以为用户提供强大而灵活的搜索体验。</p>
+<hr>
+<p><em>本文档翻译自Apache Solr官方参考指南，旨在为中文用户提供完整的查询语法与解析器概览指南。</em></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">查询解析器</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E/">搜索引擎</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/">查询语法</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/QParserPlugin/">QParserPlugin</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/13/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%BB%BA%E8%AE%AE%E5%99%A8%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr查询：建议器功能详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/11/Apache-Solr-9-8-1-%E5%8F%91%E5%B8%83-%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%B8%8E%E5%AE%9E%E9%AA%8C%E5%8A%9F%E8%83%BD%E8%B0%83%E6%95%B4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Apache Solr 9.8.1 发布：稳定性与实验功能调整</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：查询语法与解析器概览</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E5%88%97%E8%A1%A8"><span class="nav-number">1.2.</span> <span class="nav-text">查询解析器列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E6%9F%A5%E8%AF%A2%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">通用查询参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">标准查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DisMax%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.3.</span> <span class="nav-text">DisMax查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A9%E5%B1%95DisMax-eDisMax-%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.4.</span> <span class="nav-text">扩展DisMax (eDisMax)查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%BD%E6%95%B0%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.5.</span> <span class="nav-text">函数查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%AC%E5%9C%B0%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.6.</span> <span class="nav-text">本地参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JSON%E8%AF%B7%E6%B1%82API"><span class="nav-number">1.2.7.</span> <span class="nav-text">JSON请求API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3"><span class="nav-number">1.2.8.</span> <span class="nav-text">搜索嵌套文档</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.9.</span> <span class="nav-text">块连接查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.10.</span> <span class="nav-text">连接查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E9%97%B4%E6%90%9C%E7%B4%A2"><span class="nav-number">1.2.11.</span> <span class="nav-text">空间搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AF%86%E9%9B%86%E5%90%91%E9%87%8F%E6%90%9C%E7%B4%A2"><span class="nav-number">1.2.12.</span> <span class="nav-text">密集向量搜索</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.13.</span> <span class="nav-text">其他解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.2.14.</span> <span class="nav-text">SQL查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%95%8C%E9%9D%A2"><span class="nav-number">1.2.15.</span> <span class="nav-text">查询界面</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL%E7%95%8C%E9%9D%A2"><span class="nav-number">1.2.16.</span> <span class="nav-text">SQL界面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">查询解析器分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%9F%BA%E7%A1%80%E6%96%87%E6%9C%AC%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 基础文本查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%B9%E6%AE%8A%E7%94%A8%E9%80%94%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 特殊用途查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%BB%93%E6%9E%84%E5%8C%96%E6%95%B0%E6%8D%AE%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 结构化数据查询解析器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-API%E6%8E%A5%E5%8F%A3%E5%92%8C%E5%B7%A5%E5%85%B7"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. API接口和工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E6%8B%A9%E5%90%88%E9%80%82%E7%9A%84%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">选择合适的查询解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B9%E6%8D%AE%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF%E9%80%89%E6%8B%A9"><span class="nav-number">1.4.1.</span> <span class="nav-text">根据应用场景选择</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%80%83%E8%99%91"><span class="nav-number">1.4.2.</span> <span class="nav-text">性能考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%80%E5%8F%91%E5%92%8C%E7%BB%B4%E6%8A%A4"><span class="nav-number">1.4.3.</span> <span class="nav-text">开发和维护</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.</span> <span class="nav-text">查询解析器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.5.1.</span> <span class="nav-text">默认查询解析器设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%97%B6%E6%8C%87%E5%AE%9A%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.5.2.</span> <span class="nav-text">运行时指定解析器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.6.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%A7%A3%E6%9E%90%E5%99%A8%E9%80%89%E6%8B%A9%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 解析器选择策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8F%82%E6%95%B0%E4%BC%98%E5%8C%96"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 参数优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.6.3.</span> <span class="nav-text">3. 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.6.4.</span> <span class="nav-text">4. 安全考虑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

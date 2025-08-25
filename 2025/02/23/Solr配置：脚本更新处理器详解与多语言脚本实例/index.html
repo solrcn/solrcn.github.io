@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：脚本更新处理器详解与多语言脚本实例 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr文档处理脚本更新处理器JavaScriptGroovyJRubyPython" />
+  
+  
+  
+  
+  <meta name="description" content="深入了解Solr脚本更新处理器的配置和使用方法，掌握JavaScript、Groovy、JRuby、Python等多种脚本语言在文档更新处理中的应用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：脚本更新处理器详解与多语言脚本实例">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/23/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%A4%9A%E8%AF%AD%E8%A8%80%E8%84%9A%E6%9C%AC%E5%AE%9E%E4%BE%8B/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入了解Solr脚本更新处理器的配置和使用方法，掌握JavaScript、Groovy、JRuby、Python等多种脚本语言在文档更新处理中的应用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T11:33:45.066Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="文档处理">
+<meta property="article:tag" content="脚本更新处理器">
+<meta property="article:tag" content="JavaScript">
+<meta property="article:tag" content="Groovy">
+<meta property="article:tag" content="JRuby">
+<meta property="article:tag" content="Python">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：脚本更新处理器详解与多语言脚本实例" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：脚本更新处理器详解与多语言脚本实例
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/23/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%A4%9A%E8%AF%AD%E8%A8%80%E8%84%9A%E6%9C%AC%E5%AE%9E%E4%BE%8B/" class="article-date">
+	  <time datetime="2025-02-22T16:00:00.000Z" itemprop="datePublished">二月 23, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：脚本更新处理器详解与多语言脚本实例"><a href="#Solr配置：脚本更新处理器详解与多语言脚本实例" class="headerlink" title="Solr配置：脚本更新处理器详解与多语言脚本实例"></a>Solr配置：脚本更新处理器详解与多语言脚本实例</h1><p>ScriptUpdateProcessorFactory允许在Solr文档更新处理期间使用Java脚本引擎，为在索引之前表达自定义文档处理逻辑提供了极大的灵活性。</p>
+<p>它有提交、删除、回滚等索引操作的钩子，但add是最常见的用法。它被实现为一个UpdateProcessor，放置在UpdateChain中。</p>
+<p>⚠️ <strong>提示</strong>：这以前被称为_StatelessScriptingUpdateProcessor_，重命名是为了澄清此更新处理器的关键方面是它启用了脚本功能。</p>
+<h2 id="功能特性"><a href="#功能特性" class="headerlink" title="功能特性"></a>功能特性</h2><ul>
+<li><strong>多语言支持</strong>：脚本可以用JVM支持的任何脚本语言编写（如JavaScript）</li>
+<li><strong>动态执行</strong>：动态执行，无需预编译</li>
+<li><strong>强大工具</strong>：有时被称为”脱困免费卡”，因为你可以用这种方式解决一些无法以其他方式解决的问题</li>
+</ul>
+<p>⚠️ <strong>安全警告</strong>：能够在索引管道中运行你选择的脚本是一个非常强大的工具，但也会引入一些潜在的安全漏洞。</p>
+<h2 id="模块要求"><a href="#模块要求" class="headerlink" title="模块要求"></a>模块要求</h2><p>此功能通过需要在使用前启用的<code>scripting</code> Solr模块提供。</p>
+<h2 id="启用脚本更新处理器和脚本引擎"><a href="#启用脚本更新处理器和脚本引擎" class="headerlink" title="启用脚本更新处理器和脚本引擎"></a>启用脚本更新处理器和脚本引擎</h2><h3 id="JavaScript引擎"><a href="#JavaScript引擎" class="headerlink" title="JavaScript引擎"></a>JavaScript引擎</h3><ul>
+<li>Java 11及之前版本带有名为Nashorn的JavaScript引擎</li>
+<li>Java 12将需要你添加自己的JavaScript引擎</li>
+</ul>
+<h3 id="其他脚本引擎"><a href="#其他脚本引擎" class="headerlink" title="其他脚本引擎"></a>其他脚本引擎</h3><p>其他支持的脚本引擎如JRuby、Jython、Groovy，都需要你将JAR文件添加到Solr中。</p>
+<p>了解更多关于将任何其他所需的JAR文件（取决于你的脚本引擎）添加到Solr的Lib目录中。</p>
+<h2 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h2><h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateRequestProcessorChain</span> <span class="attr">name</span>=<span class="string">&quot;script&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.scripting.update.ScriptUpdateProcessorFactory&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;script&quot;</span>&gt;</span>update-script.js<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">processor</span>&gt;</span></span><br><span class="line">   <span class="comment">&lt;!-- 可选参数传递给脚本 --&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;params&quot;</span>&gt;</span></span><br><span class="line">     <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;config_param&quot;</span>&gt;</span>example config parameter<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.LogUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RunUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateRequestProcessorChain</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>⚠️ <strong>注意</strong>：处理器支持defaults&#x2F;appends&#x2F;invariants概念的配置。但是，也可以跳过这个级别，直接在<code>&lt;processor&gt;</code>标签下配置参数。</p>
+<h3 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h3><p><strong>script</strong> (必需)</p>
+<ul>
+<li>脚本文件名</li>
+<li>脚本文件必须放置在<code>conf/</code>目录中</li>
+<li>可以指定一个或多个”script”参数；多个脚本按指定顺序执行</li>
+</ul>
+<p><strong>engine</strong> (可选)</p>
+<ul>
+<li>可选地指定要使用的脚本引擎</li>
+<li>仅当脚本文件的扩展名不是到脚本引擎的标准映射时才需要</li>
+<li>例如，如果你的脚本文件用JavaScript编写但文件名叫<code>update-script.foo</code>，使用<code>javascript</code>作为引擎名</li>
+</ul>
+<p><strong>params</strong> (可选)</p>
+<ul>
+<li>传递到脚本执行上下文中的可选参数</li>
+<li>指定为具有嵌套类型参数的命名列表（<code>&lt;lst&gt;</code>）结构</li>
+<li>如果指定，脚本上下文将获得一个”params”对象，否则将没有”params”对象可用</li>
+</ul>
+<h2 id="脚本执行上下文"><a href="#脚本执行上下文" class="headerlink" title="脚本执行上下文"></a>脚本执行上下文</h2><p>每个脚本都有一些提供给它的变量：</p>
+<ul>
+<li><strong>logger</strong>：Logger (org.slf4j.Logger) 实例。对于从脚本记录信息很有用</li>
+<li><strong>req</strong>：SolrQueryRequest 实例</li>
+<li><strong>rsp</strong>：SolrQueryResponse 实例</li>
+<li><strong>params</strong>：来自配置的”params”对象（如果指定了任何）</li>
+</ul>
+<h2 id="快速体验"><a href="#快速体验" class="headerlink" title="快速体验"></a>快速体验</h2><p>techproducts配置集中有一个JavaScript示例<code>update-script.js</code>。</p>
+<p>要试用脚本功能，在<code>./server/solr/configsets/sample_techproducts_configs/conf/solrconfig.xml</code>文件中启用<code>&lt;updateRequestProcessorChain name=&quot;script&quot;&gt;</code>配置。然后通过<code>bin/solr start -e techproducts -Dsolr.modules=scripting</code>启动Solr。</p>
+<p>示例URL：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/update?commit=true&amp;stream.contentType=text/csv&amp;fieldnames=id,description&amp;stream.body=1,foo&amp;update.chain=script</span><br></pre></td></tr></table></figure>
+
+<p>这将记录以下内容：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">INFO: update-script#processAdd: id=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="脚本语言示例"><a href="#脚本语言示例" class="headerlink" title="脚本语言示例"></a>脚本语言示例</h2><h3 id="JavaScript示例"><a href="#JavaScript示例" class="headerlink" title="JavaScript示例"></a>JavaScript示例</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;  <span class="comment">// org.apache.solr.common.SolrInputDocument</span></span><br><span class="line">  id = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;id&quot;</span>);</span><br><span class="line">  logger.<span class="title function_">info</span>(<span class="string">&quot;update-script#processAdd: id=&quot;</span> + id);</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 设置字段值:</span></span><br><span class="line">  <span class="comment">// doc.setField(&quot;foo_s&quot;, &quot;whatever&quot;);</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取配置参数:</span></span><br><span class="line">  <span class="comment">// config_param = params.get(&#x27;config_param&#x27;);  // &quot;params&quot;仅在处理器配置了&lt;lst name=&quot;params&quot;&gt;时存在</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 获取请求参数:</span></span><br><span class="line">  <span class="comment">// some_param = req.getParams().get(&quot;some_param&quot;)</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 添加匹配模式的字段名字段:</span></span><br><span class="line">  <span class="comment">// - 通过在field_name_ss上进行分面，可能对确定结果集中表示的字段/属性很有用</span></span><br><span class="line">  <span class="comment">// field_names = doc.getFieldNames().toArray();</span></span><br><span class="line">  <span class="comment">// for(i=0; i &lt; field_names.length; i++) &#123;</span></span><br><span class="line">  <span class="comment">//   field_name = field_names[i];</span></span><br><span class="line">  <span class="comment">//   if (/attr_.*/.test(field_name)) &#123; doc.addField(&quot;attribute_ss&quot;, field_names[i]); &#125;</span></span><br><span class="line">  <span class="comment">// &#125;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">processDelete</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">processMergeIndexes</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">processCommit</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">processRollback</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">finish</span>(<span class="params"></span>) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Ruby示例"><a href="#Ruby示例" class="headerlink" title="Ruby示例"></a>Ruby示例</h3><p>Ruby支持通过JRuby项目实现。要使用JRuby作为脚本引擎，将<code>jruby.jar</code>添加到Solr。</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>)</span><br><span class="line">  doc = cmd.solrDoc  <span class="comment"># org.apache.solr.common.SolrInputDocument</span></span><br><span class="line">  id = doc.getFieldValue(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  <span class="variable">$logger</span>.info <span class="string">&quot;update-script#processAdd: id=<span class="subst">#&#123;id&#125;</span>&quot;</span></span><br><span class="line"></span><br><span class="line">  doc.setField(<span class="string">&#x27;source_s&#x27;</span>, <span class="string">&#x27;ruby&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  <span class="variable">$logger</span>.info <span class="string">&quot;update-script#processAdd: config_param=<span class="subst">#&#123;<span class="variable">$params</span>.get(<span class="string">&#x27;config_param&#x27;</span>)&#125;</span>&quot;</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processDelete</span>(<span class="params">cmd</span>)</span><br><span class="line">  <span class="comment"># no-op</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processMergeIndexes</span>(<span class="params">cmd</span>)</span><br><span class="line">  <span class="comment"># no-op</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processCommit</span>(<span class="params">cmd</span>)</span><br><span class="line">  <span class="comment"># no-op</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processRollback</span>(<span class="params">cmd</span>)</span><br><span class="line">  <span class="comment"># no-op</span></span><br><span class="line"><span class="keyword">end</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">finish</span>()</span><br><span class="line">  <span class="comment"># no-op</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="已知问题"><a href="#已知问题" class="headerlink" title="已知问题"></a>已知问题</h4><p>在JRuby中以下内容不能按预期工作，尽管它在JavaScript中工作正常：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># $logger.info &quot;update-script#processAdd: request_param=#&#123;$req.params.get(&#x27;request_param&#x27;)&#125;&quot;</span></span><br><span class="line"><span class="comment"># $rsp.add(&#x27;script_processed&#x27;,id)</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="Groovy示例"><a href="#Groovy示例" class="headerlink" title="Groovy示例"></a>Groovy示例</h3><p>将Groovy发行版的<code>lib/</code>目录中的JAR添加到Solr。可能不需要Groovy发行版的所有JAR，但需要的不只是主要的<code>groovy.jar</code>文件。</p>
+<figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> processAdd(cmd) &#123;</span><br><span class="line">  doc = cmd.solrDoc  <span class="comment">// org.apache.solr.common.SolrInputDocument</span></span><br><span class="line">  id = doc.getFieldValue(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  logger.info <span class="string">&quot;update-script#processAdd: id=&quot;</span> + id</span><br><span class="line"></span><br><span class="line">  doc.setField(<span class="string">&#x27;source_s&#x27;</span>, <span class="string">&#x27;groovy&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  logger.info <span class="string">&quot;update-script#processAdd: config_param=&quot;</span> + params.get(<span class="string">&#x27;config_param&#x27;</span>)</span><br><span class="line"></span><br><span class="line">  logger.info <span class="string">&quot;update-script#processAdd: request_param=&quot;</span> + req.params.get(<span class="string">&#x27;request_param&#x27;</span>)</span><br><span class="line">  rsp.add(<span class="string">&#x27;script_processed&#x27;</span>,id)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> processDelete(cmd) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> processMergeIndexes(cmd) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> processCommit(cmd) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> processRollback(cmd) &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> finish() &#123;</span><br><span class="line">  <span class="comment">// no-op</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Python示例"><a href="#Python示例" class="headerlink" title="Python示例"></a>Python示例</h3><p>Python支持通过Jython项目实现。将<strong>独立的</strong><code>jython.jar</code>（包含所有依赖项的JAR）添加到Solr中。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>):</span><br><span class="line">  doc = cmd.solrDoc</span><br><span class="line">  <span class="built_in">id</span> = doc.getFieldValue(<span class="string">&quot;id&quot;</span>)</span><br><span class="line">  logger.info(<span class="string">&quot;update-script#processAdd: id=&quot;</span> + <span class="built_in">id</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processDelete</span>(<span class="params">cmd</span>):</span><br><span class="line">    logger.info(<span class="string">&quot;update-script#processDelete&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processMergeIndexes</span>(<span class="params">cmd</span>):</span><br><span class="line">    logger.info(<span class="string">&quot;update-script#processMergeIndexes&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processCommit</span>(<span class="params">cmd</span>):</span><br><span class="line">    logger.info(<span class="string">&quot;update-script#processCommit&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">processRollback</span>(<span class="params">cmd</span>):</span><br><span class="line">    logger.info(<span class="string">&quot;update-script#processRollback&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">finish</span>():</span><br><span class="line">    logger.info(<span class="string">&quot;update-script#finish&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h2 id="实际应用示例"><a href="#实际应用示例" class="headerlink" title="实际应用示例"></a>实际应用示例</h2><h3 id="1-数据清洗和规范化"><a href="#1-数据清洗和规范化" class="headerlink" title="1. 数据清洗和规范化"></a>1. 数据清洗和规范化</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 电话号码格式化</span></span><br><span class="line">  <span class="keyword">var</span> phone = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;phone&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (phone) &#123;</span><br><span class="line">    <span class="comment">// 移除非数字字符</span></span><br><span class="line">    <span class="keyword">var</span> cleanPhone = phone.<span class="title function_">toString</span>().<span class="title function_">replace</span>(<span class="regexp">/\D/g</span>, <span class="string">&#x27;&#x27;</span>);</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;phone_clean&quot;</span>, cleanPhone);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 邮箱地址规范化</span></span><br><span class="line">  <span class="keyword">var</span> email = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;email&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (email) &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;email_domain&quot;</span>, email.<span class="title function_">toString</span>().<span class="title function_">split</span>(<span class="string">&#x27;@&#x27;</span>)[<span class="number">1</span>]);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 价格计算</span></span><br><span class="line">  <span class="keyword">var</span> price = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;price&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> discount = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;discount&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (price &amp;&amp; discount) &#123;</span><br><span class="line">    <span class="keyword">var</span> finalPrice = price * (<span class="number">1</span> - discount / <span class="number">100</span>);</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;final_price&quot;</span>, finalPrice);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-动态分类标记"><a href="#2-动态分类标记" class="headerlink" title="2. 动态分类标记"></a>2. 动态分类标记</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">  <span class="keyword">var</span> title = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;title&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> description = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;description&quot;</span>);</span><br><span class="line">  <span class="keyword">var</span> content = (title + <span class="string">&quot; &quot;</span> + description).<span class="title function_">toLowerCase</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 自动分类</span></span><br><span class="line">  <span class="keyword">var</span> categories = [];</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (content.<span class="title function_">includes</span>(<span class="string">&quot;java&quot;</span>) || content.<span class="title function_">includes</span>(<span class="string">&quot;spring&quot;</span>)) &#123;</span><br><span class="line">    categories.<span class="title function_">push</span>(<span class="string">&quot;java&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (content.<span class="title function_">includes</span>(<span class="string">&quot;python&quot;</span>) || content.<span class="title function_">includes</span>(<span class="string">&quot;django&quot;</span>)) &#123;</span><br><span class="line">    categories.<span class="title function_">push</span>(<span class="string">&quot;python&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">if</span> (content.<span class="title function_">includes</span>(<span class="string">&quot;javascript&quot;</span>) || content.<span class="title function_">includes</span>(<span class="string">&quot;nodejs&quot;</span>)) &#123;</span><br><span class="line">    categories.<span class="title function_">push</span>(<span class="string">&quot;javascript&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (categories.<span class="property">length</span> &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;auto_categories&quot;</span>, categories);</span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 优先级设置</span></span><br><span class="line">  <span class="keyword">if</span> (content.<span class="title function_">includes</span>(<span class="string">&quot;urgent&quot;</span>) || content.<span class="title function_">includes</span>(<span class="string">&quot;emergency&quot;</span>)) &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;priority&quot;</span>, <span class="string">&quot;high&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (content.<span class="title function_">includes</span>(<span class="string">&quot;normal&quot;</span>)) &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;priority&quot;</span>, <span class="string">&quot;medium&quot;</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;priority&quot;</span>, <span class="string">&quot;low&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-地理位置处理"><a href="#3-地理位置处理" class="headerlink" title="3. 地理位置处理"></a>3. 地理位置处理</h3><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> processAdd(cmd) &#123;</span><br><span class="line">  doc = cmd.solrDoc</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 地理编码</span></span><br><span class="line">  <span class="keyword">def</span> address = doc.getFieldValue(<span class="string">&#x27;address&#x27;</span>)</span><br><span class="line">  <span class="keyword">def</span> city = doc.getFieldValue(<span class="string">&#x27;city&#x27;</span>)</span><br><span class="line">  <span class="keyword">def</span> state = doc.getFieldValue(<span class="string">&#x27;state&#x27;</span>)</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (address &amp;&amp; city &amp;&amp; state) &#123;</span><br><span class="line">    <span class="keyword">def</span> fullAddress = <span class="string">&quot;$&#123;address&#125;, $&#123;city&#125;, $&#123;state&#125;&quot;</span></span><br><span class="line">    doc.setField(<span class="string">&#x27;full_address&#x27;</span>, fullAddress)</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 这里可以调用地理编码服务获取坐标</span></span><br><span class="line">    <span class="comment">// def coordinates = geocodeService.getCoordinates(fullAddress)</span></span><br><span class="line">    <span class="comment">// doc.setField(&#x27;location&#x27;, &quot;$&#123;coordinates.lat&#125;,$&#123;coordinates.lng&#125;&quot;)</span></span><br><span class="line">  &#125;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 时区处理</span></span><br><span class="line">  <span class="keyword">def</span> timezone = doc.getFieldValue(<span class="string">&#x27;timezone&#x27;</span>)</span><br><span class="line">  <span class="keyword">if</span> (timezone) &#123;</span><br><span class="line">    <span class="keyword">def</span> currentTime = <span class="keyword">new</span> Date()</span><br><span class="line">    doc.setField(<span class="string">&#x27;local_time&#x27;</span>, formatTimeForTimezone(currentTime, timezone))</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-内容增强"><a href="#4-内容增强" class="headerlink" title="4. 内容增强"></a>4. 内容增强</h3><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>)</span><br><span class="line">  doc = cmd.solrDoc</span><br><span class="line">  content = doc.getFieldValue(<span class="string">&#x27;content&#x27;</span>)</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> content</span><br><span class="line">    <span class="comment"># 提取关键词</span></span><br><span class="line">    words = content.split(<span class="regexp">/\W+/</span>).select &#123; |<span class="params">w</span>| w.length &gt; <span class="number">3</span> &#125;</span><br><span class="line">    keywords = words.group_by(&amp;<span class="symbol">:downcase</span>).map &#123; |<span class="params">k, v</span>| [k, v.size] &#125;</span><br><span class="line">                   .sort_by &#123; |<span class="params">_, count</span>| -count &#125;</span><br><span class="line">                   .first(<span class="number">10</span>)</span><br><span class="line">                   .map &#123; |<span class="params">word, _</span>| word &#125;</span><br><span class="line">    </span><br><span class="line">    doc.setField(<span class="string">&#x27;keywords_ss&#x27;</span>, keywords) <span class="keyword">if</span> keywords.any?</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 内容统计</span></span><br><span class="line">    doc.setField(<span class="string">&#x27;word_count&#x27;</span>, words.size)</span><br><span class="line">    doc.setField(<span class="string">&#x27;char_count&#x27;</span>, content.length)</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 语言检测 (简单版本)</span></span><br><span class="line">    <span class="keyword">if</span> content.match(<span class="regexp">/[\u4e00-\u9fff]/</span>)</span><br><span class="line">      doc.setField(<span class="string">&#x27;language&#x27;</span>, <span class="string">&#x27;zh&#x27;</span>)</span><br><span class="line">    <span class="keyword">elsif</span> content.match(<span class="regexp">/[a-zA-Z]/</span>)</span><br><span class="line">      doc.setField(<span class="string">&#x27;language&#x27;</span>, <span class="string">&#x27;en&#x27;</span>)</span><br><span class="line">    <span class="keyword">end</span></span><br><span class="line">  <span class="keyword">end</span></span><br><span class="line"><span class="keyword">end</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="性能优化和最佳实践"><a href="#性能优化和最佳实践" class="headerlink" title="性能优化和最佳实践"></a>性能优化和最佳实践</h2><h3 id="1-脚本优化"><a href="#1-脚本优化" class="headerlink" title="1. 脚本优化"></a>1. 脚本优化</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 缓存正则表达式</span></span><br><span class="line"><span class="keyword">var</span> emailRegex = <span class="regexp">/^[^\s@]+@[^\s@]+\.[^\s@]+$/</span>;</span><br><span class="line"><span class="keyword">var</span> phoneRegex = <span class="regexp">/^\d&#123;10,&#125;$/</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 使用缓存的正则表达式</span></span><br><span class="line">  <span class="keyword">var</span> email = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;email&quot;</span>);</span><br><span class="line">  <span class="keyword">if</span> (email &amp;&amp; emailRegex.<span class="title function_">test</span>(email)) &#123;</span><br><span class="line">    doc.<span class="title function_">setField</span>(<span class="string">&quot;email_valid&quot;</span>, <span class="literal">true</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-错误处理"><a href="#2-错误处理" class="headerlink" title="2. 错误处理"></a>2. 错误处理</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="keyword">try</span> &#123;</span><br><span class="line">    doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 业务逻辑</span></span><br><span class="line">    <span class="keyword">var</span> price = doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;price&quot;</span>);</span><br><span class="line">    <span class="keyword">if</span> (price &amp;&amp; !<span class="built_in">isNaN</span>(price)) &#123;</span><br><span class="line">      doc.<span class="title function_">setField</span>(<span class="string">&quot;price_category&quot;</span>, </span><br><span class="line">        price &gt; <span class="number">100</span> ? <span class="string">&quot;expensive&quot;</span> : <span class="string">&quot;affordable&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">  &#125; <span class="keyword">catch</span> (e) &#123;</span><br><span class="line">    logger.<span class="title function_">error</span>(<span class="string">&quot;Script error processing document: &quot;</span> + e.<span class="property">message</span>);</span><br><span class="line">    <span class="comment">// 可以选择返回false来跳过这个文档</span></span><br><span class="line">    <span class="comment">// return false;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置管理"><a href="#3-配置管理" class="headerlink" title="3. 配置管理"></a>3. 配置管理</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">updateRequestProcessorChain</span> <span class="attr">name</span>=<span class="string">&quot;enhanced-script&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.scripting.update.ScriptUpdateProcessorFactory&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;script&quot;</span>&gt;</span>data-cleaner.js<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;script&quot;</span>&gt;</span>categorizer.js<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;script&quot;</span>&gt;</span>validator.js<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;params&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;environment&quot;</span>&gt;</span>production<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;debug&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;allowed_categories&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span>&gt;</span>technology<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span>&gt;</span>business<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span>&gt;</span>science<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">processor</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.LogUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">processor</span> <span class="attr">class</span>=<span class="string">&quot;solr.RunUpdateProcessorFactory&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">updateRequestProcessorChain</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="1-脚本引擎问题"><a href="#1-脚本引擎问题" class="headerlink" title="1. 脚本引擎问题"></a>1. 脚本引擎问题</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查可用的脚本引擎</span></span><br><span class="line">java -<span class="built_in">cp</span> <span class="string">&quot;lib/*&quot;</span> -c <span class="string">&quot;</span></span><br><span class="line"><span class="string">import javax.script.ScriptEngineManager;</span></span><br><span class="line"><span class="string">var manager = new ScriptEngineManager();</span></span><br><span class="line"><span class="string">manager.getEngineFactories().forEach(factory -&gt; &#123;</span></span><br><span class="line"><span class="string">    System.out.println(factory.getEngineName() + &#x27; &#x27; + factory.getEngineVersion());</span></span><br><span class="line"><span class="string">&#125;);</span></span><br><span class="line"><span class="string">&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-调试脚本"><a href="#2-调试脚本" class="headerlink" title="2. 调试脚本"></a>2. 调试脚本</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 调试信息</span></span><br><span class="line">  logger.<span class="title function_">info</span>(<span class="string">&quot;Processing document with ID: &quot;</span> + doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 打印所有字段</span></span><br><span class="line">  <span class="keyword">var</span> fieldNames = doc.<span class="title function_">getFieldNames</span>().<span class="title function_">toArray</span>();</span><br><span class="line">  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; fieldNames.<span class="property">length</span>; i++) &#123;</span><br><span class="line">    logger.<span class="title function_">debug</span>(<span class="string">&quot;Field: &quot;</span> + fieldNames[i] + <span class="string">&quot; = &quot;</span> + </span><br><span class="line">                doc.<span class="title function_">getFieldValue</span>(fieldNames[i]));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-性能监控"><a href="#3-性能监控" class="headerlink" title="3. 性能监控"></a>3. 性能监控</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">function</span> <span class="title function_">processAdd</span>(<span class="params">cmd</span>) &#123;</span><br><span class="line">  <span class="keyword">var</span> startTime = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">  </span><br><span class="line">  <span class="comment">// 处理逻辑</span></span><br><span class="line">  doc = cmd.<span class="property">solrDoc</span>;</span><br><span class="line">  <span class="comment">// ... 处理代码 ...</span></span><br><span class="line">  </span><br><span class="line">  <span class="keyword">var</span> endTime = <span class="title class_">Date</span>.<span class="title function_">now</span>();</span><br><span class="line">  <span class="keyword">var</span> processingTime = endTime - startTime;</span><br><span class="line">  </span><br><span class="line">  <span class="keyword">if</span> (processingTime &gt; <span class="number">100</span>) &#123;  <span class="comment">// 超过100ms记录警告</span></span><br><span class="line">    logger.<span class="title function_">warn</span>(<span class="string">&quot;Slow script processing: &quot;</span> + processingTime + <span class="string">&quot;ms for doc &quot;</span> + </span><br><span class="line">                doc.<span class="title function_">getFieldValue</span>(<span class="string">&quot;id&quot;</span>));</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Solr脚本更新处理器提供了强大的文档处理能力，支持多种脚本语言。通过合理使用脚本，可以实现复杂的数据转换、验证和增强功能。在使用时需要注意性能影响和安全性，建议在开发环境中充分测试后再部署到生产环境。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E6%96%87%E6%A1%A3%E5%A4%84%E7%90%86/">文档处理</a>
+  
+    <a class="article-tag" href="/tags/%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8/">脚本更新处理器</a>
+  
+    <a class="article-tag" href="/tags/JavaScript/">JavaScript</a>
+  
+    <a class="article-tag" href="/tags/Groovy/">Groovy</a>
+  
+    <a class="article-tag" href="/tags/JRuby/">JRuby</a>
+  
+    <a class="article-tag" href="/tags/Python/">Python</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/24/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A8%A1%E5%9D%97%E7%B3%BB%E7%BB%9F%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：模块系统详解与安装配置指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/22/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E8%B5%84%E6%BA%90%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E4%B8%8E%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：资源加载机制与管理详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E5%A4%9A%E8%AF%AD%E8%A8%80%E8%84%9A%E6%9C%AC%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：脚本更新处理器详解与多语言脚本实例</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%9F%E8%83%BD%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.</span> <span class="nav-text">功能特性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E8%A6%81%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">模块要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E8%84%9A%E6%9C%AC%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E8%84%9A%E6%9C%AC%E5%BC%95%E6%93%8E"><span class="nav-number">1.3.</span> <span class="nav-text">启用脚本更新处理器和脚本引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript%E5%BC%95%E6%93%8E"><span class="nav-number">1.3.1.</span> <span class="nav-text">JavaScript引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E8%84%9A%E6%9C%AC%E5%BC%95%E6%93%8E"><span class="nav-number">1.3.2.</span> <span class="nav-text">其他脚本引擎</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">配置参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E6%89%A7%E8%A1%8C%E4%B8%8A%E4%B8%8B%E6%96%87"><span class="nav-number">1.5.</span> <span class="nav-text">脚本执行上下文</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E9%80%9F%E4%BD%93%E9%AA%8C"><span class="nav-number">1.6.</span> <span class="nav-text">快速体验</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E8%AF%AD%E8%A8%80%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.</span> <span class="nav-text">脚本语言示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.1.</span> <span class="nav-text">JavaScript示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ruby%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.2.</span> <span class="nav-text">Ruby示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">已知问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Groovy%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.3.</span> <span class="nav-text">Groovy示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Python%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.4.</span> <span class="nav-text">Python示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.8.</span> <span class="nav-text">实际应用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E6%B8%85%E6%B4%97%E5%92%8C%E8%A7%84%E8%8C%83%E5%8C%96"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 数据清洗和规范化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%8A%A8%E6%80%81%E5%88%86%E7%B1%BB%E6%A0%87%E8%AE%B0"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 动态分类标记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9C%B0%E7%90%86%E4%BD%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="nav-number">1.8.3.</span> <span class="nav-text">3. 地理位置处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%86%85%E5%AE%B9%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.8.4.</span> <span class="nav-text">4. 内容增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%92%8C%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.9.</span> <span class="nav-text">性能优化和最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%84%9A%E6%9C%AC%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.1.</span> <span class="nav-text">1. 脚本优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.9.2.</span> <span class="nav-text">2. 错误处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">1.9.3.</span> <span class="nav-text">3. 配置管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.10.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%84%9A%E6%9C%AC%E5%BC%95%E6%93%8E%E9%97%AE%E9%A2%98"><span class="nav-number">1.10.1.</span> <span class="nav-text">1. 脚本引擎问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E8%84%9A%E6%9C%AC"><span class="nav-number">1.10.2.</span> <span class="nav-text">2. 调试脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.10.3.</span> <span class="nav-text">3. 性能监控</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2025 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
