@@ -140,33 +140,6 @@ var themeMenus = {};
 </header>
 
 
-  <div id="originBgDiv" style="background: #fff; width: 100%;">
-
-      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
-        <img id="originBg" width="100%" alt="" src="">
-      </div>
-
-  </div>
-
-  <script>
-  function setAboutIMG(){
-      var imgUrls = "".split(",");
-      var random = Math.floor((Math.random() * imgUrls.length ));
-      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
-        document.getElementById("originBg").src=imgUrls[random];
-      } else {
-        document.getElementById("originBg").src='/' + imgUrls[random];
-      }
-  }
-  bgDiv=document.getElementById("originBgDiv");
-  if(location.pathname.match('about')){
-    setAboutIMG();
-    bgDiv.style.display='block';
-  }else{
-    bgDiv.style.display='none';
-  }
-  </script>
-
 
 
   <div id="container">
@@ -907,9 +880,9 @@ var themeMenus = {};
   
     <a class="article-tag" href="/tags/Solr%E6%95%99%E7%A8%8B/">Solr教程</a>
   
-    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
-  
     <a class="article-tag" href="/tags/solr%E5%85%A5%E9%97%A8/">solr入门</a>
+  
+    <a class="article-tag" href="/tags/solr%E7%8B%AC%E5%AE%B6/">solr独家</a>
   
     <a class="article-tag" href="/tags/%E6%96%B0%E6%89%8B%E5%BF%85%E7%9C%8B/">新手必看</a>
   

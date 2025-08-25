@@ -142,33 +142,6 @@ var themeMenus = {};
 </header>
 
 
-  <div id="originBgDiv" style="background: #fff; width: 100%;">
-
-      <div style="max-height:600px; overflow: hidden;  display: flex; display: -webkit-flex; align-items: center;">
-        <img id="originBg" width="100%" alt="" src="">
-      </div>
-
-  </div>
-
-  <script>
-  function setAboutIMG(){
-      var imgUrls = "".split(",");
-      var random = Math.floor((Math.random() * imgUrls.length ));
-      if (imgUrls[random].startsWith('http') || imgUrls[random].indexOf('://') >= 0) {
-        document.getElementById("originBg").src=imgUrls[random];
-      } else {
-        document.getElementById("originBg").src='/' + imgUrls[random];
-      }
-  }
-  bgDiv=document.getElementById("originBgDiv");
-  if(location.pathname.match('about')){
-    setAboutIMG();
-    bgDiv.style.display='block';
-  }else{
-    bgDiv.style.display='none';
-  }
-  </script>
-
 
 
   <div id="container">
@@ -223,7 +196,7 @@ var themeMenus = {};
 </ul>
 <h3 id="联系我们"><a href="#联系我们" class="headerlink" title="联系我们"></a>联系我们</h3><p>如果您有任何问题或建议，欢迎通过以下方式联系我们：</p>
 <ul>
-<li><strong>技术支持邮箱</strong>: <a href="mailto:&#x73;&#117;&#x70;&#x70;&#x6f;&#x72;&#x74;&#64;&#x73;&#x6f;&#x6c;&#x72;&#46;&#x63;&#99;">support@solr.cc</a></li>
+<li><strong>技术支持邮箱</strong>: <a href="mailto:&#115;&#x75;&#112;&#112;&#111;&#114;&#x74;&#x40;&#x73;&#111;&#108;&#114;&#x2e;&#x63;&#x63;">support@solr.cc</a></li>
 </ul>
 <h4 id="提问建议"><a href="#提问建议" class="headerlink" title="提问建议"></a>提问建议</h4><p>为了更好地为您提供帮助，发送邮件时请：</p>
 <ol>
