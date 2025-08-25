@@ -22,12 +22,12 @@
     <meta name="description" content="本练习将使用电影数据集，重点探索Solr的分面（Faceting）功能，这是构建强大搜索界面的关键特性。 集合设置1. 创建Films集合使用_default配置集创建一个新的”films”集合： 1bin&#x2F;solr create -c films --shards 2 --replication-factor 2  这将创建一个具有2个分片和2个副本的集合，提供良好的容错性。 模式准备2. 创建">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Solr教程：练习二 - 索引Films数据和分面探索">
-<meta property="og:url" content="https://solrcn.github.io/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/index.html">
+<meta property="og:url" content="https://solrcn.github.io/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/index.html">
 <meta property="og:site_name" content="Solr Community of China">
 <meta property="og:description" content="本练习将使用电影数据集，重点探索Solr的分面（Faceting）功能，这是构建强大搜索界面的关键特性。 集合设置1. 创建Films集合使用_default配置集创建一个新的”films”集合： 1bin&#x2F;solr create -c films --shards 2 --replication-factor 2  这将创建一个具有2个分片和2个副本的集合，提供良好的容错性。 模式准备2. 创建">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2025-08-24T16:00:00.000Z">
-<meta property="article:modified_time" content="2025-08-25T06:24:14.825Z">
+<meta property="article:published_time" content="2024-11-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T06:35:58.832Z">
 <meta property="article:author" content="longkeyy">
 <meta property="article:tag" content="Solr教程">
 <meta property="article:tag" content="Facets">
@@ -37,10 +37,10 @@
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="https://solrcn.github.io/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">
+<link rel="canonical" href="https://solrcn.github.io/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/","path":"2025/08/25/Solr教程-练习二-索引Films数据和分面探索/","title":"Solr教程：练习二 - 索引Films数据和分面探索"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/","path":"2024/11/20/Solr教程-练习二-索引Films数据和分面探索/","title":"Solr教程：练习二 - 索引Films数据和分面探索"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
 <title>Solr教程：练习二 - 索引Films数据和分面探索 | Solr Community of China</title>
@@ -184,7 +184,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2024/11/20/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%BA%8C-%E7%B4%A2%E5%BC%95Films%E6%95%B0%E6%8D%AE%E5%92%8C%E5%88%86%E9%9D%A2%E6%8E%A2%E7%B4%A2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -212,9 +212,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2025-08-25 00:00:00 / 修改时间：14:24:14" itemprop="dateCreated datePublished" datetime="2025-08-25T00:00:00+08:00">2025-08-25</time>
+      <time title="创建时间：2024-11-20 00:00:00" itemprop="dateCreated datePublished" datetime="2024-11-20T00:00:00+08:00">2024-11-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 14:35:58" itemprop="dateModified" datetime="2025-08-25T14:35:58+08:00">2025-08-25</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -329,13 +335,13 @@
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E9%AB%98%E7%BA%A7%E7%BB%83%E4%B9%A0-%E5%90%91%E9%87%8F%E6%90%9C%E7%B4%A2/" rel="prev" title="Solr教程：高级练习 - 向量搜索">
-                  <i class="fa fa-angle-left"></i> Solr教程：高级练习 - 向量搜索
+                <a href="/2024/11/15/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%80-%E7%B4%A2%E5%BC%95Techproducts%E6%95%B0%E6%8D%AE/" rel="prev" title="Solr教程：练习一 - 索引Techproducts数据">
+                  <i class="fa fa-angle-left"></i> Solr教程：练习一 - 索引Techproducts数据
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2025/08/25/Solr%E6%95%99%E7%A8%8B-%E9%AB%98%E7%BA%A7%E7%BB%83%E4%B9%A0-SolrCloud%E9%9B%86%E7%BE%A4/" rel="next" title="Solr教程：高级练习 - SolrCloud集群">
-                  Solr教程：高级练习 - SolrCloud集群 <i class="fa fa-angle-right"></i>
+                <a href="/2024/11/25/Solr%E6%95%99%E7%A8%8B-%E7%BB%83%E4%B9%A0%E4%B8%89-%E7%B4%A2%E5%BC%95%E6%82%A8%E8%87%AA%E5%B7%B1%E7%9A%84%E6%95%B0%E6%8D%AE/" rel="next" title="Solr教程：练习三 - 索引您自己的数据">
+                  Solr教程：练习三 - 索引您自己的数据 <i class="fa fa-angle-right"></i>
                 </a>
             </div>
           </div>
