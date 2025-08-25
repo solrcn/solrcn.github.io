@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr查询：分析组件分析组件允许用户在结果集上计算复杂的统计聚合。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 该组件使用户能够以各种方式与数据交互，通过多样化的分析函数集合以及强大的分面功能。标准分面在分析组件中得到支持，并增加了利用其分析能力的功能。 模块这通过需要在使用前启用的analytics Solr">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：分析组件">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询：分析组件分析组件允许用户在结果集上计算复杂的统计聚合。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 该组件使用户能够以各种方式与数据交互，通过多样化的分析函数集合以及强大的分面功能。标准分面在分析组件中得到支持，并增加了利用其分析能力的功能。 模块这通过需要在使用前启用的analytics Solr">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:20:29.653Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="分析组件">
+<meta property="article:tag" content="统计聚合">
+<meta property="article:tag" content="分面">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/","path":"2025/02/01/Solr查询：分析组件/","title":"Solr查询：分析组件"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr查询：分析组件 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：分析组件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97"><span class="nav-number">1.1.</span> <span class="nav-text">模块</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">分析配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E8%AF%AD%E6%B3%95"><span class="nav-number">1.3.</span> <span class="nav-text">请求语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.4.</span> <span class="nav-text">表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">1.4.1.</span> <span class="nav-text">构建表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%BB%84%E4%BB%B6"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">表达式组件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E9%A1%BA%E5%BA%8F"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">组件顺序</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E6%9E%84%E5%BB%BA"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">示例构建</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A1%A8%E8%BE%BE%E5%BC%8F%E5%9F%BA%E6%95%B0%EF%BC%88%E5%A4%9A%E5%80%BC%E5%92%8C%E5%8D%95%E5%80%BC%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">表达式基数（多值和单值）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%9E%8B%E5%92%8C%E9%9A%90%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.4.3.</span> <span class="nav-text">类型和隐式转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%98%E9%87%8F%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.</span> <span class="nav-text">变量函数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%98%E9%95%BF%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">变长参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#For-Each%E5%87%BD%E6%95%B0"><span class="nav-number">1.5.3.</span> <span class="nav-text">For-Each函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E7%BB%84%E5%92%8C%E5%88%86%E9%9D%A2"><span class="nav-number">1.6.</span> <span class="nav-text">分组和分面</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E9%9D%A2%E6%8E%92%E5%BA%8F"><span class="nav-number">1.6.1.</span> <span class="nav-text">分面排序</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0-1"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%80%BC%E5%88%86%E9%9D%A2"><span class="nav-number">1.6.2.</span> <span class="nav-text">值分面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0-2"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E9%80%8F%E8%A7%86%E5%88%86%E9%9D%A2"><span class="nav-number">1.6.3.</span> <span class="nav-text">分析透视分面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0-3"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E8%8C%83%E5%9B%B4%E5%88%86%E9%9D%A2"><span class="nav-number">1.6.4.</span> <span class="nav-text">分析范围分面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0-4"><span class="nav-number">1.6.4.1.</span> <span class="nav-text">参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%88%86%E9%9D%A2"><span class="nav-number">1.6.5.</span> <span class="nav-text">查询分面</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0-5"><span class="nav-number">1.6.5.1.</span> <span class="nav-text">参数</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr查询：分析组件 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr查询：分析组件
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-01 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-01T00:00:00+08:00">2025-02-01</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:20:29" itemprop="dateModified" datetime="2025-08-25T16:20:29+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%9F%A5%E8%AF%A2/" itemprop="url" rel="index"><span itemprop="name">Solr查询</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr查询：分析组件"><a href="#Solr查询：分析组件" class="headerlink" title="Solr查询：分析组件"></a>Solr查询：分析组件</h1><p>分析组件允许用户在结果集上计算复杂的统计聚合。</p>
+<p><strong>警告：</strong> 分析组件已被弃用。我们建议查看<a href="json-facet-api.html">JSON分面API</a>中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。</p>
+<p>该组件使用户能够以各种方式与数据交互，通过多样化的分析函数集合以及强大的分面功能。<br>标准分面在分析组件中得到支持，并增加了利用其分析能力的功能。</p>
+<h2 id="模块"><a href="#模块" class="headerlink" title="模块"></a>模块</h2><p>这通过需要在使用前启用的<code>analytics</code> <a href="../configuration-guide/solr-modules.html">Solr模块</a>提供。</p>
+<h2 id="分析配置"><a href="#分析配置" class="headerlink" title="分析配置"></a>分析配置</h2><p>由于分析框架是一个_搜索组件_，它必须声明为搜索组件并添加到搜索处理程序中。</p>
+<p>对于在云集合上的分布式分析请求，该组件严格使用<code>AnalyticsHandler</code>进行分片间通信。<br>用户不应使用Analytics Handler提交分析请求。</p>
+<p>接下来您需要注册请求处理程序和搜索组件。<br>将以下行添加到<code>solrconfig.xml</code>中，接近其他请求处理程序的定义：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 处理用户请求 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;analytics&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.handler.component.AnalyticsComponent&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/select&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SearchHandler&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;last-components&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span>&gt;</span>analytics<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 用于分布式请求期间的分片间通信 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/analytics&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.handler.AnalyticsHandler&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>要使这些更改生效，请重启Solr或重新加载核心或集合。</p>
+<h2 id="请求语法"><a href="#请求语法" class="headerlink" title="请求语法"></a>请求语法</h2><p>分析请求通过<code>analytics</code>参数传递给发送到<a href="../configuration-guide/requesthandlers-searchcomponents.html#search-handlers">搜索处理程序</a>的请求。<br>由于分析请求在搜索处理程序请求内部发送，它将基于搜索处理程序确定的结果集计算结果。</p>
+<p>例如，此curl命令编码并POST一个简单的分析请求到搜索处理程序：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ curl --data-binary <span class="string">&#x27;analytics=&#123;</span></span><br><span class="line"><span class="string">   &quot;expressions&quot; : &#123;</span></span><br><span class="line"><span class="string">      &quot;revenue&quot; : &quot;sum(mult(price,quantity))&quot;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">   &#125;&#x27;</span></span><br><span class="line">   http://localhost:8983/solr/sales/select?q=*:*&amp;wt=json&amp;rows=0</span><br></pre></td></tr></table></figure>
+
+<p>任何分析请求有3个主要部分：</p>
+<p><strong>表达式：</strong><br>在整个结果集上执行的计算列表。<br>表达式将搜索结果聚合为要返回的单个值。<br>此列表完全独立于每个分组中定义的表达式。<br>在&lt;&lt;表达式&gt;&gt;部分了解更多信息。</p>
+<p><strong>函数：</strong><br>一个或多个在请求的其余部分中使用的变量函数。<br>这些本质上是lambda函数，可以以多种方式组合。<br>这些函数用于在<code>expressions</code>以及<code>groupings</code>中定义的表达式。</p>
+<p><strong>分组：</strong><br>除了表达式之外要计算的分组列表。<br>分组包含一组分面和要在这些分面上计算的表达式列表。<br>分组中定义的表达式仅在该分组中定义的分面上计算。</p>
+<blockquote>
+<p><strong>可选参数</strong></p>
+<p>请求中必须存在<code>expressions</code>或<code>groupings</code>参数之一，否则没有要计算的分析。<br><code>functions</code>参数始终是可选的。</p>
+</blockquote>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale()&quot;</span><span class="punctuation">:</span> <span class="string">&quot;mult(price,quantity)&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale())&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;groupings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sales&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;stddev_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;stddev(sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;min_price&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;min(price)&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;max_quantity&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(quantity)&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;facets&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;category&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;value&quot;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;fill_missing(category, &#x27;No Category&#x27;)&quot;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;sort&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                        <span class="attr">&quot;criteria&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                            <span class="punctuation">&#123;</span></span><br><span class="line">                                <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;expression&quot;</span><span class="punctuation">,</span></span><br><span class="line">                                <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;min_price&quot;</span><span class="punctuation">,</span></span><br><span class="line">                                <span class="attr">&quot;direction&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;ascending&quot;</span></span><br><span class="line">                            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                            <span class="punctuation">&#123;</span></span><br><span class="line">                                <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;facetvalue&quot;</span><span class="punctuation">,</span></span><br><span class="line">                                <span class="attr">&quot;direction&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;descending&quot;</span></span><br><span class="line">                            <span class="punctuation">&#125;</span></span><br><span class="line">                        <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">                        <span class="attr">&quot;limit&quot;</span> <span class="punctuation">:</span> <span class="number">10</span></span><br><span class="line">                    <span class="punctuation">&#125;</span></span><br><span class="line">                <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;temps&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;query&quot;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;queries&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                        <span class="attr">&quot;hot&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;temp:[90 TO *]&quot;</span><span class="punctuation">,</span></span><br><span class="line">                        <span class="attr">&quot;cold&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;temp:[* TO 50]&quot;</span></span><br><span class="line">                    <span class="punctuation">&#125;</span></span><br><span class="line">                <span class="punctuation">&#125;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="表达式"><a href="#表达式" class="headerlink" title="表达式"></a>表达式</h2><p>表达式是从分析组件请求信息的方式。<br>这些是您希望计算并在响应中返回的统计表达式。</p>
+<h3 id="构建表达式"><a href="#构建表达式" class="headerlink" title="构建表达式"></a>构建表达式</h3><h4 id="表达式组件"><a href="#表达式组件" class="headerlink" title="表达式组件"></a>表达式组件</h4><p>表达式使用字段、常量、映射函数和减少函数构建。<br>这些可以定义的方式如下所述。</p>
+<p><strong>源：</strong></p>
+<ul>
+<li><p>常量：在表达式中定义的值。<br>支持的常量类型在<a href="analytics-expression-sources.html#constants">常量</a>部分中描述。</p>
+</li>
+<li><p>字段：从索引读取的Solr字段。<br>支持的字段在<a href="analytics-expression-sources.html#supported-field-types">支持的字段类型</a>部分中列出。</p>
+</li>
+</ul>
+<p><strong>映射函数：</strong><br>映射函数为每个Solr文档或减少操作映射值。<br>提供的映射函数在<a href="analytics-mapping-functions.html">分析映射函数</a>中详细说明。</p>
+<ul>
+<li><p>未减少的映射：将字段与另一个字段或常量映射，为每个Solr文档返回一个值。<br>未减少的映射函数可以将字段、常量以及其他未减少的映射函数作为输入。</p>
+</li>
+<li><p>减少的映射：将减少函数与另一个减少函数或常量映射，返回单个值。</p>
+</li>
+</ul>
+<p><strong>减少函数：</strong><br>将源和&#x2F;或未减少的映射函数的值为每个Solr文档减少为单个值的函数。<br>提供的减少函数在<a href="analytics-reduction-functions.html">分析减少函数</a>中详细说明。</p>
+<h4 id="组件顺序"><a href="#组件顺序" class="headerlink" title="组件顺序"></a>组件顺序</h4><p>表达式组件必须按以下顺序使用以创建有效表达式。</p>
+<ol>
+<li>减少的映射函数<ol>
+<li>常量</li>
+<li>减少函数<ol>
+<li>源</li>
+<li>未减少的映射函数<ol>
+<li>源</li>
+<li>未减少的映射函数</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>减少的映射函数</li>
+</ol>
+</li>
+<li>减少函数</li>
+</ol>
+<p>此顺序基于以下规则：</p>
+<ul>
+<li>没有减少函数可以是另一个减少函数的参数。<br>由于所有减少都在一个步骤中完成，一个减少函数不能依赖于另一个的结果。</li>
+<li>没有字段可以保持未减少，因为分析组件不能为表达式返回值列表（每个文档一个）。<br>每个表达式都必须减少为单个值。</li>
+<li>创建函数时映射函数不是必需的，但是可以使用任意多的嵌套映射。</li>
+<li>嵌套映射函数必须是相同类型，因此要么都必须是未减少的，要么都必须是减少的。<br>减少的映射函数不能将未减少的映射函数作为参数，反之亦然。</li>
+</ul>
+<h4 id="示例构建"><a href="#示例构建" class="headerlink" title="示例构建"></a>示例构建</h4><p>使用上述定义和顺序，可以将示例表达式分解为其组件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">div(<span class="built_in">sum</span>(a,fill_missing(b,0)),add(10.5,count(mult(a,c))))</span><br></pre></td></tr></table></figure>
+
+<p>作为整体，这是一个减少的映射函数。<br><code>div</code>函数是减少的映射函数，因为它是提供的映射函数并且具有减少的参数。</p>
+<p>如果我们进一步分解表达式：</p>
+<ul>
+<li><p><code>sum(a,fill_missing(b,0))</code>：减少函数<br><code>sum</code>是提供的减少函数。</p>
+<ul>
+<li><code>a</code>：字段</li>
+<li><code>fill_missing(b,0)</code>：未减少的映射函数<br><code>fill_missing</code>是未减少的映射函数，因为它是提供的映射函数并且具有字段参数。<ul>
+<li><code>b</code>：字段</li>
+<li><code>0</code>：常量</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><code>add(10.5,count(mult(a,c)))</code>：减少的映射函数<br><code>add</code>是减少的映射函数，因为它是提供的映射函数并且具有减少函数参数。</p>
+<ul>
+<li><code>10.5</code>：常量</li>
+<li><code>count(mult(a,c))</code>：减少函数<br><code>count</code>是提供的减少函数。<ul>
+<li><code>mult(a,c)</code>：未减少的映射函数<br><code>mult</code>是未减少的映射函数，因为它是提供的映射函数并且具有两个字段参数。<ul>
+<li><code>a</code>：字段</li>
+<li><code>c</code>：字段</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="表达式基数（多值和单值）"><a href="#表达式基数（多值和单值）" class="headerlink" title="表达式基数（多值和单值）"></a>表达式基数（多值和单值）</h3><p>所有多值表达式的根是多值字段。<br>单值表达式可以从常量或单值字段开始。<br>所有单值表达式都可以被视为包含一个值的多值表达式。</p>
+<p>单值表达式和多值表达式可以在许多映射函数中一起使用，以及单独使用的多值表达式和一起使用的许多单值表达式。<br>例如：</p>
+<p><code>add(&lt;单值双精度&gt;, &lt;单值双精度&gt;, ...)</code>：<br>返回一个单值双精度表达式，其中每个表达式的值相加。</p>
+<p><code>add(&lt;单值双精度&gt;, &lt;多值双精度&gt;)</code>：<br>返回一个多值双精度表达式，其中第二个表达式的每个值都加到第一个表达式的单个值上。</p>
+<p><code>add(&lt;多值双精度&gt;, &lt;单值双精度&gt;)</code>：<br>作用与上述函数相同。</p>
+<p><code>add(&lt;多值双精度&gt;)</code>：<br>返回一个单值双精度表达式，它是参数表达式的多个值的总和。</p>
+<h3 id="类型和隐式转换"><a href="#类型和隐式转换" class="headerlink" title="类型和隐式转换"></a>类型和隐式转换</h3><p>新的分析组件当前支持下表中列出的类型。<br>这些类型为以下关系启用了单向隐式转换：</p>
+<table>
+<thead>
+<tr>
+<th>类型</th>
+<th>隐式转换为</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Boolean</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Date</td>
+<td>Long, String</td>
+</tr>
+<tr>
+<td>Integer</td>
+<td>Long, Float, Double, String</td>
+</tr>
+<tr>
+<td>Long</td>
+<td>Double, String</td>
+</tr>
+<tr>
+<td>Float</td>
+<td>Double, String</td>
+</tr>
+<tr>
+<td>Double</td>
+<td>String</td>
+</tr>
+<tr>
+<td>String</td>
+<td><em>无</em></td>
+</tr>
+</tbody></table>
+<p>隐式转换意味着如果函数要求某种类型的值作为参数，参数将自动转换为该类型（如果可能）。</p>
+<p>例如，<code>concat()</code>只接受字符串参数，由于所有类型都可以隐式转换为字符串，因此任何类型都作为参数被接受。</p>
+<p>这也适用于动态类型函数。<br><code>fill_missing()</code>需要两个相同类型的参数。<br>但是，隐式转换为相同类型的两种类型也可以使用。</p>
+<p>例如，<code>fill_missing(&lt;长整数&gt;,&lt;浮点数&gt;)</code>将被转换为<code>fill_missing(&lt;双精度&gt;,&lt;双精度&gt;)</code>，因为长整数不能转换为浮点数，浮点数不能隐式转换为长整数。</p>
+<p>隐式转换有一个顺序，其中更专门的类型排在更一般的类型之前。<br>因此，尽管长整数和浮点数都可以隐式转换为双精度和字符串，但它们将被转换为双精度。<br>这是因为双精度是比字符串更专门的类型，每种类型都可以转换为字符串。</p>
+<p>顺序与上表中的顺序相同。</p>
+<p>基数也可以隐式转换。<br>单值表达式总是可以隐式转换为多值表达式，因为所有单值表达式都是具有一个值的多值表达式。</p>
+<p>隐式转换只在表达式没有它就不会”编译”时发生。<br>如果表达式最初遵循所有类型规则，则不会发生隐式转换。<br>诸如<code>string()</code>、<code>date()</code>、<code>round()</code>、<code>floor()</code>和<code>ceil()</code>等函数充当显式转换，声明所需的类型。<br>但是<code>round()</code>、<code>floor()</code>和<code>ceil()</code>可以返回int或long，具体取决于参数类型。</p>
+<h2 id="变量函数"><a href="#变量函数" class="headerlink" title="变量函数"></a>变量函数</h2><p>变量函数是缩短表达式并使编写分析查询更容易的方法。<br>它们本质上是在请求中定义的lambda函数。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale()&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;mult(price,quantity)&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale())&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在上述请求中，不是写两次<code>mult(price,quantity)</code>，而是定义了一个函数<code>sale()</code>来抽象这个概念。<br>然后在多个表达式中使用该函数。</p>
+<p>假设我们想要查看特定类别的销售：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;clothing_sale()&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;filter(mult(price,quantity),equal(category,&#x27;Clothing&#x27;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;kitchen_sale()&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;filter(mult(price,quantity),equal(category,\&quot;Kitchen\&quot;))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(clothing_sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(clothing_sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;max_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(kitchen_sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(kitchen_sale())&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="参数"><a href="#参数" class="headerlink" title="参数"></a>参数</h3><p>与其为每个类别制作一个函数，将<code>category</code>用作<code>sale()</code>函数的输入会更容易。<br>此功能的示例如下所示：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale(cat)&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;filter(mult(price,quantity),equal(category,cat))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(\&quot;Clothing\&quot;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Clothing&#x27;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;max_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(\&quot;Kitchen\&quot;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Kitchen&#x27;))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>变量函数可以接受任意数量的参数，并在函数表达式中将它们用作字段或常量。</p>
+<h3 id="变长参数"><a href="#变长参数" class="headerlink" title="变长参数"></a>变长参数</h3><p>有些分析函数接受可变数量的参数。<br>因此有些用例需要变量函数接受可变数量的参数。</p>
+<p>例如，产品的价格可能有多个但未确定数量的组件。<br>如果最后一个参数后跟<code>..</code>，则函数可以接受可变长度的参数</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale(cat, costs..)&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;filter(mult(add(costs),quantity),equal(category,cat))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(&#x27;Clothing&#x27;, material, tariff, tax))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_clothing_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Clothing&#x27;, material, tariff, tax))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;max_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(&#x27;Kitchen&#x27;, material, construction))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_kitchen_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Kitchen&#x27;, material, construction))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在上述示例中，变长参数用于封装用于产品的所有成本。<br>变长参数没有确定的参数数量请求，因此服装表达式可以使用3个，厨房表达式可以使用2个。<br>当调用<code>sale()</code>函数时，<code>costs</code>扩展为给定的参数。</p>
+<p>因此在上述请求中，在<code>sale</code>函数内部：</p>
+<ul>
+<li><code>add(costs)</code></li>
+</ul>
+<p>扩展为以下两个：</p>
+<ul>
+<li><code>add(material, tariff, tax)</code></li>
+<li><code>add(material, construction)</code></li>
+</ul>
+<h3 id="For-Each函数"><a href="#For-Each函数" class="headerlink" title="For-Each函数"></a>For-Each函数</h3><p><strong>注意：高级功能</strong></p>
+<p>虽然上述功能允许将未定义数量的参数传递给函数，但它不允许与这些参数交互。</p>
+<p>很多时候我们可能想要在每个参数上包装附加函数。<br>例如，也许我们想要同时查看多个类别。<br>所以我们想要看到<code>category EQUALS x *OR* category EQUALS y</code>等等。</p>
+<p>为了做到这一点，我们需要使用for-each lambda函数，它转换变长参数的每个值。<br>for-each在变长参数后用<code>:</code>字符开始。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale(cats..)&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;filter(mult(price,quantity),or(cats:equal(category,_)))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;max_sale_1&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(&#x27;Clothing&#x27;, &#x27;Kitchen&#x27;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_sale_1&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Clothing&#x27;, &#x27;Kitchen&#x27;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;max_sale_2&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale(&#x27;Electronics&#x27;, &#x27;Entertainment&#x27;, &#x27;Travel&#x27;))&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;med_sale_2&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale(&#x27;Electronics&#x27;, &#x27;Entertainment&#x27;, &#x27;Travel&#x27;))&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个例子中，<code>cats:</code>是在每个<code>cats</code>参数上开始for-each lambda函数的语法，<code>_</code>字符用于在for-each的每次迭代中引用<code>cats</code>的值。<br>当调用<code>sale(&quot;Clothing&quot;, &quot;Kitchen&quot;)</code>时，lambda函数<code>equal(category,_)</code>在<code>or()</code>函数内部应用于Clothing和Kitchen。</p>
+<p>使用所有这些规则，表达式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sale(&quot;Clothing&quot;,&quot;Kitchen&quot;)</span><br></pre></td></tr></table></figure>
+
+<p>扩展为：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">filter(mult(price,quantity),or(equal(category,&quot;Kitchen&quot;),equal(category,&quot;Clothing&quot;)))</span><br></pre></td></tr></table></figure>
+
+<p>由表达式解析器处理。</p>
+<h2 id="分组和分面"><a href="#分组和分面" class="headerlink" title="分组和分面"></a>分组和分面</h2><p>分面，就像在Solr的其他部分一样，允许将分析结果按表达式计算的数据的属性进行分解和分组。</p>
+<p>分析组件当前可用的分面有值分面、透视分面、范围分面和查询分面。<br>每个分面都需要在定义的分组中有唯一的名称，并且没有分面可以在分组之外定义。</p>
+<p>分组允许用户在一组分面上计算相同的表达式分组。<br>分组必须同时给出<code>expressions</code>和<code>facets</code>。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;functions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sale()&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;mult(price,quantity)&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;groupings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;sales_numbers&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;expressions&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max(sale())&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;median(sale())&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;facets&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;&lt;name&gt;&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;&lt; facet request &gt;&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;analytics_response&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;groupings&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;sales_numbers&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;&lt;name&gt;&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;&lt; facet response &gt;&quot;</span></span><br><span class="line">            <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="分面排序"><a href="#分面排序" class="headerlink" title="分面排序"></a>分面排序</h3><p>一些分析分面允许对其结果进行复杂排序。<br>当前的两个可排序分面是分析值分面和分析透视分面。</p>
+<h4 id="参数-1"><a href="#参数-1" class="headerlink" title="参数"></a>参数</h4><p><strong>criteria：</strong><br>排序分面的标准列表。</p>
+<p>它接受以下参数：</p>
+<p><strong>type：</strong><br>排序类型。有两个可能的值：</p>
+<ul>
+<li><code>expression</code>：按同一分组中定义的表达式的值排序。</li>
+<li><code>facetvalue</code>：按分面值的字符串表示排序。</li>
+</ul>
+<p><strong>Direction：</strong><br>排序方向。选项是<code>ascending</code>或<code>descending</code>。</p>
+<p><strong>expression：</strong><br>当<code>type</code>是<code>expression</code>时，是同一分组中定义的表达式的名称。</p>
+<p><strong>limit：</strong><br>将返回的分面值数量限制为前N个。默认值意味着没有限制。</p>
+<p><strong>offset：</strong><br>当设置限制时，跳过前N个分面值。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;criteria&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;expression&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;max_sale&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;direction&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;ascending&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;facetvalue&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;direction&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;descending&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;limit&quot;</span> <span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;offset&quot;</span> <span class="punctuation">:</span> <span class="number">5</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="值分面"><a href="#值分面" class="headerlink" title="值分面"></a>值分面</h3><p>值分面用于按应用于每个文档的映射表达式的值对文档进行分组。<br>映射表达式是不包含减少函数的表达式。</p>
+<p>有关更多信息，请参考表达式部分。<br>例如：</p>
+<ul>
+<li><code>mult(quantity, sum(price, tax))</code>：按产生的收入分解文档。</li>
+<li><code>fillmissing(state, &quot;N/A&quot;)</code>：按州分解文档，当文档不包含州时使用N&#x2F;A。</li>
+</ul>
+<p>值分面可以排序。</p>
+<h4 id="参数-2"><a href="#参数-2" class="headerlink" title="参数"></a>参数</h4><p><strong>expression：</strong><br>为每个文档选择分面存储桶的表达式。</p>
+<p><strong>sort：</strong><br>透视结果的排序。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;value&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;fillmissing(category,&#x27;No Category&#x27;)&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;sort&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Electronics&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">103.75</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">15.5</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Kitchen&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">88.25</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">11.37</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> 这是原始分析组件中存在的字段分面的替代。<br>通过使用字段名称作为表达式，值分面中保持了字段分面功能。</p>
+<h3 id="分析透视分面"><a href="#分析透视分面" class="headerlink" title="分析透视分面"></a>分析透视分面</h3><p>透视分面用于按应用于每个文档的多个映射表达式的值对文档进行分组。</p>
+<p>透视分面的工作很像值分面的层。<br>需要透视列表，列表的顺序直接影响返回的结果。<br>给出的第一个透视将被视为正常值分面。<br>给出的第二个透视将被视为第一个透视每个值的一个值分面。<br>这些第二级值分面中的每一个都将限制于其第一级分面存储桶中的文档。<br>无论提供多少透视，这都会继续。</p>
+<p>排序在每个透视基础上启用。<br>这意味着如果您的顶部透视有一个<code>limit:1</code>的排序，那么只有分面的第一个值将被钻取。<br>每个透视中的排序独立于其他透视。</p>
+<h4 id="参数-3"><a href="#参数-3" class="headerlink" title="参数"></a>参数</h4><p><strong>pivots：</strong><br>要计算钻取分面的透视列表。<br>列表按从最顶层到最底层的顺序排序。</p>
+<p><strong>name：</strong><br>透视的名称。</p>
+<p><strong>expression：</strong><br>为每个文档选择分面存储桶的表达式。</p>
+<p><strong>sort：</strong><br>透视结果的排序。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;pivot&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;pivots&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;country&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;country&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;sort&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;state&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;fillmissing(state, fillmissing(providence, territory))&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;name&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;city&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;expression&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;fillmissing(city, &#x27;N/A&#x27;)&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;sort&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;pivot&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Country&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;USA&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">103.75</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">15.5</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;children&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">            <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="punctuation">&#123;</span></span><br><span class="line">                <span class="attr">&quot;pivot&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;State&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Texas&quot;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                    <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">99.2</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">20.35</span></span><br><span class="line">                <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                <span class="attr">&quot;children&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">                    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="punctuation">&#123;</span></span><br><span class="line">                        <span class="attr">&quot;pivot&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;City&quot;</span><span class="punctuation">,</span></span><br><span class="line">                        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;Austin&quot;</span><span class="punctuation">,</span></span><br><span class="line">                        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">                            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">94.34</span><span class="punctuation">,</span></span><br><span class="line">                            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">17.60</span></span><br><span class="line">                        <span class="punctuation">&#125;</span></span><br><span class="line">                    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">                    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">                <span class="punctuation">]</span></span><br><span class="line">            <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="分析范围分面"><a href="#分析范围分面" class="headerlink" title="分析范围分面"></a>分析范围分面</h3><p>范围分面用于将文档按字段的值分组到给定的范围集合中。<br>分析范围分面的输入与Solr范围分面使用的输入相同。<br>有关使用的更多信息，请参考<a href="faceting.html#range-faceting">范围分面</a>部分。</p>
+<h4 id="参数-4"><a href="#参数-4" class="headerlink" title="参数"></a>参数</h4><p><strong>field：</strong><br>要进行分面的字段。</p>
+<p><strong>start：</strong><br>范围的底端。</p>
+<p><strong>end：</strong><br>范围的顶端。</p>
+<p><strong>gap：</strong><br>用于生成分面存储桶的范围间隙列表。<br>如果存储桶不能加起来适合从<code>start</code>到<code>end</code>的范围，那么最后的<code>gap</code>值将重复所需的次数以填充任何未使用的范围。</p>
+<p><strong>hardend：</strong><br>如果最后一个分面存储桶范围在<code>end</code>值处溢出，是否在<code>end</code>值处切断它。</p>
+<p><strong>include：</strong><br>要包含在分面存储桶中的边界。</p>
+<ul>
+<li><code>lower</code> - 所有基于间隙的范围包括其下边界。</li>
+<li><code>upper</code> - 所有基于间隙的范围包括其上边界。</li>
+<li><code>edge</code> - 第一个和最后一个间隙范围包括其边界（第一个的下边界，最后一个的上边界），即使没有指定相应的上&#x2F;下选项。</li>
+<li><code>outer</code> - <code>before</code>和<code>after</code>范围将包含其边界，即使第一个或最后一个范围已经包含这些边界。</li>
+<li><code>all</code> - 包括所有选项：<code>lower</code>、<code>upper</code>、<code>edge</code>和<code>outer</code>。</li>
+</ul>
+<p><strong>others：</strong><br>要包含在分面中的附加范围。</p>
+<ul>
+<li><code>before</code> - 所有字段值低于第一个范围下边界的记录。</li>
+<li><code>after</code> - 所有字段值大于最后一个范围上边界的记录。</li>
+<li><code>between</code> - 所有字段值在第一个范围下边界和最后一个范围上边界之间的记录。</li>
+<li><code>none</code> - 不包括上述任何分面存储桶。</li>
+<li><code>all</code> - 包括<code>before</code>、<code>after</code>和<code>between</code>的分面存储桶。</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;range&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;field&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;price&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;start&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;0&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;end&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;100&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;gap&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;5&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;10&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;25&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;hardend&quot;</span> <span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;include&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;lower&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;upper&quot;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;others&quot;</span> <span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">        <span class="string">&quot;after&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="string">&quot;between&quot;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;[0 TO 5]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">4.75</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">3.45</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;[5 TO 15]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">13.25</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">10.20</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;[15 TO 25]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">22.75</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">18.50</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;[25 TO 50]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">47.55</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">30.33</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;[50 TO 75]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">70.25</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">64.54</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span> <span class="attr">&quot;...&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="查询分面"><a href="#查询分面" class="headerlink" title="查询分面"></a>查询分面</h3><p>查询分面用于按给定的查询集合对文档进行分组。</p>
+<h4 id="参数-5"><a href="#参数-5" class="headerlink" title="参数"></a>参数</h4><p><strong>queries：</strong><br>要进行分面的查询列表。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;type&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;query&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;queries&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;high_quantity&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;quantity:[ 5 TO 14 ] AND price:[ 100 TO * ]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;low_quantity&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;quantity:[ 1 TO 4 ] AND price:[ 100 TO * ]&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;high_quantity&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">4.75</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">3.45</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;low_quantity&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;results&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;max_sale&quot;</span> <span class="punctuation">:</span> <span class="number">13.25</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;med_sale&quot;</span> <span class="punctuation">:</span> <span class="number">10.20</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" rel="tag"># Solr查询</a>
+              <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" rel="tag"># 分析组件</a>
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E8%81%9A%E5%90%88/" rel="tag"># 统计聚合</a>
+              <a href="/tags/%E5%88%86%E9%9D%A2/" rel="tag"># 分面</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/31/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/" rel="prev" title="Solr查询：分析减少函数">
+                  <i class="fa fa-angle-left"></i> Solr查询：分析减少函数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/02/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="next" title="Solr查询：块连接查询解析器">
+                  Solr查询：块连接查询解析器 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

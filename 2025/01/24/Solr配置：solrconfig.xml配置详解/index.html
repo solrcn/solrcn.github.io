@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="solrconfig.xml文件是影响Solr本身最多参数的配置文件。 在配置Solr时，你会经常使用solrconfig.xml，无论是直接使用还是通过Config API创建”配置覆盖”（configoverlay.json）来覆盖solrconfig.xml中的值。 在solrconfig.xml中，你可以配置重要功能，例如：  请求处理器，处理对Solr的请求，例如添加文档到索引的请求或返">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：solrconfig.xml配置详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/24/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolrconfig.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="solrconfig.xml文件是影响Solr本身最多参数的配置文件。 在配置Solr时，你会经常使用solrconfig.xml，无论是直接使用还是通过Config API创建”配置覆盖”（configoverlay.json）来覆盖solrconfig.xml中的值。 在solrconfig.xml中，你可以配置重要功能，例如：  请求处理器，处理对Solr的请求，例如添加文档到索引的请求或返">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:14:39.983Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="请求处理器">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="solrconfig.xml">
+<meta property="article:tag" content="监听器">
+<meta property="article:tag" content="配置文件">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/01/24/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolrconfig.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/24/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolrconfig.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/","path":"2025/01/24/Solr配置：solrconfig.xml配置详解/","title":"Solr配置：solrconfig.xml配置详解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr配置：solrconfig.xml配置详解 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#solrconfig-xml%E9%85%8D%E7%BD%AE%E9%83%A8%E5%88%86"><span class="nav-number">1.</span> <span class="nav-text">solrconfig.xml配置部分</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/24/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolrconfig.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr配置：solrconfig.xml配置详解 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr配置：solrconfig.xml配置详解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-24 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-24T00:00:00+08:00">2025-01-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:14:39" itemprop="dateModified" datetime="2025-08-25T16:14:39+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p><code>solrconfig.xml</code>文件是影响Solr本身最多参数的配置文件。</p>
+<p>在配置Solr时，你会经常使用<code>solrconfig.xml</code>，无论是直接使用还是通过<a href="config-api">Config API</a>创建”配置覆盖”（<code>configoverlay.json</code>）来覆盖<code>solrconfig.xml</code>中的值。</p>
+<p>在<code>solrconfig.xml</code>中，你可以配置重要功能，例如：</p>
+<ul>
+<li><p>请求处理器，处理对Solr的请求，例如添加文档到索引的请求或返回查询结果的请求</p>
+</li>
+<li><p>监听器，”监听”特定查询相关事件的进程；监听器可用于触发执行特殊代码，例如调用一些常见查询来预热缓存</p>
+</li>
+<li><p>用于管理HTTP通信的请求调度器</p>
+</li>
+<li><p>Admin Web界面</p>
+</li>
+<li><p>在非SolrCloud模式下运行时与复制和重复相关的参数</p>
+</li>
+</ul>
+<p><code>solrconfig.xml</code>文件位于每个集合的<code>conf/</code>目录中。<br>在<code>server/solr/configsets/</code>目录中可以找到几个经过充分注释的示例文件，展示了许多不同类型安装的最佳实践。</p>
+<p>某些<code>solrconfig.xml</code>方面在其他部分中有文档。<br>请参阅<a href="libs#lib-directives-in-solrconfig">SolrConfig中的lib指令</a>，它可用于插件和资源。</p>
+<h2 id="solrconfig-xml配置部分"><a href="#solrconfig-xml配置部分" class="headerlink" title="solrconfig.xml配置部分"></a>solrconfig.xml配置部分</h2><table>
+<thead>
+<tr>
+<th>部分</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a href="index-location-format">索引位置格式</a></td>
+<td>Solr索引的存储位置和方式。</td>
+</tr>
+<tr>
+<td><a href="index-segments-merging">索引段合并</a></td>
+<td>Lucene索引写入器，包括段管理、合并和锁。</td>
+</tr>
+<tr>
+<td><a href="schema-factory">Schema工厂</a></td>
+<td>Schema文件格式。</td>
+</tr>
+<tr>
+<td><a href="commits-transaction-logs">提交与事务日志</a></td>
+<td>更新请求和提交设置。</td>
+</tr>
+<tr>
+<td><a href="caches-warming">缓存预热</a></td>
+<td>缓存、查询预热和查询监听器。</td>
+</tr>
+<tr>
+<td><a href="requesthandlers-searchcomponents">请求处理器与搜索组件</a></td>
+<td>用于搜索功能的请求处理器和处理器。</td>
+</tr>
+<tr>
+<td><a href="implicit-requesthandlers">隐式请求处理器</a></td>
+<td>Solr自动提供的请求端点。</td>
+</tr>
+<tr>
+<td><a href="realtime-get">实时获取</a></td>
+<td>在不打开搜索器的情况下获取文档的最新版本。</td>
+</tr>
+<tr>
+<td><a href="initparams">初始化参数</a></td>
+<td>请求处理器的默认参数。</td>
+</tr>
+<tr>
+<td><a href="requestdispatcher">请求调度器</a></td>
+<td>高级请求解析和HTTP缓存头。</td>
+</tr>
+<tr>
+<td><a href="update-request-processors">更新请求处理器</a></td>
+<td>更新请求的插件。</td>
+</tr>
+<tr>
+<td><a href="script-update-processor">脚本更新处理器</a></td>
+<td>文档更新期间的Java脚本引擎。</td>
+</tr>
+<tr>
+<td><a href="codec-factory">编解码器工厂</a></td>
+<td>将数据写入磁盘时的Lucene编解码器。</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/" rel="tag"># 请求处理器</a>
+              <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" rel="tag"># Solr配置</a>
+              <a href="/tags/solrconfig-xml/" rel="tag"># solrconfig.xml</a>
+              <a href="/tags/%E7%9B%91%E5%90%AC%E5%99%A8/" rel="tag"># 监听器</a>
+              <a href="/tags/%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6/" rel="tag"># 配置文件</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/23/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5/" rel="prev" title="Solr索引：复制字段">
+                  <i class="fa fa-angle-left"></i> Solr索引：复制字段
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/25/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A0%B8%E5%BF%83%E5%8F%91%E7%8E%B0%E6%9C%BA%E5%88%B6/" rel="next" title="Solr配置：核心发现机制">
+                  Solr配置：核心发现机制 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

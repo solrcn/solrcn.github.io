@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr 控制脚本参考指南控制脚本概述Apache Solr 提供了一个强大的控制脚本 bin&#x2F;solr，它是管理 Solr 实例的主要命令行工具。这个脚本提供了完整的服务器生命周期管理、集合和核心操作、ZooKeeper 管理、认证配置等功能，是 Solr 运维管理的核心工具。 脚本基本语法123456789# 基本语法bin&#x2F;solr [command] [options]# 查看帮助信息bi">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr概念：控制脚本与系统管理">
+<meta property="og:url" content="https://solrcn.github.io/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr 控制脚本参考指南控制脚本概述Apache Solr 提供了一个强大的控制脚本 bin&#x2F;solr，它是管理 Solr 实例的主要命令行工具。这个脚本提供了完整的服务器生命周期管理、集合和核心操作、ZooKeeper 管理、认证配置等功能，是 Solr 运维管理的核心工具。 脚本基本语法123456789# 基本语法bin&#x2F;solr [command] [options]# 查看帮助信息bi">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-07-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T06:57:05.479Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="控制脚本">
+<meta property="article:tag" content="命令行工具">
+<meta property="article:tag" content="系统管理">
+<meta property="article:tag" content="运维工具">
+<meta property="article:tag" content="Solr概念">
+<meta property="article:tag" content="自动化部署">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":"","permalink":"https://solrcn.github.io/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/","path":"2024/07/08/Solr官方文档翻译-控制脚本参考指南/","title":"Solr概念：控制脚本与系统管理"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr概念：控制脚本与系统管理 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr 控制脚本参考指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">控制脚本概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%84%9A%E6%9C%AC%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">脚本基本语法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.</span> <span class="nav-text">服务器管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%90%AF%E5%8A%A8%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88start%EF%BC%89"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 启动服务器（start）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%90%AF%E5%8A%A8"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">基本启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SolrCloud-%E6%A8%A1%E5%BC%8F%E5%90%AF%E5%8A%A8"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">SolrCloud 模式启动</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E5%90%AF%E5%8A%A8%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">高级启动选项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%81%9C%E6%AD%A2%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88stop%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 停止服务器（stop）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%81%9C%E6%AD%A2"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">基本停止</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%9C%E6%AD%A2%E5%8F%82%E6%95%B0%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">停止参数选项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%87%8D%E5%90%AF%E6%9C%8D%E5%8A%A1%E5%99%A8%EF%BC%88restart%EF%BC%89"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 重启服务器（restart）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E7%8A%B6%E6%80%81%E6%A3%80%E6%9F%A5%EF%BC%88status%EF%BC%89"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 状态检查（status）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%92%8C%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">集合和核心管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E9%9B%86%E5%90%88-%E6%A0%B8%E5%BF%83%EF%BC%88create%EF%BC%89"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 创建集合&#x2F;核心（create）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E6%9C%BA%E6%A8%A1%E5%BC%8F%E5%88%9B%E5%BB%BA%E6%A0%B8%E5%BF%83"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">单机模式创建核心</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SolrCloud-%E6%A8%A1%E5%BC%8F%E5%88%9B%E5%BB%BA%E9%9B%86%E5%90%88"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">SolrCloud 模式创建集合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E5%88%9B%E5%BB%BA%E9%80%89%E9%A1%B9"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">高级创建选项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%A0%E9%99%A4%E9%9B%86%E5%90%88-%E6%A0%B8%E5%BF%83%EF%BC%88delete%EF%BC%89"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. 删除集合&#x2F;核心（delete）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ZooKeeper-%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.</span> <span class="nav-text">ZooKeeper 管理命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 配置集管理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE%E9%9B%86%EF%BC%88upconfig%EF%BC%89"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">上传配置集（upconfig）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8B%E8%BD%BD%E9%85%8D%E7%BD%AE%E9%9B%86%EF%BC%88downconfig%EF%BC%89"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">下载配置集（downconfig）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-ZooKeeper-%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. ZooKeeper 文件操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%8D%E5%88%B6%E6%96%87%E4%BB%B6%EF%BC%88cp%EF%BC%89"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">复制文件（cp）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%97%E5%87%BA-ZooKeeper-%E5%86%85%E5%AE%B9%EF%BC%88ls%EF%BC%89"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">列出 ZooKeeper 内容（ls）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4-ZooKeeper-%E8%8A%82%E7%82%B9%EF%BC%88rm%EF%BC%89"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">删除 ZooKeeper 节点（rm）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-ZooKeeper-%E5%AE%9E%E7%94%A8%E6%93%8D%E4%BD%9C"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. ZooKeeper 实用操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A7%BB%E5%8A%A8%E6%96%87%E4%BB%B6%EF%BC%88mv%EF%BC%89"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">移动文件（mv）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E8%B7%AF%E5%BE%84%EF%BC%88mkroot%EF%BC%89"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">创建路径（mkroot）</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%81%E5%92%8C%E5%AE%89%E5%85%A8%E7%AE%A1%E7%90%86"><span class="nav-number">1.6.</span> <span class="nav-text">认证和安全管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%90%AF%E7%94%A8%E8%AE%A4%E8%AF%81%EF%BC%88auth-enable%EF%BC%89"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 启用认证（auth enable）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%A4%E8%AF%81%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">基础认证设置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Kerberos-%E8%AE%A4%E8%AF%81%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">Kerberos 认证设置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%A6%81%E7%94%A8%E8%AE%A4%E8%AF%81%EF%BC%88auth-disable%EF%BC%89"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 禁用认证（auth disable）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%AF%BC%E5%85%A5%E5%AF%BC%E5%87%BA"><span class="nav-number">1.7.</span> <span class="nav-text">数据导入导出</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AF%BC%E5%87%BA%E6%95%B0%E6%8D%AE%EF%BC%88export%EF%BC%89"><span class="nav-number">1.7.1.</span> <span class="nav-text">1. 导出数据（export）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AF%BC%E5%85%A5%E6%95%B0%E6%8D%AE%EF%BC%88post%EF%BC%89"><span class="nav-number">1.7.2.</span> <span class="nav-text">2. 导入数据（post）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E5%92%8C%E8%AF%8A%E6%96%AD"><span class="nav-number">1.8.</span> <span class="nav-text">健康检查和诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%EF%BC%88healthcheck%EF%BC%89"><span class="nav-number">1.8.1.</span> <span class="nav-text">1. 健康检查（healthcheck）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%89%88%E6%9C%AC%E4%BF%A1%E6%81%AF%EF%BC%88version%EF%BC%89"><span class="nav-number">1.8.2.</span> <span class="nav-text">2. 版本信息（version）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BF%AB%E7%85%A7%E5%92%8C%E5%A4%87%E4%BB%BD%E7%AE%A1%E7%90%86"><span class="nav-number">1.9.</span> <span class="nav-text">快照和备份管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E5%BF%AB%E7%85%A7%EF%BC%88snapshot%EF%BC%89"><span class="nav-number">1.9.1.</span> <span class="nav-text">1. 创建快照（snapshot）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%A0%E9%99%A4%E5%BF%AB%E7%85%A7%EF%BC%88delete-snapshot%EF%BC%89"><span class="nav-number">1.9.2.</span> <span class="nav-text">2. 删除快照（delete-snapshot）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%88%97%E5%87%BA%E5%BF%AB%E7%85%A7%EF%BC%88list-snapshots%EF%BC%89"><span class="nav-number">1.9.3.</span> <span class="nav-text">3. 列出快照（list-snapshots）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E7%AE%A1%E7%90%86%E6%93%8D%E4%BD%9C"><span class="nav-number">1.10.</span> <span class="nav-text">高级管理操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%8C%85%E7%AE%A1%E7%90%86%EF%BC%88package%EF%BC%89"><span class="nav-number">1.10.1.</span> <span class="nav-text">1. 包管理（package）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-API-%E5%B7%A5%E5%85%B7%EF%BC%88api%EF%BC%89"><span class="nav-number">1.10.2.</span> <span class="nav-text">2. API 工具（api）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E5%92%8C%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">1.11.</span> <span class="nav-text">配置文件和环境变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE"><span class="nav-number">1.11.1.</span> <span class="nav-text">1. 环境变量配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%AB%98%E7%BA%A7-JVM-%E9%85%8D%E7%BD%AE"><span class="nav-number">1.11.2.</span> <span class="nav-text">2. 高级 JVM 配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%94%A8%E8%84%9A%E6%9C%AC%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.12.</span> <span class="nav-text">实用脚本示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2%E8%84%9A%E6%9C%AC"><span class="nav-number">1.12.1.</span> <span class="nav-text">1. 自动化部署脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC"><span class="nav-number">1.12.2.</span> <span class="nav-text">2. 健康检查脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC"><span class="nav-number">1.12.3.</span> <span class="nav-text">3. 备份脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.13.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E8%AF%8A%E6%96%AD"><span class="nav-number">1.13.1.</span> <span class="nav-text">1. 常见问题诊断</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E9%97%AE%E9%A2%98"><span class="nav-number">1.13.1.1.</span> <span class="nav-text">启动问题</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E9%97%AE%E9%A2%98"><span class="nav-number">1.13.1.2.</span> <span class="nav-text">连接问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%B0%83%E8%AF%95%E9%80%89%E9%A1%B9"><span class="nav-number">1.13.2.</span> <span class="nav-text">2. 调试选项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">1.14.</span> <span class="nav-text">小结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%A6%81%E7%82%B9"><span class="nav-number">1.14.1.</span> <span class="nav-text">关键要点</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2024/07/08/Solr%E5%AE%98%E6%96%B9%E6%96%87%E6%A1%A3%E7%BF%BB%E8%AF%91-%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC%E5%8F%82%E8%80%83%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr概念：控制脚本与系统管理 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr概念：控制脚本与系统管理
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2024-07-08 00:00:00" itemprop="dateCreated datePublished" datetime="2024-07-08T00:00:00+08:00">2024-07-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 14:57:05" itemprop="dateModified" datetime="2025-08-25T14:57:05+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%A6%82%E8%BF%B0/" itemprop="url" rel="index"><span itemprop="name">Solr概述</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr-控制脚本参考指南"><a href="#Solr-控制脚本参考指南" class="headerlink" title="Solr 控制脚本参考指南"></a>Solr 控制脚本参考指南</h1><h2 id="控制脚本概述"><a href="#控制脚本概述" class="headerlink" title="控制脚本概述"></a>控制脚本概述</h2><p>Apache Solr 提供了一个强大的控制脚本 <code>bin/solr</code>，它是管理 Solr 实例的主要命令行工具。这个脚本提供了完整的服务器生命周期管理、集合和核心操作、ZooKeeper 管理、认证配置等功能，是 Solr 运维管理的核心工具。</p>
+<h2 id="脚本基本语法"><a href="#脚本基本语法" class="headerlink" title="脚本基本语法"></a>脚本基本语法</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本语法</span></span><br><span class="line">bin/solr [<span class="built_in">command</span>] [options]</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看帮助信息</span></span><br><span class="line">bin/solr -h</span><br><span class="line">bin/solr --<span class="built_in">help</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看特定命令的帮助</span></span><br><span class="line">bin/solr [<span class="built_in">command</span>] -h</span><br></pre></td></tr></table></figure>
+
+<h2 id="服务器管理命令"><a href="#服务器管理命令" class="headerlink" title="服务器管理命令"></a>服务器管理命令</h2><h3 id="1-启动服务器（start）"><a href="#1-启动服务器（start）" class="headerlink" title="1. 启动服务器（start）"></a>1. 启动服务器（start）</h3><h4 id="基本启动"><a href="#基本启动" class="headerlink" title="基本启动"></a>基本启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 默认启动（端口 8983）</span></span><br><span class="line">bin/solr start</span><br><span class="line"></span><br><span class="line"><span class="comment"># 后台启动</span></span><br><span class="line">bin/solr start -force</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定端口启动</span></span><br><span class="line">bin/solr start -p 8984</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 Solr 主目录</span></span><br><span class="line">bin/solr start -s /path/to/solr/home</span><br></pre></td></tr></table></figure>
+
+<h4 id="SolrCloud-模式启动"><a href="#SolrCloud-模式启动" class="headerlink" title="SolrCloud 模式启动"></a>SolrCloud 模式启动</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 连接到外部 ZooKeeper</span></span><br><span class="line">bin/solr start -c -z zk1:2181,zk2:2181,zk3:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用 ZooKeeper chroot</span></span><br><span class="line">bin/solr start -c -z zk1:2181,zk2:2181,zk3:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定主机名</span></span><br><span class="line">bin/solr start -c -h solr1.example.com</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置内存大小</span></span><br><span class="line">bin/solr start -c -m 2g</span><br></pre></td></tr></table></figure>
+
+<h4 id="高级启动选项"><a href="#高级启动选项" class="headerlink" title="高级启动选项"></a>高级启动选项</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 完整的启动命令示例</span></span><br><span class="line">bin/solr start \</span><br><span class="line">  -cloud \</span><br><span class="line">  -port 8983 \</span><br><span class="line">  -host solr1.example.com \</span><br><span class="line">  -memory 4g \</span><br><span class="line">  -zkhost zk1:2181,zk2:2181,zk3:2181/solr \</span><br><span class="line">  -solr.data.home=/var/solr \</span><br><span class="line">  -verbose</span><br></pre></td></tr></table></figure>
+
+<p><strong>启动参数详解</strong>：</p>
+<ul>
+<li><code>-c, -cloud</code> - 以 SolrCloud 模式启动</li>
+<li><code>-p, -port &lt;port&gt;</code> - 指定端口号</li>
+<li><code>-h, -host &lt;hostname&gt;</code> - 设置主机名</li>
+<li><code>-m, -memory &lt;size&gt;</code> - 设置 JVM 堆内存大小</li>
+<li><code>-z, -zkhost &lt;zkhost&gt;</code> - ZooKeeper 主机列表</li>
+<li><code>-s, -solrhome &lt;dir&gt;</code> - Solr 主目录</li>
+<li><code>-e, -example &lt;name&gt;</code> - 启动示例配置</li>
+<li><code>-d, -dir &lt;dir&gt;</code> - 服务器目录</li>
+<li><code>-verbose</code> - 详细输出模式</li>
+<li><code>-force</code> - 强制启动（忽略警告）</li>
+</ul>
+<h3 id="2-停止服务器（stop）"><a href="#2-停止服务器（stop）" class="headerlink" title="2. 停止服务器（stop）"></a>2. 停止服务器（stop）</h3><h4 id="基本停止"><a href="#基本停止" class="headerlink" title="基本停止"></a>基本停止</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 停止默认端口的 Solr</span></span><br><span class="line">bin/solr stop</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止指定端口的 Solr</span></span><br><span class="line">bin/solr stop -p 8984</span><br><span class="line"></span><br><span class="line"><span class="comment"># 停止所有 Solr 实例</span></span><br><span class="line">bin/solr stop -all</span><br><span class="line"></span><br><span class="line"><span class="comment"># 强制停止</span></span><br><span class="line">bin/solr stop -p 8983 -force</span><br></pre></td></tr></table></figure>
+
+<h4 id="停止参数选项"><a href="#停止参数选项" class="headerlink" title="停止参数选项"></a>停止参数选项</h4><ul>
+<li><code>-p, -port &lt;port&gt;</code> - 指定要停止的端口</li>
+<li><code>-all</code> - 停止所有运行的 Solr 实例</li>
+<li><code>-k, -key &lt;key&gt;</code> - 停止键（用于安全停止）</li>
+<li><code>-force</code> - 强制停止</li>
+</ul>
+<h3 id="3-重启服务器（restart）"><a href="#3-重启服务器（restart）" class="headerlink" title="3. 重启服务器（restart）"></a>3. 重启服务器（restart）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重启默认 Solr 实例</span></span><br><span class="line">bin/solr restart</span><br><span class="line"></span><br><span class="line"><span class="comment"># 重启指定端口实例</span></span><br><span class="line">bin/solr restart -p 8984</span><br><span class="line"></span><br><span class="line"><span class="comment"># 带参数重启</span></span><br><span class="line">bin/solr restart -c -m 4g -p 8983</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-状态检查（status）"><a href="#4-状态检查（status）" class="headerlink" title="4. 状态检查（status）"></a>4. 状态检查（status）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查 Solr 状态</span></span><br><span class="line">bin/solr status</span><br><span class="line"></span><br><span class="line"><span class="comment"># 详细状态信息</span></span><br><span class="line">bin/solr status -verbose</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查特定端口</span></span><br><span class="line">bin/solr status -p 8983</span><br></pre></td></tr></table></figure>
+
+<p><strong>状态信息包括</strong>：</p>
+<ul>
+<li>运行状态和进程 ID</li>
+<li>内存使用情况</li>
+<li>启动时间和运行时长</li>
+<li>配置文件路径</li>
+<li>ZooKeeper 连接状态</li>
+</ul>
+<h2 id="集合和核心管理"><a href="#集合和核心管理" class="headerlink" title="集合和核心管理"></a>集合和核心管理</h2><h3 id="1-创建集合-核心（create）"><a href="#1-创建集合-核心（create）" class="headerlink" title="1. 创建集合&#x2F;核心（create）"></a>1. 创建集合&#x2F;核心（create）</h3><h4 id="单机模式创建核心"><a href="#单机模式创建核心" class="headerlink" title="单机模式创建核心"></a>单机模式创建核心</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建基本核心</span></span><br><span class="line">bin/solr create -c mycore</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用指定配置集创建</span></span><br><span class="line">bin/solr create -c mycore -d basic_configs</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定数据目录</span></span><br><span class="line">bin/solr create -c mycore -d /path/to/config -p 8983</span><br></pre></td></tr></table></figure>
+
+<h4 id="SolrCloud-模式创建集合"><a href="#SolrCloud-模式创建集合" class="headerlink" title="SolrCloud 模式创建集合"></a>SolrCloud 模式创建集合</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基本集合创建</span></span><br><span class="line">bin/solr create -c mycollection</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定分片和副本</span></span><br><span class="line">bin/solr create -c mycollection \</span><br><span class="line">  -shards 3 \</span><br><span class="line">  -replicationFactor 2</span><br><span class="line"></span><br><span class="line"><span class="comment"># 使用自定义配置集</span></span><br><span class="line">bin/solr create -c mycollection \</span><br><span class="line">  -d /path/to/configset \</span><br><span class="line">  -shards 2 \</span><br><span class="line">  -replicationFactor 3</span><br></pre></td></tr></table></figure>
+
+<h4 id="高级创建选项"><a href="#高级创建选项" class="headerlink" title="高级创建选项"></a>高级创建选项</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 完整的创建命令</span></span><br><span class="line">bin/solr create \</span><br><span class="line">  -collection products \</span><br><span class="line">  -configset _default \</span><br><span class="line">  -shards 4 \</span><br><span class="line">  -replicationFactor 2 \</span><br><span class="line">  -maxShardsPerNode 2 \</span><br><span class="line">  -configName products_config \</span><br><span class="line">  -port 8983</span><br></pre></td></tr></table></figure>
+
+<p><strong>创建参数详解</strong>：</p>
+<ul>
+<li><code>-c, -collection &lt;name&gt;</code> - 集合或核心名称</li>
+<li><code>-d, -confdir &lt;dir&gt;</code> - 配置目录或配置集名称</li>
+<li><code>-n, -confname &lt;name&gt;</code> - 配置集名称</li>
+<li><code>-shards &lt;num&gt;</code> - 分片数量</li>
+<li><code>-replicationFactor &lt;num&gt;</code> - 副本因子</li>
+<li><code>-maxShardsPerNode &lt;num&gt;</code> - 每个节点最大分片数</li>
+<li><code>-p, -port &lt;port&gt;</code> - 目标 Solr 端口</li>
+</ul>
+<h3 id="2-删除集合-核心（delete）"><a href="#2-删除集合-核心（delete）" class="headerlink" title="2. 删除集合&#x2F;核心（delete）"></a>2. 删除集合&#x2F;核心（delete）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除集合或核心</span></span><br><span class="line">bin/solr delete -c mycollection</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定端口删除</span></span><br><span class="line">bin/solr delete -c mycollection -p 8983</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除时清理数据</span></span><br><span class="line">bin/solr delete -c mycollection -deleteConfig <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>删除参数选项</strong>：</p>
+<ul>
+<li><code>-c, -collection &lt;name&gt;</code> - 要删除的集合名称</li>
+<li><code>-deleteConfig &lt;true|false&gt;</code> - 是否删除配置集</li>
+<li><code>-p, -port &lt;port&gt;</code> - 目标端口</li>
+</ul>
+<h2 id="ZooKeeper-管理命令"><a href="#ZooKeeper-管理命令" class="headerlink" title="ZooKeeper 管理命令"></a>ZooKeeper 管理命令</h2><h3 id="1-配置集管理"><a href="#1-配置集管理" class="headerlink" title="1. 配置集管理"></a>1. 配置集管理</h3><h4 id="上传配置集（upconfig）"><a href="#上传配置集（upconfig）" class="headerlink" title="上传配置集（upconfig）"></a>上传配置集（upconfig）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上传配置集到 ZooKeeper</span></span><br><span class="line">bin/solr zk upconfig \</span><br><span class="line">  -confname myconfig \</span><br><span class="line">  -confdir /path/to/config \</span><br><span class="line">  -zkhost zk1:2181,zk2:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从现有配置集复制</span></span><br><span class="line">bin/solr zk upconfig \</span><br><span class="line">  -confname newconfig \</span><br><span class="line">  -confdir server/solr/configsets/_default/conf \</span><br><span class="line">  -zkhost localhost:2181</span><br></pre></td></tr></table></figure>
+
+<h4 id="下载配置集（downconfig）"><a href="#下载配置集（downconfig）" class="headerlink" title="下载配置集（downconfig）"></a>下载配置集（downconfig）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 从 ZooKeeper 下载配置集</span></span><br><span class="line">bin/solr zk downconfig \</span><br><span class="line">  -confname myconfig \</span><br><span class="line">  -confdir /path/to/download \</span><br><span class="line">  -zkhost zk1:2181/solr</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-ZooKeeper-文件操作"><a href="#2-ZooKeeper-文件操作" class="headerlink" title="2. ZooKeeper 文件操作"></a>2. ZooKeeper 文件操作</h3><h4 id="复制文件（cp）"><a href="#复制文件（cp）" class="headerlink" title="复制文件（cp）"></a>复制文件（cp）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 上传文件到 ZooKeeper</span></span><br><span class="line">bin/solr zk <span class="built_in">cp</span> file:/path/to/local/file zk:/solr/configs/myconfig/solrconfig.xml \</span><br><span class="line">  -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 从 ZooKeeper 下载文件</span></span><br><span class="line">bin/solr zk <span class="built_in">cp</span> zk:/solr/configs/myconfig/schema.xml file:/local/path/schema.xml \</span><br><span class="line">  -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># ZooKeeper 内部复制</span></span><br><span class="line">bin/solr zk <span class="built_in">cp</span> zk:/source/path zk:/dest/path -zkhost zk1:2181 -recurse</span><br></pre></td></tr></table></figure>
+
+<h4 id="列出-ZooKeeper-内容（ls）"><a href="#列出-ZooKeeper-内容（ls）" class="headerlink" title="列出 ZooKeeper 内容（ls）"></a>列出 ZooKeeper 内容（ls）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出根目录</span></span><br><span class="line">bin/solr zk <span class="built_in">ls</span> / -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出配置集</span></span><br><span class="line">bin/solr zk <span class="built_in">ls</span> /configs -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 递归列出</span></span><br><span class="line">bin/solr zk <span class="built_in">ls</span> /solr -zkhost zk1:2181 -recurse</span><br></pre></td></tr></table></figure>
+
+<h4 id="删除-ZooKeeper-节点（rm）"><a href="#删除-ZooKeeper-节点（rm）" class="headerlink" title="删除 ZooKeeper 节点（rm）"></a>删除 ZooKeeper 节点（rm）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除单个文件</span></span><br><span class="line">bin/solr zk <span class="built_in">rm</span> /solr/configs/oldconfig/solrconfig.xml -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 递归删除目录</span></span><br><span class="line">bin/solr zk <span class="built_in">rm</span> /solr/configs/oldconfig -zkhost zk1:2181 -recurse</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-ZooKeeper-实用操作"><a href="#3-ZooKeeper-实用操作" class="headerlink" title="3. ZooKeeper 实用操作"></a>3. ZooKeeper 实用操作</h3><h4 id="移动文件（mv）"><a href="#移动文件（mv）" class="headerlink" title="移动文件（mv）"></a>移动文件（mv）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 ZooKeeper 中移动文件</span></span><br><span class="line">bin/solr zk <span class="built_in">mv</span> /solr/configs/old_name /solr/configs/new_name -zkhost zk1:2181</span><br></pre></td></tr></table></figure>
+
+<h4 id="创建路径（mkroot）"><a href="#创建路径（mkroot）" class="headerlink" title="创建路径（mkroot）"></a>创建路径（mkroot）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建 ZooKeeper chroot 路径</span></span><br><span class="line">bin/solr zk mkroot /solr -zkhost zk1:2181</span><br></pre></td></tr></table></figure>
+
+<h2 id="认证和安全管理"><a href="#认证和安全管理" class="headerlink" title="认证和安全管理"></a>认证和安全管理</h2><h3 id="1-启用认证（auth-enable）"><a href="#1-启用认证（auth-enable）" class="headerlink" title="1. 启用认证（auth enable）"></a>1. 启用认证（auth enable）</h3><h4 id="基础认证设置"><a href="#基础认证设置" class="headerlink" title="基础认证设置"></a>基础认证设置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用基础认证</span></span><br><span class="line">bin/solr auth <span class="built_in">enable</span> -<span class="built_in">type</span> basicAuth \</span><br><span class="line">  -credentials admin:admin123 \</span><br><span class="line">  -zkhost zk1:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定端口启用认证</span></span><br><span class="line">bin/solr auth <span class="built_in">enable</span> -<span class="built_in">type</span> basicAuth \</span><br><span class="line">  -credentials admin:password \</span><br><span class="line">  -port 8983</span><br><span class="line"></span><br><span class="line"><span class="comment"># 更新现有认证</span></span><br><span class="line">bin/solr auth <span class="built_in">enable</span> -<span class="built_in">type</span> basicAuth \</span><br><span class="line">  -credentials admin:newpassword \</span><br><span class="line">  -updateIncludeFileOnly <span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Kerberos-认证设置"><a href="#Kerberos-认证设置" class="headerlink" title="Kerberos 认证设置"></a>Kerberos 认证设置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用 Kerberos 认证</span></span><br><span class="line">bin/solr auth <span class="built_in">enable</span> -<span class="built_in">type</span> kerberos \</span><br><span class="line">  -config <span class="string">&quot;/path/to/jaas-client.conf&quot;</span> \</span><br><span class="line">  -zkhost zk1:2181/solr</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-禁用认证（auth-disable）"><a href="#2-禁用认证（auth-disable）" class="headerlink" title="2. 禁用认证（auth disable）"></a>2. 禁用认证（auth disable）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 禁用认证</span></span><br><span class="line">bin/solr auth <span class="built_in">disable</span> -zkhost zk1:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定端口禁用</span></span><br><span class="line">bin/solr auth <span class="built_in">disable</span> -port 8983</span><br></pre></td></tr></table></figure>
+
+<p><strong>认证参数说明</strong>：</p>
+<ul>
+<li><code>-type &lt;type&gt;</code> - 认证类型（basicAuth, kerberos）</li>
+<li><code>-credentials &lt;user:pass&gt;</code> - 用户凭据</li>
+<li><code>-config &lt;file&gt;</code> - 配置文件路径</li>
+<li><code>-zkhost &lt;host&gt;</code> - ZooKeeper 主机</li>
+<li><code>-updateIncludeFileOnly</code> - 仅更新包含文件</li>
+</ul>
+<h2 id="数据导入导出"><a href="#数据导入导出" class="headerlink" title="数据导入导出"></a>数据导入导出</h2><h3 id="1-导出数据（export）"><a href="#1-导出数据（export）" class="headerlink" title="1. 导出数据（export）"></a>1. 导出数据（export）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导出所有文档</span></span><br><span class="line">bin/solr <span class="built_in">export</span> -collection mycollection \</span><br><span class="line">  -out /path/to/export.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定查询导出</span></span><br><span class="line">bin/solr <span class="built_in">export</span> -collection mycollection \</span><br><span class="line">  -query <span class="string">&quot;category:electronics&quot;</span> \</span><br><span class="line">  -out electronics.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定字段导出</span></span><br><span class="line">bin/solr <span class="built_in">export</span> -collection mycollection \</span><br><span class="line">  -fields <span class="built_in">id</span>,name,price \</span><br><span class="line">  -out products.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 排序导出</span></span><br><span class="line">bin/solr <span class="built_in">export</span> -collection mycollection \</span><br><span class="line">  -<span class="built_in">sort</span> <span class="string">&quot;price desc&quot;</span> \</span><br><span class="line">  -out sorted_products.json</span><br></pre></td></tr></table></figure>
+
+<p><strong>导出参数选项</strong>：</p>
+<ul>
+<li><code>-collection &lt;name&gt;</code> - 集合名称</li>
+<li><code>-out &lt;file&gt;</code> - 输出文件路径</li>
+<li><code>-query &lt;query&gt;</code> - 查询条件</li>
+<li><code>-fields &lt;fields&gt;</code> - 导出字段列表</li>
+<li><code>-sort &lt;sort&gt;</code> - 排序条件</li>
+<li><code>-zkhost &lt;host&gt;</code> - ZooKeeper 主机</li>
+</ul>
+<h3 id="2-导入数据（post）"><a href="#2-导入数据（post）" class="headerlink" title="2. 导入数据（post）"></a>2. 导入数据（post）</h3><p>虽然 <code>post</code> 不是 <code>solr</code> 脚本的子命令，但它是重要的数据导入工具：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 导入 JSON 文件</span></span><br><span class="line">bin/post -c mycollection /path/to/data.json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入 XML 文件</span></span><br><span class="line">bin/post -c mycollection /path/to/data.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 导入目录中的所有文件</span></span><br><span class="line">bin/post -c mycollection /path/to/directory/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 Solr URL 导入</span></span><br><span class="line">bin/post -url http://localhost:8983/solr/mycollection/update /path/to/data.json</span><br></pre></td></tr></table></figure>
+
+<h2 id="健康检查和诊断"><a href="#健康检查和诊断" class="headerlink" title="健康检查和诊断"></a>健康检查和诊断</h2><h3 id="1-健康检查（healthcheck）"><a href="#1-健康检查（healthcheck）" class="headerlink" title="1. 健康检查（healthcheck）"></a>1. 健康检查（healthcheck）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查集合健康状况</span></span><br><span class="line">bin/solr healthcheck -c mycollection</span><br><span class="line"></span><br><span class="line"><span class="comment"># 指定 ZooKeeper 检查</span></span><br><span class="line">bin/solr healthcheck -c mycollection -zkhost zk1:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 详细健康检查</span></span><br><span class="line">bin/solr healthcheck -c mycollection -verbose</span><br></pre></td></tr></table></figure>
+
+<p><strong>健康检查内容</strong>：</p>
+<ul>
+<li>集合状态和分片健康</li>
+<li>副本状态和同步情况</li>
+<li>节点可用性</li>
+<li>配置一致性</li>
+</ul>
+<h3 id="2-版本信息（version）"><a href="#2-版本信息（version）" class="headerlink" title="2. 版本信息（version）"></a>2. 版本信息（version）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看 Solr 版本信息</span></span><br><span class="line">bin/solr version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 详细版本信息</span></span><br><span class="line">bin/solr -version</span><br></pre></td></tr></table></figure>
+
+<h2 id="快照和备份管理"><a href="#快照和备份管理" class="headerlink" title="快照和备份管理"></a>快照和备份管理</h2><h3 id="1-创建快照（snapshot）"><a href="#1-创建快照（snapshot）" class="headerlink" title="1. 创建快照（snapshot）"></a>1. 创建快照（snapshot）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建集合快照</span></span><br><span class="line">bin/solr snapshot -c mycollection \</span><br><span class="line">  -snapshot-name backup_20241201 \</span><br><span class="line">  -zkhost zk1:2181/solr</span><br><span class="line"></span><br><span class="line"><span class="comment"># 异步创建快照</span></span><br><span class="line">bin/solr snapshot -c mycollection \</span><br><span class="line">  -snapshot-name backup_20241201 \</span><br><span class="line">  -async snapshot_task_1</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-删除快照（delete-snapshot）"><a href="#2-删除快照（delete-snapshot）" class="headerlink" title="2. 删除快照（delete-snapshot）"></a>2. 删除快照（delete-snapshot）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除指定快照</span></span><br><span class="line">bin/solr delete-snapshot -c mycollection \</span><br><span class="line">  -snapshot-name backup_20241201 \</span><br><span class="line">  -zkhost zk1:2181/solr</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-列出快照（list-snapshots）"><a href="#3-列出快照（list-snapshots）" class="headerlink" title="3. 列出快照（list-snapshots）"></a>3. 列出快照（list-snapshots）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出集合的所有快照</span></span><br><span class="line">bin/solr list-snapshots -c mycollection -zkhost zk1:2181/solr</span><br></pre></td></tr></table></figure>
+
+<h2 id="高级管理操作"><a href="#高级管理操作" class="headerlink" title="高级管理操作"></a>高级管理操作</h2><h3 id="1-包管理（package）"><a href="#1-包管理（package）" class="headerlink" title="1. 包管理（package）"></a>1. 包管理（package）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 列出可用包</span></span><br><span class="line">bin/solr package list-available</span><br><span class="line"></span><br><span class="line"><span class="comment"># 安装包</span></span><br><span class="line">bin/solr package install clustering</span><br><span class="line"></span><br><span class="line"><span class="comment"># 列出已安装包</span></span><br><span class="line">bin/solr package list-installed</span><br><span class="line"></span><br><span class="line"><span class="comment"># 部署包到集合</span></span><br><span class="line">bin/solr package deploy clustering -cluster -collections mycollection</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-API-工具（api）"><a href="#2-API-工具（api）" class="headerlink" title="2. API 工具（api）"></a>2. API 工具（api）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接调用 Solr API</span></span><br><span class="line">bin/solr api -get <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=LIST&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># POST 请求</span></span><br><span class="line">bin/solr api -post <span class="string">&quot;http://localhost:8983/solr/mycollection/update&quot;</span> \</span><br><span class="line">  -data <span class="string">&#x27;&#123;&quot;add&quot;: &#123;&quot;doc&quot;: &#123;&quot;id&quot;: &quot;1&quot;, &quot;title&quot;: &quot;Test Document&quot;&#125;&#125;&#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置文件和环境变量"><a href="#配置文件和环境变量" class="headerlink" title="配置文件和环境变量"></a>配置文件和环境变量</h2><h3 id="1-环境变量配置"><a href="#1-环境变量配置" class="headerlink" title="1. 环境变量配置"></a>1. 环境变量配置</h3><p>主要的环境变量包括：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在 solr.in.sh 或 solr.in.cmd 中设置</span></span><br><span class="line">SOLR_HEAP=4g                    <span class="comment"># JVM 堆内存</span></span><br><span class="line">SOLR_HOME=/var/solr             <span class="comment"># Solr 主目录</span></span><br><span class="line">SOLR_PORT=8983                  <span class="comment"># 默认端口</span></span><br><span class="line">SOLR_HOST=localhost             <span class="comment"># 主机名</span></span><br><span class="line">ZK_HOST=zk1:2181,zk2:2181       <span class="comment"># ZooKeeper 主机</span></span><br><span class="line">SOLR_MODE=solrcloud             <span class="comment"># 运行模式</span></span><br><span class="line">SOLR_LOGS_DIR=/var/solr/logs    <span class="comment"># 日志目录</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-高级-JVM-配置"><a href="#2-高级-JVM-配置" class="headerlink" title="2. 高级 JVM 配置"></a>2. 高级 JVM 配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># GC 配置</span></span><br><span class="line">GC_TUNE=<span class="string">&quot;-XX:+UseG1GC -XX:+PerfDisableSharedMem&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># JVM 选项</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.clustering.enabled=true&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.autoSoftCommit.maxTime=3000&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 调试选项</span></span><br><span class="line">ENABLE_REMOTE_JMX_OPTS=<span class="literal">true</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="实用脚本示例"><a href="#实用脚本示例" class="headerlink" title="实用脚本示例"></a>实用脚本示例</h2><h3 id="1-自动化部署脚本"><a href="#1-自动化部署脚本" class="headerlink" title="1. 自动化部署脚本"></a>1. 自动化部署脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># deploy-solr.sh - 自动化 Solr 部署脚本</span></span><br><span class="line"></span><br><span class="line">SOLR_HOME=<span class="string">&quot;/opt/solr&quot;</span></span><br><span class="line">COLLECTION_NAME=<span class="string">&quot;products&quot;</span></span><br><span class="line">CONFIG_DIR=<span class="string">&quot;/path/to/config&quot;</span></span><br><span class="line">ZK_HOST=<span class="string">&quot;zk1:2181,zk2:2181,zk3:2181/solr&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动 Solr</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Starting Solr...&quot;</span></span><br><span class="line"><span class="variable">$SOLR_HOME</span>/bin/solr start -c -z <span class="variable">$ZK_HOST</span> -m 4g</span><br><span class="line"></span><br><span class="line"><span class="comment"># 等待启动完成</span></span><br><span class="line"><span class="built_in">sleep</span> 30</span><br><span class="line"></span><br><span class="line"><span class="comment"># 上传配置集</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Uploading configuration...&quot;</span></span><br><span class="line"><span class="variable">$SOLR_HOME</span>/bin/solr zk upconfig \</span><br><span class="line">  -confname <span class="variable">$&#123;COLLECTION_NAME&#125;</span>_config \</span><br><span class="line">  -confdir <span class="variable">$CONFIG_DIR</span> \</span><br><span class="line">  -zkhost <span class="variable">$ZK_HOST</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建集合</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Creating collection...&quot;</span></span><br><span class="line"><span class="variable">$SOLR_HOME</span>/bin/solr create \</span><br><span class="line">  -collection <span class="variable">$COLLECTION_NAME</span> \</span><br><span class="line">  -configset <span class="variable">$&#123;COLLECTION_NAME&#125;</span>_config \</span><br><span class="line">  -shards 3 \</span><br><span class="line">  -replicationFactor 2</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Deployment completed successfully!&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-健康检查脚本"><a href="#2-健康检查脚本" class="headerlink" title="2. 健康检查脚本"></a>2. 健康检查脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># health-monitor.sh - Solr 健康监控脚本</span></span><br><span class="line"></span><br><span class="line">SOLR_URL=<span class="string">&quot;http://localhost:8983/solr&quot;</span></span><br><span class="line">COLLECTIONS=(<span class="string">&quot;products&quot;</span> <span class="string">&quot;logs&quot;</span> <span class="string">&quot;analytics&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> collection <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$&#123;COLLECTIONS[@]&#125;</span>&quot;</span>; <span class="keyword">do</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Checking collection: <span class="variable">$collection</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 执行健康检查</span></span><br><span class="line">    health_result=$(bin/solr healthcheck -c <span class="string">&quot;<span class="variable">$collection</span>&quot;</span> 2&gt;/dev/null)</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$health_result</span>&quot;</span> | grep -q <span class="string">&quot;HEALTHY&quot;</span>; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;✓ <span class="variable">$collection</span> is healthy&quot;</span></span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;✗ <span class="variable">$collection</span> has issues&quot;</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$health_result</span>&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查整体集群状态</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Checking cluster status...&quot;</span></span><br><span class="line">cluster_status=$(bin/solr api -get <span class="string">&quot;<span class="variable">$SOLR_URL</span>/admin/collections?action=CLUSTERSTATUS&amp;wt=json&quot;</span>)</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$cluster_status</span>&quot;</span> | jq <span class="string">&#x27;.cluster.live_nodes&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-备份脚本"><a href="#3-备份脚本" class="headerlink" title="3. 备份脚本"></a>3. 备份脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># backup-collections.sh - 集合备份脚本</span></span><br><span class="line"></span><br><span class="line">COLLECTIONS=(<span class="string">&quot;products&quot;</span> <span class="string">&quot;users&quot;</span> <span class="string">&quot;analytics&quot;</span>)</span><br><span class="line">BACKUP_BASE_DIR=<span class="string">&quot;/var/solr/backups&quot;</span></span><br><span class="line">DATE=$(<span class="built_in">date</span> +%Y%m%d_%H%M%S)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> collection <span class="keyword">in</span> <span class="string">&quot;<span class="variable">$&#123;COLLECTIONS[@]&#125;</span>&quot;</span>; <span class="keyword">do</span></span><br><span class="line">    backup_name=<span class="string">&quot;<span class="variable">$&#123;collection&#125;</span>_<span class="variable">$&#123;DATE&#125;</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Creating backup for <span class="variable">$collection</span>...&quot;</span></span><br><span class="line">    </span><br><span class="line">    bin/solr api -post <span class="string">&quot;http://localhost:8983/solr/admin/collections&quot;</span> \</span><br><span class="line">        -data <span class="string">&quot;action=BACKUP&amp;name=<span class="variable">$backup_name</span>&amp;collection=<span class="variable">$collection</span>&amp;location=<span class="variable">$BACKUP_BASE_DIR</span>&quot;</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 等待备份完成</span></span><br><span class="line">    <span class="built_in">sleep</span> 10</span><br><span class="line">    </span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;Backup <span class="variable">$backup_name</span> created successfully&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清理旧备份（保留30天）</span></span><br><span class="line">find <span class="string">&quot;<span class="variable">$BACKUP_BASE_DIR</span>&quot;</span> -name <span class="string">&quot;*_20*&quot;</span> -mtime +30 -<span class="built_in">exec</span> <span class="built_in">rm</span> -rf &#123;&#125; \;</span><br></pre></td></tr></table></figure>
+
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="1-常见问题诊断"><a href="#1-常见问题诊断" class="headerlink" title="1. 常见问题诊断"></a>1. 常见问题诊断</h3><h4 id="启动问题"><a href="#启动问题" class="headerlink" title="启动问题"></a>启动问题</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查端口占用</span></span><br><span class="line">netstat -tulpn | grep :8983</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看详细启动日志</span></span><br><span class="line">bin/solr start -verbose</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查 JVM 参数</span></span><br><span class="line">ps aux | grep solr</span><br></pre></td></tr></table></figure>
+
+<h4 id="连接问题"><a href="#连接问题" class="headerlink" title="连接问题"></a>连接问题</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试 ZooKeeper 连接</span></span><br><span class="line">bin/solr zk <span class="built_in">ls</span> / -zkhost zk1:2181</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查集群状态</span></span><br><span class="line">bin/solr api -get <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=CLUSTERSTATUS&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-调试选项"><a href="#2-调试选项" class="headerlink" title="2. 调试选项"></a>2. 调试选项</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用调试模式</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.log.level=DEBUG&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用远程 JMX</span></span><br><span class="line">ENABLE_REMOTE_JMX_OPTS=<span class="literal">true</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启用 JVM 调试</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=1044&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Solr 控制脚本是 Apache Solr 生态系统中的核心管理工具，提供了全面的服务器和集群管理功能。掌握这个脚本的使用方法对于 Solr 的日常运维和管理至关重要。</p>
+<h3 id="关键要点"><a href="#关键要点" class="headerlink" title="关键要点"></a>关键要点</h3><ol>
+<li><strong>服务器管理</strong>：完整的启动、停止、重启和状态检查功能</li>
+<li><strong>集合管理</strong>：简化的集合和核心创建、删除操作</li>
+<li><strong>ZooKeeper 操作</strong>：完整的配置管理和文件操作工具</li>
+<li><strong>安全配置</strong>：内置的认证和授权管理功能</li>
+<li><strong>数据管理</strong>：便捷的数据导入导出和备份功能</li>
+<li><strong>监控诊断</strong>：健康检查和故障排除工具</li>
+</ol>
+<p>通过熟练使用这些命令和选项，可以高效地管理 Solr 集群，实现自动化运维，并快速解决各种运维问题。建议在实际使用中结合脚本自动化，提高运维效率和可靠性。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%8E%A7%E5%88%B6%E8%84%9A%E6%9C%AC/" rel="tag"># 控制脚本</a>
+              <a href="/tags/%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%B7%A5%E5%85%B7/" rel="tag"># 命令行工具</a>
+              <a href="/tags/%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" rel="tag"># 系统管理</a>
+              <a href="/tags/%E8%BF%90%E7%BB%B4%E5%B7%A5%E5%85%B7/" rel="tag"># 运维工具</a>
+              <a href="/tags/Solr%E6%A6%82%E5%BF%B5/" rel="tag"># Solr概念</a>
+              <a href="/tags/%E8%87%AA%E5%8A%A8%E5%8C%96%E9%83%A8%E7%BD%B2/" rel="tag"># 自动化部署</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2024/07/05/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%96%87%E6%A1%A3%E5%AD%97%E6%AE%B5%E4%B8%8E%E6%A8%A1%E5%BC%8F%E8%AE%BE%E8%AE%A1/" rel="prev" title="Solr概念：文档字段与模式设计">
+                  <i class="fa fa-angle-left"></i> Solr概念：文档字段与模式设计
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2024/07/25/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E7%B4%A2%E5%BC%95%E5%8E%9F%E7%90%86%E4%B8%8E%E4%BC%98%E5%8C%96/" rel="next" title="Solr概念：索引原理与优化">
+                  Solr概念：索引原理与优化 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

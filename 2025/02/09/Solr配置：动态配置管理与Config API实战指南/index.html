@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr配置：动态配置管理与Config API实战指南Apache Solr的Config API是一个强大的配置管理工具，它允许管理员通过REST API动态修改Solr的配置，而无需重启服务或手动编辑配置文件。本文将详细介绍Config API的使用方法、最佳实践和实际应用场景。 Config API概述什么是Config APIConfig API是Solr提供的一套RESTful Web">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：动态配置管理与Config API实战指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/09/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%8EConfig%20API%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr配置：动态配置管理与Config API实战指南Apache Solr的Config API是一个强大的配置管理工具，它允许管理员通过REST API动态修改Solr的配置，而无需重启服务或手动编辑配置文件。本文将详细介绍Config API的使用方法、最佳实践和实际应用场景。 Config API概述什么是Config APIConfig API是Solr提供的一套RESTful Web">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:37:50.482Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="Config API">
+<meta property="article:tag" content="REST API">
+<meta property="article:tag" content="动态配置">
+<meta property="article:tag" content="configoverlay">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/02/09/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%8EConfig%20API%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/09/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%8EConfig%20API%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/","path":"2025/02/09/Solr配置：动态配置管理与Config API实战指南/","title":"Solr配置：动态配置管理与Config API实战指南"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr配置：动态配置管理与Config API实战指南 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%8EConfig-API%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：动态配置管理与Config API实战指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-API%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">Config API概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFConfig-API"><span class="nav-number">1.1.1.</span> <span class="nav-text">什么是Config API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.2.</span> <span class="nav-text">工作原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#API%E7%AB%AF%E7%82%B9%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">API端点详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%AB%AF%E7%82%B9"><span class="nav-number">1.2.1.</span> <span class="nav-text">主要端点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AB%AF%E7%82%B9%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E"><span class="nav-number">1.2.2.</span> <span class="nav-text">端点功能说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">1. 配置查看</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE%E4%BF%AE%E6%94%B9"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">2. 配置修改</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.3.</span> <span class="nav-text">配置命令详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%B1%9E%E6%80%A7%E8%AE%BE%E7%BD%AE%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. 属性设置命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#set-property-unset-property"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">set-property &#x2F; unset-property</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E5%B1%9E%E6%80%A7%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">常用属性配置示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 请求处理器命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">添加请求处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">更新请求处理器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">删除请求处理器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 搜索组件配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.4.</span> <span class="nav-text">4. 查询解析器配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%9B%86%E7%AE%A1%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">参数集管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">1.4.1.</span> <span class="nav-text">创建参数集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">1.4.2.</span> <span class="nav-text">使用参数集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">1.4.3.</span> <span class="nav-text">更新参数集</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">1.4.4.</span> <span class="nav-text">删除参数集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.5.</span> <span class="nav-text">实际应用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 性能调优</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">缓存优化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8F%90%E4%BA%A4%E7%AD%96%E7%95%A5%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">提交策略优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E5%AE%9A%E5%88%B6"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. 搜索功能定制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E4%B8%93%E7%94%A8%E6%90%9C%E7%B4%A2%E6%8E%A5%E5%8F%A3"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">创建专用搜索接口</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%AB%98%E4%BA%AE%E6%98%BE%E7%A4%BA"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">配置高亮显示</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E8%AF%95"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 监控和调试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E8%B0%83%E8%AF%95%E6%A8%A1%E5%BC%8F"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">启用调试模式</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.6.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.1.</span> <span class="nav-text">1. 配置管理策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E6%8E%A7%E5%88%B6"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">版本控制</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE%E5%88%86%E7%A6%BB"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">环境配置分离</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.6.2.</span> <span class="nav-text">2. 安全考虑</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#API%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">API访问控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%9B%91%E6%8E%A7%E5%92%8C%E5%91%8A%E8%AD%A6"><span class="nav-number">1.6.3.</span> <span class="nav-text">3. 监控和告警</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%98%E6%9B%B4%E5%AE%A1%E8%AE%A1"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">配置变更审计</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.7.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.7.1.</span> <span class="nav-text">常见问题和解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E9%85%8D%E7%BD%AE%E4%B8%8D%E7%94%9F%E6%95%88"><span class="nav-number">1.7.1.1.</span> <span class="nav-text">1. 配置不生效</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE%E5%86%B2%E7%AA%81"><span class="nav-number">1.7.1.2.</span> <span class="nav-text">2. 配置冲突</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.7.1.3.</span> <span class="nav-text">3. 性能问题</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.8.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E4%BC%98%E5%8A%BF"><span class="nav-number">1.8.1.</span> <span class="nav-text">关键优势</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.8.2.</span> <span class="nav-text">使用建议</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/09/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E4%B8%8EConfig%20API%E5%AE%9E%E6%88%98%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr配置：动态配置管理与Config API实战指南 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr配置：动态配置管理与Config API实战指南
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-09 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-09T00:00:00+08:00">2025-02-09</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:37:50" itemprop="dateModified" datetime="2025-08-25T16:37:50+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr配置：动态配置管理与Config-API实战指南"><a href="#Solr配置：动态配置管理与Config-API实战指南" class="headerlink" title="Solr配置：动态配置管理与Config API实战指南"></a>Solr配置：动态配置管理与Config API实战指南</h1><p>Apache Solr的Config API是一个强大的配置管理工具，它允许管理员通过REST API动态修改Solr的配置，而无需重启服务或手动编辑配置文件。本文将详细介绍Config API的使用方法、最佳实践和实际应用场景。</p>
+<h2 id="Config-API概述"><a href="#Config-API概述" class="headerlink" title="Config API概述"></a>Config API概述</h2><h3 id="什么是Config-API"><a href="#什么是Config-API" class="headerlink" title="什么是Config API"></a>什么是Config API</h3><p>Config API是Solr提供的一套RESTful Web服务接口，用于在运行时动态修改Solr的配置参数。通过这个API，您可以：</p>
+<ul>
+<li>修改请求处理器配置</li>
+<li>调整缓存设置</li>
+<li>更新提交策略</li>
+<li>配置查询组件</li>
+<li>设置用户定义属性</li>
+</ul>
+<h3 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h3><p>Config API的工作机制基于配置覆盖（Configuration Overlay）：</p>
+<ol>
+<li><strong>原始配置</strong>：存储在<code>solrconfig.xml</code>中</li>
+<li><strong>覆盖配置</strong>：通过API修改的配置存储在<code>configoverlay.json</code>中</li>
+<li><strong>生效机制</strong>：运行时配置 &#x3D; 原始配置 + 覆盖配置</li>
+</ol>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">solrconfig.xml (基础配置) + configoverlay.json (覆盖配置) = 实际生效配置</span><br></pre></td></tr></table></figure>
+
+<h2 id="API端点详解"><a href="#API端点详解" class="headerlink" title="API端点详解"></a>API端点详解</h2><h3 id="主要端点"><a href="#主要端点" class="headerlink" title="主要端点"></a>主要端点</h3><p>Config API提供以下主要端点：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看完整配置</span></span><br><span class="line">GET /solr/&#123;collection&#125;/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看配置覆盖</span></span><br><span class="line">GET /solr/&#123;collection&#125;/config/overlay</span><br><span class="line"></span><br><span class="line"><span class="comment"># 修改配置</span></span><br><span class="line">POST /solr/&#123;collection&#125;/config</span><br><span class="line"></span><br><span class="line"><span class="comment"># 参数集管理</span></span><br><span class="line">GET/POST /solr/&#123;collection&#125;/config/params</span><br></pre></td></tr></table></figure>
+
+<h3 id="端点功能说明"><a href="#端点功能说明" class="headerlink" title="端点功能说明"></a>端点功能说明</h3><h4 id="1-配置查看"><a href="#1-配置查看" class="headerlink" title="1. 配置查看"></a>1. 配置查看</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看完整的有效配置</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 仅查看覆盖配置</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config/overlay&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看特定组件配置</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config/requestHandler&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-配置修改"><a href="#2-配置修改" class="headerlink" title="2. 配置修改"></a>2. 配置修改</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 修改配置的基本语法</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;command-name&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;parameter&quot;: &quot;value&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/&#123;collection&#125;/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置命令详解"><a href="#配置命令详解" class="headerlink" title="配置命令详解"></a>配置命令详解</h2><h3 id="1-属性设置命令"><a href="#1-属性设置命令" class="headerlink" title="1. 属性设置命令"></a>1. 属性设置命令</h3><h4 id="set-property-unset-property"><a href="#set-property-unset-property" class="headerlink" title="set-property &#x2F; unset-property"></a>set-property &#x2F; unset-property</h4><p>用于设置或删除预定义的配置属性：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 设置自动提交时间为15秒</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;updateHandler.autoCommit.maxTime&quot;: 15000</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 取消设置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;unset-property&quot;: &quot;updateHandler.autoCommit.maxTime&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常用属性配置示例"><a href="#常用属性配置示例" class="headerlink" title="常用属性配置示例"></a>常用属性配置示例</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置查询缓存</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;query.filterCache.size&quot;: 1000,</span></span><br><span class="line"><span class="string">      &quot;query.filterCache.initialSize&quot;: 100,</span></span><br><span class="line"><span class="string">      &quot;query.filterCache.autowarmCount&quot;: 50</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 配置文档缓存</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;query.documentCache.size&quot;: 500,</span></span><br><span class="line"><span class="string">      &quot;query.documentCache.initialSize&quot;: 50</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-请求处理器命令"><a href="#2-请求处理器命令" class="headerlink" title="2. 请求处理器命令"></a>2. 请求处理器命令</h3><h4 id="添加请求处理器"><a href="#添加请求处理器" class="headerlink" title="添加请求处理器"></a>添加请求处理器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;/myhandler&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.SearchHandler&quot;,</span></span><br><span class="line"><span class="string">        &quot;defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;q&quot;: &quot;*:*&quot;,</span></span><br><span class="line"><span class="string">          &quot;rows&quot;: &quot;10&quot;,</span></span><br><span class="line"><span class="string">          &quot;df&quot;: &quot;text&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="更新请求处理器"><a href="#更新请求处理器" class="headerlink" title="更新请求处理器"></a>更新请求处理器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;update-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;/select&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;rows&quot;: &quot;20&quot;,</span></span><br><span class="line"><span class="string">          &quot;fl&quot;: &quot;id,name,score&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="删除请求处理器"><a href="#删除请求处理器" class="headerlink" title="删除请求处理器"></a>删除请求处理器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;delete-requesthandler&quot;: &quot;/myhandler&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-搜索组件配置"><a href="#3-搜索组件配置" class="headerlink" title="3. 搜索组件配置"></a>3. 搜索组件配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加搜索组件</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-searchcomponent&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;mycomponent&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.HighlightComponent&quot;,</span></span><br><span class="line"><span class="string">        &quot;highlighting&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;fragmenter&quot;: &quot;gap&quot;,</span></span><br><span class="line"><span class="string">          &quot;max.chars&quot;: &quot;500&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-查询解析器配置"><a href="#4-查询解析器配置" class="headerlink" title="4. 查询解析器配置"></a>4. 查询解析器配置</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加查询解析器</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-queryparser&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;myparser&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.DisMaxQParserPlugin&quot;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="参数集管理"><a href="#参数集管理" class="headerlink" title="参数集管理"></a>参数集管理</h2><h3 id="创建参数集"><a href="#创建参数集" class="headerlink" title="创建参数集"></a>创建参数集</h3><p>参数集（Parameter Sets）允许您创建命名的参数组合：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建搜索参数集</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;search_defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;q&quot;: &quot;*:*&quot;,</span></span><br><span class="line"><span class="string">        &quot;rows&quot;: &quot;10&quot;,</span></span><br><span class="line"><span class="string">        &quot;start&quot;: &quot;0&quot;,</span></span><br><span class="line"><span class="string">        &quot;fl&quot;: &quot;id,name,score&quot;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config/params&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用参数集"><a href="#使用参数集" class="headerlink" title="使用参数集"></a>使用参数集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在查询中使用参数集</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/select?useParams=search_defaults&amp;q=electronics&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="更新参数集"><a href="#更新参数集" class="headerlink" title="更新参数集"></a>更新参数集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;update&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;search_defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;rows&quot;: &quot;20&quot;,</span></span><br><span class="line"><span class="string">        &quot;sort&quot;: &quot;score desc&quot;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config/params&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="删除参数集"><a href="#删除参数集" class="headerlink" title="删除参数集"></a>删除参数集</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;delete&quot;: &quot;search_defaults&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config/params&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="实际应用场景"><a href="#实际应用场景" class="headerlink" title="实际应用场景"></a>实际应用场景</h2><h3 id="1-性能调优"><a href="#1-性能调优" class="headerlink" title="1. 性能调优"></a>1. 性能调优</h3><h4 id="缓存优化"><a href="#缓存优化" class="headerlink" title="缓存优化"></a>缓存优化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 动态调整缓存大小</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;query.filterCache.size&quot;: 2000,</span></span><br><span class="line"><span class="string">      &quot;query.queryResultCache.size&quot;: 1000,</span></span><br><span class="line"><span class="string">      &quot;query.documentCache.size&quot;: 800</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="提交策略优化"><a href="#提交策略优化" class="headerlink" title="提交策略优化"></a>提交策略优化</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化自动提交设置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;updateHandler.autoCommit.maxTime&quot;: 300000,</span></span><br><span class="line"><span class="string">      &quot;updateHandler.autoCommit.maxDocs&quot;: 10000,</span></span><br><span class="line"><span class="string">      &quot;updateHandler.autoSoftCommit.maxTime&quot;: 5000</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-搜索功能定制"><a href="#2-搜索功能定制" class="headerlink" title="2. 搜索功能定制"></a>2. 搜索功能定制</h3><h4 id="创建专用搜索接口"><a href="#创建专用搜索接口" class="headerlink" title="创建专用搜索接口"></a>创建专用搜索接口</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建产品搜索接口</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;/products&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.SearchHandler&quot;,</span></span><br><span class="line"><span class="string">        &quot;defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;q&quot;: &quot;*:*&quot;,</span></span><br><span class="line"><span class="string">          &quot;fq&quot;: &quot;type:product&quot;,</span></span><br><span class="line"><span class="string">          &quot;rows&quot;: &quot;12&quot;,</span></span><br><span class="line"><span class="string">          &quot;fl&quot;: &quot;id,name,price,category,inStock&quot;,</span></span><br><span class="line"><span class="string">          &quot;facet&quot;: &quot;true&quot;,</span></span><br><span class="line"><span class="string">          &quot;facet.field&quot;: [&quot;category&quot;, &quot;brand&quot;],</span></span><br><span class="line"><span class="string">          &quot;facet.mincount&quot;: &quot;1&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="配置高亮显示"><a href="#配置高亮显示" class="headerlink" title="配置高亮显示"></a>配置高亮显示</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 添加高亮搜索处理器</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;/highlight&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.SearchHandler&quot;,</span></span><br><span class="line"><span class="string">        &quot;defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;hl&quot;: &quot;true&quot;,</span></span><br><span class="line"><span class="string">          &quot;hl.fl&quot;: &quot;name,features&quot;,</span></span><br><span class="line"><span class="string">          &quot;hl.simple.pre&quot;: &quot;&lt;mark&gt;&quot;,</span></span><br><span class="line"><span class="string">          &quot;hl.simple.post&quot;: &quot;&lt;/mark&gt;&quot;,</span></span><br><span class="line"><span class="string">          &quot;hl.maxAnalyzedChars&quot;: &quot;1000000&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-监控和调试"><a href="#3-监控和调试" class="headerlink" title="3. 监控和调试"></a>3. 监控和调试</h3><h4 id="启用调试模式"><a href="#启用调试模式" class="headerlink" title="启用调试模式"></a>启用调试模式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建调试搜索接口</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;/debug&quot;: &#123;</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;solr.SearchHandler&quot;,</span></span><br><span class="line"><span class="string">        &quot;defaults&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;debugQuery&quot;: &quot;true&quot;,</span></span><br><span class="line"><span class="string">          &quot;debug.explain.structured&quot;: &quot;true&quot;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">      &#125;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="1-配置管理策略"><a href="#1-配置管理策略" class="headerlink" title="1. 配置管理策略"></a>1. 配置管理策略</h3><h4 id="版本控制"><a href="#版本控制" class="headerlink" title="版本控制"></a>版本控制</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 备份当前配置覆盖</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config/overlay&quot;</span> &gt; config-backup-$(<span class="built_in">date</span> +%Y%m%d).json</span><br><span class="line"></span><br><span class="line"><span class="comment"># 应用新配置前验证</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;set-property&quot;:&#123;&quot;test.param&quot;:&quot;test_value&quot;&#125;&#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证后清理测试配置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;unset-property&quot;:&quot;test.param&quot;&#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="环境配置分离"><a href="#环境配置分离" class="headerlink" title="环境配置分离"></a>环境配置分离</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 开发环境配置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-user-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;environment&quot;: &quot;development&quot;,</span></span><br><span class="line"><span class="string">      &quot;debug.mode&quot;: &quot;true&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 生产环境配置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-user-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;environment&quot;: &quot;production&quot;,</span></span><br><span class="line"><span class="string">      &quot;debug.mode&quot;: &quot;false&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-安全考虑"><a href="#2-安全考虑" class="headerlink" title="2. 安全考虑"></a>2. 安全考虑</h3><h4 id="API访问控制"><a href="#API访问控制" class="headerlink" title="API访问控制"></a>API访问控制</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 配置基本认证（需要在安全插件中配置）</span></span><br><span class="line">curl -u admin:password -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;set-property&quot;:&#123;&quot;query.timeout&quot;:&quot;30000&quot;&#125;&#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-监控和告警"><a href="#3-监控和告警" class="headerlink" title="3. 监控和告警"></a>3. 监控和告警</h3><h4 id="配置变更审计"><a href="#配置变更审计" class="headerlink" title="配置变更审计"></a>配置变更审计</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 配置变更监控脚本</span></span><br><span class="line"></span><br><span class="line">SOLR_HOST=<span class="string">&quot;localhost:8983&quot;</span></span><br><span class="line">COLLECTION=<span class="string">&quot;techproducts&quot;</span></span><br><span class="line">BACKUP_DIR=<span class="string">&quot;/var/solr/config-backups&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取当前配置哈希</span></span><br><span class="line">current_hash=$(curl -s <span class="string">&quot;<span class="variable">$SOLR_HOST</span>/solr/<span class="variable">$COLLECTION</span>/config/overlay&quot;</span> | <span class="built_in">md5sum</span> | <span class="built_in">cut</span> -d<span class="string">&#x27; &#x27;</span> -f1)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查是否有变更</span></span><br><span class="line"><span class="keyword">if</span> [ -f <span class="string">&quot;<span class="variable">$BACKUP_DIR</span>/last_hash&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">    last_hash=$(<span class="built_in">cat</span> <span class="string">&quot;<span class="variable">$BACKUP_DIR</span>/last_hash&quot;</span>)</span><br><span class="line">    <span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$current_hash</span>&quot;</span> != <span class="string">&quot;<span class="variable">$last_hash</span>&quot;</span> ]; <span class="keyword">then</span></span><br><span class="line">        <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(date)</span>: 配置发生变更&quot;</span> &gt;&gt; <span class="string">&quot;<span class="variable">$BACKUP_DIR</span>/config_changes.log&quot;</span></span><br><span class="line">        curl -s <span class="string">&quot;<span class="variable">$SOLR_HOST</span>/solr/<span class="variable">$COLLECTION</span>/config/overlay&quot;</span> &gt; <span class="string">&quot;<span class="variable">$BACKUP_DIR</span>/config_<span class="subst">$(date +%Y%m%d_%H%M%S)</span>.json&quot;</span></span><br><span class="line">    <span class="keyword">fi</span></span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;<span class="variable">$current_hash</span>&quot;</span> &gt; <span class="string">&quot;<span class="variable">$BACKUP_DIR</span>/last_hash&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题和解决方案"><a href="#常见问题和解决方案" class="headerlink" title="常见问题和解决方案"></a>常见问题和解决方案</h3><h4 id="1-配置不生效"><a href="#1-配置不生效" class="headerlink" title="1. 配置不生效"></a>1. 配置不生效</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查配置覆盖状态</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config/overlay&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重载核心配置（SolrCloud环境会自动同步）</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/cores?action=RELOAD&amp;core=techproducts&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="2-配置冲突"><a href="#2-配置冲突" class="headerlink" title="2. 配置冲突"></a>2. 配置冲突</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看完整的有效配置</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span> | jq <span class="string">&#x27;.config.requestHandler&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 清除所有覆盖配置</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;&quot;delete-property&quot;: &quot;*&quot;&#125;&#x27;</span> \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/techproducts/config&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-性能问题"><a href="#3-性能问题" class="headerlink" title="3. 性能问题"></a>3. 性能问题</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查配置对性能的影响</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/info/system&quot;</span> | jq <span class="string">&#x27;.system.committedGeneration&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 监控缓存命中率</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/techproducts/admin/mbeans?cat=CACHE&amp;stats=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Config API是Solr提供的强大配置管理工具，它使得动态配置调整变得简单和安全。通过本文介绍的方法和最佳实践，您可以：</p>
+<h3 id="关键优势"><a href="#关键优势" class="headerlink" title="关键优势"></a>关键优势</h3><ol>
+<li><strong>无停机配置</strong>：在不重启服务的情况下修改配置</li>
+<li><strong>版本化管理</strong>：配置变更可追踪和回滚</li>
+<li><strong>环境一致性</strong>：确保不同环境的配置同步</li>
+<li><strong>API化操作</strong>：便于自动化和脚本化管理</li>
+</ol>
+<h3 id="使用建议"><a href="#使用建议" class="headerlink" title="使用建议"></a>使用建议</h3><ol>
+<li>在生产环境应用前，先在测试环境验证配置变更</li>
+<li>建立配置变更的审批和记录机制</li>
+<li>定期备份配置覆盖文件</li>
+<li>监控配置变更对性能的影响</li>
+<li>制定配置回滚的应急预案</li>
+</ol>
+<p>通过合理使用Config API，可以大大提高Solr系统的管理效率和运维质量，是现代Solr部署不可或缺的重要工具。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr/" rel="tag"># Solr</a>
+              <a href="/tags/Config-API/" rel="tag"># Config API</a>
+              <a href="/tags/REST-API/" rel="tag"># REST API</a>
+              <a href="/tags/%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE/" rel="tag"># 动态配置</a>
+              <a href="/tags/configoverlay/" rel="tag"># configoverlay</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/08/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95%E5%92%8C%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" rel="prev" title="Solr配置：数据目录和索引位置管理详解">
+                  <i class="fa fa-angle-left"></i> Solr配置：数据目录和索引位置管理详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/10/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%BA%93%E6%96%87%E4%BB%B6%E7%AE%A1%E7%90%86%E4%B8%8E%E6%8F%92%E4%BB%B6%E5%8A%A0%E8%BD%BD%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3/" rel="next" title="Solr配置：库文件管理与插件加载机制详解">
+                  Solr配置：库文件管理与插件加载机制详解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

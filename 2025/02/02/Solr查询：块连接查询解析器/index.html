@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr查询：块连接查询解析器有两个支持块连接的查询解析器。这些解析器允许索引和搜索已作为嵌套文档索引的关系内容。 以下查询解析器的示例用法假设已索引了以下文档： 12345678910111213141516171819202122&lt;add&gt;  &lt;doc&gt;    &lt;field name&#x3D;&quot;id&quot;&gt;1&lt;&#x2F;field&gt;    &amp;lt">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：块连接查询解析器">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/02/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询：块连接查询解析器有两个支持块连接的查询解析器。这些解析器允许索引和搜索已作为嵌套文档索引的关系内容。 以下查询解析器的示例用法假设已索引了以下文档： 12345678910111213141516171819202122&lt;add&gt;  &lt;doc&gt;    &lt;field name&#x3D;&quot;id&quot;&gt;1&lt;&#x2F;field&gt;    &amp;lt">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-01T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:21:31.308Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="查询解析器">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="块连接">
+<meta property="article:tag" content="嵌套文档">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/02/02/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/02/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/","path":"2025/02/02/Solr查询：块连接查询解析器/","title":"Solr查询：块连接查询解析器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr查询：块连接查询解析器 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：块连接查询解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E8%BF%9E%E6%8E%A5%E5%AD%90%E6%96%87%E6%A1%A3%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">块连接子文档查询解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%92%8C%E6%A0%87%E8%AE%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">过滤和标记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E5%AD%90%E6%96%87%E6%A1%A3%E8%AF%AD%E6%B3%95"><span class="nav-number">1.1.2.</span> <span class="nav-text">所有子文档语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E8%BF%9E%E6%8E%A5%E7%88%B6%E6%96%87%E6%A1%A3%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">块连接父文档查询解析器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E5%92%8C%E6%A0%87%E8%AE%B0-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">过滤和标记</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%9D%97%E8%BF%9E%E6%8E%A5%E7%88%B6%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%84%E5%88%86"><span class="nav-number">1.2.2.</span> <span class="nav-text">使用块连接父查询解析器评分</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%80%E6%9C%89%E7%88%B6%E6%96%87%E6%A1%A3%E8%AF%AD%E6%B3%95"><span class="nav-number">1.2.3.</span> <span class="nav-text">所有父文档语法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9D%97%E6%8E%A9%E7%A0%81%EF%BC%9Aof%E5%92%8Cwhich%E6%9C%AC%E5%9C%B0%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">块掩码：of和which本地参数</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/02/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9D%97%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr查询：块连接查询解析器 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr查询：块连接查询解析器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-02 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-02T00:00:00+08:00">2025-02-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:21:31" itemprop="dateModified" datetime="2025-08-25T16:21:31+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%9F%A5%E8%AF%A2/" itemprop="url" rel="index"><span itemprop="name">Solr查询</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr查询：块连接查询解析器"><a href="#Solr查询：块连接查询解析器" class="headerlink" title="Solr查询：块连接查询解析器"></a>Solr查询：块连接查询解析器</h1><p>有两个支持块连接的查询解析器。<br>这些解析器允许索引和搜索已作为<a href="../indexing-guide/indexing-nested-documents.html">嵌套文档</a>索引的关系内容。</p>
+<p>以下查询解析器的示例用法假设已索引了以下文档：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span>parent<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span>&gt;</span>Solr has block join support<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>2<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span>child<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;comments&quot;</span>&gt;</span>SolrCloud supports it too!<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>3<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span>parent<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span>&gt;</span>New Lucene and Solr release<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>4<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span>child<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;comments&quot;</span>&gt;</span>Lots of new features<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="块连接子文档查询解析器"><a href="#块连接子文档查询解析器" class="headerlink" title="块连接子文档查询解析器"></a>块连接子文档查询解析器</h2><p>此解析器包装一个匹配某些父文档的查询并返回这些文档的子文档。</p>
+<p>此解析器的语法是：<code>q=&#123;!child of=&lt;blockMask&gt;&#125;&lt;someParents&gt;</code>。</p>
+<ul>
+<li>内部从属查询字符串（<code>someParents</code>）必须是一个将匹配某些父文档的查询</li>
+<li><code>of</code>参数必须是一个用作块掩码的查询字符串——通常是匹配所有可能父文档集合的查询</li>
+</ul>
+<p>结果查询将匹配所有不匹配<code>&lt;blockMask&gt;</code>查询并且是<code>&lt;someParents&gt;</code>匹配文档的子文档（或后代）的文档。</p>
+<p>使用上面的示例文档，我们可以构建一个查询，如<code>q=&#123;!child of=&quot;content_type:parent&quot;&#125;title:lucene</code>。<br>我们只得到一个文档作为响应：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">&quot;response&quot;</span> <span class="attr">numFound</span>=<span class="string">&quot;1&quot;</span> <span class="attr">start</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>4<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">str</span>&gt;</span>child<span class="tag">&lt;/<span class="name">str</span>&gt;</span><span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;comments&quot;</span>&gt;</span>Lots of new features<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> <code>someParents</code>的查询<strong>必须</strong>匹配块掩码匹配文档的严格子集，否则您的查询可能导致错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Parent query must not match any docs besides parent filter.</span><br><span class="line">Combine them as must (+) and must-not (-) clauses to find a problem doc.</span><br></pre></td></tr></table></figure>
+
+<p>如果遇到这种类型的错误，您可以搜索<code>q=+(someParents) -(blockMask)</code>来找到原因。</p>
+<h3 id="过滤和标记"><a href="#过滤和标记" class="headerlink" title="过滤和标记"></a>过滤和标记</h3><p><code>&#123;!child&#125;</code>还支持<code>filters</code>和<code>excludeTags</code>本地参数，如下所示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?q=&#123;!child of=&lt;blockMask&gt; filters=$parentfq excludeTags=certain&#125;&lt;someParents&gt;</span><br><span class="line">&amp;parentfq=BRAND:Foo</span><br><span class="line">&amp;parentfq=NAME:Bar</span><br><span class="line">&amp;parentfq=&#123;!tag=certain&#125;CATEGORY:Baz</span><br></pre></td></tr></table></figure>
+
+<p>这等同于：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q=&#123;!child of=&lt;blockMask&gt;&#125;+&lt;someParents&gt; +BRAND:Foo +NAME:Bar</span><br></pre></td></tr></table></figure>
+
+<p>注意在<code>filters</code>中引用查询的”$”语法；逗号分隔的标签<code>excludeTags</code>允许通过标记排除某些查询。<br>总体思路类似于<a href="faceting.html#tagging-and-excluding-filters">在分面中排除<code>fq</code></a>。<br>注意，过滤应用于从属子句（<code>&lt;someParents&gt;</code>），并且交集结果连接到子文档。</p>
+<h3 id="所有子文档语法"><a href="#所有子文档语法" class="headerlink" title="所有子文档语法"></a>所有子文档语法</h3><p>当省略从属子句（<code>&lt;someParents&gt;</code>）时，它被解析为子文档的_分段_和_缓存_过滤器。<br>更准确地说，<code>q=&#123;!child of=&lt;blockMask&gt;&#125;</code>等同于<code>q=*:* -&lt;blockMask&gt;</code>。</p>
+<h2 id="块连接父文档查询解析器"><a href="#块连接父文档查询解析器" class="headerlink" title="块连接父文档查询解析器"></a>块连接父文档查询解析器</h2><p>此解析器接受一个匹配子文档的查询并返回它们的父文档。</p>
+<p>此解析器的语法类似于<code>child</code>解析器：<code>q=&#123;!parent which=&lt;blockMask&gt;&#125;&lt;someChildren&gt;</code>。</p>
+<ul>
+<li>内部从属查询字符串（<code>someChildren</code>）必须是一个将匹配某些子文档的查询</li>
+<li><code>which</code>参数必须是一个用作块掩码的查询字符串——通常是匹配所有可能父文档集合的查询</li>
+</ul>
+<p>结果查询将匹配所有匹配<code>&lt;blockMask&gt;</code>查询并且是<code>&lt;someChildren&gt;</code>匹配文档的父文档（或祖先）的文档。</p>
+<p>再次使用上面的示例文档，我们可以构建一个查询，如<code>q=&#123;!parent which=&quot;content_type:parent&quot;&#125;comments:SolrCloud</code>。<br>我们得到这个文档作为响应：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">result</span> <span class="attr">name</span>=<span class="string">&quot;response&quot;</span> <span class="attr">numFound</span>=<span class="string">&quot;1&quot;</span> <span class="attr">start</span>=<span class="string">&quot;0&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">str</span>&gt;</span>parent<span class="tag">&lt;/<span class="name">str</span>&gt;</span><span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">str</span>&gt;</span>Solr has block join support<span class="tag">&lt;/<span class="name">str</span>&gt;</span><span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">result</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> <code>someChildren</code>的查询<strong>不得</strong>匹配块掩码匹配的任何文档，否则您的查询可能导致错误：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Child query must not match same docs with parent filter.</span><br><span class="line">Combine them as must clauses (+) to find a problem doc.</span><br></pre></td></tr></table></figure>
+
+<p>您可以搜索<code>q=+(blockMask) +(someChildren)</code>来找到原因。</p>
+<h3 id="过滤和标记-1"><a href="#过滤和标记-1" class="headerlink" title="过滤和标记"></a>过滤和标记</h3><p><code>&#123;!parent&#125;</code>查询支持<code>filters</code>和<code>excludeTags</code>本地参数，如下所示：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">?q=&#123;!parent which=&lt;blockMask&gt; filters=$childfq excludeTags=certain&#125;&lt;someChildren&gt;</span><br><span class="line">&amp;childfq=COLOR:Red</span><br><span class="line">&amp;childfq=SIZE:XL</span><br><span class="line">&amp;childfq=&#123;!tag=certain&#125;PRINT:Hatched</span><br></pre></td></tr></table></figure>
+
+<p>这等同于：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q=&#123;!parent which=&lt;blockMask&gt;&#125;+&lt;someChildren&gt; +COLOR:Red +SIZE:XL</span><br></pre></td></tr></table></figure>
+
+<p>注意在<code>filters</code>中引用查询的”$”语法。<br><code>excludeTags</code>中的逗号分隔标签允许通过标记排除某些查询。<br>总体思路类似于<a href="faceting.html#tagging-and-excluding-filters">在分面中排除<code>fq</code></a>。<br>注意过滤首先应用于从属子句（<code>&lt;someChildren&gt;</code>），然后交集结果连接到父文档。</p>
+<h3 id="使用块连接父查询解析器评分"><a href="#使用块连接父查询解析器评分" class="headerlink" title="使用块连接父查询解析器评分"></a>使用块连接父查询解析器评分</h3><p>您可以选择使用<code>score</code>本地参数返回从属查询的分数。<br>用于此参数的值定义聚合类型，包括<code>avg</code>（平均）、<code>max</code>（最大）、<code>min</code>（最小）、<code>total</code>（总和）。<br>隐式默认值是<code>none</code>，返回<code>0.0</code>。</p>
+<h3 id="所有父文档语法"><a href="#所有父文档语法" class="headerlink" title="所有父文档语法"></a>所有父文档语法</h3><p>当省略从属子句（<code>&lt;someChildren&gt;</code>）时，它被解析为所有父文档的_分段_和_缓存_过滤器，或者更准确地说，<code>q=&#123;!parent which=&lt;blockMask&gt;&#125;</code>等同于<code>q=&lt;blockMask&gt;</code>。</p>
+<h2 id="块掩码：of和which本地参数"><a href="#块掩码：of和which本地参数" class="headerlink" title="块掩码：of和which本地参数"></a>块掩码：<code>of</code>和<code>which</code>本地参数</h2><p>指定为<code>of</code>或<code>which</code>参数（取决于使用的解析器）的”块掩码”查询的目的是识别索引中应被视为”父文档”_（或其祖先）_的所有文档集合，以及哪些文档应被视为”子文档”。<br>这很重要，因为在”磁盘上”索引中，关系被扁平化为文档”块”，所以需要<code>of</code> &#x2F; <code>which</code>参数作为对平面文档块的”掩码”来识别每个层次关系的边界。</p>
+<p>在上面的示例查询中，我们能够使用非常简单的<code>doc_type:parent</code>块掩码，因为我们的数据非常简单：每个文档要么是<code>parent</code>要么是<code>child</code>。<br>因此这个查询字符串很容易区分我们的_所有_文档。</p>
+<p>一个常见的错误是尝试使用比所有父文档集合更严格的<code>which</code>参数，以过滤匹配的父文档，如这个错误示例：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// 错误！不要使用！</span><br><span class="line">q=&#123;!parent which=&quot;title:join&quot;&#125;comments:support</span><br></pre></td></tr></table></figure>
+
+<p>这种类型的查询经常不会按您期望的方式工作。<br>由于<code>which</code>参数只识别_一些_”父”文档，结果查询可能匹配不应该匹配的”父”文档，因为它会错误地将所有不匹配<code>which=&quot;title:join&quot;</code>块掩码的文档识别为索引中下一个”父”文档（匹配此掩码）的子文档。</p>
+<p>当将父&#x2F;子文档与没有子文档_并且不匹配用于识别”父”文档的查询_的”简单”文档混合时，可能出现类似的问题情况。例如，如果我们将以下文档添加到现有的父&#x2F;子示例文档中：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">add</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">doc</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;id&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;content_type&quot;</span>&gt;</span>plain<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">field</span> <span class="attr">name</span>=<span class="string">&quot;title&quot;</span>&gt;</span>Lucene and Solr are cool<span class="tag">&lt;/<span class="name">field</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">doc</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">add</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>…那么我们简单的<code>doc_type:parent</code>块掩码将不再足够。<br>我们需要使用<code>*:* -doc_type:child</code>或<code>doc_type:(simple parent)</code>来防止我们的”简单”文档被错误地视为相邻”父”文档的”子”文档。</p>
+<p><a href="searching-nested-documents.html">搜索嵌套文档</a>部分包含使用非平凡文档层次结构指定块掩码查询的更详细示例。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/" rel="tag"># 查询解析器</a>
+              <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" rel="tag"># Solr查询</a>
+              <a href="/tags/%E5%9D%97%E8%BF%9E%E6%8E%A5/" rel="tag"># 块连接</a>
+              <a href="/tags/%E5%B5%8C%E5%A5%97%E6%96%87%E6%A1%A3/" rel="tag"># 嵌套文档</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" rel="prev" title="Solr查询：分析组件">
+                  <i class="fa fa-angle-left"></i> Solr查询：分析组件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/03/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" rel="next" title="Solr部署：别名管理">
+                  Solr部署：别名管理 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

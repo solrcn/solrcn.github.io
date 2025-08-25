@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr查询：分析表达式源表达式源是在分析表达式中进行聚合的数据来源。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 这些源可以是使用docValues索引的Solr字段，或者是常量。 支持的字段类型支持以下Solr字段类型。这些类型的字段可以是多值的也可以是单值的。 在分析表达式中使用的所有字段必须启用docVa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：分析表达式源">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/29/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询：分析表达式源表达式源是在分析表达式中进行聚合的数据来源。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 这些源可以是使用docValues索引的Solr字段，或者是常量。 支持的字段类型支持以下Solr字段类型。这些类型的字段可以是多值的也可以是单值的。 在分析表达式中使用的所有字段必须启用docVa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:16:12.797Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="分析组件">
+<meta property="article:tag" content="表达式">
+<meta property="article:tag" content="数据源">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/01/29/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/29/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/","path":"2025/01/29/Solr查询：分析表达式源/","title":"Solr查询：分析表达式源"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr查询：分析表达式源 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：分析表达式源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">支持的字段类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5%E5%8E%BB%E9%87%8D"><span class="nav-number">1.1.1.</span> <span class="nav-text">多值字段去重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">常量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">日期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97"><span class="nav-number">1.2.3.</span> <span class="nav-text">数字</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/29/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr查询：分析表达式源 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr查询：分析表达式源
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-29 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-29T00:00:00+08:00">2025-01-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:16:12" itemprop="dateModified" datetime="2025-08-25T16:16:12+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%9F%A5%E8%AF%A2/" itemprop="url" rel="index"><span itemprop="name">Solr查询</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr查询：分析表达式源"><a href="#Solr查询：分析表达式源" class="headerlink" title="Solr查询：分析表达式源"></a>Solr查询：分析表达式源</h1><p>表达式源是在<a href="analytics.html#expressions">分析表达式</a>中进行聚合的数据来源。</p>
+<p><strong>警告：</strong> 分析组件已被弃用。我们建议查看<a href="json-facet-api.html">JSON分面API</a>中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。</p>
+<p>这些源可以是使用docValues索引的Solr字段，或者是常量。</p>
+<h2 id="支持的字段类型"><a href="#支持的字段类型" class="headerlink" title="支持的字段类型"></a>支持的字段类型</h2><p>支持以下<a href="../indexing-guide/field-types-included-with-solr.html">Solr字段类型</a>。<br>这些类型的字段可以是多值的也可以是单值的。</p>
+<p>在分析表达式中使用的所有字段<strong>必须</strong>启用<a href="../indexing-guide/docvalues.html">docValues</a>。</p>
+<p>&#x2F;&#x2F; 由于从7.0开始Trie<em>字段已被弃用，我们应该考虑从此列表中移除Trie</em>字段…</p>
+<p><strong>字符串：</strong></p>
+<ul>
+<li>StrField</li>
+</ul>
+<p><strong>布尔值：</strong></p>
+<ul>
+<li>BoolField</li>
+</ul>
+<p><strong>整数：</strong></p>
+<ul>
+<li>TrieIntField</li>
+<li>IntPointField</li>
+</ul>
+<p><strong>长整数：</strong></p>
+<ul>
+<li>TrieLongField</li>
+<li>LongPointField</li>
+</ul>
+<p><strong>浮点数：</strong></p>
+<ul>
+<li>TrieFloatField</li>
+<li>FloatPointField</li>
+</ul>
+<p><strong>双精度：</strong></p>
+<ul>
+<li>TrieDoubleField</li>
+<li>DoublePointField</li>
+</ul>
+<p><strong>日期：</strong></p>
+<ul>
+<li>TrieDateField</li>
+<li>DatePointField</li>
+</ul>
+<h3 id="多值字段去重"><a href="#多值字段去重" class="headerlink" title="多值字段去重"></a>多值字段去重</h3><p><strong>警告：</strong> 除了PointFields外，所有多值字段类型都会进行去重，这意味着在索引期间会移除同一字段的重复值。<br>为了保存重复值，您必须使用PointField类型。</p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><p>常量可以包含在表达式中，与字段和函数一起使用。<br>下面显示了可用的常量。<br>常量不需要被任何函数包围来定义它们，它们可以完全像字段一样在表达式中使用。</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>有两种指定常量字符串的方式，如下所示。</p>
+<ul>
+<li><p>被双引号包围，在引号内<code>&quot;</code>和<code>\</code>都必须用<code>\</code>字符转义。</p>
+<p><code>&quot;Inside of &#39;double&#39; \\ \&quot;quotes\&quot;&quot;</code> &#x3D;&gt; <code>Inside of &#39;double&#39; \ &quot;quotes&quot;</code></p>
+</li>
+<li><p>被单引号包围，在引号内<code>&#39;</code>和<code>\</code>都必须用<code>\</code>字符转义。</p>
+<p><code>&#39;Inside of &quot;single&quot; \\ \&#39;quotes\&#39;&#39;</code> &#x3D;&gt; <code>Inside of &quot;double&quot; \ &#39;quotes&#39;</code></p>
+</li>
+</ul>
+<h3 id="日期"><a href="#日期" class="headerlink" title="日期"></a>日期</h3><p>日期可以按与Solr查询中相同的方式指定。<br>只需使用ISO-8601格式。<br>有关更多信息，请参考<a href="../indexing-guide/date-formatting-math.html">日期格式化数学</a>。</p>
+<ul>
+<li><code>2017-07-17T19:35:08Z</code></li>
+</ul>
+<h3 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h3><p>任何非小数数字都将被读取为整数，如果对于整数来说太大，则为长整数。<br>所有小数数字都将被读取为双精度数。</p>
+<ul>
+<li><code>-123421</code>：整数</li>
+<li><code>800000000000</code>：长整数</li>
+<li><code>230.34</code>：双精度</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" rel="tag"># Solr查询</a>
+              <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" rel="tag"># 分析组件</a>
+              <a href="/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F/" rel="tag"># 表达式</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90/" rel="tag"># 数据源</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/28/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3/" rel="prev" title="Solr配置：索引位置格式详解">
+                  <i class="fa fa-angle-left"></i> Solr配置：索引位置格式详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/30/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" rel="next" title="Solr查询：分析映射函数">
+                  Solr查询：分析映射函数 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr查询：分析减少函数减少函数将源和&#x2F;或未减少的映射函数的值为每个Solr文档减少为单个值。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 下面是分析组件提供的所有减少函数列表。这些可以与映射函数结合使用以实现更复杂的功能。 计数减少计数表达式的现有值数量。对于单值表达式，这等价于docCount。如">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：分析减少函数">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/31/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询：分析减少函数减少函数将源和&#x2F;或未减少的映射函数的值为每个Solr文档减少为单个值。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 下面是分析组件提供的所有减少函数列表。这些可以与映射函数结合使用以实现更复杂的功能。 计数减少计数表达式的现有值数量。对于单值表达式，这等价于docCount。如">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-30T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:17:57.733Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="分析组件">
+<meta property="article:tag" content="减少函数">
+<meta property="article:tag" content="聚合函数">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/01/31/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/31/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/","path":"2025/01/31/Solr查询：分析减少函数/","title":"Solr查询：分析减少函数"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr查询：分析减少函数 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：分析减少函数</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0%E5%87%8F%E5%B0%91"><span class="nav-number">1.1.</span> <span class="nav-text">计数减少</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%95%B0"><span class="nav-number">1.1.1.</span> <span class="nav-text">计数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E8%AE%A1%E6%95%B0"><span class="nav-number">1.1.2.</span> <span class="nav-text">文档计数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%BA%E5%A4%B1"><span class="nav-number">1.1.3.</span> <span class="nav-text">缺失</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%94%AF%E4%B8%80"><span class="nav-number">1.1.4.</span> <span class="nav-text">唯一</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%87%8F%E5%B0%91"><span class="nav-number">1.2.</span> <span class="nav-text">数学减少</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B1%82%E5%92%8C"><span class="nav-number">1.2.1.</span> <span class="nav-text">求和</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E5%B7%AE"><span class="nav-number">1.2.2.</span> <span class="nav-text">方差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%B7%AE"><span class="nav-number">1.2.3.</span> <span class="nav-text">标准差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E5%80%BC"><span class="nav-number">1.2.4.</span> <span class="nav-text">平均值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8A%A0%E6%9D%83%E5%B9%B3%E5%9D%87%E5%80%BC"><span class="nav-number">1.2.5.</span> <span class="nav-text">加权平均值</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%92%E5%BA%8F%E5%87%8F%E5%B0%91"><span class="nav-number">1.3.</span> <span class="nav-text">排序减少</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%B0%8F%E5%80%BC"><span class="nav-number">1.3.1.</span> <span class="nav-text">最小值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%80%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">最大值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%AD%E4%BD%8D%E6%95%B0"><span class="nav-number">1.3.3.</span> <span class="nav-text">中位数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%99%BE%E5%88%86%E4%BD%8D%E6%95%B0"><span class="nav-number">1.3.4.</span> <span class="nav-text">百分位数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BA%8F%E6%95%B0"><span class="nav-number">1.3.5.</span> <span class="nav-text">序数</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/31/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr查询：分析减少函数 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr查询：分析减少函数
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-31 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-31T00:00:00+08:00">2025-01-31</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:17:57" itemprop="dateModified" datetime="2025-08-25T16:17:57+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E6%9F%A5%E8%AF%A2/" itemprop="url" rel="index"><span itemprop="name">Solr查询</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr查询：分析减少函数"><a href="#Solr查询：分析减少函数" class="headerlink" title="Solr查询：分析减少函数"></a>Solr查询：分析减少函数</h1><p>减少函数将<a href="analytics-expression-sources.html">源</a>和&#x2F;或未减少的<a href="analytics-mapping-functions.html">映射函数</a>的值为每个Solr文档减少为单个值。</p>
+<p><strong>警告：</strong> 分析组件已被弃用。我们建议查看<a href="json-facet-api.html">JSON分面API</a>中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。</p>
+<p>下面是分析组件提供的所有减少函数列表。<br>这些可以与映射函数结合使用以实现更复杂的功能。</p>
+<h2 id="计数减少"><a href="#计数减少" class="headerlink" title="计数减少"></a>计数减少</h2><h3 id="计数"><a href="#计数" class="headerlink" title="计数"></a>计数</h3><p>表达式的现有值数量。<br>对于单值表达式，这等价于<code>docCount</code>。<br>如果未给出表达式，则返回匹配文档的数量。</p>
+<p><code>count()</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<p><code>count(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<h3 id="文档计数"><a href="#文档计数" class="headerlink" title="文档计数"></a>文档计数</h3><p>表达式具有现有值的文档数量。<br>对于单值表达式，这等价于<code>count</code>。<br>如果未给出表达式，则返回匹配文档的数量。</p>
+<p><code>doc_count()</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<p><code>doc_count(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<h3 id="缺失"><a href="#缺失" class="headerlink" title="缺失"></a>缺失</h3><p>表达式没有现有值的文档数量。</p>
+<p><code>missing(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<h3 id="唯一"><a href="#唯一" class="headerlink" title="唯一"></a>唯一</h3><p>表达式的唯一值数量。<br>此函数接受<code>Numeric</code>、<code>Date</code>和<code>String</code>表达式。</p>
+<p><code>unique(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single Long_ &gt;</code></p>
+<h2 id="数学减少"><a href="#数学减少" class="headerlink" title="数学减少"></a>数学减少</h2><h3 id="求和"><a href="#求和" class="headerlink" title="求和"></a>求和</h3><p>返回表达式所有值的总和。</p>
+<p><code>sum(&lt; _Double_ &gt;)</code> &#x3D;&gt; <code>&lt; _Single Double_ &gt;</code></p>
+<h3 id="方差"><a href="#方差" class="headerlink" title="方差"></a>方差</h3><p>返回表达式所有值的方差。</p>
+<p><code>variance(&lt; _Double_ &gt;)</code> &#x3D;&gt; <code>&lt; _Single Double_ &gt;</code></p>
+<h3 id="标准差"><a href="#标准差" class="headerlink" title="标准差"></a>标准差</h3><p>返回表达式所有值的标准差。</p>
+<p><code>stddev(&lt; _Double_ &gt;)</code> &#x3D;&gt; <code>&lt; _Single Double_ &gt;</code></p>
+<h3 id="平均值"><a href="#平均值" class="headerlink" title="平均值"></a>平均值</h3><p>返回表达式所有值的算术平均值。</p>
+<p><code>mean(&lt; _Double_ &gt;)</code> &#x3D;&gt; <code>&lt; _Single Double_ &gt;</code></p>
+<h3 id="加权平均值"><a href="#加权平均值" class="headerlink" title="加权平均值"></a>加权平均值</h3><p>返回第二个表达式所有值的算术平均值，用第一个表达式的值加权。</p>
+<p><code>wmean(&lt; _Double_ &gt;, &lt; _Double_ &gt;)</code> &#x3D;&gt; <code>&lt; _Single Double_ &gt;</code></p>
+<p><strong>注意：</strong> 表达式必须满足<code>mult</code>函数参数的规则。</p>
+<h2 id="排序减少"><a href="#排序减少" class="headerlink" title="排序减少"></a>排序减少</h2><h3 id="最小值"><a href="#最小值" class="headerlink" title="最小值"></a>最小值</h3><p>返回表达式的最小值。<br>此函数接受<code>Numeric</code>、<code>Date</code>和<code>String</code>表达式。</p>
+<p><code>min(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single_ T &gt;</code></p>
+<h3 id="最大值"><a href="#最大值" class="headerlink" title="最大值"></a>最大值</h3><p>返回表达式的最大值。<br>此函数接受<code>Numeric</code>、<code>Date</code>和<code>String</code>表达式。</p>
+<p><code>max(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single_ T &gt;</code></p>
+<h3 id="中位数"><a href="#中位数" class="headerlink" title="中位数"></a>中位数</h3><p>返回表达式所有值的中位数。<br>此函数接受<code>Numeric</code>和<code>Date</code>表达式。</p>
+<p><code>median(&lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single_ T &gt;</code></p>
+<h3 id="百分位数"><a href="#百分位数" class="headerlink" title="百分位数"></a>百分位数</h3><p>计算表达式所有值的给定百分位数。<br>此函数在第2个参数中接受<code>Numeric</code>、<code>Date</code>和<code>String</code>表达式。</p>
+<p>百分位数作为第1个参数给出，必须是在[0, 100)之间的常量双精度数。</p>
+<p><code>percentile(&lt;Constant Double&gt;, &lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single_ T &gt;</code></p>
+<h3 id="序数"><a href="#序数" class="headerlink" title="序数"></a>序数</h3><p>计算表达式所有值的给定序数。<br>此函数在第2个参数中接受<code>Numeric</code>、<code>Date</code>和<code>String</code>表达式。<br>序数作为第1个参数给出，必须是常量整数。<br><strong>不接受0作为序数值。</strong></p>
+<p>如果序数为正数，返回值将是第n小的值。</p>
+<p>如果序数为负数，返回值将是第n大的值。</p>
+<p><code>ordinal(&lt;Constant Int&gt;, &lt; T &gt;)</code> &#x3D;&gt; <code>&lt; _Single_ T &gt;</code></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr%E6%9F%A5%E8%AF%A2/" rel="tag"># Solr查询</a>
+              <a href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" rel="tag"># 分析组件</a>
+              <a href="/tags/%E5%87%8F%E5%B0%91%E5%87%BD%E6%95%B0/" rel="tag"># 减少函数</a>
+              <a href="/tags/%E8%81%9A%E5%90%88%E5%87%BD%E6%95%B0/" rel="tag"># 聚合函数</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/30/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" rel="prev" title="Solr查询：分析映射函数">
+                  <i class="fa fa-angle-left"></i> Solr查询：分析映射函数
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/01/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/" rel="next" title="Solr查询：分析组件">
+                  Solr查询：分析组件 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

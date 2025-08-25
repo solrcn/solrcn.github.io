@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="分析器检查字段的文本并生成token流。 分析器在Solr的schema中被指定为&lt;fieldType&gt;元素的子元素。 在正常使用中，只有solr.TextField或solr.SortableTextField类型的字段才会指定分析器。配置分析器的最简单方法是使用单个&lt;analyzer&gt;元素，其class属性是完全限定的Java类名。命名的类必须派生自org.apache">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：分析器">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/20/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E5%99%A8/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="分析器检查字段的文本并生成token流。 分析器在Solr的schema中被指定为&lt;fieldType&gt;元素的子元素。 在正常使用中，只有solr.TextField或solr.SortableTextField类型的字段才会指定分析器。配置分析器的最简单方法是使用单个&lt;analyzer&gt;元素，其class属性是完全限定的Java类名。命名的类必须派生自org.apache">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:09:40.272Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="字段类型">
+<meta property="article:tag" content="Solr索引">
+<meta property="article:tag" content="分析器">
+<meta property="article:tag" content="分词器">
+<meta property="article:tag" content="过滤器">
+<meta property="article:tag" content="TextField">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/01/20/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E5%99%A8/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/20/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E5%99%A8/","path":"2025/01/20/Solr索引：分析器/","title":"Solr索引：分析器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr索引：分析器 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E9%98%B6%E6%AE%B5"><span class="nav-number">1.</span> <span class="nav-text">分析阶段</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E8%AF%8D%E6%89%A9%E5%B1%95%E7%9A%84%E5%88%86%E6%9E%90"><span class="nav-number">1.1.</span> <span class="nav-text">多词扩展的分析</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/20/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr索引：分析器 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr索引：分析器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-20 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-20T00:00:00+08:00">2025-01-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:09:40" itemprop="dateModified" datetime="2025-08-25T16:09:40+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E7%B4%A2%E5%BC%95/" itemprop="url" rel="index"><span itemprop="name">Solr索引</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>分析器检查字段的文本并生成token流。</p>
+<p>分析器在<a href="schema-elements">Solr的schema</a>中被指定为<code>&lt;fieldType&gt;</code>元素的子元素。</p>
+<p>在正常使用中，只有<code>solr.TextField</code>或<code>solr.SortableTextField</code>类型的字段才会指定分析器。<br>配置分析器的最简单方法是使用单个<code>&lt;analyzer&gt;</code>元素，其class属性是完全限定的Java类名。<br>命名的类必须派生自<code>org.apache.lucene.analysis.Analyzer</code>。<br>例如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.lucene.analysis.core.WhitespaceAnalyzer&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这种情况下，单个类<code>WhitespaceAnalyzer</code>负责分析命名文本字段的内容并发出相应的token。<br>对于简单情况，如纯英语散文，像这样的单个分析器类可能就足够了。<br>但通常需要对字段内容进行更复杂的分析。</p>
+<p>即使是最复杂的分析需求通常也可以分解为一系列离散的、相对简单的处理步骤。<br>如你将很快发现的，Solr发行版提供了大量的分词器和过滤器选择，涵盖了你可能遇到的大多数场景。<br>设置分析器链非常直接；你指定一个简单的<code>&lt;analyzer&gt;</code>元素（没有class属性），其子元素命名用于分词器和过滤器的工厂类，按照你希望它们运行的顺序。</p>
+<p>例如：</p>
+<p><strong>使用名称：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;standard&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;lowercase&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;stop&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;englishPorter&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>分词器和过滤器工厂类通过它们的符号名称（SPI名称）引用。<br>这里，name&#x3D;”standard”指向<code>org.apache.lucene.analysis.standard.StandardTokenizerFactory</code>。</p>
+<p><strong>使用类名（遗留）：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;solr.StandardTokenizerFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.StopFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.EnglishPorterFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>注意<code>org.apache.lucene.analysis</code>包中的类可以在这里用<code>solr.</code>前缀的简写形式引用。</p>
+<p>在这种情况下，<code>&lt;analyzer&gt;</code>元素上没有指定Analyzer类。<br>相反，一系列更专门的类被连接在一起，共同充当字段的分析器。<br>字段的文本被传递给列表中的第一项（<code>solr.StandardTokenizerFactory</code>），从最后一项（<code>solr.EnglishPorterFilterFactory</code>）出现的token是用于索引或查询任何使用”nametext”<code>fieldType</code>字段的词条。</p>
+<blockquote>
+<p><strong>字段值与索引词条</strong></p>
+<p>分析器的输出影响给定字段中索引的_词条_（以及在对这些字段进行查询时解析查询时使用的词条），但它对字段的_存储_值没有影响。<br>例如：分析器可能将”Brown Cow”拆分为两个索引词条”brown”和”cow”，但存储的值仍然是单个字符串：”Brown Cow”</p>
+</blockquote>
+<h2 id="分析阶段"><a href="#分析阶段" class="headerlink" title="分析阶段"></a>分析阶段</h2><p>分析发生在两个上下文中。<br>在索引时，当创建字段时，分析产生的token流被添加到索引中，并定义字段的词条集合（包括位置、大小等）。<br>在查询时，被搜索的值被分析，产生的词条与存储在字段索引中的那些词条匹配。</p>
+<p>在许多情况下，相同的分析应该应用于两个阶段。<br>当你想要查询精确的字符串匹配时，这是理想的，例如可能不区分大小写。<br>在其他情况下，你可能希望在索引期间应用与查询时使用的略有不同的分析步骤。</p>
+<p>如果你为字段类型提供一个简单的<code>&lt;analyzer&gt;</code>定义，如上面的例子，那么它将用于索引和查询。<br>如果你希望为每个阶段使用不同的分析器，你可以包含两个用type属性区分的<code>&lt;analyzer&gt;</code>定义。<br>例如：</p>
+<p><strong>使用名称：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;index&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;standard&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;lowercase&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;keepWord&quot;</span> <span class="attr">words</span>=<span class="string">&quot;keepwords.txt&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;synonymFilter&quot;</span> <span class="attr">synonyms</span>=<span class="string">&quot;syns.txt&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;standard&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;lowercase&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>使用类名（遗留）：</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;index&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;solr.StandardTokenizerFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.KeepWordFilterFactory&quot;</span> <span class="attr">words</span>=<span class="string">&quot;keepwords.txt&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.SynonymFilterFactory&quot;</span> <span class="attr">synonyms</span>=<span class="string">&quot;syns.txt&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;solr.StandardTokenizerFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在这个理论例子中，在索引时文本被分词，token被设置为小写，任何没有列在<code>keepwords.txt</code>中的被丢弃，剩下的根据<code>syns.txt</code>文件中的同义词规则映射为替代值。<br>这本质上从一个受限制的可能值集合构建索引，然后将它们标准化为甚至可能不出现在原始文本中的值。</p>
+<p>在查询时，唯一发生的标准化是将查询词条转换为小写。<br>在索引时发生的过滤和映射步骤不应用于查询词条。<br>在这个例子中，查询必须非常精确，只使用在索引时存储的标准化词条。</p>
+<h3 id="多词扩展的分析"><a href="#多词扩展的分析" class="headerlink" title="多词扩展的分析"></a>多词扩展的分析</h3><p>在某些类型的查询中（即前缀、通配符、正则表达式等），用户提供的输入不是用于分析的自然语言。<br>同义词或停用词过滤等在这些类型的查询中不能以逻辑方式工作。</p>
+<p>当Solr需要为导致多词扩展的查询执行分析时，会为过滤器链中的每个工厂调用<code>normalize</code>方法。<br>在这种上下文中不合理的过滤器的工厂将返回其输入不变。<br>标准化适用于CharFilters和TokenFilters。</p>
+<p>对于大多数用例，这提供了最好的可能行为，但如果你希望对这些类型查询执行的分析有绝对控制权，你可以显式定义一个<code>multiterm</code>分析器来使用，如下例所示：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">name</span>=<span class="string">&quot;nametext&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;index&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;standard&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;lowercase&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;keepWord&quot;</span> <span class="attr">words</span>=<span class="string">&quot;keepwords.txt&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;synonym&quot;</span> <span class="attr">synonyms</span>=<span class="string">&quot;syns.txt&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;standard&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">name</span>=<span class="string">&quot;lowercase&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 在进行涉及多词扩展的查询时不进行分析 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span> <span class="attr">type</span>=<span class="string">&quot;multiterm&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">name</span>=<span class="string">&quot;keyword&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B/" rel="tag"># 字段类型</a>
+              <a href="/tags/Solr%E7%B4%A2%E5%BC%95/" rel="tag"># Solr索引</a>
+              <a href="/tags/%E5%88%86%E6%9E%90%E5%99%A8/" rel="tag"># 分析器</a>
+              <a href="/tags/%E5%88%86%E8%AF%8D%E5%99%A8/" rel="tag"># 分词器</a>
+              <a href="/tags/%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="tag"># 过滤器</a>
+              <a href="/tags/TextField/" rel="tag"># TextField</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/19/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E7%95%8C%E9%9D%A2/" rel="prev" title="Solr索引：分析界面">
+                  <i class="fa fa-angle-left"></i> Solr索引：分析界面
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/21/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%AD%97%E7%AC%A6%E8%BF%87%E6%BB%A4%E5%99%A8/" rel="next" title="Solr索引：字符过滤器">
+                  Solr索引：字符过滤器 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

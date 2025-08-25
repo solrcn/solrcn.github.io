@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr部署：别名SolrCloud具有通过替代名称查询一个或多个集合的能力。这些集合的替代名称称为别名，在您想要时非常有用：  原子地切换到使用新（重新）索引的集合，零停机时间（通过重新定义别名） 将客户端编程与集合名称变化隔离 对具有相同模式的多个集合发出单个查询  有两种类型的别名：标准别名和路由别名。在路由别名中，有两种类型：类别路由别名和时间路由别名。本节讨论这些类型。 可以向别名发送集">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：别名">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr部署：别名SolrCloud具有通过替代名称查询一个或多个集合的能力。这些集合的替代名称称为别名，在您想要时非常有用：  原子地切换到使用新（重新）索引的集合，零停机时间（通过重新定义别名） 将客户端编程与集合名称变化隔离 对具有相同模式的多个集合发出单个查询  有两种类型的别名：标准别名和路由别名。在路由别名中，有两种类型：类别路由别名和时间路由别名。本节讨论这些类型。 可以向别名发送集">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:27:02.385Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="别名">
+<meta property="article:tag" content="集合管理">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/","path":"2025/02/04/Solr部署：别名/","title":"Solr部署：别名"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr部署：别名 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：别名</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%88%AB%E5%90%8D"><span class="nav-number">1.1.</span> <span class="nav-text">标准别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B7%AF%E7%94%B1%E5%88%AB%E5%90%8D"><span class="nav-number">1.2.</span> <span class="nav-text">路由别名</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E8%B7%AF%E7%94%B1%E5%88%AB%E5%90%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">时间路由别名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E5%92%8C%E5%81%87%E8%AE%BE"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">限制和假设</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B1%BB%E5%88%AB%E8%B7%AF%E7%94%B1%E5%88%AB%E5%90%8D"><span class="nav-number">1.2.2.</span> <span class="nav-text">类别路由别名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86-1"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">工作原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E5%92%8C%E5%81%87%E8%AE%BE-1"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">限制和假设</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%B4%E5%BA%A6%E8%B7%AF%E7%94%B1%E5%88%AB%E5%90%8D"><span class="nav-number">1.2.3.</span> <span class="nav-text">维度路由别名</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86-2"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">工作原理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%B9%E8%BF%9B%E5%8F%AF%E8%83%BD%E6%80%A7"><span class="nav-number">1.2.4.</span> <span class="nav-text">改进可能性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E5%90%88%E5%91%BD%E4%BB%A4%E5%92%8C%E5%88%AB%E5%90%8D"><span class="nav-number">1.3.</span> <span class="nav-text">集合命令和别名</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr部署：别名 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr部署：别名
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-04 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-04T00:00:00+08:00">2025-02-04</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:27:02" itemprop="dateModified" datetime="2025-08-25T16:27:02+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">Solr部署</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr部署：别名"><a href="#Solr部署：别名" class="headerlink" title="Solr部署：别名"></a>Solr部署：别名</h1><p>SolrCloud具有通过替代名称查询一个或多个集合的能力。<br>这些集合的替代名称称为别名，在您想要时非常有用：</p>
+<ol>
+<li>原子地切换到使用新（重新）索引的集合，零停机时间（通过重新定义别名）</li>
+<li>将客户端编程与集合名称变化隔离</li>
+<li>对具有相同模式的多个集合发出单个查询</li>
+</ol>
+<p>有两种类型的别名：标准别名和路由别名。<br>在路由别名中，有两种类型：类别路由别名和时间路由别名。<br>本节讨论这些类型。</p>
+<p>可以向别名发送集合更新命令，但只能发送到那些解析为单个集合的别名，或那些定义多个集合之间路由的别名（路由别名）。<br>在其他情况下，更新命令会被拒绝并显示错误，因为没有逻辑来在多个集合之间分发文档。</p>
+<h2 id="标准别名"><a href="#标准别名" class="headerlink" title="标准别名"></a>标准别名</h2><p>标准别名使用<a href="alias-management.html#createalias">CREATEALIAS</a>命令创建和更新。</p>
+<p>作为别名成员的当前集合列表可以通过<a href="cluster-node-management.html#clusterstatus">CLUSTERSTATUS</a>命令验证。</p>
+<p>所有别名的完整定义，包括关于该别名的元数据（在路由别名的情况下，见下文）可以通过<a href="alias-management.html#listaliases">LISTALIASES</a>命令验证。</p>
+<p>或者，此信息可以通过使用本机ZooKeeper客户端或在管理UI的云菜单<a href="cloud-screens.html#tree-view">树视图</a>页面中检查ZooKeeper中的<code>/aliases.json</code>来获得。</p>
+<p>别名可以通过<a href="alias-management.html#deletealias">DELETEALIAS</a>命令删除。<br>删除别名时，底层集合<strong>不受影响</strong>。</p>
+<p><strong>提示：</strong> 任何引用多个集合的别名（标准或路由）可能会使相关性复杂化。<br>默认情况下，SolrCloud基于每个分片对文档评分。</p>
+<p>对于别名中的多个集合，这总是一个问题，因此如果您有BM25或TF&#x2F;IDF相关性重要的用例，您会想要开启一个<a href="solrcloud-distributed-requests.html#distributedidf">ExactStatsCache</a>实现。</p>
+<p>但是，对于结果按数字、日期或字母数字字段值排序而非相关性计算的分析用例，这不是问题。</p>
+<h2 id="路由别名"><a href="#路由别名" class="headerlink" title="路由别名"></a>路由别名</h2><p>为了解决与标准别名相关的更新限制并提供额外的有用功能，开发了路由别名的概念。<br>目前有两种类型的路由别名：时间路由和类别路由。<br>下面详细描述了这些，但它们共享一些通用行为。</p>
+<p>在处理路由别名的更新时，Solr像往常一样初始化其更新请求处理器链，但当<code>DistributedUpdateProcessor</code>（DUP）初始化时，它检测到更新的目标是路由别名，并在自己前面注入<code>RoutedAliasUpdateProcessor</code>（RAUP）。<br>RAUP与Overseer协调，是路由别名的主要部分，必须紧接在DUP之前。<br>不可能配置在RAUP和DUP之间具有其他类型UpdateRequestProcessors的自定义链。</p>
+<p>理想情况下，作为路由别名的用户，您不需要关心集合命名模式的细节，因为查询和更新都可以通过别名完成。<br>添加数据时，您通常应该将文档定向到别名（例如，引用别名名称而不是任何集合）。<br>Solr服务器和<code>CloudSolrClient</code>将更新请求定向到别名指向的第一个集合。<br>一旦服务器接收到数据，它将执行必要的路由。</p>
+<p><strong>警告：</strong> 对于所有路由别名来说，路由值<strong>不</strong>改变是极其重要的。<br>对相同ID使用不同路由值重新索引文档会产生两个具有相同ID但可通过别名访问的不同文档。<br>一旦存在重复ID，路由别名的所有查询时间行为都是**<em>未定义的</em>**并且不容易预测。</p>
+<p><strong>注意：</strong> 对路由别名使用”数据驱动”模式（也称为<a href="../indexing-guide/schemaless-mode.html">无模式模式</a>）是个坏主意，因为重复的模式变化可能同时发生，导致错误。</p>
+<h3 id="时间路由别名"><a href="#时间路由别名" class="headerlink" title="时间路由别名"></a>时间路由别名</h3><p>时间路由别名（TRA）是管理别名和时间顺序集合系列的SolrCloud功能。</p>
+<p>它根据时间戳自动创建新集合并（可选地）删除旧集合，将文档路由到正确的集合。<br>这种方法允许无限期地索引数据，而不会因为单个索引的连续增长而导致性能降级。</p>
+<p>如果您需要在Solr中存储大量时间戳数据，例如日志或IoT传感器数据，那么此功能可能比创建一个分片哈希路由集合更有意义。</p>
+<h4 id="工作原理"><a href="#工作原理" class="headerlink" title="工作原理"></a>工作原理</h4><p>首先，您使用<a href="alias-management.html#createalias">CREATEALIAS</a>命令创建具有所需路由器设置的时间路由别名。<br>大多数设置可以稍后使用<a href="alias-management.html#aliasprop">ALIASPROP</a>命令编辑。</p>
+<p>第一个集合将自动创建，以及指向它的别名。<br>作为TRA成员的集合中的每个底层Solr”核心”都有引用别名的特殊核心属性。<br>每个集合的名称由TRA名称和开始时间戳（UTC）组成，截断尾随零和符号。</p>
+<p>TRA的集合列表总是反向排序的，因此请求的连接路径将路由到主集合。<br>使用<code>CloudSolrClient</code>是可取的，因为它可以减少一个底层物理HTTP请求的数量。<br>如果您知道要发送的特定文档集将进入特定的较旧集合，那么您可以从客户端将其直接定向到那里作为优化，但这不是必需的。<br><code>CloudSolrClient</code>（尚）不这样做。</p>
+<p>RAUP在初始化时首先从别名属性读取TRA配置。<br>当它看到每个文档时，它检查TRA属性的更改，如果需要更新其缓存的配置，然后确定文档属于哪个集合：</p>
+<ul>
+<li><p>如果RAUP需要将其发送到客户端选择与之通信的集合之外的时间段代表的集合，那么它将使用与DUP共享的机制来做。<br>一旦文档转发到正确的集合（即正确的TRA时间段），它直接跳到目标集合上的DUP并正常继续，可能在目标集合内再次路由到正确的分片和副本。</p>
+</li>
+<li><p>如果它属于当前集合（如果处理发生时的事件，这通常是情况），文档通过DUP。<br>DUP执行其正常的集合级处理，可能涉及将文档路由到另一个分片和副本。</p>
+</li>
+<li><p>如果文档上的时间戳比最近的TRA段更新，那么需要在TRA前面添加新集合。<br>RAUP将创建此集合，将其添加到别名，然后将文档转发到它刚创建的集合。<br>如果需要创建多个集合，这可以递归发生。</p>
+<p>每次添加新集合时，都会检查TRA中最旧的集合是否可能删除（如果已配置）。<br>所有这些都同步发生，可能会为更新请求和索引延迟增加数秒。</p>
+<p>如果配置了<code>router.preemptiveCreateMath</code>并且文档到达此窗口内，那么它将异步发生。<br>有关更多信息，请参见<a href="alias-management.html#time-routed-alias-parameters">时间路由别名参数</a>。</p>
+</li>
+</ul>
+<p>任何其他类型的更新，如提交或删除，都由RAUP路由到所有集合。<br>一般来说，这不是性能问题。<br>当Solr接收到没有删除任何内容的删除或没有需要提交的提交时，它相当便宜。</p>
+<h4 id="限制和假设"><a href="#限制和假设" class="headerlink" title="限制和假设"></a>限制和假设</h4><ul>
+<li><p>仅支持<strong>时间</strong>路由别名。<br>如果您有其他顺序号，您可以将其伪造为时间（例如，假设某个纪元并递增，转换为时间戳）。</p>
+<p>最小可能间隔是一秒。<br>不支持其他路由方案，尽管开发此功能时考虑了它可以扩展&#x2F;改进到其他方案。</p>
+</li>
+<li><p>底层集合形成没有间隙的连续序列。<br>当底层数据有大间隙时，这将不适合，因为Solr将坚持每个增量都有集合。<br>这部分是因为Solr基于下一个集合的时间戳计算每个间隔集合的结束时间，因为它在其他方面不以任何方式存储。</p>
+</li>
+<li><p>如果您还配置了自动删除旧集合，请避免向最旧的集合发送更新。<br>这可能导致异常冒泡回索引客户端。</p>
+</li>
+</ul>
+<h3 id="类别路由别名"><a href="#类别路由别名" class="headerlink" title="类别路由别名"></a>类别路由别名</h3><p>类别路由别名（CRA）是基于单个字段的值管理别名和一组依赖集合的功能。</p>
+<p>CRA自动创建新集合，但因为分区基于分类信息而非连续的基于数字的值，所以没有自动删除的逻辑。<br>这种方法允许简化必须因集群管理或安全原因分离到集合中的数据索引。</p>
+<h4 id="工作原理-1"><a href="#工作原理-1" class="headerlink" title="工作原理"></a>工作原理</h4><p>首先，您使用<a href="alias-management.html#createalias">CREATEALIAS</a>命令创建具有所需路由器设置的类别路由别名。<br>大多数设置可以稍后使用<a href="alias-management.html#aliasprop">ALIASPROP</a>命令编辑。</p>
+<p>别名将使用特殊占位符集合创建，该集合将始终命名为<code>myAlias\__CRA__NEW_CATEGORY_ROUTED_ALIAS_WAITING_FOR_DATA\__TEMP</code>。<br>索引到CRA中的第一个文档将创建名为<code>myAlias__CRA__foo</code>的第二个集合（对于路由字段值<code>foo</code>）。<br>索引的第二个文档将导致删除临时占位符集合。<br>此后，每当遇到字段的新值时，都会创建集合。</p>
+<p><strong>注意：</strong> 为了防止失控的集合创建，提供了限制类别总数和拒绝不匹配正则表达式的值的选项（有关详细信息，请参见<a href="alias-management.html#category-routed-alias-parameters">类别路由别名参数</a>）。</p>
+<p>注意通过为这些选项提供非常大或非常宽松的值，您接受了损坏数据可能创建数千个集合并使您的集群停滞的风险。</p>
+<p>字段值（因此集合名称）区分大小写。</p>
+<p>如同Solr的其他地方，数据的操作和清理预期在数据发送到Solr之前由外部进程完成，但有一个例外。<br>在整个Solr中，集合名称中的允许字符有限制。<br>除ASCII字母数字字符（<code>A-Za-z0-9</code>）、连字符（<code>-</code>）或下划线（<code>_</code>）之外的任何字符在计算类别的集合名称时都被下划线替换。<br>对于名为<code>myAlias</code>的CRA，以下表格显示了如何计算集合名称：</p>
+<table>
+<thead>
+<tr>
+<th>值</th>
+<th>CRA集合名称</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>foo</td>
+<td>+myAlias__CRA__foo+</td>
+</tr>
+<tr>
+<td>Foo</td>
+<td>+myAlias__CRA__Foo+</td>
+</tr>
+<tr>
+<td>foo bar</td>
+<td>+myAlias__CRA__foo_bar+</td>
+</tr>
+<tr>
+<td>+FOÓB&amp;R+</td>
+<td>+myAlias__CRA__FO_B_R+</td>
+</tr>
+<tr>
+<td>+中文的东西+</td>
+<td>+myAlias__CRA_______+</td>
+</tr>
+<tr>
+<td>+foo__CRA__bar+</td>
+<td><em>导致400错误请求</em></td>
+</tr>
+<tr>
+<td>+<null>+</td>
+<td><em>导致400错误请求</em></td>
+</tr>
+</tbody></table>
+<p>由于集合创建可能需要1-3秒，在CRA中插入数据的系统应该构建为在创建新集合时处理此类暂停。<br>与时间路由别名不同，没有办法预测下一个值，因此此类暂停是不可避免的。</p>
+<p>没有自动删除类别的手段。<br>如果需要从CRA中删除类别，建议以下过程：</p>
+<p>&#x2F;&#x2F; TODO：这应该有示例说明</p>
+<ol>
+<li>确保不会发送具有与要删除类别对应值的文档，通过停止索引或修复传入数据流</li>
+<li>修改ZooKeeper中的别名定义，删除与类别对应的集合。</li>
+<li>删除与类别对应的集合。<br>注意如果集合不首先从别名中删除，此步骤将失败。</li>
+</ol>
+<h4 id="限制和假设-1"><a href="#限制和假设-1" class="headerlink" title="限制和假设"></a>限制和假设</h4><ul>
+<li><p>CRA目前不适用于非英语数据值，由于集合名称的限制。<br>这可以通过将路由值复制到**<em>URL安全</em>**Base64编码字段并在该值上路由来解决。</p>
+</li>
+<li><p>对<code>__CRA__</code>中缀的检查独立于正则表达式验证，并在计算要创建集合的名称之后发生。<br>它不能被避免，对于支持未来功能是必要的。</p>
+</li>
+</ul>
+<h3 id="维度路由别名"><a href="#维度路由别名" class="headerlink" title="维度路由别名"></a>维度路由别名</h3><p>对于所需的数据分离涉及两个字段并且在索引期间组合到单个字段不切实际的情况，或者跨多个类别需要TRA行为的情况，可以使用维度路由别名。<br>此功能设计为处理任意数量和任何顺序的类别和时间维度组合，但用户被警告要仔细考虑此类配置产生的集合总数。<br>数百个或1000个左右的集合计数开始对ZooKeeper造成重大挑战。</p>
+<p><strong>注意：</strong> DRA是新功能，目前只支持2个维度。<br>未来将支持更多维度（参见<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/SOLR-13628%E4%BA%86%E8%A7%A3%E8%BF%9B%E5%BA%A6%EF%BC%89%E3%80%82">https://issues.apache.org/jira/browse/SOLR-13628了解进度）。</a></p>
+<h4 id="工作原理-2"><a href="#工作原理-2" class="headerlink" title="工作原理"></a>工作原理</h4><p>首先，您为每个维度创建具有所需路由器设置的维度路由别名。<br>有关如何指定每个维度配置的详细信息，请参见<a href="alias-management.html#createalias">CREATEALIAS</a>命令文档。<br>典型集合名称将是以下形式（示例为类别x时间示例，30分钟间隔）：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">myalias__CRA__someCategory__TRA__2019-07-01_00_30</span><br></pre></td></tr></table></figure>
+
+<p>注意初始集合将是包含基于类别维度的任何DRA的一次性占位符。<br>集合名称的每个子部分的名称生成与相应组件维度类型的对应部分相同（例如，生成<code>__CRA__</code>或<code>__TRA__</code>的类别值仍会产生错误）。</p>
+<p><strong>警告：</strong> 关于使用不同路由值重新索引文档的先前警告适用于DRA的每个维度。<br>DRA不适合用于路由中使用的类别或时间戳会改变的文档（这当然也适用于未来RA类型中的其他路由值）。</p>
+<p>与所有路由别名一样，如果您的数据表现不良，DRA会施加一些成本。<br>除了每个组件维度的正常注意事项外，在DRA运行一段时间后发送新类别时需要小心。<br>有序维度（时间）的行为与无序（类别）维度略有不同。<br>有序维度依赖于别名中集合的迭代顺序，因此不能容忍乱序生成集合名称。<br>这意味着当时间等有序维度是DRA的组件并且DRA经历接收具有新类别的文档，其时间值对应于时间维度起始时间片以外的时间片时，需要在文档可以索引之前创建几个集合。<br>这种”新类别效应”与如果您选择了过去太远的开始日期，TRA的行为相同。</p>
+<p>例如，给定起始时间为2019-07-01T00:00:00Z的维度[time,category] DRA，4个文档的集合创建模式可能如下所示：</p>
+<p><strong>没有文档</strong></p>
+<p><strong>别名集合：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">// temp避免空别名错误条件</span><br><span class="line">myalias__TRA__2019-07-01__CRA__NEW_CATEGORY_ROUTED_ALIAS_WAITING_FOR_DATA_TEMP</span><br></pre></td></tr></table></figure>
+
+<p><strong>文档1</strong></p>
+<ul>
+<li>time: 2019-07-01T00:00:00Z</li>
+<li>category: someCategory</li>
+</ul>
+<p><strong>别名集合：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">// temp保留以避免在与集合创建竞争时出现空别名</span><br><span class="line">myalias__TRA__2019-07-01__CRA__NEW_CATEGORY_ROUTED_ALIAS_WAITING_FOR_DATA_TEMP</span><br><span class="line">myalias__TRA__2019-07-01__CRA__someCategory</span><br></pre></td></tr></table></figure>
+
+<p><strong>文档2</strong></p>
+<ul>
+<li>time: 2019-07-02T00:04:00Z</li>
+<li>category: otherCategory</li>
+</ul>
+<p><strong>别名集合：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">// temp现在可以删除而不会有空别名风险。</span><br><span class="line">myalias__TRA__2019-07-01__CRA__someCategory</span><br><span class="line">myalias__TRA__2019-07-01__CRA__otherCategory // 一次更新中创建了2个集合</span><br><span class="line">myalias__TRA__2019-07-02__CRA__otherCategory</span><br></pre></td></tr></table></figure>
+
+<p><strong>文档3</strong></p>
+<ul>
+<li>time: 2019-07-03T00:12:00Z</li>
+<li>category: thirdCategory</li>
+</ul>
+<p><strong>别名集合：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">myalias__TRA__2019-07-01__CRA__someCategory</span><br><span class="line">myalias__TRA__2019-07-01__CRA__otherCategory</span><br><span class="line">myalias__TRA__2019-07-02__CRA__otherCategory</span><br><span class="line">myalias__TRA__2019-07-01__CRA__thirdCategory // 一次更新中创建了3个集合！</span><br><span class="line">myalias__TRA__2019-07-02__CRA__thirdCategory</span><br><span class="line">myalias__TRA__2019-07-03__CRA__thirdCategory</span><br></pre></td></tr></table></figure>
+
+<p><strong>文档4</strong></p>
+<ul>
+<li>time: 2019-07-03T00:12:00Z</li>
+<li>category: someCategory</li>
+</ul>
+<p><strong>别名集合：</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">myalias__TRA__2019-07-01__CRA__someCategory</span><br><span class="line">myalias__TRA__2019-07-01__CRA__otherCategory</span><br><span class="line">myalias__TRA__2019-07-02__CRA__otherCategory</span><br><span class="line">myalias__TRA__2019-07-01__CRA__thirdCategory</span><br><span class="line">myalias__TRA__2019-07-02__CRA__thirdCategory</span><br><span class="line">myalias__TRA__2019-07-03__CRA__thirdCategory</span><br><span class="line">myalias__TRA__2019-07-02__CRA__someCategory // 一次更新中创建了2个集合</span><br><span class="line">myalias__TRA__2019-07-03__CRA__someCategory</span><br></pre></td></tr></table></figure>
+
+<p>因此，DRA的最佳点是对于具有标准化维度集且不会改变并且完整排列组合定期发生的数据集。<br>如果稍后引入新类别并且索引延迟是重要的SLA功能，有几种策略可以减轻这种影响：</p>
+<ul>
+<li><p>如果要创建的额外时间片数量不是很大，则从常规索引中发送单个文档，并在允许新类别通过SLA约束过程发送之前等待集合创建完成。</p>
+</li>
+<li><p>如果上述过程可能创建极多数量的集合，并且新类别中最早可能文档已知，可以使用<a href="alias-management.html#aliasprop">ALIASPROP</a>命令调整时间维度的开始时间</p>
+</li>
+</ul>
+<h3 id="改进可能性"><a href="#改进可能性" class="headerlink" title="改进可能性"></a>改进可能性</h3><p>路由别名是SolrCloud相对较新的功能，可以预期会改进。<br>一些**<em>尚未实施</em>**的_潜在_改进领域是：</p>
+<ul>
+<li><p><strong>TRA：</strong> 带时间过滤器的搜索应该只到适用的集合。</p>
+</li>
+<li><p><strong>TRA：</strong> 自动优化（或减少资源）较旧集合的方法，这些集合预期不会接收更多更新，并且可能有更少的搜索需求。</p>
+</li>
+<li><p><strong>CRA：</strong> 通过Base64编码对非英语文本的内在支持。</p>
+</li>
+<li><p><strong>CRA：</strong> 为事先知道值的情况提供初始值列表，以减少索引期间的暂停。</p>
+</li>
+<li><p><strong>DRA：</strong> 支持超过2个维度。</p>
+</li>
+<li><p><code>CloudSolrClient</code>可以基于路由值将文档路由到正确集合，而不是总是选择最新&#x2F;第一个。</p>
+</li>
+<li><p>目前只有更新被路由，查询分发到别名中的所有集合，但未来功能可能支持基于特殊参数或可能对路由字段的过滤器将查询路由到单个适当集合。</p>
+</li>
+<li><p>集合可能受其大小而非时间或类别值约束。<br>这可能实施为另一种类型的路由别名，或可能作为现有路由别名的选项</p>
+</li>
+<li><p>删除别名的选项，也在一步中删除底层集合。<br>路由别名可能在初始测试期间快速创建比预期更多的集合。<br>在此类事件后删除它们过于繁琐。</p>
+</li>
+</ul>
+<p>一如既往，欢迎补丁和拉取请求！</p>
+<h2 id="集合命令和别名"><a href="#集合命令和别名" class="headerlink" title="集合命令和别名"></a>集合命令和别名</h2><p>SolrCloud支持在通常需要集合名称的集合命令中使用别名名称。<br>这仅在满足以下条件时工作：</p>
+<ul>
+<li>使用请求参数<code>followAliases=true</code></li>
+<li>别名不得引用超过一个集合</li>
+<li>别名不得引用路由别名</li>
+</ul>
+<p>如果满足所有条件，命令将解析所有别名名称并对别名引用的集合进行操作，就好像它是用集合名称调用的一样。<br>否则命令不会执行并会抛出异常。</p>
+<p>应该小心使用<code>followAliases=true</code>参数，以便解析的目标确实是预期的。<br>在多级别名或影子别名（与现有集合同名但指向其他集合的别名）的情况下，强烈不建议使用此选项，因为效果可能难以正确预测。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/SolrCloud/" rel="tag"># SolrCloud</a>
+              <a href="/tags/Solr%E9%83%A8%E7%BD%B2/" rel="tag"># Solr部署</a>
+              <a href="/tags/%E5%88%AB%E5%90%8D/" rel="tag"># 别名</a>
+              <a href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/" rel="tag"># 集合管理</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/03/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%AB%E5%90%8D%E7%AE%A1%E7%90%86/" rel="prev" title="Solr部署：别名管理">
+                  <i class="fa fa-angle-left"></i> Solr部署：别名管理
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" rel="next" title="Solr部署：审计日志">
+                  Solr部署：审计日志 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

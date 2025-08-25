@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Core Admin API主要在运行SolrCloud集群时由Collections API在底层使用。 SolrCloud用户通常不应直接使用CoreAdmin API，但该API可能对用户管理集群或单节点安装的核心维护操作有用。 Core Admin API由CoreAdminHandler实现，这是一个特殊用途的请求处理器，用于管理Solr核心。与其他请求处理器不同，CoreAdminHa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：CoreAdmin API完整指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9ACoreAdmin%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Core Admin API主要在运行SolrCloud集群时由Collections API在底层使用。 SolrCloud用户通常不应直接使用CoreAdmin API，但该API可能对用户管理集群或单节点安装的核心维护操作有用。 Core Admin API由CoreAdminHandler实现，这是一个特殊用途的请求处理器，用于管理Solr核心。与其他请求处理器不同，CoreAdminHa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-25T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:14:40.066Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="CoreAdmin API">
+<meta property="article:tag" content="核心管理">
+<meta property="article:tag" content="API操作">
+<meta property="article:tag" content="核心维护">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9ACoreAdmin%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9ACoreAdmin%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/","path":"2025/01/26/Solr配置：CoreAdmin API完整指南/","title":"Solr配置：CoreAdmin API完整指南"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr配置：CoreAdmin API完整指南 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#STATUS"><span class="nav-number">1.</span> <span class="nav-text">STATUS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API"><span class="nav-number">1.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API"><span class="nav-number">1.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#STATUS%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">STATUS参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CREATE"><span class="nav-number">2.</span> <span class="nav-text">CREATE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-1"><span class="nav-number">2.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-1"><span class="nav-number">2.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CREATE%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">CREATE核心参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CREATE%E7%A4%BA%E4%BE%8B"><span class="nav-number">2.4.</span> <span class="nav-text">CREATE示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RELOAD"><span class="nav-number">3.</span> <span class="nav-text">RELOAD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-2"><span class="nav-number">3.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-2"><span class="nav-number">3.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RELOAD%E6%A0%B8%E5%BF%83%E5%8F%82%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">RELOAD核心参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RENAME"><span class="nav-number">4.</span> <span class="nav-text">RENAME</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-3"><span class="nav-number">4.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-3"><span class="nav-number">4.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RENAME%E5%8F%82%E6%95%B0"><span class="nav-number">4.3.</span> <span class="nav-text">RENAME参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SWAP"><span class="nav-number">5.</span> <span class="nav-text">SWAP</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-4"><span class="nav-number">5.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-4"><span class="nav-number">5.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SWAP%E5%8F%82%E6%95%B0"><span class="nav-number">5.3.</span> <span class="nav-text">SWAP参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UNLOAD"><span class="nav-number">6.</span> <span class="nav-text">UNLOAD</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-5"><span class="nav-number">6.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-5"><span class="nav-number">6.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UNLOAD%E5%8F%82%E6%95%B0"><span class="nav-number">6.3.</span> <span class="nav-text">UNLOAD参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MERGEINDEXES"><span class="nav-number">7.</span> <span class="nav-text">MERGEINDEXES</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8indexDir%E5%8F%82%E6%95%B0"><span class="nav-number">7.1.</span> <span class="nav-text">使用indexDir参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-6"><span class="nav-number">7.2.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-6"><span class="nav-number">7.3.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8srcCore%E5%8F%82%E6%95%B0"><span class="nav-number">7.4.</span> <span class="nav-text">使用srcCore参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-7"><span class="nav-number">7.5.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-7"><span class="nav-number">7.6.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MERGEINDEXES%E5%8F%82%E6%95%B0"><span class="nav-number">7.7.</span> <span class="nav-text">MERGEINDEXES参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SPLIT"><span class="nav-number">8.</span> <span class="nav-text">SPLIT</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SPLIT%E5%8F%82%E6%95%B0"><span class="nav-number">8.1.</span> <span class="nav-text">SPLIT参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SPLIT%E7%A4%BA%E4%BE%8B"><span class="nav-number">8.2.</span> <span class="nav-text">SPLIT示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REQUESTSTATUS"><span class="nav-number">9.</span> <span class="nav-text">REQUESTSTATUS</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API-8"><span class="nav-number">9.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API-8"><span class="nav-number">9.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Core-REQUESTSTATUS%E5%8F%82%E6%95%B0"><span class="nav-number">9.3.</span> <span class="nav-text">Core REQUESTSTATUS参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#REQUESTRECOVERY"><span class="nav-number">10.</span> <span class="nav-text">REQUESTRECOVERY</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#REQUESTRECOVERY%E5%8F%82%E6%95%B0"><span class="nav-number">10.1.</span> <span class="nav-text">REQUESTRECOVERY参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REQUESTRECOVERY%E7%A4%BA%E4%BE%8B"><span class="nav-number">10.2.</span> <span class="nav-text">REQUESTRECOVERY示例</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9ACoreAdmin%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr配置：CoreAdmin API完整指南 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr配置：CoreAdmin API完整指南
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-01-26 00:00:00" itemprop="dateCreated datePublished" datetime="2025-01-26T00:00:00+08:00">2025-01-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:14:40" itemprop="dateModified" datetime="2025-08-25T16:14:40+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E9%85%8D%E7%BD%AE/" itemprop="url" rel="index"><span itemprop="name">Solr配置</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><p>Core Admin API主要在运行<a href="deployment-guide:cluster-types#solrcloud-mode">SolrCloud</a>集群时由<a href="collections-api">Collections API</a>在底层使用。</p>
+<p>SolrCloud用户通常不应直接使用CoreAdmin API，但该API可能对用户管理集群或单节点安装的核心维护操作有用。</p>
+<p>Core Admin API由CoreAdminHandler实现，这是一个特殊用途的<a href="requesthandlers-searchcomponents">请求处理器</a>，用于管理Solr核心。<br>与其他请求处理器不同，CoreAdminHandler不附加到单个核心。<br>相反，每个Solr节点中有一个CoreAdminHandler实例，管理该节点中运行的所有核心，并可在<code>/solr/admin/cores</code>路径访问。</p>
+<p>CoreAdmin操作可以通过指定<code>action</code>请求参数的HTTP请求执行，并将其他特定于操作的参数作为附加参数提供。</p>
+<p>所有操作名称都是大写的，并在下面的部分中深入定义。</p>
+<p>本节中的所有示例都假设你正在运行”techproducts”Solr示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/solr start -DconfigSetBaseDir=./server/solr/configsets -e techproducts</span><br></pre></td></tr></table></figure>
+
+<p>我们传递了<code>configSetBaseDir</code>的显式相对路径，以便能够在下面的示例中使用<code>sample_techproducts_configs</code> configset创建新核心。</p>
+<h2 id="STATUS"><a href="#STATUS" class="headerlink" title="STATUS"></a>STATUS</h2><p><code>STATUS</code>操作返回所有运行中的Solr核心的状态，或仅返回指定核心的状态。</p>
+<h3 id="V1-API"><a href="#V1-API" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=STATUS&amp;core=techproducts</span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API"><a href="#V2-API" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取所有核心状态</span></span><br><span class="line">curl -X GET http://localhost:8983/api/cores/</span><br><span class="line"></span><br><span class="line"><span class="comment"># 获取单个核心状态</span></span><br><span class="line">curl -X GET http://localhost:8983/api/cores/techproducts</span><br><span class="line"></span><br><span class="line"><span class="comment"># 跳过返回索引信息</span></span><br><span class="line">curl -X GET http://localhost:8983/api/cores?indexInfo=<span class="literal">false</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="STATUS参数"><a href="#STATUS参数" class="headerlink" title="STATUS参数"></a>STATUS参数</h3><p><strong>core</strong>（可选，默认：none）：<br>核心的名称，如<code>solr.xml</code>中<code>&lt;core&gt;</code>元素的”name”属性中列出的。<br>如果省略此参数，将返回所有运行核心的状态。</p>
+<p><strong>indexInfo</strong>（可选，默认：<code>true</code>）：<br>如果为<code>false</code>，索引信息不会与核心STATUS请求一起返回。<br>在具有大量核心（即数百个以上）的Solr实现中，检索每个核心的索引信息可能需要很长时间，而且并不总是需要的。</p>
+<h2 id="CREATE"><a href="#CREATE" class="headerlink" title="CREATE"></a>CREATE</h2><p><code>CREATE</code>操作创建新核心并注册它。</p>
+<p>如果具有给定名称的Solr核心已存在，它将继续处理请求，而新核心正在初始化。<br>当新核心准备就绪时，它将接收新请求，旧核心将被卸载。</p>
+<h3 id="V1-API-1"><a href="#V1-API-1" class="headerlink" title="V1 API"></a>V1 API</h3><p>假设你使用现有的configSet创建新核心：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=techproducts_v2&amp;configSet=sample_techproducts_configs</span><br></pre></td></tr></table></figure>
+
+<p>如果你已有部署在磁盘上的现有核心文件，只需从它们创建Solr核心，则URL将类似于：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=_core-name_&amp;instanceDir=_path/to/dir_&amp;config=solrconfig.xml&amp;dataDir=data</span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-1"><a href="#V2-API-1" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;create&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;name&quot;: &quot;techproducts_v2&quot;,</span></span><br><span class="line"><span class="string">      &quot;configSet&quot;: &quot;sample_techproducts_configs&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意此命令是Core Admin API命令中<strong>唯一</strong>不支持<code>core</code>参数的命令。<br>相反，需要<code>name</code>参数，如下所示。</p>
+<p>注意CREATE必须能够找到配置，否则将不会成功。</p>
+<p>当你运行SolrCloud并为集合创建新核心时，配置将从集合继承。<br>每个集合链接到存储在ZooKeeper中的<code>configName</code>。<br>这满足了配置要求。<br>也就是说，如果你正在运行SolrCloud，你<strong>不应该</strong>完全使用CoreAdmin API。<br>相反，请使用<a href="collections-api">Collections API</a>。</p>
+<p>对于用户管理的集群，如果你定义了<a href="config-sets">配置集</a>，可以使用下面记录的<code>configSet</code>参数。<br>如果没有配置集，则CREATE调用中指定的<code>instanceDir</code>必须已存在，并且必须包含<code>conf</code>目录，该目录又必须包含<code>solrconfig.xml</code>、你的schema（通常命名为<code>managed-schema.xml</code>或<code>schema.xml</code>）以及这些配置引用的任何文件。</p>
+<p>可以使用<code>config</code>和<code>schema</code>参数指定配置和schema文件名，但这些是专家选项。<br>你可以做的一件事是避免创建<code>conf</code>目录，使用指向绝对路径的<code>config</code>和<code>schema</code>参数，但这可能导致令人困惑的配置，除非你完全了解自己在做什么。</p>
+<blockquote>
+<p><strong>CREATE和<code>core.properties</code>文件</strong></p>
+<p><strong>重要</strong>：<code>core.properties</code>文件是作为CREATE命令的一部分构建的。<br>如果你在核心目录中自己创建<code>core.properties</code>文件，然后尝试使用CREATE将该核心添加到Solr，你将收到一个错误，告诉你那里已经定义了另一个核心。<br>在使用CREATE命令调用CoreAdmin API之前，<code>core.properties</code>文件<strong>不得</strong>存在。</p>
+</blockquote>
+<h3 id="CREATE核心参数"><a href="#CREATE核心参数" class="headerlink" title="CREATE核心参数"></a>CREATE核心参数</h3><p><strong>name</strong>（必需，默认：none）：<br>新核心的名称。<br>与<code>&lt;core&gt;</code>元素上的<code>name</code>相同。</p>
+<p><strong>instanceDir</strong>（可选，默认：见描述）：<br>存储此核心文件的目录。<br>与<code>&lt;core&gt;</code>元素上的<code>instanceDir</code>相同。<br>如果不提供，默认值是为<code>name</code>参数指定的值。<br>此目录必须在<code>SOLR_HOME</code>、<code>SOLR_DATA_HOME</code>或系统属性<code>solr.allowPaths</code>指定的路径之一内。</p>
+<p><strong>config</strong>（可选，默认：<code>solrconfig.xml</code>）：<br>相对于<code>instanceDir</code>的配置文件名（即<code>solrconfig.xml</code>）。</p>
+<p><strong>schema</strong>（可选，默认：见描述）：<br>用于核心的schema文件名。<br>请注意，如果你使用的是”托管schema”（默认行为），那么此属性的任何值如果不匹配有效的<code>managedSchemaResourceName</code>将被读取一次、备份，并转换为托管schema使用。<br>有关详细信息，请参见<a href="schema-factory">Schema工厂</a>。</p>
+<p><strong>dataDir</strong>（可选，默认：<code>data</code>）：<br>相对于<code>instanceDir</code>的数据目录名称。<br>如果使用绝对值，它必须在<code>SOLR_HOME</code>、<code>SOLR_DATA_HOME</code>或系统属性<code>solr.allowPaths</code>指定的路径之一内。</p>
+<p><strong>configSet</strong>（可选，默认：none）：<br>用于此核心的configset名称。<br>有关更多信息，请参见<a href="config-sets">配置集</a>部分。</p>
+<p><strong>collection</strong>（可选，默认：见描述）：<br>此核心所属集合的名称。<br>默认为核心的名称。<br><code>collection._param_=_value_</code>导致如果正在创建新集合，设置属性<code>_param_=_value_</code>。<br>使用<code>collection.configName=_config-name_</code>指向新集合的配置。</p>
+<p><strong>警告</strong>：虽然可以为不存在的集合创建核心，但这种方法不受支持且不推荐。<br>在为其直接创建核心之前，始终使用<a href="collections-api">Collections API</a>创建集合。</p>
+<p><strong>shard</strong>（可选，默认：none）：<br>此核心代表的分片ID。<br>这应该只在特殊情况下需要；通常你希望被自动分配分片ID。</p>
+<p><strong>property.<em>name</em>&#x3D;<em>value</em></strong>（可选，默认：none）：<br>将核心属性_name_设置为_value_。<br>请参见定义<a href="core-discovery#defining-core-properties-files">core.properties文件内容</a>的部分。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h3 id="CREATE示例"><a href="#CREATE示例" class="headerlink" title="CREATE示例"></a>CREATE示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=CREATE&amp;name=my_core&amp;collection=my_collection&amp;shard=shard2</span><br></pre></td></tr></table></figure>
+
+<h2 id="RELOAD"><a href="#RELOAD" class="headerlink" title="RELOAD"></a>RELOAD</h2><p>RELOAD操作从现有已注册Solr核心的配置加载新核心。<br>当新核心初始化时，现有核心将继续处理请求。<br>当新Solr核心准备就绪时，它接管，旧核心被卸载。</p>
+<h3 id="V1-API-2"><a href="#V1-API-2" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=RELOAD&amp;core=techproducts</span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-2"><a href="#V2-API-2" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/techproducts/reload</span><br></pre></td></tr></table></figure>
+
+<p>当你对Solr核心在磁盘上的配置进行了更改时，这很有用，例如添加新字段定义。<br>调用RELOAD操作让你应用新配置而无需重启Solr。</p>
+<blockquote>
+<p><strong>重要</strong></p>
+<p>RELOAD执行SolrCore的”实时”重新加载，重用一些现有对象。<br>某些配置选项，如<code>dataDir</code>位置和<code>solrconfig.xml</code>中的<code>IndexWriter</code>相关设置不能更改，并且不能通过简单的RELOAD操作激活。</p>
+</blockquote>
+<h3 id="RELOAD核心参数"><a href="#RELOAD核心参数" class="headerlink" title="RELOAD核心参数"></a>RELOAD核心参数</h3><p><strong>core</strong>（可选，默认：none）：<br>核心的名称，如<code>solr.xml</code>中<code>&lt;core&gt;</code>元素的”name”属性中列出的。<br>此参数在v1中是必需的，在v2 API中是URL的一部分。</p>
+<h2 id="RENAME"><a href="#RENAME" class="headerlink" title="RENAME"></a>RENAME</h2><p><code>RENAME</code>操作更改Solr核心的名称。</p>
+<h3 id="V1-API-3"><a href="#V1-API-3" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET <span class="string">&quot;http://localhost:8983/solr/admin/cores?action=RENAME&amp;core=currentCoreName&amp;other=newCoreName&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-3"><a href="#V2-API-3" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/currentCoreName/rename -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;to&quot;: &quot;newCoreName&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="RENAME参数"><a href="#RENAME参数" class="headerlink" title="RENAME参数"></a>RENAME参数</h3><p><strong>core</strong>（必需，默认：none）：<br>要重命名的现有Solr核心的名称。<br>如果发出v1请求，指定为查询参数；如果使用v2 API，指定为路径参数。</p>
+<p><strong>other</strong>（v1）、<strong>to</strong>（v2）（必需，默认：none）：<br>Solr核心的新名称。<br>如果发出v1请求，指定为查询参数；如果使用v2 API，指定为请求正文中的属性。<br>如果<code>&lt;solr&gt;</code>的持久属性为<code>true</code>，新名称将作为<code>&lt;core&gt;</code>属性的<code>name</code>属性写入<code>solr.xml</code>。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h2 id="SWAP"><a href="#SWAP" class="headerlink" title="SWAP"></a>SWAP</h2><p><code>SWAP</code>原子交换用于访问两个现有Solr核心的名称。<br>这可用于将新内容交换到生产环境中。<br>之前的核心仍可用，如有必要可以交换回来。<br>交换后，每个核心将以另一个核心的名称知名。</p>
+<h3 id="V1-API-4"><a href="#V1-API-4" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/cores?action=SWAP&amp;core=_core-name_&amp;other=_other-core-name_</span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-4"><a href="#V2-API-4" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/_core-name_/swap -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">  &#123;</span></span><br><span class="line"><span class="string">    &quot;with&quot;: &quot;_other-core-name_&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>重要</strong></p>
+<p>不要对SolrCloud节点使用<code>SWAP</code>。<br>这不受支持，可能导致核心无法使用。</p>
+</blockquote>
+<h3 id="SWAP参数"><a href="#SWAP参数" class="headerlink" title="SWAP参数"></a>SWAP参数</h3><p><strong>core</strong>（必需，默认：none）：<br>要交换的核心之一的名称。</p>
+<p><strong>other</strong>（必需，默认：none）：<br>要交换的另一个核心的名称。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h2 id="UNLOAD"><a href="#UNLOAD" class="headerlink" title="UNLOAD"></a>UNLOAD</h2><p><code>UNLOAD</code>操作从Solr中移除核心。<br>活动请求将继续处理，但不会向指定核心发送新请求。<br>如果核心注册在多个名称下，只有给定的名称被移除。</p>
+<h3 id="V1-API-5"><a href="#V1-API-5" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?actionUNLOAD&amp;core=techproducts</span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-5"><a href="#V2-API-5" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/techproducts/unload -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">  &#123;&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>UNLOAD</code>操作需要一个参数（<code>core</code>）识别要移除的核心。<br>如果<code>&lt;solr&gt;</code>的持久属性设置为<code>true</code>，具有此<code>name</code>属性的<code>&lt;core&gt;</code>元素将从<code>solr.xml</code>中移除。</p>
+<blockquote>
+<p><strong>重要</strong></p>
+<p>在SolrCloud集合中卸载所有核心会导致从ZooKeeper中移除该集合的元数据。</p>
+</blockquote>
+<h3 id="UNLOAD参数"><a href="#UNLOAD参数" class="headerlink" title="UNLOAD参数"></a>UNLOAD参数</h3><p><strong>core</strong>（必需，默认：none）：<br>要移除的核心名称。<br>此参数是必需的。</p>
+<p><strong>deleteIndex</strong>（可选，默认：<code>false</code>）：<br>如果为<code>true</code>，卸载核心时将移除索引。</p>
+<p><strong>deleteDataDir</strong>（可选，默认：<code>false</code>）：<br>如果为<code>true</code>，移除<code>data</code>目录及所有子目录。</p>
+<p><strong>deleteInstanceDir</strong>（可选，默认：<code>false</code>）：<br>如果为<code>true</code>，移除与核心相关的所有内容，包括索引目录、配置文件和其他相关文件。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h2 id="MERGEINDEXES"><a href="#MERGEINDEXES" class="headerlink" title="MERGEINDEXES"></a>MERGEINDEXES</h2><p><code>MERGEINDEXES</code>操作将一个或多个索引合并到另一个索引。<br>索引必须已完成提交，并且应该锁定以防止写入，直到合并完成，否则生成的合并索引可能会损坏。<br>目标核心索引必须已存在并具有与将合并到其中的一个或多个索引兼容的schema。<br>合并完成后，还应该对目标核心执行另一次提交。</p>
+<h3 id="使用indexDir参数"><a href="#使用indexDir参数" class="headerlink" title="使用indexDir参数"></a>使用indexDir参数</h3><h3 id="V1-API-6"><a href="#V1-API-6" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET <span class="string">&quot;http://localhost:8983/solr/admin/cores?action=MERGEINDEXES&amp;core=targetCoreName&amp;indexDir=path/to/core1/data/index&amp;indexDir=path/to/core2/data/index&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-6"><a href="#V2-API-6" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/targetCoreName/merge-indices -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;indexDirs&quot;: [&quot;path/to/core1/data/index&quot;,&quot;path/to/core2/data/index&quot;]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>在此例中，我们使用<code>indexDir</code>参数（v2 API中的<code>indexDirs</code>）定义源核心的索引位置。<br><code>core</code>参数定义目标索引。<br>这种方法的好处是我们可以合并任何基于Lucene的索引，这些索引可能不与Solr核心关联。</p>
+<h3 id="使用srcCore参数"><a href="#使用srcCore参数" class="headerlink" title="使用srcCore参数"></a>使用srcCore参数</h3><h3 id="V1-API-7"><a href="#V1-API-7" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET <span class="string">&quot;http://localhost:8983/solr/admin/cores?action=mergeindexes&amp;core=targetCoreName&amp;srcCore=core1&amp;srcCore=core2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-7"><a href="#V2-API-7" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/targetCoreName/merge-indices -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> -d <span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#123;</span></span><br><span class="line"><span class="string">  &quot;srcCores&quot;: [&quot;core1&quot;,&quot;core2&quot;]</span></span><br><span class="line"><span class="string">&#125;</span></span><br><span class="line"><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>这种方法允许我们定义可能没有与目标核心位于同一物理服务器上的索引路径的核心。<br>但是，我们只能使用Solr核心作为源索引。<br>这种方法的另一个好处是，如果与源索引并行进行写入，我们的损坏风险不会那么高。</p>
+<p>我们可以通过指定<code>async</code>参数并传递请求ID来使此调用异步运行。<br>然后可以使用REQUESTSTATUS API使用此ID检查已提交任务的状态。</p>
+<h3 id="MERGEINDEXES参数"><a href="#MERGEINDEXES参数" class="headerlink" title="MERGEINDEXES参数"></a>MERGEINDEXES参数</h3><p><strong>core</strong>（必需，默认：none）：<br>目标核心&#x2F;索引的名称。</p>
+<p><strong>indexDir</strong>（可选，默认：none）：<br>多值，要合并的目录。</p>
+<p><strong>srcCore</strong>（可选，默认：none）：<br>多值，要合并的源核心。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h2 id="SPLIT"><a href="#SPLIT" class="headerlink" title="SPLIT"></a>SPLIT</h2><p><code>SPLIT</code>操作将索引拆分为两个或多个索引。<br>被拆分的索引可以继续处理请求。<br>拆分片段可以放在服务器文件系统上的指定目录中，或者可以合并到运行的Solr核心中。</p>
+<h3 id="SPLIT参数"><a href="#SPLIT参数" class="headerlink" title="SPLIT参数"></a>SPLIT参数</h3><p><strong>core</strong>（必需，默认：none）：<br>要拆分的核心名称。</p>
+<p><strong>path</strong>（可选，默认：none）：<br>多值，索引片段将写入的目录路径。<br>必须指定此参数或<code>targetCore</code>。<br>如果指定此参数，不能使用<code>targetCore</code>参数。</p>
+<p><strong>targetCore</strong>（可选，默认：none）：<br>多值，索引片段将合并到的目标Solr核心。<br>必须指定此参数或<code>path</code>。<br>如果指定此参数，不能使用<code>path</code>参数。</p>
+<p><strong>ranges</strong>（可选，默认：none）：<br>十六进制格式的哈希范围的逗号分隔列表。<br>如果使用此参数，不应使用<code>split.key</code>。<br>请参见下面的SPLIT示例了解如何使用此参数的示例。</p>
+<p><strong>split.key</strong>（可选，默认：none）：<br>用于拆分索引的键。<br>如果使用此参数，不应使用<code>ranges</code>。<br>请参见下面的SPLIT示例了解如何使用此参数的示例。</p>
+<p><strong>async</strong>（可选，默认：none）：<br>请求ID以跟踪此操作，将异步处理。</p>
+<h3 id="SPLIT示例"><a href="#SPLIT示例" class="headerlink" title="SPLIT示例"></a>SPLIT示例</h3><p><code>core</code>索引将被拆分成与<code>path</code>或<code>targetCore</code>参数数量相等的片段。</p>
+<p><strong>使用两个targetCore参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=SPLIT&amp;core=core0&amp;targetCore=core1&amp;targetCore=core2</span><br></pre></td></tr></table></figure>
+
+<p>这里<code>core</code>索引将被拆分成两片并合并到两个<code>targetCore</code>索引中。</p>
+<p><strong>使用两个path参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=SPLIT&amp;core=core0&amp;path=/path/to/index/1&amp;path=/path/to/index/2</span><br></pre></td></tr></table></figure>
+
+<p><code>core</code>索引将被拆分成两片并写入指定的两个目录路径。</p>
+<p><strong>使用split.key参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=SPLIT&amp;core=core0&amp;targetCore=core1&amp;split.key=A!</span><br></pre></td></tr></table></figure>
+
+<p>这里所有具有与<code>split.key</code>（即<code>A!</code>）相同路由键的文档将从<code>core</code>索引拆分并写入<code>targetCore</code>。</p>
+<p><strong>使用ranges参数</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=SPLIT&amp;core=core0&amp;targetCore=core1&amp;targetCore=core2&amp;targetCore=core3&amp;ranges=0-1f4,1f5-3e8,3e9-5dc</span><br></pre></td></tr></table></figure>
+
+<p>此例使用<code>ranges</code>参数，哈希范围0-500、501-1000和1001-1500以十六进制指定。<br>这里索引将被拆分成三片，每个targetCore接收匹配指定哈希范围的文档，即core1将获得哈希范围0-500的文档，core2将接收哈希范围501-1000的文档，最后core3将接收哈希范围1001-1500的文档。<br>必须至少指定一个哈希范围。<br>请注意，使用等于路由键哈希范围的单个哈希范围<strong>不</strong>等效于使用<code>split.key</code>参数，因为多个路由键可以哈希到同一范围。</p>
+<p><code>targetCore</code>必须已存在并且必须具有与<code>core</code>索引兼容的schema。<br>在拆分之前，会自动在<code>core</code>索引上调用提交。</p>
+<p>此命令用作SolrCloud的<a href="deployment-guide:shard-management#splitshard">SPLITSHARD</a>命令的一部分，但它也可用于用户管理集群中的核心。<br>当在没有<code>split.key</code>参数的用户管理集群中的核心上使用时，此操作将拆分源索引并交替分发其文档，以便每个拆分片段包含相等数量的文档。<br>如果指定了<code>split.key</code>参数，则只有具有相同路由键的文档将从源索引拆分。</p>
+<h2 id="REQUESTSTATUS"><a href="#REQUESTSTATUS" class="headerlink" title="REQUESTSTATUS"></a>REQUESTSTATUS</h2><p>请求已提交的异步CoreAdmin API调用的状态。</p>
+<h3 id="V1-API-8"><a href="#V1-API-8" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=REQUESTSTATUS&amp;requestid=<span class="built_in">id</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API-8"><a href="#V2-API-8" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X GET http://localhost:8983/api/node/commands/id</span><br></pre></td></tr></table></figure>
+
+<h3 id="Core-REQUESTSTATUS参数"><a href="#Core-REQUESTSTATUS参数" class="headerlink" title="Core REQUESTSTATUS参数"></a>Core REQUESTSTATUS参数</h3><p>REQUESTSTATUS命令只有一个参数。</p>
+<p><strong>requestid</strong>（必需，默认：none）：<br>异步请求的用户定义请求ID。</p>
+<p>以下调用将返回已提交的异步CoreAdmin调用的状态。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=REQUESTSTATUS&amp;requestid=1</span><br></pre></td></tr></table></figure>
+
+<h2 id="REQUESTRECOVERY"><a href="#REQUESTRECOVERY" class="headerlink" title="REQUESTRECOVERY"></a>REQUESTRECOVERY</h2><p><code>REQUESTRECOVERY</code>操作通过与leader同步手动要求核心恢复。<br>这应该被视为”专家”级别命令，应在节点（SolrCloud副本）无法自动变为活动状态的情况下使用。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">admin/cores?action=REQUESTRECOVERY&amp;core=_core-name_</span><br></pre></td></tr></table></figure>
+
+<h3 id="REQUESTRECOVERY参数"><a href="#REQUESTRECOVERY参数" class="headerlink" title="REQUESTRECOVERY参数"></a>REQUESTRECOVERY参数</h3><p><strong>core</strong>（必需，默认：none）：<br>要重新同步的核心名称。</p>
+<h3 id="REQUESTRECOVERY示例"><a href="#REQUESTRECOVERY示例" class="headerlink" title="REQUESTRECOVERY示例"></a>REQUESTRECOVERY示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8981/solr/admin/cores?action=REQUESTRECOVERY&amp;core=gettingstarted_shard1_replica1</span><br></pre></td></tr></table></figure>
+
+<p>要指定的核心可以通过admin UI展开相应的ZooKeeper节点找到。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr%E9%85%8D%E7%BD%AE/" rel="tag"># Solr配置</a>
+              <a href="/tags/CoreAdmin-API/" rel="tag"># CoreAdmin API</a>
+              <a href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/" rel="tag"># 核心管理</a>
+              <a href="/tags/API%E6%93%8D%E4%BD%9C/" rel="tag"># API操作</a>
+              <a href="/tags/%E6%A0%B8%E5%BF%83%E7%BB%B4%E6%8A%A4/" rel="tag"># 核心维护</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/01/25/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%A0%B8%E5%BF%83%E5%8F%91%E7%8E%B0%E6%9C%BA%E5%88%B6/" rel="prev" title="Solr配置：核心发现机制">
+                  <i class="fa fa-angle-left"></i> Solr配置：核心发现机制
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/01/26/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-52012%E4%B8%8ECVE-2025-24814/" rel="next" title="Apache Solr 安全漏洞通告：CVE-2024-52012 与 CVE-2025-24814">
+                  Apache Solr 安全漏洞通告：CVE-2024-52012 与 CVE-2025-24814 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>

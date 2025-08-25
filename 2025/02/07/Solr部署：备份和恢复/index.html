@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 7.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.0/css/all.min.css" integrity="sha256-VHqXKFhhMxcpubYf9xiWdCiojEbY9NexQ4jh8AxbvcM=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"solrcn.github.io","root":"/","images":"/images","scheme":"Muse","darkmode":false,"version":"8.24.0","exturl":false,"sidebar":{"position":"left","width_expanded":320,"width_dual_column":240,"display":"post","padding":18,"offset":12},"hljswrap":true,"codeblock":{"theme":{"light":"default","dark":"stackoverflow-dark"},"prism":{"light":"prism","dark":"prism-dark"},"copy_button":{"enable":false,"style":null},"fold":{"enable":false,"height":500},"language":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"duration":200,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js" defer></script>
+
+    <meta name="description" content="Solr部署：备份和恢复如果您担心数据丢失，当然您应该担心，您需要一种方法来备份您的Solr索引，以便在发生灾难性故障时能够快速恢复。 Solr提供两种方法来备份和恢复Solr核心或集合，这取决于您如何运行Solr。如果您运行SolrCloud集群，您将使用集合API。如果您运行用户管理的集群或单节点安装，您将使用复制处理程序。 注意： 备份（和快照）捕获已经硬提交的数据。使用softCommit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：备份和恢复">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/07/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr部署：备份和恢复如果您担心数据丢失，当然您应该担心，您需要一种方法来备份您的Solr索引，以便在发生灾难性故障时能够快速恢复。 Solr提供两种方法来备份和恢复Solr核心或集合，这取决于您如何运行Solr。如果您运行SolrCloud集群，您将使用集合API。如果您运行用户管理的集群或单节点安装，您将使用复制处理程序。 注意： 备份（和快照）捕获已经硬提交的数据。使用softCommit">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-06T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:32:03.034Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="集合管理">
+<meta property="article:tag" content="备份恢复">
+<meta property="article:tag" content="数据保护">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="https://solrcn.github.io/2025/02/07/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D/">
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"https://solrcn.github.io/2025/02/07/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D/","path":"2025/02/07/Solr部署：备份和恢复/","title":"Solr部署：备份和恢复"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Solr部署：备份和恢复 | Solr Community of China</title>
+  
+
+
+
+
+
+
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous" defer></script>
+<script src="/js/utils.js" defer></script><script src="/js/motion.js" defer></script><script src="/js/sidebar.js" defer></script><script src="/js/next-boot.js" defer></script>
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">Solr Community of China</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Apache Solr 中文社区</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：备份和恢复</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#SolrCloud%E9%9B%86%E7%BE%A4"><span class="nav-number">1.1.</span> <span class="nav-text">SolrCloud集群</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E7%9A%84%E9%9B%86%E7%BE%A4%E5%92%8C%E5%8D%95%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85"><span class="nav-number">1.2.</span> <span class="nav-text">用户管理的集群和单节点安装</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BDAPI"><span class="nav-number">1.2.1.</span> <span class="nav-text">备份API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E7%8A%B6%E6%80%81"><span class="nav-number">1.2.2.</span> <span class="nav-text">备份状态</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8DAPI"><span class="nav-number">1.2.3.</span> <span class="nav-text">恢复API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%81%A2%E5%A4%8D%E7%8A%B6%E6%80%81API"><span class="nav-number">1.2.4.</span> <span class="nav-text">恢复状态API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#CREATE%EF%BC%9A%E5%88%9B%E5%BB%BA%E5%BF%AB%E7%85%A7"><span class="nav-number">1.3.</span> <span class="nav-text">CREATE：创建快照</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#CREATE%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.1.</span> <span class="nav-text">CREATE参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CREATE%E5%93%8D%E5%BA%94"><span class="nav-number">1.3.2.</span> <span class="nav-text">CREATE响应</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#List%EF%BC%9A%E5%88%97%E5%87%BA%E7%89%B9%E5%AE%9A%E6%A0%B8%E5%BF%83%E7%9A%84%E6%89%80%E6%9C%89%E5%BF%AB%E7%85%A7"><span class="nav-number">1.4.</span> <span class="nav-text">List：列出特定核心的所有快照</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LIST%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">LIST参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LIST%E5%93%8D%E5%BA%94"><span class="nav-number">1.4.2.</span> <span class="nav-text">LIST响应</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DELETE%EF%BC%9A%E5%88%A0%E9%99%A4%E5%BF%AB%E7%85%A7"><span class="nav-number">1.5.</span> <span class="nav-text">DELETE：删除快照</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DELETE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">DELETE参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DELETE%E5%93%8D%E5%BA%94"><span class="nav-number">1.5.2.</span> <span class="nav-text">DELETE响应</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD-%E6%81%A2%E5%A4%8D%E5%AD%98%E5%82%A8%E5%AD%98%E5%82%A8%E5%BA%93"><span class="nav-number">1.6.</span> <span class="nav-text">备份&#x2F;恢复存储存储库</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LocalFileSystemRepository"><span class="nav-number">1.6.1.</span> <span class="nav-text">LocalFileSystemRepository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HdfsBackupRepository"><span class="nav-number">1.6.2.</span> <span class="nav-text">HdfsBackupRepository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GCSBackupRepository"><span class="nav-number">1.6.3.</span> <span class="nav-text">GCSBackupRepository</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#S3BackupRepository"><span class="nav-number">1.6.4.</span> <span class="nav-text">S3BackupRepository</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#S3%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.4.1.</span> <span class="nav-text">S3客户端配置</span></a></li></ol></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">longkeyy</p>
+  <div class="site-description" itemprop="description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">236</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://solrcn.github.io/2025/02/07/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="longkeyy">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Solr Community of China">
+      <meta itemprop="description" content="Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Solr部署：备份和恢复 | Solr Community of China">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Solr部署：备份和恢复
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2025-02-07 00:00:00" itemprop="dateCreated datePublished" datetime="2025-02-07T00:00:00+08:00">2025-02-07</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2025-08-25 16:32:03" itemprop="dateModified" datetime="2025-08-25T16:32:03+08:00">2025-08-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Solr%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">Solr部署</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody"><h1 id="Solr部署：备份和恢复"><a href="#Solr部署：备份和恢复" class="headerlink" title="Solr部署：备份和恢复"></a>Solr部署：备份和恢复</h1><p>如果您担心数据丢失，当然您应该担心，您需要一种方法来备份您的Solr索引，以便在发生灾难性故障时能够快速恢复。</p>
+<p>Solr提供两种方法来备份和恢复Solr核心或集合，这取决于您如何运行Solr。<br>如果您运行SolrCloud集群，您将使用集合API。<br>如果您运行用户管理的集群或单节点安装，您将使用复制处理程序。</p>
+<p><strong>注意：</strong> 备份（和快照）捕获已经<a href="../configuration-guide/commits-transaction-logs.html#hard-commits-vs-soft-commits">硬提交</a>的数据。<br>使用<code>softCommit=true</code>提交更改可能导致更改在搜索结果中可见但不包含在后续备份中。</p>
+<p>同样，使用<code>openSearcher=false</code>提交更改可能导致更改提交到磁盘并包含在后续备份中，即使它们当前在搜索结果中不可见。</p>
+<h2 id="SolrCloud集群"><a href="#SolrCloud集群" class="headerlink" title="SolrCloud集群"></a>SolrCloud集群</h2><p>SolrCloud中的备份支持通过<a href="collection-management.html#backup">集合API</a>提供。<br>这允许跨多个分片生成备份，并恢复到与原始集合相同数量的分片和副本。</p>
+<p><strong>注意：</strong> SolrCloud备份&#x2F;恢复需要在所有节点上挂载在相同路径的共享文件系统，或HDFS。</p>
+<p>支持四个不同的API命令：</p>
+<ul>
+<li><code>action=BACKUP</code>：此命令备份Solr索引和配置。<br>更多信息请参见<a href="collection-management.html#backup">备份集合</a>部分。</li>
+<li><code>action=RESTORE</code>：此命令恢复Solr索引和配置。<br>更多信息请参见<a href="collection-management.html#restore">恢复集合</a>部分。</li>
+<li><code>action=LISTBACKUP</code>：此命令列出指定位置可用的备份点，显示每个备份点的元数据。<br>更多信息请参见<a href="collection-management.html#listbackup">列出备份</a>部分。</li>
+<li><code>action=DELETEBACKUP</code>：此命令允许删除备份文件或整个备份。<br>更多信息请参见<a href="collection-management.html#deletebackup">删除备份</a>部分。</li>
+</ul>
+<h2 id="用户管理的集群和单节点安装"><a href="#用户管理的集群和单节点安装" class="headerlink" title="用户管理的集群和单节点安装"></a>用户管理的集群和单节点安装</h2><p>备份和恢复使用Solr的复制处理程序。<br>开箱即用，Solr包含对复制的隐式支持，因此可以使用此API。<br>但是，可以通过在<code>solrconfig.xml</code>中定义自己的复制处理程序来自定义复制处理程序的配置。<br>有关配置复制处理程序的详细信息，请参见<a href="user-managed-index-replication.html#configuring-the-replicationhandler">配置ReplicationHandler</a>部分。</p>
+<h3 id="备份API"><a href="#备份API" class="headerlink" title="备份API"></a>备份API</h3><p><code>backup</code> API需要向<code>/replication</code>处理程序发送命令来备份系统。</p>
+<p>您可以用这样的HTTP命令触发备份（将”gettingstarted”替换为您正在使用的核心名称）：</p>
+<p><strong>备份API示例</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/replication?command=backup</span><br></pre></td></tr></table></figure>
+
+<p><code>backup</code>命令是异步调用，它将表示来自最新索引提交点的数据。<br>所有索引和搜索操作将继续像往常一样对索引执行。</p>
+<p>一次只能对一个核心进行一次备份调用。<br>当正在进行备份操作时，后续的恢复调用将抛出异常。</p>
+<p>备份请求还可以接受以下额外参数：</p>
+<p><strong>location：</strong><br><em>可选，默认：无</em></p>
+<p>将创建备份的路径。<br>如果路径不是绝对路径，则备份路径将相对于Solr的实例目录。</p>
+<p><strong>name：</strong><br><em>可选，默认：无</em></p>
+<p>快照将在名为<code>snapshot.&lt;name&gt;</code>的目录中创建。<br>如果未指定名称，则目录名称将具有以下格式：<code>snapshot.&lt;_yyyyMMddHHmmssSSS_&gt;</code>。</p>
+<p><strong>numberToKeep：</strong><br><em>可选，默认：无</em></p>
+<p>要保留的备份数量。<br>如果在<code>solrconfig.xml</code>中的复制处理程序上指定了<code>maxNumberOfBackups</code>，则始终使用<code>maxNumberOfBackups</code>，尝试使用<code>numberToKeep</code>将导致错误。<br>另外，如果指定了备份名称，则不考虑此参数。<br>有关<code>maxNumberOfBackups</code>的更多信息可以在<a href="user-managed-index-replication.html#configuring-the-replicationhandler">配置ReplicationHandler</a>部分中找到。</p>
+<p><strong>repository：</strong><br><em>可选，默认：无</em></p>
+<p>要用于备份的存储库名称。<br>如果未指定存储库，则将自动使用本地文件系统存储库。</p>
+<p><strong>commitName：</strong><br><em>可选，默认：无</em></p>
+<p>使用CREATESNAPSHOT命令创建快照时使用的提交名称。</p>
+<h3 id="备份状态"><a href="#备份状态" class="headerlink" title="备份状态"></a>备份状态</h3><p>可以通过向<code>/replication</code>处理程序发送<code>details</code>命令来监控<code>backup</code>操作以查看是否已完成，如此示例：</p>
+<p><strong>状态API示例</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/replication?command=details&amp;wt=xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>输出片段</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;backup&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;startTime&quot;</span>&gt;</span>2022-02-11T17:19:33.271461700Z<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;fileCount&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;indexFileCount&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>success<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;snapshotCompletedAt&quot;</span>&gt;</span>2022-02-11T17:19:34.363859100Z<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;endTime&quot;</span>&gt;</span>2022-02-11T17:19:34.363859100Z<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;snapshotName&quot;</span>&gt;</span>my_backup<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果失败，则响应中将发送<code>snapShootException</code>。</p>
+<h3 id="恢复API"><a href="#恢复API" class="headerlink" title="恢复API"></a>恢复API</h3><p>恢复备份需要向<code>/replication</code>处理程序发送<code>restore</code>命令，后跟要恢复的备份名称。</p>
+<p>您可以用这样的命令从备份恢复：</p>
+<p><strong>示例用法</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/replication?command=restore&amp;name=backup_name</span><br></pre></td></tr></table></figure>
+
+<p>这将把命名的索引快照恢复到当前核心。<br>一旦恢复完成，搜索将开始反映快照数据。</p>
+<p><code>restore</code>请求可以接受这些额外参数：</p>
+<p><strong>location：</strong><br><em>可选，默认：无</em></p>
+<p>备份快照文件的位置。<br>如果未指定，它会在Solr的数据目录中查找备份。</p>
+<p><strong>name：</strong><br><em>可选，默认：无</em></p>
+<p>要恢复的备份索引快照的名称。<br>如果未提供名称，它会在位置目录中查找具有<code>snapshot.&lt;timestamp&gt;</code>格式的备份。<br>在这种情况下，它选择最新时间戳的备份。</p>
+<p><strong>repository：</strong><br><em>可选，默认：无</em></p>
+<p>要用于备份的存储库名称。<br>如果未指定存储库，则将自动使用本地文件系统存储库。</p>
+<p><code>restore</code>命令是异步调用。<br>一旦恢复完成，反映的数据将是被恢复的备份索引。</p>
+<p>一次只能对一个核心进行一次<code>restore</code>调用。<br>当正在进行恢复操作时，后续的恢复调用将抛出异常。</p>
+<h3 id="恢复状态API"><a href="#恢复状态API" class="headerlink" title="恢复状态API"></a>恢复状态API</h3><p>您还可以通过向<code>/replication</code>处理程序发送<code>restorestatus</code>命令来检查<code>restore</code>操作的状态，如此示例：</p>
+<p><strong>状态API示例</strong></p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/replication?command=restorestatus&amp;wt=xml</span><br></pre></td></tr></table></figure>
+
+<p><strong>状态API输出</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;responseHeader&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;QTime&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;restorestatus&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;snapshotName&quot;</span>&gt;</span>snapshot.<span class="tag">&lt;<span class="name">name</span>&gt;</span><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>success<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>状态值可以是”In Progress”、”success”或”failed”。<br>如果失败，响应中还将发送”exception”。</p>
+<h2 id="CREATE：创建快照"><a href="#CREATE：创建快照" class="headerlink" title="CREATE：创建快照"></a>CREATE：创建快照</h2><p>快照功能与备份功能不同，因为索引文件不会被复制到任何地方。<br>索引文件在同一索引目录中被快照，可以在创建备份时引用。</p>
+<p>您可以用这样的HTTP命令触发快照命令（将”techproducts”替换为您正在使用的核心名称）：</p>
+<p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/solr/admin/cores?action=CREATESNAPSHOT&amp;core=techproducts&amp;commitName=commit1</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong><br>使用v2 API时，核心和快照名称是路径的一部分而不是查询参数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST http://localhost:8983/api/cores/techproducts/snapshots/commit1</span><br></pre></td></tr></table></figure>
+
+<h3 id="CREATE参数"><a href="#CREATE参数" class="headerlink" title="CREATE参数"></a>CREATE参数</h3><p>CREATE操作允许以下参数：</p>
+<p><strong>async：</strong><br><em>可选，默认：无</em></p>
+<p>请求ID来跟踪将异步处理的操作。</p>
+<h3 id="CREATE响应"><a href="#CREATE响应" class="headerlink" title="CREATE响应"></a>CREATE响应</h3><p>响应将包括请求状态、核心名称、快照名称、索引目录路径、快照生成和文件名列表。<br>如果状态不是”success”，错误消息将解释请求失败的原因。</p>
+<h2 id="List：列出特定核心的所有快照"><a href="#List：列出特定核心的所有快照" class="headerlink" title="List：列出特定核心的所有快照"></a>List：列出特定核心的所有快照</h2><p>您可以用这样的HTTP命令触发列出快照命令（将”techproducts”替换为您正在使用的核心名称）：</p>
+<p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/admin/cores?action=LISTSNAPSHOTS&amp;core=techproducts&amp;commitName=commit1</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong><br>使用v2 API时，核心名称出现在路径中，而不是作为查询参数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/api/cores/techproducts/snapshots</span><br></pre></td></tr></table></figure>
+
+<h3 id="LIST参数"><a href="#LIST参数" class="headerlink" title="LIST参数"></a>LIST参数</h3><p>LIST操作允许以下参数：</p>
+<p><strong>async：</strong><br><em>可选，默认：无</em></p>
+<p>请求ID来跟踪将异步处理的操作。</p>
+<h3 id="LIST响应"><a href="#LIST响应" class="headerlink" title="LIST响应"></a>LIST响应</h3><p>响应将包括请求状态和核心的所有现有快照。<br>如果状态不是”success”，错误消息将解释请求失败的原因。</p>
+<h2 id="DELETE：删除快照"><a href="#DELETE：删除快照" class="headerlink" title="DELETE：删除快照"></a>DELETE：删除快照</h2><p>您可以用这样的HTTP命令触发删除快照（将”techproducts”替换为您正在使用的核心名称）：</p>
+<p><strong>V1 API：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/admin/cores?action=DELETESNAPSHOT&amp;core=techproducts&amp;commitName=commit1</span><br></pre></td></tr></table></figure>
+
+<p><strong>V2 API：</strong><br>使用v2 API时，核心和快照名称是路径的一部分而不是查询参数。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X DELETE http://localhost:8983/api/cores/techproducts/snapshots/commit1</span><br></pre></td></tr></table></figure>
+
+<h3 id="DELETE参数"><a href="#DELETE参数" class="headerlink" title="DELETE参数"></a>DELETE参数</h3><p>DELETE操作允许以下参数：</p>
+<p><strong>async：</strong><br><em>可选，默认：无</em></p>
+<p>请求ID来跟踪将异步处理的操作。</p>
+<h3 id="DELETE响应"><a href="#DELETE响应" class="headerlink" title="DELETE响应"></a>DELETE响应</h3><p>响应将包括请求状态、核心名称和被删除快照的名称。<br>如果状态不是”success”，错误消息将解释请求失败的原因。</p>
+<h2 id="备份-恢复存储存储库"><a href="#备份-恢复存储存储库" class="headerlink" title="备份&#x2F;恢复存储存储库"></a>备份&#x2F;恢复存储存储库</h2><p>Solr提供存储库抽象，允许用户将其数据备份和恢复到各种不同的存储系统。<br>例如，在本地文件系统（例如EXT3）上运行的Solr集群可以将备份数据存储在同一磁盘上、远程网络挂载驱动器、HDFS，甚至一些流行的”云存储”提供商中，这取决于所选择的”存储库”实现。<br>Solr提供多种不同的开箱即用存储库实现（<code>LocalFileSystemRepository</code>、<code>HdfsBackupRepository</code>、<code>GCSBackupRepository</code>和<code>S3BackupRepository</code>），并允许用户根据需要为自己的存储系统创建插件。还可以创建一个<code>DelegatingBackupRepository</code>，它委托给另一个<code>BackupRepository</code>并在其基础上添加或修改某些行为。</p>
+<p>用户可以在其<code>solr.xml</code>文件中定义任意数量的存储库。<br>上面描述的备份和恢复API允许用户通过<code>repository</code>参数在运行时选择要使用的这些定义中的哪一个。<br>当未指定<code>repository</code>参数时，本地文件系统存储库用作默认值。</p>
+<p>存储库由嵌套在<code>&lt;backup&gt;</code>父标签下的<code>&lt;repository&gt;</code>标签定义。<br>所有<code>&lt;repository&gt;</code>标签必须具有<code>name</code>属性（定义用户稍后可以引用以选择此存储库的标识符）和<code>class</code>属性（包含实现存储库的完整Java类名）。<br>它们还可能具有布尔<code>default</code>属性，在至多一个存储库定义上可能为<code>true</code>。<br><code>&lt;repository&gt;</code>标签下的任何子元素都作为附加配置传递给存储库，允许存储库读取其自己的特定于实现的配置。</p>
+<p>下面提供有关Solr提供的每个存储库实现的信息。</p>
+<p>默认情况下，所有存储库实现在将索引文件复制到目标之前验证索引文件的完整性。但是，可以通过设置可选配置属性<code>verifyChecksum</code>来禁用此完整性检查。</p>
+<p><strong>verifyChecksum：</strong><br><em>可选，默认：<code>true</code></em></p>
+<p>定义备份存储库在将索引文件复制到目标之前是否应检查索引文件完整性。设置<code>false</code>以禁用校验和验证，以便以不同方式验证完整性，例如如果文件被加密。</p>
+<h3 id="LocalFileSystemRepository"><a href="#LocalFileSystemRepository" class="headerlink" title="LocalFileSystemRepository"></a>LocalFileSystemRepository</h3><p>LocalFileSystemRepository在可访问文件系统的任何地方存储和检索备份文件。<br>文件可以存储在”本地”磁盘上，或在对文件系统看起来本地的网络挂载驱动器上。</p>
+<p><strong>警告：</strong> 希望将LocalFileSystemRepository与网络驱动器结合使用的SolrCloud管理员应该小心确保驱动器在每个Solr节点上的相同位置可用。<br>严格来说，挂载只需要在执行备份（或恢复）的节点和当前充当”Overseer”的节点上存在。<br>但是，由于”overseer”角色经常在集群中的节点之间移动，通常建议将备份驱动器统一添加到所有节点。</p>
+<p>不明确提供<code>repository</code>参数或在<code>solr.xml</code>中指定默认值的任何备份和恢复命令都使用LocalFileSystemRepository实例作为默认值。</p>
+<p>LocalFileSystemRepository接受以下配置选项：</p>
+<p><strong>location：</strong><br><em>可选，默认：无</em></p>
+<p>用于备份存储和检索的有效文件路径（Solr本地可访问）。<br>当用户在其备份或恢复API命令中不提供<code>location</code>参数时用作回退。</p>
+<p>使用此属性的示例配置可以在下面找到。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">backup</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">repository</span> <span class="attr">name</span>=<span class="string">&quot;local_repo&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.core.backup.repository.LocalFileSystemRepository&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;location&quot;</span>&gt;</span>/solr/backup_data<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">backup</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="HdfsBackupRepository"><a href="#HdfsBackupRepository" class="headerlink" title="HdfsBackupRepository"></a>HdfsBackupRepository</h3><p>从HDFS目录存储和检索备份文件。</p>
+<p>这通过需要在使用前启用的<code>hdfs</code> <a href="../configuration-guide/solr-modules.html">Solr模块</a>提供。</p>
+<p>HdfsBackupRepository接受以下配置选项：</p>
+<p><strong>solr.hdfs.buffer.size：</strong><br><em>可选，默认：<code>4096</code>千字节</em></p>
+<p>用于往返HDFS传输数据的缓冲区大小（以字节为单位）。<br>在内存允许的情况下，更大的缓冲区通常可以获得更好的吞吐量。</p>
+<p><strong>solr.hdfs.home：</strong><br><em>必需，默认：无</em></p>
+<p>格式为<code>hdfs://&lt;host&gt;:&lt;port&gt;/&lt;hdfsBaseFilePath&gt;</code>的HDFS URI，指向Solr要存储（或检索）备份文件的HDFS集群。</p>
+<p><strong>solr.hdfs.permissions.umask-mode：</strong><br><em>可选，默认：无</em></p>
+<p>在HDFS中创建文件时使用的权限umask。</p>
+<p><strong>location：</strong><br><em>可选，默认：无</em></p>
+<p>HDFS集群上用于备份存储和检索的有效目录路径。<br>当用户在其备份或恢复API命令中不提供<code>location</code>参数时用作回退。</p>
+<p>使用这些属性的示例配置可以在下面找到：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">backup</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">repository</span> <span class="attr">name</span>=<span class="string">&quot;hdfs&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.hdfs.backup.repository.HdfsBackupRepository&quot;</span> <span class="attr">default</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;solr.hdfs.home&quot;</span>&gt;</span>hdfs://some_hdfs_host:1234/solr/backup/data<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;solr.hdfs.buffer.size&quot;</span>&gt;</span>8192<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;solr.hdfs.permissions.umask-mode&quot;</span>&gt;</span>0022<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;location&quot;</span>&gt;</span>/default/hdfs/backup/location<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">backup</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="GCSBackupRepository"><a href="#GCSBackupRepository" class="headerlink" title="GCSBackupRepository"></a>GCSBackupRepository</h3><p>在Google Cloud Storage（”GCS”）存储桶中存储和检索备份文件。</p>
+<p>这通过需要在使用前启用的<code>gcs-repository</code> <a href="../configuration-guide/solr-modules.html">Solr模块</a>提供。</p>
+<p>GCSBackupRepository接受以下整体配置选项：</p>
+<p><strong>gcsBucket：</strong><br><em>可选，默认：见说明</em></p>
+<p>要读写所有备份文件的GCS存储桶。<br>如果未指定，GCSBackupRepository将使用<code>GCS_BUCKET</code>环境变量的值。<br>如果两个值都不存在，将使用值<code>solrBackupsBucket</code>作为默认值。</p>
+<p><strong>gcsCredentialPath：</strong><br><em>可选，默认：见说明</em></p>
+<p>本地文件系统上（Solr可访问）到<a target="_blank" rel="noopener" href="https://cloud.google.com/iam/docs/creating-managing-service-account-keys">Google Cloud服务帐户密钥</a>文件的路径。<br>如果未指定，GCSBackupRepository将使用<code>GCS_CREDENTIAL_PATH</code>环境变量的值。<br>如果两个值都不存在且Solr在GCP内部运行，GCS客户端将尝试使用GCP的”计算引擎元数据服务器”或<a target="_blank" rel="noopener" href="https://cloud.google.com/kubernetes-engine/docs/how-to/workload-identity">工作负载标识</a>功能进行认证。<br>如果两个值都不存在且Solr在GCP外部运行，它将无法认证，任何备份或恢复操作都将失败。</p>
+<p><strong>location：</strong><br><em>可选，默认：无</em></p>
+<p>给定GCS存储桶中用于备份存储和检索的有效”目录”路径。<br>（GCS使用平面存储模型，但Solr的备份功能以近似分层目录存储的方式命名blob。）<br>当用户在其备份或恢复API命令中不提供<code>location</code>参数时用作回退。</p>
+<p>除了这些整体配置属性外，GCSBackupRepository还为用户提供了对用于与GCS通信的客户端的详细控制。<br>这些属性不太可能引起大多数用户的兴趣，但对于那些希望微管理性能或受到不稳定网络影响的人来说可能很有价值。</p>
+<p>GCSBackupRepository接受以下高级客户端配置选项：</p>
+<p><strong>gcsWriteBufferSizeBytes：</strong><br><em>可选，默认：<code>16777216</code>字节（16 MB）</em></p>
+<p>向GCS发送数据时使用的缓冲区大小（以字节为单位）。</p>
+<p><strong>gcsReadBufferSizeBytes：</strong><br><em>可选，默认：<code>2097152</code>字节（2 MB）</em></p>
+<p>从GCS复制数据时使用的缓冲区大小（以字节为单位）。</p>
+<p><strong>gcsClientHttpConnectTimeoutMillis：</strong><br><em>可选，默认：<code>2000</code>毫秒</em></p>
+<p>GCS客户端进行的所有HTTP请求的连接超时（以毫秒为单位）。<br><code>0</code>可用于请求无限超时。<br>负整数或根本不指定值将导致默认值。</p>
+<p><strong>gcsClientHttpReadTimeoutMillis：</strong><br><em>可选，默认：<code>20000</code>毫秒</em></p>
+<p>在已建立连接上读取数据的读取超时（以毫秒为单位）。<br><code>0</code>可用于请求无限超时。<br>负整数或根本不指定值将导致默认值。</p>
+<p><strong>gcsClientMaxRetries：</strong><br><em>可选，默认：<code>10</code></em></p>
+<p>失败时重试操作的最大次数。<br>GCS客户端将重试操作，直到达到此值，或跨所有尝试花费的时间超过<code>gcsClientMaxRequestTimeoutMillis</code>。<br><code>0</code>可用于指定不应进行重试。</p>
+<p><strong>gcsClientMaxRequestTimeoutMillis：</strong><br><em>可选，默认：<code>30000</code>毫秒</em></p>
+<p>在失败操作的所有重试上花费的最大时间。<br>GCS客户端将重试操作，直到达到此超时或<code>gcsClientMaxRetries</code>尝试失败。</p>
+<p><strong>gcsClientHttpInitialRetryDelayMillis：</strong><br><em>可选，默认：<code>1000</code>毫秒</em></p>
+<p>失败的HTTP请求第一次重试之前延迟的时间（以毫秒为单位）。<br>此值还影响后续重试 - 有关更多信息，请参见下面的<code>gcsClientHttpRetryDelayMultiplier</code>描述。<br>如果<code>gcsClientMaxRetries</code>为<code>0</code>，则忽略此属性，因为不尝试重试。</p>
+<p><strong>gcsClientHttpRetryDelayMultiplier：</strong><br><em>可选，默认：<code>1.0</code></em></p>
+<p>用于缩放失败HTTP请求每次连续重试之间延迟的浮点乘数。<br>此数字越大，重试延迟复合和缩放越快。</p>
+<p>在底层，GSC客户端在重试之间使用指数退避策略，由公式控制：<code>gcsClientHttpInitialRetryDelayMillis*(gcsClientHttpRetryDelayMultiplier)^(retryNum-1)</code>。<br>第一次重试将有<code>gcsClientHttpInitialRetryDelayMillis</code>的延迟，第二次有<code>gcsClientHttpInitialRetryDelayMillis * gcsClientHttpRetryDelayMultiplier</code>的延迟，第三次有<code>gcsClientHttpInitialRetryDelayMillis * gcsClientHttpRetryDelayMultiplier^2</code>的延迟，依此类推。</p>
+<p>如果未指定，默认使用值<code>1.0</code>，确保在每次重试尝试之间使用<code>gcsClientHttpInitialRetryDelayMillis</code>。</p>
+<p><strong>gcsClientHttpMaxRetryDelayMillis：</strong><br><em>可选，默认：<code>30000</code>毫秒</em></p>
+<p>失败HTTP请求重试尝试之间的最大延迟（以毫秒为单位）。<br>这通常用于限制多次尝试中重试延迟的指数增长。<br>有关在不受此最大值限制时如何计算每个延迟的更多信息，请参见上面的<code>gcsClientHttpRetryDelayMultiplier</code>描述。</p>
+<p>使用整体和GCS客户端属性的示例配置可以在下面看到：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">backup</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">repository</span> <span class="attr">name</span>=<span class="string">&quot;gcs_backup&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.gcs.GCSBackupRepository&quot;</span> <span class="attr">default</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;gcsBucket&quot;</span>&gt;</span>solrBackups<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;gcsCredentialPath&quot;</span>&gt;</span>/local/path/to/credential/file<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;location&quot;</span>&gt;</span>/default/gcs/backup/location<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;gcsClientMaxRetries&quot;</span>&gt;</span>5<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;gcsClientHttpInitialRetryDelayMillis&quot;</span>&gt;</span>1500<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">double</span> <span class="attr">name</span>=<span class="string">&quot;gcsClientHttpRetryDelayMultiplier&quot;</span>&gt;</span>1.5<span class="tag">&lt;/<span class="name">double</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;gcsClientHttpMaxRetryDelayMillis&quot;</span>&gt;</span>10000<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">backup</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="S3BackupRepository"><a href="#S3BackupRepository" class="headerlink" title="S3BackupRepository"></a>S3BackupRepository</h3><p>在Amazon S3存储桶中存储和检索备份文件。</p>
+<p>这通过需要在使用前启用的<code>s3-repository</code> <a href="../configuration-guide/solr-modules.html">Solr模块</a>提供。</p>
+<p>此插件使用<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/credentials.html">默认AWS凭证提供者链</a>，因此请确保您的凭证设置适当（例如，通过环境变量，或在<code>~/.aws/credentials</code>中等）。</p>
+<p><strong>注意：</strong> 使用S3存储库的**<code>location</code>**选项有一些细微差别。<br><code>location</code>选项指定存储备份信息的子目录。</p>
+<p><strong>位置格式：</strong><br>使用备份和恢复集合API调用时，**<code>location</code>**选项可以以多种方式呈现：</p>
+<ul>
+<li><code>dir/in/bucket</code></li>
+<li><code>/dir/in/bucket</code></li>
+<li><code>s3:/dir/in/bucket</code></li>
+<li><code>s3://dir/in/bucket</code></li>
+</ul>
+<p>上述所有选项都将解析为您S3存储桶中的同一目录：<code>dir/in/bucket</code>。</p>
+<p><strong>预创建：</strong><br>位置必须在您可以对该位置执行任何备份操作之前已存在于您的S3存储桶中。</p>
+<p><strong>请注意，您在S3中创建的目录不能以<code>/</code>开头，因为<code>locations</code>会剥离任何<code>/</code>前缀（在<code>位置格式</code>中显示）。</strong></p>
+<p><strong>空位置：</strong><br>如果您不想在存储桶中使用子目录来存储备份，您可以使用以下任何位置选项：<code>/</code>、<code>s3:/</code>、<code>s3://</code>。<br>但是location选项是强制性的，如果没有它尝试执行备份操作，您将收到错误。</p>
+<p>下面可以看到启用S3备份和恢复的示例配置：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">backup</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">repository</span> <span class="attr">name</span>=<span class="string">&quot;s3&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.s3.S3BackupRepository&quot;</span> <span class="attr">default</span>=<span class="string">&quot;false&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;s3.bucket.name&quot;</span>&gt;</span>my-s3-bucket<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;s3.region&quot;</span>&gt;</span>us-west-2<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">repository</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">backup</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>S3BackupRepository接受以下选项（在<code>solr.xml</code>中）用于整体配置：</p>
+<p><strong>s3.bucket.name：</strong><br><em>可选，默认：无</em></p>
+<p>要读写所有备份文件的S3存储桶。可以通过设置<code>S3_BUCKET_NAME</code>环境变量覆盖。</p>
+<p><strong>s3.profile：</strong><br><em>可选，默认：无</em></p>
+<p>要从配置文件加载AWS设置的配置文件。<br>配置文件允许多个S3Repositories的独立设置。<br>可以通过设置<code>AWS_PROFILE</code>环境变量或<code>-Daws.profile</code>系统属性覆盖。<br>有关按配置文件设置配置的更多信息，请参阅<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/sdkref/latest/guide/file-format.html#file-format-config">AWS Java SDK文档</a>。</p>
+<p><strong>s3.region：</strong><br><em>可选，默认：无</em></p>
+<p>您的存储桶配置所在的有效Amazon S3区域字符串。您必须对此存储桶具有读写权限。<br>有关完整区域列表，请参考<a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/general/latest/gr/s3.html">S3文档</a>。<br>可以通过设置<code>S3_REGION</code>环境变量或在AWS配置文件中设置区域来覆盖。</p>
+<p><strong>s3.endpoint：</strong><br><em>可选，默认：无</em></p>
+<p>显式S3端点。使用AWS S3时在正常操作下不需要（S3客户端可以从<code>s3.region</code>推断端点）。<br>如果使用模拟S3框架并想要显式覆盖S3请求路由的位置（例如使用S3Mock时），此参数很有用。<br>可以通过设置<code>S3_ENDPOINT</code>环境变量覆盖。</p>
+<p><strong>注意：</strong> 您可以使用<code>s3.endpoint</code>选项将此BackupRepository与_s3兼容_端点一起使用。<br>请注意，并非所有_s3兼容_端点都可以与S3BackupRepository一起使用。<br>Minio是一个_s3兼容_端点的例子，它不能与S3BackupRepository一起使用。<br>S3BackupRepository只保证与AWS S3和S3Mock兼容。</p>
+<h4 id="S3客户端配置"><a href="#S3客户端配置" class="headerlink" title="S3客户端配置"></a>S3客户端配置</h4><p>AWS Java SDK提供了许多设置S3客户端配置的方法。<br>Solr S3Repository允许通过以下方式设置这些配置：</p>
+<ul>
+<li>环境变量</li>
+<li>Java系统属性</li>
+<li>AWS配置文件（可能按配置文件）</li>
+</ul>
+<p><a target="_blank" rel="noopener" href="https://docs.aws.amazon.com/sdkref/latest/guide/settings-global.html">这些选项</a>包括：</p>
+<ul>
+<li>区域</li>
+<li>访问密钥</li>
+<li>重试<ul>
+<li>RetryMode（<code>LEGACY</code>、<code>STANDARD</code>、<code>ADAPTIVE</code>）</li>
+<li>最大尝试次数</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Solr%E9%83%A8%E7%BD%B2/" rel="tag"># Solr部署</a>
+              <a href="/tags/%E9%9B%86%E5%90%88%E7%AE%A1%E7%90%86/" rel="tag"># 集合管理</a>
+              <a href="/tags/%E5%A4%87%E4%BB%BD%E6%81%A2%E5%A4%8D/" rel="tag"># 备份恢复</a>
+              <a href="/tags/%E6%95%B0%E6%8D%AE%E4%BF%9D%E6%8A%A4/" rel="tag"># 数据保护</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2025/02/06/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AE%A4%E8%AF%81%E5%92%8C%E6%8E%88%E6%9D%83%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE/" rel="prev" title="Solr部署：认证和授权插件配置">
+                  <i class="fa fa-angle-left"></i> Solr部署：认证和授权插件配置
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2025/02/08/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%95%B0%E6%8D%AE%E7%9B%AE%E5%BD%95%E5%92%8C%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" rel="next" title="Solr配置：数据目录和索引位置管理详解">
+                  Solr配置：数据目录和索引位置管理详解 <i class="fa fa-angle-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+  <div class="copyright">
+    &copy; 
+    <span itemprop="copyrightYear">2025</span>
+    <span class="with-love">
+      <i class="fa fa-heart"></i>
+    </span>
+    <span class="author" itemprop="copyrightHolder">longkeyy</span>
+  </div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/muse/" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+  <div class="sidebar-dimmer"></div>
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+</body>
+</html>
