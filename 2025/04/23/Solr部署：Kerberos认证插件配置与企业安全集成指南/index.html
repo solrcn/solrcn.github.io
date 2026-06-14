@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：kerberos认证插件配置与企业安全集成指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="ZooKeeperSolr认证Kerberos企业安全SPNegoKDCJAAS" />
+  
+  
+  
+  
+  <meta name="description" content="Solr部署：Kerberos认证插件配置与企业安全集成指南概述如果您正在使用Kerberos来保护网络环境，Kerberos认证插件可用于保护Solr集群。该插件允许Solr使用Kerberos服务主体和keytab文件来验证ZooKeeper身份以及Solr集群节点之间的通信。 管理界面用户和所有客户端（如SolrJ）在使用界面或向Solr发送请求之前，也需要拥有有效的票证。 支持范围Kerb">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：Kerberos认证插件配置与企业安全集成指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/04/23/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AKerberos%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr部署：Kerberos认证插件配置与企业安全集成指南概述如果您正在使用Kerberos来保护网络环境，Kerberos认证插件可用于保护Solr集群。该插件允许Solr使用Kerberos服务主体和keytab文件来验证ZooKeeper身份以及Solr集群节点之间的通信。 管理界面用户和所有客户端（如SolrJ）在使用界面或向Solr发送请求之前，也需要拥有有效的票证。 支持范围Kerb">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-23T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:40:33.650Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="ZooKeeper">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="认证">
+<meta property="article:tag" content="Kerberos">
+<meta property="article:tag" content="企业安全">
+<meta property="article:tag" content="SPNego">
+<meta property="article:tag" content="KDC">
+<meta property="article:tag" content="JAAS">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：Kerberos认证插件配置与企业安全集成指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：Kerberos认证插件配置与企业安全集成指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/04/23/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AKerberos%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-04-23T16:00:00.000Z" itemprop="datePublished">四月 23, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr部署：Kerberos认证插件配置与企业安全集成指南"><a href="#Solr部署：Kerberos认证插件配置与企业安全集成指南" class="headerlink" title="Solr部署：Kerberos认证插件配置与企业安全集成指南"></a>Solr部署：Kerberos认证插件配置与企业安全集成指南</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>如果您正在使用Kerberos来保护网络环境，Kerberos认证插件可用于保护Solr集群。该插件允许Solr使用Kerberos服务主体和keytab文件来验证ZooKeeper身份以及Solr集群节点之间的通信。</p>
+<p>管理界面用户和所有客户端（如SolrJ）在使用界面或向Solr发送请求之前，也需要拥有有效的票证。</p>
+<h2 id="支持范围"><a href="#支持范围" class="headerlink" title="支持范围"></a>支持范围</h2><p>Kerberos认证支持以下安装类型：</p>
+<ul>
+<li><strong>SolrCloud集群</strong></li>
+<li><strong>用户管理的分布式部署</strong></li>
+<li><strong>单节点安装</strong></li>
+</ul>
+<h2 id="与Hadoop集成的特殊说明"><a href="#与Hadoop集成的特殊说明" class="headerlink" title="与Hadoop集成的特殊说明"></a>与Hadoop集成的特殊说明</h2><p>如果您正在将Solr与受Kerberos保护的Hadoop集群一起使用，并且打算将Solr索引存储在HDFS中，除了本页说明外，还需要参考”Running Solr on HDFS”部分的额外配置步骤。</p>
+<p><strong>重要区别</strong>：</p>
+<ul>
+<li>本页说明适用于Solr本身需要Kerberos保护的场景</li>
+<li>如果仅需要在Kerberos化的HDFS系统中存储索引，请参考HDFS专门文档</li>
+</ul>
+<h2 id="Solr与Kerberos的工作原理"><a href="#Solr与Kerberos的工作原理" class="headerlink" title="Solr与Kerberos的工作原理"></a>Solr与Kerberos的工作原理</h2><h3 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h3><p>设置Solr使用Kerberos时，会配置Solr使用<strong>服务主体</strong>（Kerberos用户名），该主体在密钥分发中心（KDC）注册以验证请求。配置定义了服务主体名称和包含凭据的keytab文件位置。</p>
+<h3 id="配置存储"><a href="#配置存储" class="headerlink" title="配置存储"></a>配置存储</h3><p>与所有认证插件一样，Kerberos认证配置存储在<code>security.json</code>文件中。</p>
+<h3 id="服务主体和Keytab文件"><a href="#服务主体和Keytab文件" class="headerlink" title="服务主体和Keytab文件"></a>服务主体和Keytab文件</h3><h4 id="服务主体结构"><a href="#服务主体结构" class="headerlink" title="服务主体结构"></a>服务主体结构</h4><p>每个Solr节点必须在密钥分发中心（KDC）注册一个服务主体。Kerberos插件使用SPNego协商认证。</p>
+<p><strong>服务主体示例</strong>：<code>HTTP/host1@YOUR-DOMAIN.ORG</code></p>
+<p>组成部分解释：</p>
+<ul>
+<li><code>HTTP</code>：表示此服务主体将用于验证的请求类型。**必须使用HTTP&#x2F;**前缀以支持SPNego与Solr的HTTP请求协作</li>
+<li><code>host1</code>：托管Solr节点的机器主机名</li>
+<li><code>YOUR-DOMAIN.ORG</code>：组织范围的Kerberos域</li>
+</ul>
+<h4 id="主体共享规则"><a href="#主体共享规则" class="headerlink" title="主体共享规则"></a>主体共享规则</h4><p>同一主机上的多个Solr节点可以使用相同的服务主体，因为主机名是共同的。</p>
+<h4 id="Keytab文件要求"><a href="#Keytab文件要求" class="headerlink" title="Keytab文件要求"></a>Keytab文件要求</h4><p>每个Solr节点需要一个keytab文件，该文件应包含所用服务主体的凭据。</p>
+<p><strong>Keytab文件特点</strong>：</p>
+<ul>
+<li>包含加密凭据以支持无密码登录</li>
+<li>在从KDC获取Kerberos票证时使用</li>
+<li>应保存在安全位置</li>
+<li>不应与集群用户共享</li>
+</ul>
+<h4 id="节点间通信"><a href="#节点间通信" class="headerlink" title="节点间通信"></a>节点间通信</h4><p>Solr集群需要节点间通信，每个节点都必须能够向其他节点发出启用Kerberos的请求。</p>
+<p><strong>默认配置</strong>：Solr使用相同的服务主体和keytab作为节点间通信的”客户端主体”</p>
+<p><strong>高级配置</strong>：可以配置独立的客户端主体，但不推荐且本指南未涵盖</p>
+<h3 id="Kerberos化的ZooKeeper"><a href="#Kerberos化的ZooKeeper" class="headerlink" title="Kerberos化的ZooKeeper"></a>Kerberos化的ZooKeeper</h3><h4 id="推荐配置"><a href="#推荐配置" class="headerlink" title="推荐配置"></a>推荐配置</h4><p>设置Kerberos化的SolrCloud集群时，<strong>强烈建议</strong>也为ZooKeeper启用Kerberos安全。</p>
+<h4 id="统一配置优势"><a href="#统一配置优势" class="headerlink" title="统一配置优势"></a>统一配置优势</h4><p>在此设置中，用于ZooKeeper身份验证的客户端主体也可用于节点间通信：</p>
+<ul>
+<li><strong>好处</strong>：无需单独续订票证授予票证（TGT）</li>
+<li><strong>原因</strong>：Solr使用的ZooKeeper客户端负责处理续订</li>
+<li><strong>实现</strong>：单个JAAS配置（应用名为Client）可同时用于Kerberos插件和ZooKeeper客户端</li>
+</ul>
+<h3 id="浏览器配置"><a href="#浏览器配置" class="headerlink" title="浏览器配置"></a>浏览器配置</h3><h4 id="管理界面访问"><a href="#管理界面访问" class="headerlink" title="管理界面访问"></a>管理界面访问</h4><p>启用Kerberos认证后，浏览器必须能够与Kerberos认证器服务协商以允许访问Solr管理界面。</p>
+<h4 id="浏览器支持差异"><a href="#浏览器支持差异" class="headerlink" title="浏览器支持差异"></a>浏览器支持差异</h4><ul>
+<li>每个浏览器支持方式不同</li>
+<li>某些浏览器（如Chrome）完全不支持</li>
+<li>配置不当会导致401错误</li>
+</ul>
+<h4 id="配置要求"><a href="#配置要求" class="headerlink" title="配置要求"></a>配置要求</h4><p>如果在启用Kerberos认证后看到401错误，可能是浏览器未正确配置以知道如何或在何处协商认证请求。</p>
+<p><strong>注意</strong>：浏览器配置详情超出本文档范围，请联系Kerberos系统管理员获取配置细节。</p>
+<h2 id="Kerberos认证配置"><a href="#Kerberos认证配置" class="headerlink" title="Kerberos认证配置"></a>Kerberos认证配置</h2><h3 id="配置前的重要警告"><a href="#配置前的重要警告" class="headerlink" title="配置前的重要警告"></a>配置前的重要警告</h3><p><strong>咨询管理员</strong>：在尝试配置Solr使用Kerberos认证之前，请与本地Kerberos管理员审查每个步骤并就每个细节进行咨询，确保了解每个参数的正确值。小错误可能导致Solr无法启动或正常运行，且很难诊断。</p>
+<h3 id="配置步骤概览"><a href="#配置步骤概览" class="headerlink" title="配置步骤概览"></a>配置步骤概览</h3><p>Kerberos插件配置包含几个部分：</p>
+<ol>
+<li><strong>创建服务主体和keytab文件</strong></li>
+<li><strong>ZooKeeper配置</strong></li>
+<li><strong>创建或更新<code>/security.json</code></strong></li>
+<li><strong>定义<code>jaas-client.conf</code></strong></li>
+<li><strong>Solr启动参数</strong></li>
+</ol>
+<h3 id="主机名使用说明"><a href="#主机名使用说明" class="headerlink" title="主机名使用说明"></a>主机名使用说明</h3><p>要使用主机名而不是IP地址，请在<code>bin/solr.in.sh</code>中使用<code>SOLR_HOST</code>配置，或在Solr启动时传递<code>-Dhost=&lt;hostname&gt;</code>系统参数。</p>
+<p><strong>本指南使用IP地址</strong>。如果指定主机名，请将指南中的所有IP地址适当替换为Solr主机名。</p>
+<h2 id="详细配置步骤"><a href="#详细配置步骤" class="headerlink" title="详细配置步骤"></a>详细配置步骤</h2><h3 id="第一步：获取服务主体和Keytab"><a href="#第一步：获取服务主体和Keytab" class="headerlink" title="第一步：获取服务主体和Keytab"></a>第一步：获取服务主体和Keytab</h3><p>在配置Solr之前，确保在KDC服务器中为每个Solr主机和ZooKeeper（如果ZooKeeper尚未配置）提供Kerberos服务主体，并生成keytab文件。</p>
+<h4 id="示例配置过程"><a href="#示例配置过程" class="headerlink" title="示例配置过程"></a>示例配置过程</h4><p>假设主机名为<code>192.168.0.107</code>，主目录为<code>/home/foo/</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">root@kdc:/# kadmin.local</span><br><span class="line">Authenticating as principal foo/admin@EXAMPLE.COM with password.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 添加服务主体</span></span><br><span class="line">kadmin.local:  addprinc HTTP/192.168.0.107</span><br><span class="line">WARNING: no policy specified <span class="keyword">for</span> HTTP/192.168.0.107@EXAMPLE.COM; defaulting to no policy</span><br><span class="line">Enter password <span class="keyword">for</span> principal <span class="string">&quot;HTTP/192.168.0.107@EXAMPLE.COM&quot;</span>:</span><br><span class="line">Re-enter password <span class="keyword">for</span> principal <span class="string">&quot;HTTP/192.168.0.107@EXAMPLE.COM&quot;</span>:</span><br><span class="line">Principal <span class="string">&quot;HTTP/192.168.0.107@EXAMPLE.COM&quot;</span> created.</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建keytab文件</span></span><br><span class="line">kadmin.local:  ktadd -k /tmp/107.keytab HTTP/192.168.0.107</span><br><span class="line">Entry <span class="keyword">for</span> principal HTTP/192.168.0.107 with kvno 2, encryption <span class="built_in">type</span> aes256-cts-hmac-sha1-96 added to keytab WRFILE:/tmp/107.keytab.</span><br><span class="line">Entry <span class="keyword">for</span> principal HTTP/192.168.0.107 with kvno 2, encryption <span class="built_in">type</span> arcfour-hmac added to keytab WRFILE:/tmp/107.keytab.</span><br><span class="line">Entry <span class="keyword">for</span> principal HTTP/192.168.0.107 with kvno 2, encryption <span class="built_in">type</span> des3-cbc-sha1 added to keytab WRFILE:/tmp/107.keytab.</span><br><span class="line">Entry <span class="keyword">for</span> principal HTTP/192.168.0.107 with kvno 2, encryption <span class="built_in">type</span> des-cbc-crc added to keytab WRFILE:/tmp/107.keytab.</span><br><span class="line"></span><br><span class="line">kadmin.local:  quit</span><br></pre></td></tr></table></figure>
+
+<h4 id="文件部署"><a href="#文件部署" class="headerlink" title="文件部署"></a>文件部署</h4><p>将keytab文件从KDC服务器的<code>/tmp/107.keytab</code>位置复制到Solr主机的<code>/keytabs/107.keytab</code>。</p>
+<p><strong>重要</strong>：为每个Solr节点重复此步骤。</p>
+<h4 id="ZooKeeper主体"><a href="#ZooKeeper主体" class="headerlink" title="ZooKeeper主体"></a>ZooKeeper主体</h4><p>如果尚未设置ZooKeeper服务主体和keytab，可能需要采取类似步骤。在这种情况下，可以使用<code>zookeeper/host1</code>作为其中一个节点的服务主体。</p>
+<h3 id="第二步：ZooKeeper配置"><a href="#第二步：ZooKeeper配置" class="headerlink" title="第二步：ZooKeeper配置"></a>第二步：ZooKeeper配置</h3><h4 id="跳过条件"><a href="#跳过条件" class="headerlink" title="跳过条件"></a>跳过条件</h4><p>如果您使用的ZooKeeper已配置为使用Kerberos，可以跳过此处显示的ZooKeeper相关步骤。</p>
+<h4 id="配置要求-1"><a href="#配置要求-1" class="headerlink" title="配置要求"></a>配置要求</h4><p>ZooKeeper管理SolrCloud集群中节点间的通信，因此也必须能够与集群的每个节点进行身份验证。</p>
+<p>配置要求：</p>
+<ol>
+<li>为ZooKeeper设置服务主体</li>
+<li>定义JAAS配置文件</li>
+<li>指示ZooKeeper使用这两项</li>
+</ol>
+<h4 id="Java环境配置"><a href="#Java环境配置" class="headerlink" title="Java环境配置"></a>Java环境配置</h4><p>在ZooKeeper的<code>conf</code>目录中创建文件<code>java.env</code>并添加以下内容：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export JVMFLAGS=&quot;-Djava.security.auth.login.config=/etc/zookeeper/conf/jaas-client.conf&quot;</span><br></pre></td></tr></table></figure>
+
+<h4 id="JAAS配置文件"><a href="#JAAS配置文件" class="headerlink" title="JAAS配置文件"></a>JAAS配置文件</h4><p>JAAS配置文件应包含以下参数。确保适当更改<code>principal</code>和<code>keyTab</code>路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">Server &#123;</span><br><span class="line"> com.sun.security.auth.module.Krb5LoginModule required</span><br><span class="line">  useKeyTab=true</span><br><span class="line">  keyTab=&quot;/keytabs/zkhost1.keytab&quot;</span><br><span class="line">  storeKey=true</span><br><span class="line">  doNotPrompt=true</span><br><span class="line">  useTicketCache=false</span><br><span class="line">  debug=true</span><br><span class="line">  principal=&quot;zookeeper/host1@EXAMPLE.COM&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="ZooKeeper配置更新"><a href="#ZooKeeper配置更新" class="headerlink" title="ZooKeeper配置更新"></a>ZooKeeper配置更新</h4><p>将以下行添加到ZooKeeper配置文件<code>zoo.cfg</code>：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">authProvider.1</span>=<span class="string">org.apache.zookeeper.server.auth.SASLAuthenticationProvider</span></span><br><span class="line"><span class="attr">jaasLoginRenew</span>=<span class="string">3600000</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动ZooKeeper"><a href="#启动ZooKeeper" class="headerlink" title="启动ZooKeeper"></a>启动ZooKeeper</h4><p>所有部分就绪后，使用以下参数启动ZooKeeper：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/zkServer.sh start -Djava.security.auth.login.config=/etc/zookeeper/conf/jaas-client.conf</span><br></pre></td></tr></table></figure>
+
+<h3 id="第三步：创建security-json"><a href="#第三步：创建security-json" class="headerlink" title="第三步：创建security.json"></a>第三步：创建security.json</h3><h4 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h4><p>创建包含以下内容的<code>security.json</code>文件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.KerberosPlugin&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="上传到ZooKeeper"><a href="#上传到ZooKeeper" class="headerlink" title="上传到ZooKeeper"></a>上传到ZooKeeper</h4><p>使用<code>bin/solr zk</code>命令上传文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ bin/solr zk <span class="built_in">cp</span> ./security.json zk:security.json -z localhost:2181</span><br></pre></td></tr></table></figure>
+
+<h4 id="单节点安装"><a href="#单节点安装" class="headerlink" title="单节点安装"></a>单节点安装</h4><p>如果使用单节点Solr安装，需要创建<code>security.json</code>文件并将其放在<code>$SOLR_HOME</code>目录中。</p>
+<h4 id="现有配置处理"><a href="#现有配置处理" class="headerlink" title="现有配置处理"></a>现有配置处理</h4><p><strong>重要</strong>：如果ZooKeeper中已有<code>/security.json</code>文件，请下载文件，添加或修改authentication部分，然后使用Solr中可用的ZooKeeper实用工具将其重新上传到ZooKeeper。</p>
+<h3 id="第四步：定义JAAS配置文件"><a href="#第四步：定义JAAS配置文件" class="headerlink" title="第四步：定义JAAS配置文件"></a>第四步：定义JAAS配置文件</h3><h4 id="配置文件用途"><a href="#配置文件用途" class="headerlink" title="配置文件用途"></a>配置文件用途</h4><p>JAAS配置文件定义用于身份验证的属性，如服务主体和keytab文件位置。还可以设置其他属性以确保票证缓存和其他功能。</p>
+<h4 id="配置文件示例"><a href="#配置文件示例" class="headerlink" title="配置文件示例"></a>配置文件示例</h4><p>以下示例可以复制并为您的环境稍作修改。文件位置可以在服务器上的任何位置，但启动Solr时会引用它，因此必须在文件系统上可读。</p>
+<p><strong>示例路径</strong>：<code>/home/foo/jaas-client.conf</code></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">Client &#123;</span><br><span class="line">  com.sun.security.auth.module.Krb5LoginModule required</span><br><span class="line">  useKeyTab=true</span><br><span class="line">  keyTab=&quot;/keytabs/107.keytab&quot;</span><br><span class="line">  storeKey=true</span><br><span class="line">  useTicketCache=true</span><br><span class="line">  debug=true</span><br><span class="line">  principal=&quot;HTTP/192.168.0.107@EXAMPLE.COM&quot;;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<h4 id="配置说明"><a href="#配置说明" class="headerlink" title="配置说明"></a>配置说明</h4><p><strong>第一行</strong>：定义部分名称，将与<code>solr.kerberos.jaas.appname</code>参数一起使用。</p>
+<p><strong>主要属性</strong>：</p>
+<ul>
+<li><code>useKeyTab</code>：布尔属性，定义是否应使用keytab文件（此处为<code>true</code>）</li>
+<li><code>keyTab</code>：此JAAS配置文件部分对应的主体的keytab文件位置和名称。路径应用双引号括起来</li>
+<li><code>storeKey</code>：布尔属性，允许将密钥存储在用户的私有凭据中</li>
+<li><code>useTicketCache</code>：布尔属性，允许从票证缓存获取票证</li>
+<li><code>debug</code>：布尔属性，输出调试消息以帮助故障排除</li>
+<li><code>principal</code>：要使用的服务主体名称</li>
+</ul>
+<h4 id="多节点注意事项"><a href="#多节点注意事项" class="headerlink" title="多节点注意事项"></a>多节点注意事项</h4><p>JAAS文件可以包含不同用户的多个部分，但每个部分必须具有唯一名称，以便在每个应用程序中唯一引用。</p>
+<p><strong>重要</strong>：客户端<code>principal</code>与服务主体相同，用于验证节点间请求和对ZooKeeper的请求。</p>
+<h3 id="第五步：Solr启动参数"><a href="#第五步：Solr启动参数" class="headerlink" title="第五步：Solr启动参数"></a>第五步：Solr启动参数</h3><h4 id="参数配置方式"><a href="#参数配置方式" class="headerlink" title="参数配置方式"></a>参数配置方式</h4><p>启动Solr时，需要传递以下特定于主机的参数。这些参数可以：</p>
+<ul>
+<li>使用<code>bin/solr</code>启动命令在命令行传递</li>
+<li>在<code>bin/solr.in.sh</code>或<code>bin/solr.in.cmd</code>中定义</li>
+</ul>
+<h4 id="核心启动参数"><a href="#核心启动参数" class="headerlink" title="核心启动参数"></a>核心启动参数</h4><h5 id="solr-kerberos-name-rules"><a href="#solr-kerberos-name-rules" class="headerlink" title="solr.kerberos.name.rules"></a>solr.kerberos.name.rules</h5><ul>
+<li><strong>是否必需</strong>：可选</li>
+<li><strong>默认值</strong>：<code>DEFAULT</code></li>
+<li><strong>功能</strong>：用于将Kerberos主体映射到短名称</li>
+<li><strong>示例</strong>：<code>RULE:[1:$1@$0](.*EXAMPLE.COM)s/@.*//</code></li>
+</ul>
+<h5 id="solr-kerberos-name-rules-mechanism"><a href="#solr-kerberos-name-rules-mechanism" class="headerlink" title="solr.kerberos.name.rules.mechanism"></a>solr.kerberos.name.rules.mechanism</h5><ul>
+<li><strong>是否必需</strong>：可选</li>
+<li><strong>默认值</strong>：<code>hadoop</code></li>
+<li><strong>功能</strong>：将Kerberos主体映射到短名称的机制</li>
+<li><strong>选项</strong>：<code>hadoop</code>或<code>mit</code></li>
+</ul>
+<h5 id="solr-kerberos-cookie-domain"><a href="#solr-kerberos-cookie-domain" class="headerlink" title="solr.kerberos.cookie.domain"></a>solr.kerberos.cookie.domain</h5><ul>
+<li><strong>是否必需</strong>：必需</li>
+<li><strong>默认值</strong>：无</li>
+<li><strong>功能</strong>：用于发出cookie，应包含Solr节点的主机名</li>
+</ul>
+<h5 id="solr-kerberos-cookie-portaware"><a href="#solr-kerberos-cookie-portaware" class="headerlink" title="solr.kerberos.cookie.portaware"></a>solr.kerberos.cookie.portaware</h5><ul>
+<li><strong>是否必需</strong>：可选</li>
+<li><strong>默认值</strong>：<code>false</code></li>
+<li><strong>功能</strong>：控制cookie是否感知端口</li>
+</ul>
+<h2 id="实际部署示例"><a href="#实际部署示例" class="headerlink" title="实际部署示例"></a>实际部署示例</h2><h3 id="完整启动脚本"><a href="#完整启动脚本" class="headerlink" title="完整启动脚本"></a>完整启动脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置Kerberos相关的JVM参数</span></span><br><span class="line"><span class="built_in">export</span> SOLR_OPTS=<span class="string">&quot;-Djava.security.auth.login.config=/home/foo/jaas-client.conf \</span></span><br><span class="line"><span class="string">  -Dsolr.kerberos.cookie.domain=192.168.0.107 \</span></span><br><span class="line"><span class="string">  -Dsolr.kerberos.cookie.portaware=false \</span></span><br><span class="line"><span class="string">  -Dsolr.kerberos.name.rules=DEFAULT&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动Solr</span></span><br><span class="line">bin/solr start -c -z localhost:2181</span><br></pre></td></tr></table></figure>
+
+<h3 id="solr-in-sh配置示例"><a href="#solr-in-sh配置示例" class="headerlink" title="solr.in.sh配置示例"></a>solr.in.sh配置示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Kerberos认证配置</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Djava.security.auth.login.config=/home/foo/jaas-client.conf&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.kerberos.cookie.domain=192.168.0.107&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.kerberos.cookie.portaware=false&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsolr.kerberos.name.rules=DEFAULT&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># ZooKeeper连接</span></span><br><span class="line">ZK_HOST=<span class="string">&quot;localhost:2181&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="客户端使用和管理"><a href="#客户端使用和管理" class="headerlink" title="客户端使用和管理"></a>客户端使用和管理</h2><h3 id="SolrJ客户端"><a href="#SolrJ客户端" class="headerlink" title="SolrJ客户端"></a>SolrJ客户端</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 使用Kerberos认证的SolrJ客户端配置示例</span></span><br><span class="line">System.setProperty(<span class="string">&quot;java.security.auth.login.config&quot;</span>, <span class="string">&quot;/path/to/jaas-client.conf&quot;</span>);</span><br><span class="line">System.setProperty(<span class="string">&quot;solr.kerberos.jaas.appname&quot;</span>, <span class="string">&quot;Client&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="type">SolrClient</span> <span class="variable">client</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Http2SolrClient</span>.Builder(<span class="string">&quot;http://localhost:8983/solr&quot;</span>)</span><br><span class="line">    .build();</span><br></pre></td></tr></table></figure>
+
+<h3 id="cURL客户端"><a href="#cURL客户端" class="headerlink" title="cURL客户端"></a>cURL客户端</h3><p>使用Kerberos票证进行认证：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 获取票证</span></span><br><span class="line">kinit HTTP/192.168.0.107@EXAMPLE.COM</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送请求（使用negotiate认证）</span></span><br><span class="line">curl --negotiate -u: http://localhost:8983/solr/admin/info/system</span><br></pre></td></tr></table></figure>
+
+<h3 id="管理界面访问-1"><a href="#管理界面访问-1" class="headerlink" title="管理界面访问"></a>管理界面访问</h3><ol>
+<li><strong>浏览器配置</strong>：确保浏览器支持Kerberos&#x2F;SPNEGO</li>
+<li><strong>票证获取</strong>：在访问前获取有效的Kerberos票证</li>
+<li><strong>域配置</strong>：浏览器必须配置为信任Solr域</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题和解决方案"><a href="#常见问题和解决方案" class="headerlink" title="常见问题和解决方案"></a>常见问题和解决方案</h3><h4 id="1-认证失败"><a href="#1-认证失败" class="headerlink" title="1. 认证失败"></a>1. 认证失败</h4><p><strong>症状</strong>：401 Unauthorized错误</p>
+<p><strong>可能原因和解决方案</strong>：</p>
+<ul>
+<li><strong>票证过期</strong>：使用<code>kinit</code>重新获取票证</li>
+<li><strong>主体配置错误</strong>：检查JAAS配置中的主体名称</li>
+<li><strong>Keytab文件问题</strong>：验证keytab文件路径和权限</li>
+</ul>
+<h4 id="2-节点间通信失败"><a href="#2-节点间通信失败" class="headerlink" title="2. 节点间通信失败"></a>2. 节点间通信失败</h4><p><strong>症状</strong>：SolrCloud节点无法相互通信</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>验证所有节点使用相同的Kerberos配置</li>
+<li>检查ZooKeeper的Kerberos配置</li>
+<li>确认服务主体包含正确的主机名</li>
+</ul>
+<h4 id="3-浏览器访问问题"><a href="#3-浏览器访问问题" class="headerlink" title="3. 浏览器访问问题"></a>3. 浏览器访问问题</h4><p><strong>症状</strong>：管理界面无法访问</p>
+<p><strong>解决方案</strong>：</p>
+<ul>
+<li>配置浏览器支持SPNEGO</li>
+<li>检查浏览器的安全设置</li>
+<li>验证Kerberos票证有效性</li>
+</ul>
+<h3 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h3><h4 id="启用调试日志"><a href="#启用调试日志" class="headerlink" title="启用调试日志"></a>启用调试日志</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 在JAAS配置中添加debug=true</span></span><br><span class="line"><span class="comment"># 在启动参数中添加Kerberos调试</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsun.security.krb5.debug=true&quot;</span></span><br><span class="line">SOLR_OPTS=<span class="string">&quot;<span class="variable">$SOLR_OPTS</span> -Dsun.security.jgss.debug=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="验证Kerberos配置"><a href="#验证Kerberos配置" class="headerlink" title="验证Kerberos配置"></a>验证Kerberos配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试keytab文件</span></span><br><span class="line">kinit -kt /keytabs/107.keytab HTTP/192.168.0.107@EXAMPLE.COM</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查票证</span></span><br><span class="line">klist</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试ZooKeeper连接</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;ls /&quot;</span> | bin/solr zk -z localhost:2181</span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="安全建议"><a href="#安全建议" class="headerlink" title="安全建议"></a>安全建议</h3><ol>
+<li><p><strong>Keytab文件安全</strong>：</p>
+<ul>
+<li>设置适当的文件权限（600）</li>
+<li>定期轮换keytab</li>
+<li>限制文件系统访问</li>
+</ul>
+</li>
+<li><p><strong>网络安全</strong>：</p>
+<ul>
+<li>使用防火墙保护KDC</li>
+<li>加密节点间通信</li>
+<li>监控认证失败</li>
+</ul>
+</li>
+<li><p><strong>监控和审计</strong>：</p>
+<ul>
+<li>启用Kerberos日志</li>
+<li>监控票证续订</li>
+<li>定期审查访问权限</li>
+</ul>
+</li>
+</ol>
+<h3 id="运维建议"><a href="#运维建议" class="headerlink" title="运维建议"></a>运维建议</h3><ol>
+<li><p><strong>自动化部署</strong>：</p>
+<ul>
+<li>使用配置管理工具</li>
+<li>标准化keytab分发</li>
+<li>自动化票证轮换</li>
+</ul>
+</li>
+<li><p><strong>高可用性</strong>：</p>
+<ul>
+<li>配置多个KDC</li>
+<li>实施故障转移机制</li>
+<li>监控KDC健康状态</li>
+</ul>
+</li>
+<li><p><strong>性能优化</strong>：</p>
+<ul>
+<li>调整票证缓存设置</li>
+<li>优化续订间隔</li>
+<li>监控认证性能</li>
+</ul>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Kerberos认证插件为Solr提供了企业级的身份验证解决方案，特别适合已经部署Kerberos基础设施的环境。通过正确配置服务主体、keytab文件和JAAS配置，可以实现安全可靠的Solr集群认证。</p>
+<p>在实施过程中，需要特别注意与现有Kerberos基础设施的集成，确保所有组件（Solr节点、ZooKeeper、客户端）都正确配置以支持Kerberos认证。同时，建立完善的监控和故障排除机制对于维护系统的稳定运行至关重要。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Apache-Solr/">Apache Solr</a>
+      , 
+    
+      <a class="article-category" href="/categories/Apache-Solr/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">安全配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/ZooKeeper/">ZooKeeper</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E8%AE%A4%E8%AF%81/">认证</a>
+  
+    <a class="article-tag" href="/tags/Kerberos/">Kerberos</a>
+  
+    <a class="article-tag" href="/tags/%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8/">企业安全</a>
+  
+    <a class="article-tag" href="/tags/SPNego/">SPNego</a>
+  
+    <a class="article-tag" href="/tags/KDC/">KDC</a>
+  
+    <a class="article-tag" href="/tags/JAAS/">JAAS</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/24/Solr%E9%83%A8%E7%BD%B2%EF%BC%9ASolrCloud%E5%88%86%E5%B8%83%E5%BC%8F%E8%AF%B7%E6%B1%82%E8%B7%AF%E7%94%B1%E4%B8%8E%E5%AE%B9%E9%94%99%E6%9C%BA%E5%88%B6%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：SolrCloud分布式请求路由与容错机制深度解析
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/04/22/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJWT%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8EOpenID%20Connect%E9%9B%86%E6%88%90%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：JWT认证插件配置与OpenID Connect集成完整指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9AKerberos%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：Kerberos认证插件配置与企业安全集成指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E8%8C%83%E5%9B%B4"><span class="nav-number">1.2.</span> <span class="nav-text">支持范围</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8EHadoop%E9%9B%86%E6%88%90%E7%9A%84%E7%89%B9%E6%AE%8A%E8%AF%B4%E6%98%8E"><span class="nav-number">1.3.</span> <span class="nav-text">与Hadoop集成的特殊说明</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solr%E4%B8%8EKerberos%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.4.</span> <span class="nav-text">Solr与Kerberos的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.4.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%AD%98%E5%82%A8"><span class="nav-number">1.4.2.</span> <span class="nav-text">配置存储</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E4%B8%BB%E4%BD%93%E5%92%8CKeytab%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.3.</span> <span class="nav-text">服务主体和Keytab文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E4%B8%BB%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">1.4.3.1.</span> <span class="nav-text">服务主体结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%BB%E4%BD%93%E5%85%B1%E4%BA%AB%E8%A7%84%E5%88%99"><span class="nav-number">1.4.3.2.</span> <span class="nav-text">主体共享规则</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Keytab%E6%96%87%E4%BB%B6%E8%A6%81%E6%B1%82"><span class="nav-number">1.4.3.3.</span> <span class="nav-text">Keytab文件要求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%8A%82%E7%82%B9%E9%97%B4%E9%80%9A%E4%BF%A1"><span class="nav-number">1.4.3.4.</span> <span class="nav-text">节点间通信</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kerberos%E5%8C%96%E7%9A%84ZooKeeper"><span class="nav-number">1.4.4.</span> <span class="nav-text">Kerberos化的ZooKeeper</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">推荐配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%9F%E4%B8%80%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8A%BF"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">统一配置优势</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.5.</span> <span class="nav-text">浏览器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%E8%AE%BF%E9%97%AE"><span class="nav-number">1.4.5.1.</span> <span class="nav-text">管理界面访问</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8F%E8%A7%88%E5%99%A8%E6%94%AF%E6%8C%81%E5%B7%AE%E5%BC%82"><span class="nav-number">1.4.5.2.</span> <span class="nav-text">浏览器支持差异</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A6%81%E6%B1%82"><span class="nav-number">1.4.5.3.</span> <span class="nav-text">配置要求</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Kerberos%E8%AE%A4%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.</span> <span class="nav-text">Kerberos认证配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%89%8D%E7%9A%84%E9%87%8D%E8%A6%81%E8%AD%A6%E5%91%8A"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置前的重要警告</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4%E6%A6%82%E8%A7%88"><span class="nav-number">1.5.2.</span> <span class="nav-text">配置步骤概览</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E6%9C%BA%E5%90%8D%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.3.</span> <span class="nav-text">主机名使用说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.6.</span> <span class="nav-text">详细配置步骤</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E6%AD%A5%EF%BC%9A%E8%8E%B7%E5%8F%96%E6%9C%8D%E5%8A%A1%E4%B8%BB%E4%BD%93%E5%92%8CKeytab"><span class="nav-number">1.6.1.</span> <span class="nav-text">第一步：获取服务主体和Keytab</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E9%85%8D%E7%BD%AE%E8%BF%87%E7%A8%8B"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">示例配置过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E9%83%A8%E7%BD%B2"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">文件部署</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper%E4%B8%BB%E4%BD%93"><span class="nav-number">1.6.1.3.</span> <span class="nav-text">ZooKeeper主体</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E6%AD%A5%EF%BC%9AZooKeeper%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">第二步：ZooKeeper配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B7%B3%E8%BF%87%E6%9D%A1%E4%BB%B6"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">跳过条件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A6%81%E6%B1%82-1"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">配置要求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Java%E7%8E%AF%E5%A2%83%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.3.</span> <span class="nav-text">Java环境配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JAAS%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.6.2.4.</span> <span class="nav-text">JAAS配置文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZooKeeper%E9%85%8D%E7%BD%AE%E6%9B%B4%E6%96%B0"><span class="nav-number">1.6.2.5.</span> <span class="nav-text">ZooKeeper配置更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8ZooKeeper"><span class="nav-number">1.6.2.6.</span> <span class="nav-text">启动ZooKeeper</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E6%AD%A5%EF%BC%9A%E5%88%9B%E5%BB%BAsecurity-json"><span class="nav-number">1.6.3.</span> <span class="nav-text">第三步：创建security.json</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E5%88%B0ZooKeeper"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">上传到ZooKeeper</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8D%95%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85"><span class="nav-number">1.6.3.3.</span> <span class="nav-text">单节点安装</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%8E%B0%E6%9C%89%E9%85%8D%E7%BD%AE%E5%A4%84%E7%90%86"><span class="nav-number">1.6.3.4.</span> <span class="nav-text">现有配置处理</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E5%9B%9B%E6%AD%A5%EF%BC%9A%E5%AE%9A%E4%B9%89JAAS%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">1.6.4.</span> <span class="nav-text">第四步：定义JAAS配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%94%A8%E9%80%94"><span class="nav-number">1.6.4.1.</span> <span class="nav-text">配置文件用途</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.4.2.</span> <span class="nav-text">配置文件示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="nav-number">1.6.4.3.</span> <span class="nav-text">配置说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%8A%82%E7%82%B9%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.6.4.4.</span> <span class="nav-text">多节点注意事项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%94%E6%AD%A5%EF%BC%9ASolr%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.5.</span> <span class="nav-text">第五步：Solr启动参数</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E9%85%8D%E7%BD%AE%E6%96%B9%E5%BC%8F"><span class="nav-number">1.6.5.1.</span> <span class="nav-text">参数配置方式</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.6.5.2.</span> <span class="nav-text">核心启动参数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#solr-kerberos-name-rules"><span class="nav-number">1.6.5.2.1.</span> <span class="nav-text">solr.kerberos.name.rules</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#solr-kerberos-name-rules-mechanism"><span class="nav-number">1.6.5.2.2.</span> <span class="nav-text">solr.kerberos.name.rules.mechanism</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#solr-kerberos-cookie-domain"><span class="nav-number">1.6.5.2.3.</span> <span class="nav-text">solr.kerberos.cookie.domain</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#solr-kerberos-cookie-portaware"><span class="nav-number">1.6.5.2.4.</span> <span class="nav-text">solr.kerberos.cookie.portaware</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E9%83%A8%E7%BD%B2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.</span> <span class="nav-text">实际部署示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E5%90%AF%E5%8A%A8%E8%84%9A%E6%9C%AC"><span class="nav-number">1.7.1.</span> <span class="nav-text">完整启动脚本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#solr-in-sh%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.2.</span> <span class="nav-text">solr.in.sh配置示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E5%92%8C%E7%AE%A1%E7%90%86"><span class="nav-number">1.8.</span> <span class="nav-text">客户端使用和管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrJ%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.8.1.</span> <span class="nav-text">SolrJ客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cURL%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.8.2.</span> <span class="nav-text">cURL客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%E8%AE%BF%E9%97%AE-1"><span class="nav-number">1.8.3.</span> <span class="nav-text">管理界面访问</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.9.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.9.1.</span> <span class="nav-text">常见问题和解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E8%AE%A4%E8%AF%81%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">1. 认证失败</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E8%8A%82%E7%82%B9%E9%97%B4%E9%80%9A%E4%BF%A1%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.9.1.2.</span> <span class="nav-text">2. 节点间通信失败</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%B5%8F%E8%A7%88%E5%99%A8%E8%AE%BF%E9%97%AE%E9%97%AE%E9%A2%98"><span class="nav-number">1.9.1.3.</span> <span class="nav-text">3. 浏览器访问问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number">1.9.2.</span> <span class="nav-text">调试技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E8%B0%83%E8%AF%95%E6%97%A5%E5%BF%97"><span class="nav-number">1.9.2.1.</span> <span class="nav-text">启用调试日志</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81Kerberos%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.2.2.</span> <span class="nav-text">验证Kerberos配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.10.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.10.1.</span> <span class="nav-text">安全建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.10.2.</span> <span class="nav-text">运维建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

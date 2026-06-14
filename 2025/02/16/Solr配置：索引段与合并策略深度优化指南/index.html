@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：索引段与合并策略深度优化指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能优化索引Solr配置" />
+  
+  
+  
+  
+  <meta name="description" content="Solr配置：索引段与合并策略深度优化指南Lucene索引以段的形式存储，Solr提供了多个参数来控制如何写入新段以及何时合并段。理解和优化这些配置对Solr的性能至关重要。 索引段的基本概念Lucene索引是”写一次”文件：一旦段写入永久存储（磁盘），它就永远不会被修改。这意味着索引实际上由多个文件组成，每个文件都是完整索引的子集。为了防止索引的永久碎片化，段会定期合并。 solrconfig.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：索引段与合并策略深度优化指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E6%AE%B5%E4%B8%8E%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr配置：索引段与合并策略深度优化指南Lucene索引以段的形式存储，Solr提供了多个参数来控制如何写入新段以及何时合并段。理解和优化这些配置对Solr的性能至关重要。 索引段的基本概念Lucene索引是”写一次”文件：一旦段写入永久存储（磁盘），它就永远不会被修改。这意味着索引实际上由多个文件组成，每个文件都是完整索引的子集。为了防止索引的永久碎片化，段会定期合并。 solrconfig.">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T09:47:45.900Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="索引">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="配置">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：索引段与合并策略深度优化指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：索引段与合并策略深度优化指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E6%AE%B5%E4%B8%8E%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-02-16T16:00:00.000Z" itemprop="datePublished">二月 16, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：索引段与合并策略深度优化指南"><a href="#Solr配置：索引段与合并策略深度优化指南" class="headerlink" title="Solr配置：索引段与合并策略深度优化指南"></a>Solr配置：索引段与合并策略深度优化指南</h1><p>Lucene索引以段的形式存储，Solr提供了多个参数来控制如何写入新段以及何时合并段。理解和优化这些配置对Solr的性能至关重要。</p>
+<h2 id="索引段的基本概念"><a href="#索引段的基本概念" class="headerlink" title="索引段的基本概念"></a>索引段的基本概念</h2><p>Lucene索引是”写一次”文件：一旦段写入永久存储（磁盘），它就永远不会被修改。这意味着索引实际上由多个文件组成，每个文件都是完整索引的子集。为了防止索引的永久碎片化，段会定期合并。</p>
+<h2 id="solrconfig-xml中的配置"><a href="#solrconfig-xml中的配置" class="headerlink" title="solrconfig.xml中的&lt;indexConfig&gt;配置"></a>solrconfig.xml中的&lt;indexConfig&gt;配置</h2><p><code>&lt;indexConfig&gt;</code>部分定义了Lucene索引写入器的低级行为。</p>
+<p>默认情况下，Solr包含的示例<code>solrconfig.xml</code>中这些设置被注释掉，这意味着使用默认值。在大多数情况下，默认值是合适的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">indexConfig</span>&gt;</span></span><br><span class="line">  ...</span><br><span class="line"><span class="tag">&lt;/<span class="name">indexConfig</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="新段写入配置"><a href="#新段写入配置" class="headerlink" title="新段写入配置"></a>新段写入配置</h2><p>以下配置项控制何时将新段”刷新”到磁盘：</p>
+<h3 id="ramBufferSizeMB"><a href="#ramBufferSizeMB" class="headerlink" title="ramBufferSizeMB"></a>ramBufferSizeMB</h3><p>当累积的文档更新超过此内存空间（以兆字节定义）时，等待的更新将被刷新。这也可能创建新段或触发合并。使用此设置通常比<code>maxBufferedDocs</code>更可取。如果同时设置了<code>maxBufferedDocs</code>和<code>ramBufferSizeMB</code>，则在达到任一限制时都会发生刷新。默认值为100MB。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ramBufferSizeMB</span>&gt;</span>100<span class="tag">&lt;/<span class="name">ramBufferSizeMB</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="maxBufferedDocs"><a href="#maxBufferedDocs" class="headerlink" title="maxBufferedDocs"></a>maxBufferedDocs</h3><p>设置在将文档更新刷新为新段之前在内存中缓冲的文档更新数量。这也可能触发合并。默认的Solr配置设置为按RAM使用量（<code>ramBufferSizeMB</code>）刷新。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">maxBufferedDocs</span>&gt;</span>1000<span class="tag">&lt;/<span class="name">maxBufferedDocs</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="useCompoundFile"><a href="#useCompoundFile" class="headerlink" title="useCompoundFile"></a>useCompoundFile</h3><p>控制新写入（尚未合并）的索引段是否应使用复合文件段格式。默认值为<code>false</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">useCompoundFile</span>&gt;</span>false<span class="tag">&lt;/<span class="name">useCompoundFile</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="ramPerThreadHardLimitMB"><a href="#ramPerThreadHardLimitMB" class="headerlink" title="ramPerThreadHardLimitMB"></a>ramPerThreadHardLimitMB</h3><p>设置每个线程的最大内存消耗（以兆字节定义），如果超过将触发强制刷新。给定值必须大于0且小于2048MB（2GB）。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">ramPerThreadHardLimitMB</span>&gt;</span>1945<span class="tag">&lt;/<span class="name">ramPerThreadHardLimitMB</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意</strong>：这是专家级参数，即使未超过<code>ramBufferSizeMB</code>，它也会触发强制刷新。</p>
+<h2 id="索引段合并配置"><a href="#索引段合并配置" class="headerlink" title="索引段合并配置"></a>索引段合并配置</h2><p>以下设置定义何时合并段：</p>
+<h3 id="mergePolicyFactory"><a href="#mergePolicyFactory" class="headerlink" title="mergePolicyFactory"></a>mergePolicyFactory</h3><p>定义段合并的执行方式。</p>
+<p>Solr的默认策略是<code>TieredMergePolicy</code>，它合并大约相等大小的段，受每层允许段数量的限制。</p>
+<p>其他可用策略包括<code>LogByteSizeMergePolicy</code>和<code>LogDocMergePolicy</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mergePolicyFactory</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.index.TieredMergePolicyFactory&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxMergeAtOnce&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;segmentsPerTier&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;targetSearchConcurrency&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">double</span> <span class="attr">name</span>=<span class="string">&quot;forceMergeDeletesPctAllowed&quot;</span>&gt;</span>10.0<span class="tag">&lt;/<span class="name">double</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">double</span> <span class="attr">name</span>=<span class="string">&quot;deletesPctAllowed&quot;</span>&gt;</span>33.0<span class="tag">&lt;/<span class="name">double</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mergePolicyFactory</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="控制段大小"><a href="#控制段大小" class="headerlink" title="控制段大小"></a>控制段大小</h3><p>用户对<code>TieredMergePolicy</code>配置最常见的调整是”合并因子”，用于改变一次应合并多少段，以及在<code>TieredMergePolicy</code>情况下的最大合并段大小。</p>
+<p>对于<code>TieredMergePolicy</code>，这通过设置以下选项控制：</p>
+<ul>
+<li><code>maxMergeAtOnce</code>（默认10）</li>
+<li><code>segmentsPerTier</code>（默认10）</li>
+<li><code>maxMergedSegmentMB</code>（默认5000）</li>
+</ul>
+<p>选择最佳合并因子通常是索引速度与搜索速度之间的权衡：</p>
+<ul>
+<li><strong>较少段数</strong>：通常加速搜索，因为要查找的地方更少，也可能减少磁盘上的物理文件数量，但合并发生更频繁，增加系统负载</li>
+<li><strong>较多段数</strong>：可以加速索引，因为合并发生较少，但搜索变得更昂贵且可能更慢</li>
+</ul>
+<h3 id="控制已删除文档百分比"><a href="#控制已删除文档百分比" class="headerlink" title="控制已删除文档百分比"></a>控制已删除文档百分比</h3><p>当文档被删除或更新时，文档被标记为已删除但不会从索引中移除，直到段被合并。使用默认<code>TieredMergePolicy</code>时有两个参数可以调整：</p>
+<p><strong>forceMergeDeletesPctAllowed（默认：10.0）</strong>：<br>当发出外部<code>expungeDeletes</code>命令时，任何删除文档超过此百分比的段将被合并到新段中，与删除文档相关的数据将被清除。值为0.0将使expungeDeletes的行为基本上与<code>optimize</code>相同。</p>
+<p><strong>deletesPctAllowed（默认：33.0）</strong>：<br>在正常段合并期间，会尽力确保索引中已删除文档的总百分比低于此阈值。有效设置在20%到50%之间。选择33%作为默认值，因为当此设置接近20%时，会给系统增加相当大的负载。</p>
+<h3 id="自定义合并策略"><a href="#自定义合并策略" class="headerlink" title="自定义合并策略"></a>自定义合并策略</h3><p>如果内置合并策略的配置选项不能完全满足您的用例，您可以通过创建自定义合并策略工厂或配置包装器来自定义它们：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mergePolicyFactory</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.index.SortingMergePolicyFactory&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sort&quot;</span>&gt;</span>timestamp desc<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;wrapped.prefix&quot;</span>&gt;</span>inner<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;inner.class&quot;</span>&gt;</span>org.apache.solr.index.TieredMergePolicyFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;inner.maxMergeAtOnce&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;inner.segmentsPerTier&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mergePolicyFactory</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="mergeScheduler"><a href="#mergeScheduler" class="headerlink" title="mergeScheduler"></a>mergeScheduler</h3><p>合并调度器控制如何执行合并。默认的<code>ConcurrentMergeScheduler</code>使用单独的线程在后台执行合并。替代的<code>SerialMergeScheduler</code>不使用单独的线程执行合并。</p>
+<p><code>ConcurrentMergeScheduler</code>具有以下可配置属性，这些属性的默认值根据底层磁盘驱动器是否为旋转磁盘动态设置：</p>
+<p><strong>maxMergeCount</strong>：允许的最大同时合并数量<br><strong>maxThreadCount</strong>：应同时运行的最大合并线程数量<br><strong>ioThrottle</strong>：明确控制I&#x2F;O限流的布尔值</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mergeScheduler</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.lucene.index.ConcurrentMergeScheduler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxMergeCount&quot;</span>&gt;</span>9<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxThreadCount&quot;</span>&gt;</span>4<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mergeScheduler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="mergedSegmentWarmer"><a href="#mergedSegmentWarmer" class="headerlink" title="mergedSegmentWarmer"></a>mergedSegmentWarmer</h3><p>当使用Solr进行近实时使用案例时，可以配置合并段预热器在合并提交之前预热新合并段上的读取器。这不是近实时搜索所必需的，但会减少合并完成后打开新近实时读取器时的搜索延迟。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">mergedSegmentWarmer</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.lucene.index.SimpleMergedSegmentWarmer&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="复合文件段"><a href="#复合文件段" class="headerlink" title="复合文件段"></a>复合文件段</h2><p>每个Lucene段通常由十几个文件组成。Solr可以配置为将Lucene段的所有文件捆绑到一个复合文件中，使用<code>.cfs</code>扩展名（”复合文件段”）。</p>
+<p>CFS段可能会因各种原因产生轻微的性能损失，具体取决于运行时环境。例如，文件系统缓冲区通常与打开的文件描述符相关联，这可能限制每个索引可用的总缓存空间。</p>
+<p>在每个进程允许打开文件数量有限的系统上，CFS可能避免达到该限制。</p>
+<h2 id="索引锁"><a href="#索引锁" class="headerlink" title="索引锁"></a>索引锁</h2><h3 id="lockType"><a href="#lockType" class="headerlink" title="lockType"></a>lockType</h3><p>LockFactory选项指定要使用的锁定实现。有效的锁类型选项取决于您配置的DirectoryFactory。</p>
+<p><code>StandardDirectoryFactory</code>（默认）支持的值：</p>
+<ul>
+<li><code>native</code>（默认）：使用本机OS文件锁定</li>
+<li><code>simple</code>：使用简单文件进行锁定</li>
+<li><code>single</code>（专家级）：用于只读索引目录的特殊情况</li>
+<li><code>hdfs</code>：支持读写索引和事务日志文件到HDFS文件系统</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">lockType</span>&gt;</span>native<span class="tag">&lt;/<span class="name">lockType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="writeLockTimeout"><a href="#writeLockTimeout" class="headerlink" title="writeLockTimeout"></a>writeLockTimeout</h3><p>在IndexWriter上等待写锁的最长时间。默认值为1000，以毫秒表示。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">writeLockTimeout</span>&gt;</span>1000<span class="tag">&lt;/<span class="name">writeLockTimeout</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="其他索引设置"><a href="#其他索引设置" class="headerlink" title="其他索引设置"></a>其他索引设置</h2><h3 id="deletionPolicy"><a href="#deletionPolicy" class="headerlink" title="deletionPolicy"></a>deletionPolicy</h3><p>控制在回滚情况下如何保留提交。默认值为<code>SolrDeletionPolicy</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">deletionPolicy</span> <span class="attr">class</span>=<span class="string">&quot;solr.SolrDeletionPolicy&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;maxCommitsToKeep&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;maxOptimizedCommitsToKeep&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;maxCommitAge&quot;</span>&gt;</span>1DAY<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">deletionPolicy</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="infoStream"><a href="#infoStream" class="headerlink" title="infoStream"></a>infoStream</h3><p>InfoStream设置指示底层Lucene类将索引过程的详细调试信息写入Solr日志消息。请注意，启用此功能可能会大幅增加日志大小并在高流量系统中造成一些性能滞后。默认值为<code>false</code>。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">infoStream</span>&gt;</span>false<span class="tag">&lt;/<span class="name">infoStream</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="性能优化建议"><a href="#性能优化建议" class="headerlink" title="性能优化建议"></a>性能优化建议</h2><ol>
+<li><strong>根据使用场景调整合并策略</strong>：频繁更新的系统可能需要较大的<code>ramBufferSizeMB</code></li>
+<li><strong>监控段数量</strong>：通过Admin UI的段信息屏幕监控段状态</li>
+<li><strong>合理设置删除文档百分比</strong>：避免过多的已删除文档影响性能</li>
+<li><strong>根据硬件选择合并调度器</strong>：SSD可以使用更高的并发合并</li>
+<li><strong>定期监控和调整</strong>：根据实际负载调整参数</li>
+</ol>
+<p>通过合理配置索引段和合并策略，可以显著提高Solr的索引和查询性能。建议在生产环境中逐步调整参数，并持续监控性能指标。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95/">索引</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE/">配置</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%9B%B4%E6%96%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3%E4%B8%8E%E9%AB%98%E7%BA%A7%E5%BA%94%E7%94%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：更新请求处理器详解与高级应用
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E5%B1%9E%E6%80%A7%E6%9B%BF%E6%8D%A2%E4%B8%8E%E5%8F%98%E9%87%8F%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：属性替换与变量配置详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E6%AE%B5%E4%B8%8E%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5%E6%B7%B1%E5%BA%A6%E4%BC%98%E5%8C%96%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：索引段与合并策略深度优化指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%AE%B5%E7%9A%84%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">索引段的基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#solrconfig-xml%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">solrconfig.xml中的&lt;indexConfig&gt;配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%B0%E6%AE%B5%E5%86%99%E5%85%A5%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.</span> <span class="nav-text">新段写入配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ramBufferSizeMB"><span class="nav-number">1.3.1.</span> <span class="nav-text">ramBufferSizeMB</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#maxBufferedDocs"><span class="nav-number">1.3.2.</span> <span class="nav-text">maxBufferedDocs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#useCompoundFile"><span class="nav-number">1.3.3.</span> <span class="nav-text">useCompoundFile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ramPerThreadHardLimitMB"><span class="nav-number">1.3.4.</span> <span class="nav-text">ramPerThreadHardLimitMB</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E6%AE%B5%E5%90%88%E5%B9%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.</span> <span class="nav-text">索引段合并配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#mergePolicyFactory"><span class="nav-number">1.4.1.</span> <span class="nav-text">mergePolicyFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E6%AE%B5%E5%A4%A7%E5%B0%8F"><span class="nav-number">1.4.2.</span> <span class="nav-text">控制段大小</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8E%A7%E5%88%B6%E5%B7%B2%E5%88%A0%E9%99%A4%E6%96%87%E6%A1%A3%E7%99%BE%E5%88%86%E6%AF%94"><span class="nav-number">1.4.3.</span> <span class="nav-text">控制已删除文档百分比</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E5%90%88%E5%B9%B6%E7%AD%96%E7%95%A5"><span class="nav-number">1.4.4.</span> <span class="nav-text">自定义合并策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mergeScheduler"><span class="nav-number">1.4.5.</span> <span class="nav-text">mergeScheduler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mergedSegmentWarmer"><span class="nav-number">1.4.6.</span> <span class="nav-text">mergedSegmentWarmer</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%8D%E5%90%88%E6%96%87%E4%BB%B6%E6%AE%B5"><span class="nav-number">1.5.</span> <span class="nav-text">复合文件段</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E9%94%81"><span class="nav-number">1.6.</span> <span class="nav-text">索引锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lockType"><span class="nav-number">1.6.1.</span> <span class="nav-text">lockType</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#writeLockTimeout"><span class="nav-number">1.6.2.</span> <span class="nav-text">writeLockTimeout</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B4%A2%E5%BC%95%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.7.</span> <span class="nav-text">其他索引设置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#deletionPolicy"><span class="nav-number">1.7.1.</span> <span class="nav-text">deletionPolicy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#infoStream"><span class="nav-number">1.7.2.</span> <span class="nav-text">infoStream</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.8.</span> <span class="nav-text">性能优化建议</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

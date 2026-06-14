@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：configsets api完整指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloudZooKeeperSolr配置Configsets API配置集管理" />
+  
+  
+  
+  
+  <meta name="description" content="深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：Configsets API完整指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入了解Solr Configsets API的使用方法，包括配置集的上传、创建、删除和管理操作">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-16T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:05:42.615Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="ZooKeeper">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="Configsets API">
+<meta property="article:tag" content="配置集管理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：Configsets API完整指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：Configsets API完整指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-01-16T16:00:00.000Z" itemprop="datePublished">一月 16, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：Configsets-API完整指南"><a href="#Solr配置：Configsets-API完整指南" class="headerlink" title="Solr配置：Configsets API完整指南"></a>Solr配置：Configsets API完整指南</h1><p>Configsets API使您能够在Solr运行SolrCloud模式时向ZooKeeper上传新的配置集、创建和删除配置集。</p>
+<p>配置集是配置文件的集合，如<code>solrconfig.xml</code>、<code>synonyms.txt</code>、模式、特定语言的文件和其他集合级配置文件（通常位于<code>conf</code>目录中的所有内容）。Solr附带两个示例配置集（<code>_default</code>和<code>sample_techproducts_configs</code>），可在创建集合时使用。使用相同概念，您可以创建自己的配置集，并在创建集合时使其可用。</p>
+<p>此API提供了一种将配置文件上传到ZooKeeper并在两个或多个集合之间共享相同配置文件集的方法。</p>
+<p>一旦配置集已上传到ZooKeeper，在使用<a href="collections-api.md">Collections API</a>创建集合时使用配置集名称，集合将使用您的配置文件。</p>
+<p>如果通过此API上传，配置集不必在集合之间共享，但如果您希望这样做，此API使其更容易实现。上传配置集的替代方法是将配置文件放入<code>server/solr/configsets</code>下的目录中，并在使用<code>bin/solr create</code>创建集合时使用目录名称作为<code>-d</code>参数。</p>
+<p><strong>注意：</strong> 此API只能与运行SolrCloud模式的Solr一起使用。如果您不在SolrCloud模式下运行Solr但仍希望使用共享配置，请参见<a href="config-sets.md">配置集</a>部分。</p>
+<p>API通过向<code>configs</code>端点传递命令来工作。端点的路径因使用的API而异：v1 API使用<code>/solr/admin/configs</code>，而v2 API使用<code>/api/configsets</code>。下面提供了两种类型的示例。</p>
+<h2 id="列出配置集"><a href="#列出配置集" class="headerlink" title="列出配置集"></a>列出配置集</h2><p><code>list</code>命令获取在集合创建期间可用的配置集名称。</p>
+<h4 id="V1-API"><a href="#V1-API" class="headerlink" title="V1 API"></a>V1 API</h4><p>使用v1 API时，<code>list</code>命令必须大写为<code>LIST</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/configs?action=LIST&amp;omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API"><a href="#V2-API" class="headerlink" title="V2 API"></a>V2 API</h4><p>使用v2 API时，当请求中没有发送数据时，隐含<code>list</code>命令。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/api/configsets?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>输出将如下所示：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;configSets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="string">&quot;_default&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;techproducts&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;gettingstarted&quot;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="上传配置集"><a href="#上传配置集" class="headerlink" title="上传配置集"></a>上传配置集</h2><p>上传配置集，作为压缩文件发送。也可以使用<code>filePath</code>参数上传单个非压缩文件。</p>
+<p>此功能默认启用，但可以通过运行时参数<code>-Dconfigset.upload.enabled=false</code>禁用。如果您要将Solr安装暴露给不受信任的用户，建议禁用此功能（尽管您永远不应该这样做！）。</p>
+<p>如果启用了身份验证并且上传操作作为已认证请求执行，则配置集以”受信任”模式上传。没有身份验证的情况下，配置集以”不受信任”模式上传。使用”不受信任”配置集创建集合时，以下功能将不起作用：</p>
+<ul>
+<li>在请求处理时不能使用XSLT转换器（<code>tr</code>参数）。</li>
+<li>如果在配置集中指定，ScriptUpdateProcessorFactory将不会初始化。</li>
+<li>如果配置集中使用了<code>&lt;lib&gt;</code>指令，集合将不会初始化。<br>（注意：添加到Solr类路径的库不需要<code>&lt;lib&gt;</code>指令）</li>
+</ul>
+<p>如果您使用任何这些参数或功能，您必须在Solr安装中启用安全功能，并且必须作为已认证用户上传配置集。</p>
+<p>并非所有文件类型都支持在配置集中使用。请参见<a href="config-sets.md#forbidden-file-types">禁止的文件类型</a>了解更多信息。</p>
+<p><code>upload</code>命令采用以下参数：</p>
+<p><strong>name</strong></p>
+<ul>
+<li>必需参数，默认值：无</li>
+<li>上传完成时要创建的配置集</li>
+</ul>
+<p><strong>overwrite</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>如果设置为<code>true</code>，Solr将覆盖同名的现有配置集（如果为false，请求将失败）</li>
+<li>如果提供了<code>filePath</code>，则此选项指定如果配置集中的指定文件已存在，是否应覆盖它</li>
+<li>使用v1 API时默认值为<code>false</code>，但使用v2 API时为<code>true</code></li>
+</ul>
+<p><strong>cleanup</strong></p>
+<ul>
+<li>可选参数，默认值：<code>false</code></li>
+<li>覆盖现有配置集时（<code>overwrite=true</code>），此参数告诉Solr删除存在于旧配置集中但不在上传的配置集中的ZooKeeper文件</li>
+<li>使用<code>filePath</code>时，此参数不能设置为true</li>
+</ul>
+<p><strong>filePath</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>此参数允许将单个非压缩文件上传到ZooKeeper中配置集下的给定路径</li>
+<li>此功能遵循<code>overwrite</code>参数，因此如果给定文件路径已存在于配置集中且overwrite设置为<code>false</code>，请求将失败</li>
+<li>使用<code>filePath</code>时，<code>cleanup</code>参数不能设置为true</li>
+</ul>
+<p>如果上传整个配置集，请求主体应该是包含配置集的zip文件。zip文件必须从<code>conf</code>目录内创建（即<code>solrconfig.xml</code>必须是zip文件中的顶级条目）。</p>
+<p>以下是如何创建名为”myconfig.zip”的zip文件并将其作为名为”myConfigSet”的配置集上传的示例：</p>
+<h4 id="V1-API-1"><a href="#V1-API-1" class="headerlink" title="V1 API"></a>V1 API</h4><p>使用v1 API时，<code>upload</code>命令必须大写为<code>UPLOAD</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ (<span class="built_in">cd</span> solr/server/solr/configsets/sample_techproducts_configs/conf &amp;&amp; zip -r - *) &gt; myconfigset.zip</span><br><span class="line"></span><br><span class="line">$ curl -X POST --header <span class="string">&quot;Content-Type:application/octet-stream&quot;</span> --data-binary @myconfigset.zip <span class="string">&quot;http://localhost:8983/solr/admin/configs?action=UPLOAD&amp;name=myConfigSet&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>同样可以使用Unix管道通过单个请求实现：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ (<span class="built_in">cd</span> server/solr/configsets/sample_techproducts_configs/conf &amp;&amp; zip -r - *) | curl -X POST --header <span class="string">&quot;Content-Type:application/octet-stream&quot;</span> --data-binary @- <span class="string">&quot;http://localhost:8983/solr/admin/configs?action=UPLOAD&amp;name=myConfigSet&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-1"><a href="#V2-API-1" class="headerlink" title="V2 API"></a>V2 API</h4><p>使用v2 API时，要上传的配置集名称作为路径参数提供：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ (<span class="built_in">cd</span> solr/server/solr/configsets/sample_techproducts_configs/conf &amp;&amp; zip -r - *) &gt; myconfigset.zip</span><br><span class="line"></span><br><span class="line">$ curl -X PUT --header <span class="string">&quot;Content-Type:application/octet-stream&quot;</span> --data-binary @myconfigset.zip <span class="string">&quot;http://localhost:8983/api/configsets/myConfigSet&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用此API时，如果配置集已存在，默认行为是覆盖配置集。可以使用参数<code>overwrite=false</code>禁用此行为，在这种情况下，如果配置集已存在，请求将失败。</p>
+<p>以下是如何将单个文件上传到名为”myConfigSet”的配置集的示例：</p>
+<h4 id="V1-API-2"><a href="#V1-API-2" class="headerlink" title="V1 API"></a>V1 API</h4><p>使用v1 API时，<code>upload</code>命令必须大写为<code>UPLOAD</code>。要上传的文件名通过<code>filePath</code>参数提供：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST --header <span class="string">&quot;Content-Type:application/octet-stream&quot;</span> --data-binary @solr/server/solr/configsets/sample_techproducts_configs/conf/solrconfig.xml <span class="string">&quot;http://localhost:8983/solr/admin/configs?action=UPLOAD&amp;name=myConfigSet&amp;filePath=solrconfig.xml&amp;overwrite=true&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-2"><a href="#V2-API-2" class="headerlink" title="V2 API"></a>V2 API</h4><p>使用v2 API时，配置集和文件的名称都在URL中提供。它们可以在<code>/configsets/__config_name__/__file_name__</code>中替换。文件名可能嵌套并包含<code>/</code>字符。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X PUT --header <span class="string">&quot;Content-Type:application/octet-stream&quot;</span> --data-binary @solr/server/solr/configsets/sample_techproducts_configs/conf/solrconfig.xml <span class="string">&quot;http://localhost:8983/api/configsets/myConfigSet/solrconfig.xml&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用此API时，如果文件已存在于配置集中，默认行为是覆盖文件。可以使用参数<code>overwrite=false</code>禁用此行为，在这种情况下，如果文件已存在于配置集中，请求将失败。</p>
+<h2 id="创建配置集"><a href="#创建配置集" class="headerlink" title="创建配置集"></a>创建配置集</h2><p><code>create</code>命令基于先前上传的配置集创建新的配置集。</p>
+<p>如果您尚未上传任何配置集，请参见上面的&lt;&lt;上传配置集&gt;&gt;命令。</p>
+<p>创建配置集时支持以下参数。</p>
+<p><strong>name</strong></p>
+<ul>
+<li>必需参数，默认值：无</li>
+<li>要创建的配置集</li>
+</ul>
+<p><strong>baseConfigSet</strong></p>
+<ul>
+<li>可选参数，默认值：<code>_default</code></li>
+<li>要作为基础复制的配置集名称</li>
+</ul>
+<p><strong>configSetProp.<em>property</em>&#x3D;<em>value</em></strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>要在复制的配置集中覆盖的基础配置集中的配置集属性</li>
+</ul>
+<p>例如，要基于先前定义的”predefinedTemplate”配置集创建名为”myConfigset”的配置集，覆盖immutable属性为false。</p>
+<h4 id="V1-API-3"><a href="#V1-API-3" class="headerlink" title="V1 API"></a>V1 API</h4><p>使用v1 API时，<code>create</code>命令必须大写为<code>CREATE</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/configs?action=CREATE&amp;name=myConfigSet&amp;baseConfigSet=predefinedTemplate&amp;configSetProp.immutable=<span class="literal">false</span>&amp;wt=xml&amp;omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-3"><a href="#V2-API-3" class="headerlink" title="V2 API"></a>V2 API</h4><p>使用v2 API时，<code>create</code>命令是隐含的，参数在<code>POST</code>请求主体中指定。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;name&quot;: &quot;myConfigSet&quot;,</span></span><br><span class="line"><span class="string">  &quot;baseConfigSet&quot;: &quot;predefinedTemplate&quot;,</span></span><br><span class="line"><span class="string">  &quot;properties&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;immutable&quot;: &quot;false&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/configsets?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>输出</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;responseHeader&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;QTime&quot;</span>&gt;</span>323<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="删除配置集"><a href="#删除配置集" class="headerlink" title="删除配置集"></a>删除配置集</h2><p><code>delete</code>命令删除配置集。它不会删除使用该配置集创建的任何集合。</p>
+<p><strong>name</strong></p>
+<ul>
+<li>必需参数，默认值：无</li>
+<li>要删除的配置集</li>
+</ul>
+<p>要删除名为”myConfigSet”的配置集：</p>
+<h4 id="V1-API-4"><a href="#V1-API-4" class="headerlink" title="V1 API"></a>V1 API</h4><p>使用v1 API时，<code>delete</code>命令必须大写为<code>DELETE</code>。要删除的配置集名称通过<code>name</code>参数提供：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/configs?action=DELETE&amp;name=myConfigSet&amp;omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-4"><a href="#V2-API-4" class="headerlink" title="V2 API"></a>V2 API</h4><p>使用v2 API时，<code>delete</code>命令作为请求方法提供，如<code>-X DELETE</code>。要删除的配置集名称作为路径参数提供：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X DELETE http://localhost:8983/api/configsets/myConfigSet?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>输出</strong></p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">response</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;responseHeader&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;status&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;QTime&quot;</span>&gt;</span>170<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">response</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="配置集版本管理"><a href="#配置集版本管理" class="headerlink" title="配置集版本管理"></a>配置集版本管理</h3><p>建议对配置集进行版本管理，特别是在生产环境中：</p>
+<ol>
+<li><strong>命名约定</strong>：使用有意义的名称，包含版本信息，如<code>myapp-v1.0</code>、<code>myapp-v1.1</code>等</li>
+<li><strong>备份策略</strong>：在更新配置集之前，始终备份现有版本</li>
+<li><strong>测试验证</strong>：在非生产环境中彻底测试新配置集</li>
+</ol>
+<h3 id="安全考虑"><a href="#安全考虑" class="headerlink" title="安全考虑"></a>安全考虑</h3><ol>
+<li><strong>启用认证</strong>：在生产环境中始终启用Solr认证以使用受信任模式</li>
+<li><strong>文件类型限制</strong>：了解并遵循配置集中禁止的文件类型规则</li>
+<li><strong>权限控制</strong>：限制可以上传和修改配置集的用户</li>
+</ol>
+<h3 id="性能优化"><a href="#性能优化" class="headerlink" title="性能优化"></a>性能优化</h3><ol>
+<li><strong>清理操作</strong>：定期清理不使用的配置集以保持ZooKeeper整洁</li>
+<li><strong>批量操作</strong>：对于多个文件更改，优先使用完整配置集上传而不是单个文件上传</li>
+<li><strong>监控使用情况</strong>：跟踪哪些配置集被哪些集合使用</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ol>
+<li><strong>上传失败</strong>：检查文件权限和网络连接</li>
+<li><strong>认证错误</strong>：确保用户具有适当的权限</li>
+<li><strong>ZooKeeper连接</strong>：验证ZooKeeper集群的健康状况</li>
+</ol>
+<h3 id="错误处理"><a href="#错误处理" class="headerlink" title="错误处理"></a>错误处理</h3><ol>
+<li><strong>重试机制</strong>：实现适当的重试逻辑处理临时网络问题</li>
+<li><strong>状态验证</strong>：上传后验证配置集是否正确创建</li>
+<li><strong>日志监控</strong>：监控Solr日志以获取详细错误信息</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Configsets API为SolrCloud环境中的配置管理提供了强大而灵活的解决方案。通过支持配置集的上传、创建、列出和删除操作，它简化了多集合环境中的配置共享和版本管理。合理使用此API，结合适当的安全措施和最佳实践，可以大大提高Solr集群的可维护性和配置一致性。</p>
+<p>无论是在开发环境中进行快速配置迭代，还是在生产环境中进行精细的配置管理，Configsets API都提供了必要的工具来满足各种需求。通过理解其工作原理和限制，管理员可以构建更加健壮和可扩展的Solr解决方案。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/ZooKeeper/">ZooKeeper</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/Configsets-API/">Configsets API</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E9%9B%86%E7%AE%A1%E7%90%86/">配置集管理</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：solr.xml配置详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/15/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：Config API详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets-API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：Configsets API完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.1.</span> <span class="nav-text">列出配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API"><span class="nav-number">1.1.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API"><span class="nav-number">1.1.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8A%E4%BC%A0%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.2.</span> <span class="nav-text">上传配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-1"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-1"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-2"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-2"><span class="nav-number">1.2.0.4.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.3.</span> <span class="nav-text">创建配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-3"><span class="nav-number">1.3.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-3"><span class="nav-number">1.3.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E9%85%8D%E7%BD%AE%E9%9B%86"><span class="nav-number">1.4.</span> <span class="nav-text">删除配置集</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-4"><span class="nav-number">1.4.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-4"><span class="nav-number">1.4.0.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.5.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E9%9B%86%E7%89%88%E6%9C%AC%E7%AE%A1%E7%90%86"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置集版本管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E8%80%83%E8%99%91"><span class="nav-number">1.5.2.</span> <span class="nav-text">安全考虑</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">性能优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.6.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.6.1.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%94%99%E8%AF%AF%E5%A4%84%E7%90%86"><span class="nav-number">1.6.2.</span> <span class="nav-text">错误处理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.7.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

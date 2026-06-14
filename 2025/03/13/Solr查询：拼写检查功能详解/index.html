@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：拼写检查功能详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="搜索优化Solr查询Solr拼写检查SpellCheckComponent查询建议" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析Apache Solr拼写检查功能的配置和使用方法，包括IndexBasedSpellChecker、DirectSolrSpellChecker、FileBasedSpellChecker、WordBreakSolrSpellChecker等多种拼写检查器的特性和应用场景。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：拼写检查功能详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/13/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析Apache Solr拼写检查功能的配置和使用方法，包括IndexBasedSpellChecker、DirectSolrSpellChecker、FileBasedSpellChecker、WordBreakSolrSpellChecker等多种拼写检查器的特性和应用场景。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-13T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:12:06.136Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="搜索优化">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="拼写检查">
+<meta property="article:tag" content="SpellCheckComponent">
+<meta property="article:tag" content="查询建议">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：拼写检查功能详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：拼写检查功能详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/13/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-13T16:00:00.000Z" itemprop="datePublished">三月 13, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr查询：拼写检查功能详解"><a href="#Solr查询：拼写检查功能详解" class="headerlink" title="Solr查询：拼写检查功能详解"></a>Solr查询：拼写检查功能详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>拼写检查组件旨在基于其他类似术语提供内联查询建议。</p>
+<p>这些建议的基础可以是Solr字段中的术语、外部创建的文本文件或其他Lucene索引中的字段。</p>
+<h2 id="配置SpellCheckComponent"><a href="#配置SpellCheckComponent" class="headerlink" title="配置SpellCheckComponent"></a>配置SpellCheckComponent</h2><h3 id="在solrconfig-xml中定义拼写检查"><a href="#在solrconfig-xml中定义拼写检查" class="headerlink" title="在solrconfig.xml中定义拼写检查"></a>在solrconfig.xml中定义拼写检查</h3><p>第一步是在<code>solrconfig.xml</code>中指定术语源。Solr中有许多拼写检查方法，下面讨论。</p>
+<h4 id="IndexBasedSpellChecker"><a href="#IndexBasedSpellChecker" class="headerlink" title="IndexBasedSpellChecker"></a>IndexBasedSpellChecker</h4><p><code>IndexBasedSpellChecker</code>使用Solr索引作为用于拼写检查的并行索引的基础。它需要定义字段作为索引术语的基础；常见做法是将某些字段（如<code>title</code>、<code>body</code>等）的术语复制到为拼写检查创建的另一个字段。</p>
+<p>以下是在<code>solrconfig.xml</code>中配置<code>IndexBasedSpellChecker</code>的示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SpellCheckComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellchecker&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;classname&quot;</span>&gt;</span>solr.IndexBasedSpellChecker<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必需参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>content<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- IndexBasedSpellChecker的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sourceLocation&quot;</span>&gt;</span>./folder/with/index/files<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 所有拼写检查器的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheckIndexDir&quot;</span>&gt;</span>./spellcheckerDir<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>default<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fieldType&quot;</span>&gt;</span>content_ft<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;queryAnalyzerFieldType&quot;</span>&gt;</span>text_general<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;distanceMeasure&quot;</span>&gt;</span>org.apache.lucene.search.spell.LevenshteinDistance<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;comparatorClass&quot;</span>&gt;</span>score<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;accuracy&quot;</span>&gt;</span>0.5<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;thresholdTokenFrequency&quot;</span>&gt;</span>0.0<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;buildOnCommit&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;buildOnOptimize&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>第一个元素定义<code>searchComponent</code>使用<code>solr.SpellCheckComponent</code>。<code>classname</code>是SpellCheckComponent的具体实现，在这种情况下是<code>solr.IndexBasedSpellChecker</code>。定义<code>classname</code>是可选的；如果未定义，将默认为<code>IndexBasedSpellChecker</code>。</p>
+<p><code>spellcheckIndexDir</code>定义保存拼写检查索引的目录位置，而<code>field</code>定义拼写检查术语的源字段（在模式中定义）。选择拼写检查索引字段时，最好避免重度处理的字段以获得更准确的结果。如果字段由于处理同义词和&#x2F;或词干提取而有许多词变化，字典将除了更有效的拼写数据外还用这些变化创建。</p>
+<p>默认情况下，此拼写检查器从Solr索引构建其字典。这可以通过指定<code>sourceLocation</code>来更改——使用静态Lucene索引文件的文件夹而不是Solr索引。</p>
+<p>可以为拼写检查器分配描述性标签<code>name</code>——如果搜索组件定义多个拼写检查器，这会很有帮助。这样，拼写检查查询可以识别应咨询的拼写检查器子集（有关更多详细信息，请参阅拼写检查参数）。</p>
+<p><code>field</code>的查询分析器用于标记拼写检查查询。如果需要覆盖该行为，配置<code>fieldType</code>，拼写检查器将使用该字段类型的查询分析器。</p>
+<p><code>queryAnalyzerFieldType</code>是Solr模式中的字段类型，工作方式类似于<code>fieldType</code>参数。关键区别在于，当Solr通过<code>spellcheck.q</code>提供的拼写检查查询进行标记时，使用<code>field</code>或<code>fieldType</code>；当查询通过<code>q</code>参数提供时，使用<code>queryAnalyzerFieldType</code>。</p>
+<p>此参数指定的字段类型应进行最少的转换。通常最好避免积极词干提取或NGram的类型，例如，因为这些类型的分析可能会影响拼写检查。</p>
+<p><code>distanceMeasure</code>、<code>comparatorClass</code>、<code>accuracy</code>和<code>thresholdTokenFrequency</code>等常见配置参数提供对返回的拼写检查建议的控制。</p>
+<p>如果未指定<code>distanceMeasure</code>，Solr将使用Levenshtein度量，这也是其他拼写检查器实现的默认度量（除了<code>DirectSolrSpellChecker</code>）。</p>
+<p>当<code>comparatorClass</code>配置为”score”时，距离较低（即相似性较高）分数的建议被认为更相关。替代值是”freq”——这优先考虑具有更高文档频率的建议。</p>
+<p><code>accuracy</code>设置定义有效建议的阈值，<code>thresholdTokenFrequency</code>设置允许跳过在索引中文档频率较低的建议。</p>
+<p>最后，<code>buildOnCommit</code>和<code>buildOnOptimize</code>定义是否在每次提交时（即每次向索引添加新文档时）或在每次优化请求时构建拼写检查索引。两者都是可选的，如果您宁愿将其值设置为<code>false</code>，可以省略。</p>
+<h4 id="DirectSolrSpellChecker"><a href="#DirectSolrSpellChecker" class="headerlink" title="DirectSolrSpellChecker"></a>DirectSolrSpellChecker</h4><p><code>DirectSolrSpellChecker</code>使用来自Solr索引的术语，而不像<code>IndexBasedSpellChecker</code>那样构建并行索引。此拼写检查器的好处是不必定期构建，这意味着术语始终与索引中的术语保持最新。</p>
+<p>以下是在<code>solrconfig.xml</code>中的配置方式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SpellCheckComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellchecker&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;classname&quot;</span>&gt;</span>solr.DirectSolrSpellChecker<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必需参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>name<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- DirectSolrSpellChecker的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxEdits&quot;</span>&gt;</span>2<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minPrefix&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxInspections&quot;</span>&gt;</span>5<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minQueryLength&quot;</span>&gt;</span>4<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxQueryLength&quot;</span>&gt;</span>40<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;maxQueryFrequency&quot;</span>&gt;</span>0.01<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 所有拼写检查器的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>default<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fieldType&quot;</span>&gt;</span>name<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;queryAnalyzerFieldType&quot;</span>&gt;</span>text_general<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;distanceMeasure&quot;</span>&gt;</span>internal<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;comparatorClass&quot;</span>&gt;</span>score<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;accuracy&quot;</span>&gt;</span>0.5<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;thresholdTokenFrequency&quot;</span>&gt;</span>0.0<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>选择此拼写检查器要查询的<code>field</code>时，您需要一个对其执行相对较少分析的字段（特别是词干提取等分析）。请注意，您需要指定用于建议的字段，因此像<code>IndexBasedSpellChecker</code>一样，您可能希望将数据从<code>title</code>、<code>body</code>等字段复制到专门用于提供拼写建议的字段。</p>
+<p>许多参数与此拼写检查器应如何查询索引以获取术语建议有关。<code>distanceMeasure</code>定义在拼写检查查询期间使用的度量——此拼写检查器的默认值是”internal”，对应于Damerau-Levenshtein度量。</p>
+<p>因为此拼写检查器查询主索引，您可能希望限制其查询索引的频率，以确保避免与用户查询的任何性能冲突。<code>accuracy</code>设置定义有效建议的阈值，而<code>maxEdits</code>定义允许对术语的更改数量。由于大多数拼写错误只偏离1个字母，将其设置为1将减少可能建议的数量（但默认值是2）；该值只能是1或2。<code>minPrefix</code>定义术语应共享的最小字符数。将其设置为1意味着拼写建议都将以相同字母开头，例如。</p>
+<p><code>maxInspections</code>参数定义在返回结果之前要检查的可能匹配的最大数量；默认为5。<code>minQueryLength</code>定义在提供建议之前查询中必须有多少字符；默认为4。<code>maxQueryLength</code>使拼写检查器能够跳过非常长的查询术语，这可以避免昂贵的操作或异常。默认情况下对术语长度没有限制。</p>
+<p>首先，拼写检查器通过在索引中查找传入查询词来分析它们。只有索引中不存在或太稀有（等于或低于<code>maxQueryFrequency</code>）的查询词被认为是拼写错误并用于查找建议。比<code>maxQueryFrequency</code>更频繁的词会绕过拼写检查器不变。找到每个拼写错误词的建议后，它们会根据<code>thresholdTokenFrequency</code>作为边界值进行足够频率过滤。这些参数（<code>maxQueryFrequency</code>和<code>thresholdTokenFrequency</code>）可以是表示为1以下小数值的百分比（如<code>0.01</code>或<code>1%</code>）或绝对值（如<code>4</code>）。</p>
+<p><strong>注意</strong>：当<code>maxQueryFrequency</code>指定为百分比时，它在每个分片上独立评估（相对于该分片的<code>maxDoc</code>）以确定是否应被视为拼写错误。如果术语分布在分片之间不均匀，某些不频繁术语可能被认为是正确拼写的，并且在预期时不生成建议。</p>
+<h4 id="FileBasedSpellChecker"><a href="#FileBasedSpellChecker" class="headerlink" title="FileBasedSpellChecker"></a>FileBasedSpellChecker</h4><p><code>FileBasedSpellChecker</code>使用外部文件作为拼写字典。如果使用Solr作为拼写服务器，或如果拼写建议不需要基于索引中的实际术语，这可能很有用。</p>
+<p>在<code>solrconfig.xml</code>中，您将这样定义searchComponent：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SpellCheckComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellchecker&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;classname&quot;</span>&gt;</span>solr.FileBasedSpellChecker<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必需参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sourceLocation&quot;</span>&gt;</span>spellings.txt<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- FileBasedSpellChecker的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fieldType&quot;</span>&gt;</span>text_general<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;characterEncoding&quot;</span>&gt;</span>UTF-8<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 所有拼写检查器的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheckIndexDir&quot;</span>&gt;</span>./spellcheckerDir<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>file<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;queryAnalyzerFieldType&quot;</span>&gt;</span>text_general<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;distanceMeasure&quot;</span>&gt;</span>org.apache.lucene.search.spell.LevenshteinDistance<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;comparatorClass&quot;</span>&gt;</span>score<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;accuracy&quot;</span>&gt;</span>0.5<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">float</span> <span class="attr">name</span>=<span class="string">&quot;thresholdTokenFrequency&quot;</span>&gt;</span>0.0<span class="tag">&lt;/<span class="name">float</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;buildOnCommit&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;buildOnOptimize&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>配置与<code>IndexBasedSpellChecker</code>非常相似，这里的区别是使用<code>sourceLocation</code>定义术语文件的位置，使用<code>characterEncoding</code>定义术语文件的编码。</p>
+<p>如果指定了<code>fieldType</code>参数并与Solr模式中的类型匹配，Solr将通过首先使用<code>fieldType</code>索引分析器标记外部文件中的每行来构建拼写检查索引，然后将每个标记添加到索引。</p>
+<p>如果没有，Solr将外部文件中的每行视为单个标记，并按原样将它们添加到拼写检查索引。</p>
+<p><strong>提示</strong>：在前面的示例中，使用name来命名拼写检查器的这个特定定义。多个定义可以在单个<code>solrconfig.xml</code>中共存，name有助于区分它们。如果只定义一个拼写检查器，则不需要名称。</p>
+<h4 id="WordBreakSolrSpellChecker"><a href="#WordBreakSolrSpellChecker" class="headerlink" title="WordBreakSolrSpellChecker"></a>WordBreakSolrSpellChecker</h4><p><code>WordBreakSolrSpellChecker</code>通过组合相邻查询术语和&#x2F;或将术语分解为多个词来提供建议。它是<code>SpellCheckComponent</code>的增强，利用Lucene的<code>WordBreakSpellChecker</code>。它可以检测由于错位空白而导致的拼写错误，而无需使用基于shingle的字典，并为词分割错误提供整理支持，包括用户在同一查询中混合单词拼写错误和词分割错误的情况。它还提供分片支持。</p>
+<p>以下是在<code>solrconfig.xml</code>中的配置方式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SpellCheckComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellchecker&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;classname&quot;</span>&gt;</span>solr.WordBreakSolrSpellChecker<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 必需参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>lowerfilt<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- WordBreakSpellChecker的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;combineWords&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;breakWords&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;breakSuggestionTieBreaker&quot;</span>&gt;</span>max_freq<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxChanges&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxCombinedLength&quot;</span>&gt;</span>20<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minBreakLength&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxEvaluations&quot;</span>&gt;</span>1000<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minSuggestionFreq&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 所有拼写检查器的可选参数 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>wordbreak<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;fieldType&quot;</span>&gt;</span>lowerfilt_ft<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;queryAnalyzerFieldType&quot;</span>&gt;</span>text_general<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>一些参数应该从其他拼写检查器的讨论中熟悉，如<code>name</code>、<code>classname</code>和<code>field</code>。此拼写检查器的新参数是<code>combineWords</code>，定义是否应在字典搜索中组合词（默认为true）；和<code>breakWords</code>，定义是否应在字典搜索期间分解词（默认为true）。</p>
+<p><code>maxChanges</code>是一个整数，定义拼写检查器应检查整理可能性对索引的次数。</p>
+<p><code>maxCombinedLength</code>允许跳过太长的建议。类似地，<code>minBreakLength</code>指示拼写检查器不要将词分解为太短的部分。</p>
+<p><code>maxEvaluations</code>定义要评估的词组合的最大数量——较高的值可能改善结果质量，而较低的值可能改善性能。</p>
+<p><code>minSuggestionFreq</code>设置术语必须具有的最小频率才能作为建议的一部分包含。</p>
+<p>最后，<code>breakSuggestionTieBreaker</code>设置（”max_freq”或”sum_freq”）指示Solr按词分解数排序建议，然后分别按所有组件术语频率的最大值或总和排序。</p>
+<p>拼写检查器可以与传统检查器（即<code>DirectSolrSpellChecker</code>）一起配置。结果被组合，整理可能包含来自两个拼写检查器的修正混合。</p>
+<h3 id="添加到请求处理器"><a href="#添加到请求处理器" class="headerlink" title="添加到请求处理器"></a>添加到请求处理器</h3><p>查询将发送到请求处理器。如果每个请求都应生成建议，那么您将向正在使用的<code>requestHandler</code>添加以下内容：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>可能的参数之一是要使用的<code>spellcheck.dictionary</code>，可以定义多个。使用多个字典时，咨询所有指定的字典并交错结果。使用来自不同拼写检查器的组合创建整理，注意多个重叠纠正不会出现在同一整理中。</p>
+<p>以下是多个字典的示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;spellCheckWithWordbreak&quot;</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.handler.component.SearchHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.dictionary&quot;</span>&gt;</span>default<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.dictionary&quot;</span>&gt;</span>wordbreak<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck.count&quot;</span>&gt;</span>20<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;last-components&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span>&gt;</span>spellcheck<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="拼写检查参数"><a href="#拼写检查参数" class="headerlink" title="拼写检查参数"></a>拼写检查参数</h2><p>拼写检查组件接受以下描述的参数。</p>
+<h3 id="spellcheck"><a href="#spellcheck" class="headerlink" title="spellcheck"></a>spellcheck</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>此参数为请求启用拼写检查建议。如果为<code>true</code>，则将生成拼写建议。如果需要拼写检查，这是必需的</li>
+</ul>
+<h3 id="spellcheck-q或q"><a href="#spellcheck-q或q" class="headerlink" title="spellcheck.q或q"></a>spellcheck.q或q</h3><ul>
+<li>可选，默认：无</li>
+<li>此参数指定要拼写检查的查询</li>
+<li>如果定义了<code>spellcheck.q</code>，则使用它；否则使用原始输入查询。<code>spellcheck.q</code>参数旨在是原始查询，减去任何额外标记，如字段名称、提升等</li>
+<li>如果指定了<code>q</code>参数，则使用<code>SpellingQueryConverter</code>类将其解析为标记；否则使用WhitespaceTokenizer</li>
+<li>选择使用哪一个取决于应用程序。基本上，如果您在应用程序中有拼写”就绪”版本，那么使用<code>spellcheck.q</code>可能更好。否则，如果您只想让Solr完成工作，请使用<code>q</code>参数</li>
+</ul>
+<p><strong>注意</strong>：<code>SpellingQueryConverter</code>类不能正确处理非ASCII字符。在这种情况下，您必须使用<code>spellcheck.q</code>，或实现自己的QueryConverter。</p>
+<h3 id="spellcheck-build"><a href="#spellcheck-build" class="headerlink" title="spellcheck.build"></a>spellcheck.build</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果设置为<code>true</code>，此参数创建用于拼写检查的字典。在典型的搜索应用程序中，您需要在使用拼写检查之前构建字典。但是，并不总是需要首先构建字典。例如，您可以配置拼写检查器使用已存在的字典</li>
+<li>字典需要一些时间来构建，所以此参数不应与每个请求一起发送</li>
+</ul>
+<h3 id="spellcheck-reload"><a href="#spellcheck-reload" class="headerlink" title="spellcheck.reload"></a>spellcheck.reload</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果设置为<code>true</code>，此参数重新加载拼写检查器。结果取决于<code>SolrSpellChecker.reload()</code>的实现。在典型实现中，重新加载拼写检查器意味着重新加载字典</li>
+</ul>
+<h3 id="spellcheck-count"><a href="#spellcheck-count" class="headerlink" title="spellcheck.count"></a>spellcheck.count</h3><ul>
+<li>可选，默认：见描述</li>
+<li>此参数指定拼写检查器应为术语返回的最大建议数。如果未设置此参数，值默认为<code>1</code>。如果设置了参数但未分配数字，值默认为<code>5</code>。如果参数设置为正整数，该数字成为拼写检查器返回的最大建议数</li>
+</ul>
+<h3 id="spellcheck-onlyMorePopular"><a href="#spellcheck-onlyMorePopular" class="headerlink" title="spellcheck.onlyMorePopular"></a>spellcheck.onlyMorePopular</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，Solr将返回比现有查询产生更多命中的建议。请注意，即使给定查询术语存在于索引中并被认为是”正确的”，这也会返回更受欢迎的建议</li>
+</ul>
+<h3 id="spellcheck-maxResultsForSuggest"><a href="#spellcheck-maxResultsForSuggest" class="headerlink" title="spellcheck.maxResultsForSuggest"></a>spellcheck.maxResultsForSuggest</h3><ul>
+<li>可选，默认：无</li>
+<li>例如，如果设置为<code>5</code>且用户查询返回5个或更少结果，拼写检查器将报告”correctlySpelled&#x3D;false”并提供建议（如果请求，还有整理）。将此设置大于零对于为返回少量命中的查询创建”您是否意思是？”建议很有用</li>
+</ul>
+<h3 id="spellcheck-alternativeTermCount"><a href="#spellcheck-alternativeTermCount" class="headerlink" title="spellcheck.alternativeTermCount"></a>spellcheck.alternativeTermCount</h3><ul>
+<li>可选，默认：无</li>
+<li>定义为索引和&#x2F;或字典中存在的每个查询术语返回的建议数。大概用户希望对docFrequency&gt;0的词有更少的建议。此外，设置此值启用上下文敏感的拼写建议</li>
+</ul>
+<h3 id="spellcheck-extendedResults"><a href="#spellcheck-extendedResults" class="headerlink" title="spellcheck.extendedResults"></a>spellcheck.extendedResults</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，此参数使Solr返回关于拼写检查结果的附加信息，例如索引中每个原始术语的频率（<code>origFreq</code>）以及索引中每个建议的频率（<code>frequency</code>）。请注意，此结果格式与非扩展格式不同，因为词的返回建议实际上是列表数组，其中每个列表保存建议的术语及其频率</li>
+</ul>
+<h3 id="spellcheck-collate"><a href="#spellcheck-collate" class="headerlink" title="spellcheck.collate"></a>spellcheck.collate</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，此参数指示Solr为每个标记采用最佳建议（如果存在）并从建议构造新查询</li>
+<li>例如，如果输入查询是”jawa class lording”，”jawa”的最佳建议是”java”，”lording”是”loading”，那么结果整理将是”java class loading”</li>
+<li><code>spellcheck.collate</code>参数只返回即使重新查询时应用原始<code>fq</code>参数也保证产生命中的整理。这在每个查询有多个纠正时特别有用</li>
+<li><strong>注意</strong>：这只返回要使用的查询。它不实际运行建议的查询</li>
+</ul>
+<h3 id="spellcheck-maxCollations"><a href="#spellcheck-maxCollations" class="headerlink" title="spellcheck.maxCollations"></a>spellcheck.maxCollations</h3><ul>
+<li>可选，默认：<code>1</code></li>
+<li>返回的最大整理数。如果<code>spellcheck.collate</code>为false，则忽略此参数</li>
+</ul>
+<h3 id="spellcheck-maxCollationTries"><a href="#spellcheck-maxCollationTries" class="headerlink" title="spellcheck.maxCollationTries"></a>spellcheck.maxCollationTries</h3><ul>
+<li>可选，默认：<code>0</code></li>
+<li>此参数指定Solr在放弃之前尝试的整理可能性数。较低的值确保更好的性能。较高的值可能需要找到可以返回结果的整理。默认值<code>0</code>等价于不检查整理。如果<code>spellcheck.collate</code>为false，则忽略此参数</li>
+</ul>
+<h3 id="spellcheck-maxCollationEvaluations"><a href="#spellcheck-maxCollationEvaluations" class="headerlink" title="spellcheck.maxCollationEvaluations"></a>spellcheck.maxCollationEvaluations</h3><ul>
+<li>可选，默认：<code>10000</code></li>
+<li>此参数指定在决定要对索引测试哪些整理候选者之前要排序和评估的词纠正组合的最大数量。这是用户输入具有许多拼写错误词的查询时的性能安全网</li>
+</ul>
+<h3 id="spellcheck-collateExtendedResults"><a href="#spellcheck-collateExtendedResults" class="headerlink" title="spellcheck.collateExtendedResults"></a>spellcheck.collateExtendedResults</h3><ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，此参数返回详细描述Solr找到的整理的扩展响应格式。如果<code>spellcheck.collate</code>为false，则忽略此项</li>
+</ul>
+<h3 id="spellcheck-collateMaxCollectDocs"><a href="#spellcheck-collateMaxCollectDocs" class="headerlink" title="spellcheck.collateMaxCollectDocs"></a>spellcheck.collateMaxCollectDocs</h3><ul>
+<li>可选，默认：<code>0</code></li>
+<li>此参数指定测试潜在整理对索引时应收集的最大文档数。值<code>0</code>表示应收集所有文档，产生精确的命中计数。否则，提供估计作为性能优化，在不需要精确命中计数的情况下——指定的值越高，估计越精确</li>
+<li>当<code>spellcheck.collateExtendedResults</code>为<code>false</code>时，始终使用优化，就像指定了<code>1</code>一样</li>
+</ul>
+<h3 id="spellcheck-collateParam-前缀"><a href="#spellcheck-collateParam-前缀" class="headerlink" title="spellcheck.collateParam.*前缀"></a>spellcheck.collateParam.*前缀</h3><ul>
+<li>可选，默认：无</li>
+<li>此参数前缀可用于指定您希望拼写检查器在内部验证整理查询时使用的任何附加参数。例如，即使您的常规搜索结果允许通过<code>q.op=OR</code>和<code>mm=20%</code>等参数松散匹配一个或多个查询术语，您可以指定覆盖参数，如<code>spellcheck.collateParam.q.op=AND&amp;spellcheck.collateParam.mm=100%</code>，要求只能返回由在至少一个文档中都找到的词组成的整理</li>
+</ul>
+<h3 id="spellcheck-dictionary"><a href="#spellcheck-dictionary" class="headerlink" title="spellcheck.dictionary"></a>spellcheck.dictionary</h3><ul>
+<li>可选，默认：<code>default</code></li>
+<li>此参数使Solr使用参数参数中命名的字典。此参数可用于在每个请求基础上调用特定的拼写检查器</li>
+</ul>
+<h3 id="spellcheck-accuracy"><a href="#spellcheck-accuracy" class="headerlink" title="spellcheck.accuracy"></a>spellcheck.accuracy</h3><ul>
+<li>可选，默认：见描述</li>
+<li>指定拼写检查实现使用的精度值来决定结果是否有价值。值是0到1之间的浮点数。默认为<code>Float.MIN_VALUE</code></li>
+</ul>
+<h3 id="spellcheck-key"><a href="#spellcheck-key" class="headerlink" title="spellcheck..key"></a>spellcheck.<DICT_NAME>.key</h3><ul>
+<li>可选，默认：无</li>
+<li>为处理给定字典的实现指定键&#x2F;值对。传递的值只是<code>key=value</code>（<code>spellcheck.&lt;DICT_NAME&gt;.</code>被剥离）</li>
+<li>例如，给定名为<code>foo</code>的字典，<code>spellcheck.foo.myKey=myValue</code>将导致<code>myKey=myValue</code>传递给处理字典<code>foo</code>的实现</li>
+</ul>
+<h2 id="拼写检查示例"><a href="#拼写检查示例" class="headerlink" title="拼写检查示例"></a>拼写检查示例</h2><p>使用Solr的<code>bin/solr start -e techproducts</code>示例，此查询显示使用<code>spellcheck.q</code>参数定义查询并强制整理要求所有输入术语必须匹配的简单请求结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/spell?df=text&amp;spellcheck.q=delll+ultra+sharp&amp;spellcheck=true&amp;spellcheck.collateParam.q.op=AND&amp;wt=xml</span><br></pre></td></tr></table></figure>
+
+<p>结果：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;spellcheck&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;suggestions&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;delll&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;numFound&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;startOffset&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;endOffset&quot;</span>&gt;</span>5<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;origFreq&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;suggestion&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;word&quot;</span>&gt;</span>dell<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;freq&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;ultra sharp&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;numFound&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;startOffset&quot;</span>&gt;</span>6<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;endOffset&quot;</span>&gt;</span>17<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;origFreq&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;suggestion&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;word&quot;</span>&gt;</span>ultrasharp<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;freq&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;correctlySpelled&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;collations&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;collation&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;collationQuery&quot;</span>&gt;</span>dell ultrasharp<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;hits&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;misspellingsAndCorrections&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;delll&quot;</span>&gt;</span>dell<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;ultra sharp&quot;</span>&gt;</span>ultrasharp<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="分布式拼写检查"><a href="#分布式拼写检查" class="headerlink" title="分布式拼写检查"></a>分布式拼写检查</h2><p><code>SpellCheckComponent</code>还支持分布式索引上的拼写检查。如果您在除”&#x2F;select”之外的请求处理器上使用SpellCheckComponent，必须提供以下两个参数：</p>
+<h3 id="shards"><a href="#shards" class="headerlink" title="shards"></a>shards</h3><ul>
+<li>必需，默认：无</li>
+<li>指定分布式索引配置中的分片。有关分布式索引的更多信息，请参阅集群类型</li>
+</ul>
+<h3 id="shards-qt"><a href="#shards-qt" class="headerlink" title="shards.qt"></a>shards.qt</h3><ul>
+<li>必需，默认：无</li>
+<li>指定Solr用于分片请求的请求处理器。<code>/select</code>请求处理器不需要此参数</li>
+</ul>
+<p>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/spell?spellcheck=true&amp;spellcheck.build=true&amp;spellcheck.q=toyata&amp;shards.qt=/spell&amp;shards=solr-shard1:8983/solr/techproducts,solr-shard2:8983/solr/techproducts</span><br></pre></td></tr></table></figure>
+
+<p>在分布式请求到SpellCheckComponent的情况下，即使<code>spellcheck.count</code>参数值小于5，也会向分片请求至少五个建议。一旦收集建议，它们按配置的距离度量（默认为Levenshtein距离）然后按聚合频率排序。</p>
+<hr>
+<p><em>本文档翻译自Apache Solr官方参考指南，旨在为中文用户提供完整的拼写检查功能使用指南。</em></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/">搜索优化</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5/">拼写检查</a>
+  
+    <a class="article-tag" href="/tags/SpellCheckComponent/">SpellCheckComponent</a>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E5%BB%BA%E8%AE%AE/">查询建议</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/14/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E9%9B%86%E7%BE%A4%E8%8A%82%E7%82%B9%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：集群节点管理命令详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/12/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%BB%BA%E8%AE%AE%E5%99%A8%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr查询：建议器功能详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：拼写检查功能详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AESpellCheckComponent"><span class="nav-number">1.2.</span> <span class="nav-text">配置SpellCheckComponent</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8solrconfig-xml%E4%B8%AD%E5%AE%9A%E4%B9%89%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5"><span class="nav-number">1.2.1.</span> <span class="nav-text">在solrconfig.xml中定义拼写检查</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IndexBasedSpellChecker"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">IndexBasedSpellChecker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#DirectSolrSpellChecker"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">DirectSolrSpellChecker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#FileBasedSpellChecker"><span class="nav-number">1.2.1.3.</span> <span class="nav-text">FileBasedSpellChecker</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#WordBreakSolrSpellChecker"><span class="nav-number">1.2.1.4.</span> <span class="nav-text">WordBreakSolrSpellChecker</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%88%B0%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.2.2.</span> <span class="nav-text">添加到请求处理器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.</span> <span class="nav-text">拼写检查参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck"><span class="nav-number">1.3.1.</span> <span class="nav-text">spellcheck</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-q%E6%88%96q"><span class="nav-number">1.3.2.</span> <span class="nav-text">spellcheck.q或q</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-build"><span class="nav-number">1.3.3.</span> <span class="nav-text">spellcheck.build</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-reload"><span class="nav-number">1.3.4.</span> <span class="nav-text">spellcheck.reload</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-count"><span class="nav-number">1.3.5.</span> <span class="nav-text">spellcheck.count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-onlyMorePopular"><span class="nav-number">1.3.6.</span> <span class="nav-text">spellcheck.onlyMorePopular</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-maxResultsForSuggest"><span class="nav-number">1.3.7.</span> <span class="nav-text">spellcheck.maxResultsForSuggest</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-alternativeTermCount"><span class="nav-number">1.3.8.</span> <span class="nav-text">spellcheck.alternativeTermCount</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-extendedResults"><span class="nav-number">1.3.9.</span> <span class="nav-text">spellcheck.extendedResults</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-collate"><span class="nav-number">1.3.10.</span> <span class="nav-text">spellcheck.collate</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-maxCollations"><span class="nav-number">1.3.11.</span> <span class="nav-text">spellcheck.maxCollations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-maxCollationTries"><span class="nav-number">1.3.12.</span> <span class="nav-text">spellcheck.maxCollationTries</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-maxCollationEvaluations"><span class="nav-number">1.3.13.</span> <span class="nav-text">spellcheck.maxCollationEvaluations</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-collateExtendedResults"><span class="nav-number">1.3.14.</span> <span class="nav-text">spellcheck.collateExtendedResults</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-collateMaxCollectDocs"><span class="nav-number">1.3.15.</span> <span class="nav-text">spellcheck.collateMaxCollectDocs</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-collateParam-%E5%89%8D%E7%BC%80"><span class="nav-number">1.3.16.</span> <span class="nav-text">spellcheck.collateParam.*前缀</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-dictionary"><span class="nav-number">1.3.17.</span> <span class="nav-text">spellcheck.dictionary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-accuracy"><span class="nav-number">1.3.18.</span> <span class="nav-text">spellcheck.accuracy</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#spellcheck-key"><span class="nav-number">1.3.19.</span> <span class="nav-text">spellcheck..key</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">拼写检查示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5"><span class="nav-number">1.5.</span> <span class="nav-text">分布式拼写检查</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#shards"><span class="nav-number">1.5.1.</span> <span class="nav-text">shards</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#shards-qt"><span class="nav-number">1.5.2.</span> <span class="nav-text">shards.qt</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

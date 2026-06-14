@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：config api详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="请求处理器Solr配置Config APIREST API配置管理" />
+  
+  
+  
+  
+  <meta name="description" content="深入了解Solr Config API的使用方法，包括配置检索、属性设置和组件管理的完整指南">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：Config API详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/15/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入了解Solr Config API的使用方法，包括配置检索、属性设置和组件管理的完整指南">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-15T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:05:42.575Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="请求处理器">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="Config API">
+<meta property="article:tag" content="REST API">
+<meta property="article:tag" content="配置管理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：Config API详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：Config API详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/15/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig%20API%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-15T16:00:00.000Z" itemprop="datePublished">一月 15, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：Config-API详解"><a href="#Solr配置：Config-API详解" class="headerlink" title="Solr配置：Config API详解"></a>Solr配置：Config API详解</h1><p>Config API使您能够使用类似REST的API调用操作<code>solrconfig.xml</code>的各个方面。</p>
+<p>此功能默认启用，在SolrCloud、用户管理集群和单节点安装中的工作方式类似。许多常编辑的属性（如缓存大小和提交设置）和请求处理器定义都可以通过此API更改。</p>
+<p>使用此API时，<code>solrconfig.xml</code>不会被更改。相反，所有编辑的配置都存储在名为<code>configoverlay.json</code>的文件中。<code>configoverlay.json</code>中的值会覆盖<code>solrconfig.xml</code>中的值。</p>
+<h2 id="Config-API端点"><a href="#Config-API端点" class="headerlink" title="Config API端点"></a>Config API端点</h2><p>所有Config API端点都是特定于集合的，这意味着此API一次只能检查或修改单个集合的配置。</p>
+<ul>
+<li><code>_collection_/config</code>：检索完整的有效配置，或修改配置。使用GET检索，使用POST执行命令。</li>
+<li><code>_collection_/config/overlay</code>：仅检索<code>configoverlay.json</code>中的详细信息，删除直接或通过默认值在<code>solrconfig.xml</code>中定义的任何选项。</li>
+<li><code>_collection_/config/params</code>：创建可以覆盖或替代<code>solrconfig.xml</code>中定义的参数的参数集。有关此端点的更多信息，请参见<a href="request-parameters-api.md">请求参数API</a>。</li>
+</ul>
+<h2 id="检索配置"><a href="#检索配置" class="headerlink" title="检索配置"></a>检索配置</h2><p>所有配置项都可以通过向<code>/config</code>端点发送GET请求来检索：</p>
+<h4 id="V1-API"><a href="#V1-API" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API"><a href="#V2-API" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>响应将是通过合并<code>configoverlay.json</code>和<code>solrconfig.xml</code>中的设置产生的Solr配置。</p>
+<p>可以将返回的配置限制为顶级部分，如<code>query</code>、<code>requestHandler</code>或<code>updateHandler</code>。为此，将部分名称附加到<code>config</code>端点。例如，要检索所有请求处理器的配置：</p>
+<h4 id="V1-API-1"><a href="#V1-API-1" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/config/requestHandler</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-1"><a href="#V2-API-1" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/api/collections/techproducts/config/requestHandler</span><br></pre></td></tr></table></figure>
+
+<p>输出将是在<code>solrconfig.xml</code>中定义、由Solr<a href="implicit-requesthandlers.md">隐式定义</a>以及通过存储在<code>configoverlay.json</code>中的Config API定义的每个请求处理器的详细信息。要查看隐式请求处理器的配置，请将<code>expandParams=true</code>添加到请求中。有关使用此命令的示例，请参见上面链接的隐式请求处理器的文档。</p>
+<p>可以作为路径参数添加的可用顶级部分包括：<code>query</code>、<code>requestHandler</code>、<code>searchComponent</code>、<code>updateHandler</code>、<code>queryResponseWriter</code>、<code>initParams</code>、<code>znodeVersion</code>、<code>listener</code>、<code>directoryFactory</code>、<code>indexConfig</code>和<code>codecFactory</code>。</p>
+<p>要进一步将请求限制为顶级部分中的单个组件，请使用<code>componentName</code>请求参数。</p>
+<p>例如，要返回<code>/select</code>请求处理器的配置：</p>
+<h4 id="V1-API-2"><a href="#V1-API-2" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/config/requestHandler?componentName=/select</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-2"><a href="#V2-API-2" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/api/collections/techproducts/config/requestHandler?componentName=/select</span><br></pre></td></tr></table></figure>
+
+<p>此命令的输出将类似于：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;config&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;requestHandler&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;/select&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/select&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.SearchHandler&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;defaults&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;echoParams&quot;</span><span class="punctuation">:</span> <span class="string">&quot;explicit&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rows&quot;</span><span class="punctuation">:</span><span class="number">10</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>限制到顶级部分中对象的能力仅限于请求处理器（<code>requestHandler</code>）、搜索组件（<code>searchComponent</code>）和响应编写器（<code>queryResponseWriter</code>）。</p>
+<h2 id="修改配置的命令"><a href="#修改配置的命令" class="headerlink" title="修改配置的命令"></a>修改配置的命令</h2><p>此API使用带有POST请求的特定命令告诉Solr要在<code>configoverlay.json</code>中添加或修改什么属性或属性类型。命令与要添加或修改属性或组件的数据一起传递。</p>
+<p>用于修改的Config API命令分为3种类型，每种类型都操作<code>solrconfig.xml</code>中的特定数据结构。这些类型是：</p>
+<ul>
+<li>用于&lt;&lt;通用属性命令,通用属性&gt;&gt;的<code>set-property</code>和<code>unset-property</code></li>
+<li>用于&lt;&lt;处理器和组件命令,自定义处理器和本地组件&gt;&gt;的特定于组件的<code>add-</code>、<code>update-</code>和<code>delete-</code>命令</li>
+<li>用于&lt;&lt;用户定义属性命令,用户定义属性&gt;&gt;的<code>set-user-property</code>和<code>unset-user-property</code></li>
+</ul>
+<h3 id="通用属性命令"><a href="#通用属性命令" class="headerlink" title="通用属性命令"></a>通用属性命令</h3><p>通用属性是Solr实例中经常自定义的属性。它们通过两个命令操作：</p>
+<ul>
+<li><code>set-property</code>：设置已知属性。属性名称是预定义和固定的。如果属性已经设置，此命令将覆盖以前的设置。</li>
+<li><code>unset-property</code>：删除使用<code>set-property</code>命令设置的属性。</li>
+</ul>
+<p>可以使用<code>set-property</code>和<code>unset-property</code>配置的属性是预定义的并在下面列出。这些属性的名称源自它们在<code>solrconfig.xml</code>中的XML路径。</p>
+<p><strong>更新处理器设置</strong></p>
+<p>有关这些设置的默认值和可接受值，请参见<a href="commits-transaction-logs.md">提交和事务日志</a>。</p>
+<ul>
+<li><code>updateHandler.autoCommit.maxDocs</code></li>
+<li><code>updateHandler.autoCommit.maxTime</code></li>
+<li><code>updateHandler.autoCommit.openSearcher</code></li>
+<li><code>updateHandler.autoSoftCommit.maxDocs</code></li>
+<li><code>updateHandler.autoSoftCommit.maxTime</code></li>
+<li><code>updateHandler.commitWithin.softCommit</code></li>
+</ul>
+<p><strong>查询设置</strong></p>
+<p>有关这些设置的默认值和可接受值，请参见<a href="caches-warming.md">缓存和预热</a>。</p>
+<p><em>缓存和缓存大小</em></p>
+<ul>
+<li><code>query.filterCache.class</code></li>
+<li><code>query.filterCache.size</code></li>
+<li><code>query.filterCache.initialSize</code></li>
+<li><code>query.filterCache.autowarmCount</code></li>
+<li><code>query.filterCache.maxRamMB</code></li>
+<li><code>query.filterCache.regenerator</code></li>
+<li><code>query.queryResultCache.class</code></li>
+<li><code>query.queryResultCache.size</code></li>
+<li><code>query.queryResultCache.initialSize</code></li>
+<li><code>query.queryResultCache.autowarmCount</code></li>
+<li><code>query.queryResultCache.maxRamMB</code></li>
+<li><code>query.queryResultCache.regenerator</code></li>
+<li><code>query.documentCache.class</code></li>
+<li><code>query.documentCache.size</code></li>
+<li><code>query.documentCache.initialSize</code></li>
+<li><code>query.documentCache.autowarmCount</code></li>
+<li><code>query.documentCache.regenerator</code></li>
+<li><code>query.fieldValueCache.class</code></li>
+<li><code>query.fieldValueCache.size</code></li>
+<li><code>query.fieldValueCache.initialSize</code></li>
+<li><code>query.fieldValueCache.autowarmCount</code></li>
+<li><code>query.fieldValueCache.regenerator</code></li>
+</ul>
+<p><em>查询大小和预热</em></p>
+<ul>
+<li><code>query.maxBooleanClauses</code></li>
+<li><code>query.enableLazyFieldLoading</code></li>
+<li><code>query.useFilterForSortedQuery</code></li>
+<li><code>query.queryResultWindowSize</code></li>
+<li><code>query.queryResultMaxDocCached</code></li>
+</ul>
+<p><em>查询断路器</em></p>
+<p>有关更多详细信息，请参见<a href="circuit-breakers.md">断路器</a></p>
+<ul>
+<li><code>query.memEnabled</code></li>
+<li><code>query.memThreshold</code></li>
+</ul>
+<p><strong>RequestDispatcher设置</strong></p>
+<p>有关这些设置的默认值和可接受值，请参见<a href="requestdispatcher.md">请求分发器</a>。</p>
+<ul>
+<li><code>requestDispatcher.handleSelect</code></li>
+<li><code>requestDispatcher.requestParsers.multipartUploadLimitInKB</code></li>
+<li><code>requestDispatcher.requestParsers.formdataUploadLimitInKB</code></li>
+<li><code>requestDispatcher.requestParsers.addHttpRequestToContext</code></li>
+</ul>
+<h4 id="通用属性示例"><a href="#通用属性示例" class="headerlink" title="通用属性示例"></a>通用属性示例</h4><p>构造修改或添加这些属性之一的命令遵循此模式：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;set-property&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;&lt;property&gt;&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&lt;value&gt;&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>增加<code>updateHandler.autoCommit.maxTime</code>的请求如下：</p>
+<h4 id="V1-API-3"><a href="#V1-API-3" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;set-property&quot;:&#123;&quot;updateHandler.autoCommit.maxTime&quot;:15000&#125;&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-3"><a href="#V2-API-3" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;set-property&quot;:&#123;&quot;updateHandler.autoCommit.maxTime&quot;:15000&#125;&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>您可以使用<code>config/overlay</code>端点验证属性已添加到<code>configoverlay.json</code>：</p>
+<h4 id="V1-API-4"><a href="#V1-API-4" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/techproducts/config/overlay?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-4"><a href="#V2-API-4" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/api/collections/techproducts/config/overlay?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>输出：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;overlay&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;znodeVersion&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;props&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;updateHandler&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;autoCommit&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;maxTime&quot;</span><span class="punctuation">:</span> <span class="number">15000</span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>要取消设置属性：</p>
+<h4 id="V1-API-5"><a href="#V1-API-5" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;unset-property&quot;: &quot;updateHandler.autoCommit.maxTime&quot;&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-5"><a href="#V2-API-5" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;unset-property&quot;: &quot;updateHandler.autoCommit.maxTime&quot;&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h3 id="处理器和组件命令"><a href="#处理器和组件命令" class="headerlink" title="处理器和组件命令"></a>处理器和组件命令</h3><p>请求处理器、搜索组件和其他类型的本地化Solr组件（如查询解析器、更新处理器等）可以使用特定于正在修改的组件类型的特定命令进行添加、更新和删除。</p>
+<p>语法在每种情况下都类似：<code>add-&lt;component-name&gt;</code>、<code>update-&lt;component-name&gt;</code>和<code>delete-&lt;component-name&gt;</code>。命令名称不区分大小写，因此<code>Add-RequestHandler</code>、<code>ADD-REQUESTHANDLER</code>和<code>add-requesthandler</code>是等效的。</p>
+<p>在每种情况下，<code>add-</code>命令将新配置添加到<code>configoverlay.json</code>，这将覆盖<code>solrconfig.xml</code>中组件的任何其他设置。</p>
+<p><code>update-</code>命令覆盖<code>configoverlay.json</code>中的现有设置。</p>
+<p><code>delete-</code>命令从<code>configoverlay.json</code>中删除设置。</p>
+<p>从<code>configoverlay.json</code>中删除的设置不会从<code>solrconfig.xml</code>中删除（如果它们恰好在那里重复）。</p>
+<p>下面是可用命令的完整列表：</p>
+<h4 id="组件的基本命令"><a href="#组件的基本命令" class="headerlink" title="组件的基本命令"></a>组件的基本命令</h4><p>这些是最常使用的命令：</p>
+<ul>
+<li><code>add-requesthandler</code></li>
+<li><code>update-requesthandler</code></li>
+<li><code>delete-requesthandler</code></li>
+<li><code>add-searchcomponent</code></li>
+<li><code>update-searchcomponent</code></li>
+<li><code>delete-searchcomponent</code></li>
+<li><code>add-initparams</code></li>
+<li><code>update-initparams</code></li>
+<li><code>delete-initparams</code></li>
+<li><code>add-queryresponsewriter</code></li>
+<li><code>update-queryresponsewriter</code></li>
+<li><code>delete-queryresponsewriter</code></li>
+</ul>
+<h4 id="组件的高级命令"><a href="#组件的高级命令" class="headerlink" title="组件的高级命令"></a>组件的高级命令</h4><p>这些命令允许注册更高级的Solr自定义：</p>
+<ul>
+<li><code>add-queryparser</code></li>
+<li><code>update-queryparser</code></li>
+<li><code>delete-queryparser</code></li>
+<li><code>add-valuesourceparser</code></li>
+<li><code>update-valuesourceparser</code></li>
+<li><code>delete-valuesourceparser</code></li>
+<li><code>add-transformer</code></li>
+<li><code>update-transformer</code></li>
+<li><code>delete-transformer</code></li>
+<li><code>add-updateprocessor</code></li>
+<li><code>update-updateprocessor</code></li>
+<li><code>delete-updateprocessor</code></li>
+<li><code>add-queryconverter</code></li>
+<li><code>update-queryconverter</code></li>
+<li><code>delete-queryconverter</code></li>
+<li><code>add-listener</code></li>
+<li><code>update-listener</code></li>
+<li><code>delete-listener</code></li>
+<li><code>add-expressible</code></li>
+<li><code>update-expressible</code></li>
+<li><code>delete-expressible</code></li>
+</ul>
+<h4 id="处理器和组件命令示例"><a href="#处理器和组件命令示例" class="headerlink" title="处理器和组件命令示例"></a>处理器和组件命令示例</h4><p>要创建请求处理器，我们可以使用<code>add-requesthandler</code>命令：</p>
+<h4 id="V1-API-6"><a href="#V1-API-6" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;/mypath&quot;,</span></span><br><span class="line"><span class="string">    &quot;class&quot;: &quot;solr.DumpRequestHandler&quot;,</span></span><br><span class="line"><span class="string">    &quot;defaults&quot;: &#123; &quot;x&quot;: &quot;y&quot; ,&quot;a&quot;: &quot;b&quot;, &quot;rows&quot;:10 &#125;,</span></span><br><span class="line"><span class="string">    &quot;useParams&quot;: &quot;x&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-6"><a href="#V2-API-6" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;add-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;/mypath&quot;,</span></span><br><span class="line"><span class="string">    &quot;class&quot;: &quot;solr.DumpRequestHandler&quot;,</span></span><br><span class="line"><span class="string">    &quot;defaults&quot;: &#123; &quot;x&quot;: &quot;y&quot; ,&quot;a&quot;: &quot;b&quot;, &quot;rows&quot;:10 &#125;,</span></span><br><span class="line"><span class="string">    &quot;useParams&quot;: &quot;x&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>调用新请求处理器以检查是否已注册：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ curl http://localhost:8983/solr/techproducts/mypath?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>您应该看到以下输出：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;params&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;indent&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;a&quot;</span><span class="punctuation">:</span> <span class="string">&quot;b&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;x&quot;</span><span class="punctuation">:</span> <span class="string">&quot;y&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;rows&quot;</span><span class="punctuation">:</span> <span class="string">&quot;10&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;context&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;webapp&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/solr&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;path&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/mypath&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;httpMethod&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GET&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>要更新请求处理器，应使用<code>update-requesthandler</code>命令：</p>
+<h4 id="V1-API-7"><a href="#V1-API-7" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;update-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;/mypath&quot;,</span></span><br><span class="line"><span class="string">    &quot;class&quot;: &quot;solr.DumpRequestHandler&quot;,</span></span><br><span class="line"><span class="string">    &quot;defaults&quot;: &#123;&quot;x&quot;: &quot;new value for X&quot;, &quot;rows&quot;: &quot;20&quot;&#125;,</span></span><br><span class="line"><span class="string">    &quot;useParams&quot;: &quot;x&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-7"><a href="#V2-API-7" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;update-requesthandler&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;name&quot;: &quot;/mypath&quot;,</span></span><br><span class="line"><span class="string">    &quot;class&quot;: &quot;solr.DumpRequestHandler&quot;,</span></span><br><span class="line"><span class="string">    &quot;defaults&quot;: &#123;&quot;x&quot;: &quot;new value for X&quot;, &quot;rows&quot;: &quot;20&quot;&#125;,</span></span><br><span class="line"><span class="string">    &quot;useParams&quot;: &quot;x&quot;</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>最后，通过<code>delete-requesthandler</code>命令删除请求处理器：</p>
+<h4 id="V1-API-8"><a href="#V1-API-8" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;delete-requesthandler&quot;: &quot;/mypath&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-8"><a href="#V2-API-8" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;delete-requesthandler&quot;: &quot;/mypath&quot;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h3 id="用户定义属性命令"><a href="#用户定义属性命令" class="headerlink" title="用户定义属性命令"></a>用户定义属性命令</h3><p>Solr允许用户使用占位符格式<code>$&#123;variable_name:default_val&#125;</code>模板化<code>solrconfig.xml</code>。您可以使用系统属性设置值，例如<code>-Dvariable_name= my_customvalue</code>。在运行时使用这些命令可以实现相同的目的：</p>
+<ul>
+<li><code>set-user-property</code>：设置用户定义的属性。如果属性已经设置，此命令将覆盖以前的设置。</li>
+<li><code>unset-user-property</code>：删除用户定义的属性。</li>
+</ul>
+<p>请求的结构类似于使用其他命令的请求结构，格式为<code>&quot;command&quot;:&#123;&quot;variable_name&quot;: &quot;property_value&quot;&#125;</code>。如有必要，可以一次添加多个变量。</p>
+<p>有关用户定义属性的更多信息，请参见<a href="property-substitution.md#user-defined-properties-in-core-properties">core.properties中的用户定义属性</a>部分。</p>
+<h4 id="创建和更新用户定义属性"><a href="#创建和更新用户定义属性" class="headerlink" title="创建和更新用户定义属性"></a>创建和更新用户定义属性</h4><p>此命令设置用户属性：</p>
+<h4 id="V1-API-9"><a href="#V1-API-9" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;set-user-property&quot;: &#123;&quot;variable_name&quot;: &quot;some_value&quot;&#125;&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-9"><a href="#V2-API-9" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;set-user-property&quot;: &#123;&quot;variable_name&quot;: &quot;some_value&quot;&#125;&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>同样，我们可以使用<code>/config/overlay</code>端点验证更改已经完成：</p>
+<h4 id="V1-API-10"><a href="#V1-API-10" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/solr/techproducts/config/overlay?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-10"><a href="#V2-API-10" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/api/collections/techproducts/config/overlay?omitHeader=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>我们期望看到如下输出：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;overlay&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;znodeVersion&quot;</span><span class="punctuation">:</span><span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;userProps&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">     <span class="attr">&quot;variable_name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;some_value&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>要取消设置变量，发出如下命令：</p>
+<h4 id="V1-API-11"><a href="#V1-API-11" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;unset-user-property&quot;: &quot;variable_name&quot;&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-11"><a href="#V2-API-11" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&quot;unset-user-property&quot;: &quot;variable_name&quot;&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h2 id="如何将solrconfig-xml属性映射到JSON"><a href="#如何将solrconfig-xml属性映射到JSON" class="headerlink" title="如何将solrconfig.xml属性映射到JSON"></a>如何将solrconfig.xml属性映射到JSON</h2><p>通过使用此API，您将生成<code>solrconfig.xml</code>中定义的属性的JSON表示。要了解如何使用API表示属性，让我们看几个示例。</p>
+<p>以下是请求处理器在<code>solrconfig.xml</code>中的样子：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/query&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SearchHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;echoParams&quot;</span>&gt;</span>explicit<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;rows&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>使用Config API定义的相同请求处理器如下所示：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;add-requesthandler&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/query&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.SearchHandler&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;defaults&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;echoParams&quot;</span><span class="punctuation">:</span> <span class="string">&quot;explicit&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;rows&quot;</span><span class="punctuation">:</span> <span class="number">10</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Config-API的工作原理"><a href="#Config-API的工作原理" class="headerlink" title="Config API的工作原理"></a>Config API的工作原理</h2><p>当使用SolrCloud时，每个核心都会监视用于该核心的配置集的ZooKeeper目录。如果同一节点中有多个核心使用相同的配置集，则只使用一个ZooKeeper监视。</p>
+<p><strong>提示：</strong> 在用户管理集群或单节点安装中，没有监视（因为ZooKeeper未运行）。</p>
+<p>例如，如果配置集’myconf’被核心使用，节点将监视<code>/configs/myconf</code>。通过API执行的每个写操作都会’触碰’目录，所有监视器都会收到通知。每个核心都会通过比较<code>znode</code>版本检查模式文件、<code>solrconfig.xml</code>或<code>configoverlay.json</code>是否已被修改。如果有任何被修改，核心会重新加载。</p>
+<p>如果修改了<code>params.json</code>，参数对象只是更新而不进行核心重新加载（有关<code>params.json</code>的更多信息，请参见<a href="request-parameters-api.md">请求参数API</a>）。</p>
+<h3 id="空命令"><a href="#空命令" class="headerlink" title="空命令"></a>空命令</h3><p>如果向<code>/config</code>端点发送空命令，监视将在使用此配置集的所有核心上触发。例如：</p>
+<h4 id="V1-API-12"><a href="#V1-API-12" class="headerlink" title="V1 API"></a>V1 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&#125;&#x27;</span> http://localhost:8983/solr/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<h4 id="V2-API-12"><a href="#V2-API-12" class="headerlink" title="V2 API"></a>V2 API</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;&#125;&#x27;</span> http://localhost:8983/api/collections/techproducts/config</span><br></pre></td></tr></table></figure>
+
+<p>直接编辑任何文件而不’触碰’目录<strong>不会</strong>使其对所有节点可见。</p>
+<p>组件可以通过使用<code>SolrCore#registerConfListener()</code>注册监听器来监视配置集’触碰’事件。</p>
+<h3 id="监听配置更改"><a href="#监听配置更改" class="headerlink" title="监听配置更改"></a>监听配置更改</h3><p>任何组件都可以使用以下方式注册监听器：</p>
+<p><code>SolrCore#addConfListener(Runnable listener)</code></p>
+<p>以获取配置更改的通知。如果修改的文件导致核心重新加载（即<code>configoverlay.xml</code>或模式），这不是很有用。组件可以使用此功能重新加载它们感兴趣的文件。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Config API为Solr配置管理提供了强大而灵活的工具。通过REST风格的接口，管理员可以动态修改常用配置属性、管理请求处理器和组件，以及设置用户定义属性。配置覆盖机制确保原始配置文件的完整性，同时提供运行时配置修改的能力。合理使用Config API可以显著简化Solr集群的配置管理和维护工作。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">请求处理器</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/Config-API/">Config API</a>
+  
+    <a class="article-tag" href="/tags/REST-API/">REST API</a>
+  
+    <a class="article-tag" href="/tags/%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/">配置管理</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：Configsets API完整指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/14/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E6%8F%90%E4%BA%A4%E4%B8%8E%E4%BA%8B%E5%8A%A1%E6%97%A5%E5%BF%97%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：提交与事务日志详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfig-API%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：Config API详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-API%E7%AB%AF%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">Config API端点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E7%B4%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">检索配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API"><span class="nav-number">1.2.0.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API"><span class="nav-number">1.2.0.2.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-1"><span class="nav-number">1.2.0.3.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-1"><span class="nav-number">1.2.0.4.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-2"><span class="nav-number">1.2.0.5.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-2"><span class="nav-number">1.2.0.6.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E9%85%8D%E7%BD%AE%E7%9A%84%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.</span> <span class="nav-text">修改配置的命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%B1%9E%E6%80%A7%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.1.</span> <span class="nav-text">通用属性命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%9A%E7%94%A8%E5%B1%9E%E6%80%A7%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">通用属性示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-3"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-3"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-4"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-4"><span class="nav-number">1.3.1.5.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-5"><span class="nav-number">1.3.1.6.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-5"><span class="nav-number">1.3.1.7.</span> <span class="nav-text">V2 API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.</span> <span class="nav-text">处理器和组件命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E7%9A%84%E5%9F%BA%E6%9C%AC%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">组件的基本命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BB%84%E4%BB%B6%E7%9A%84%E9%AB%98%E7%BA%A7%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">组件的高级命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%99%A8%E5%92%8C%E7%BB%84%E4%BB%B6%E5%91%BD%E4%BB%A4%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">处理器和组件命令示例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-6"><span class="nav-number">1.3.2.4.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-6"><span class="nav-number">1.3.2.5.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-7"><span class="nav-number">1.3.2.6.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-7"><span class="nav-number">1.3.2.7.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-8"><span class="nav-number">1.3.2.8.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-8"><span class="nav-number">1.3.2.9.</span> <span class="nav-text">V2 API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.3.</span> <span class="nav-text">用户定义属性命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%92%8C%E6%9B%B4%E6%96%B0%E7%94%A8%E6%88%B7%E5%AE%9A%E4%B9%89%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">创建和更新用户定义属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-9"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-9"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-10"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-10"><span class="nav-number">1.3.3.5.</span> <span class="nav-text">V2 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-11"><span class="nav-number">1.3.3.6.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-11"><span class="nav-number">1.3.3.7.</span> <span class="nav-text">V2 API</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E5%B0%86solrconfig-xml%E5%B1%9E%E6%80%A7%E6%98%A0%E5%B0%84%E5%88%B0JSON"><span class="nav-number">1.4.</span> <span class="nav-text">如何将solrconfig.xml属性映射到JSON</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Config-API%E7%9A%84%E5%B7%A5%E4%BD%9C%E5%8E%9F%E7%90%86"><span class="nav-number">1.5.</span> <span class="nav-text">Config API的工作原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A9%BA%E5%91%BD%E4%BB%A4"><span class="nav-number">1.5.1.</span> <span class="nav-text">空命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#V1-API-12"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#V2-API-12"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E5%90%AC%E9%85%8D%E7%BD%AE%E6%9B%B4%E6%94%B9"><span class="nav-number">1.5.2.</span> <span class="nav-text">监听配置更改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr索引：重新索引策略与最佳实践详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr索引版本升级重新索引模式变更索引策略" />
+  
+  
+  
+  
+  <meta name="description" content="深入分析Solr重新索引的触发条件、执行策略和最佳实践，包括模式变更、版本升级、配置修改等场景下的重索引方案与风险控制">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：重新索引策略与最佳实践详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/31/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入分析Solr重新索引的触发条件、执行策略和最佳实践，包括模式变更、版本升级、配置修改等场景下的重索引方案与风险控制">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-31T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:03:49.952Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr索引">
+<meta property="article:tag" content="版本升级">
+<meta property="article:tag" content="重新索引">
+<meta property="article:tag" content="模式变更">
+<meta property="article:tag" content="索引策略">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr索引：重新索引策略与最佳实践详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr索引：重新索引策略与最佳实践详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/31/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-31T16:00:00.000Z" itemprop="datePublished">三月 31, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr索引：重新索引策略与最佳实践详解"><a href="#Solr索引：重新索引策略与最佳实践详解" class="headerlink" title="Solr索引：重新索引策略与最佳实践详解"></a>Solr索引：重新索引策略与最佳实践详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>在Solr配置发生某些类型的更改时，特别是模式更改时，需要重新索引数据。这些更改包括编辑字段或字段类型的属性、添加字段或复制字段规则、升级Solr以及更改某些系统配置属性。</p>
+<p>重要的是要意识到，未能重新索引可能会对Solr或用户查找所需内容产生明显和微妙的后果。</p>
+<p>在这种情况下，”重新索引”意味着<strong>首先删除现有索引，然后重复用于从记录系统中摄取整个语料库的过程</strong>。强烈建议Solr用户有一个一致、可重复的索引过程，以便在需要时重新创建索引。</p>
+<h2 id="重新索引的核心概念"><a href="#重新索引的核心概念" class="headerlink" title="重新索引的核心概念"></a>重新索引的核心概念</h2><h3 id="定义与重要性"><a href="#定义与重要性" class="headerlink" title="定义与重要性"></a>定义与重要性</h3><p>重新索引不是简单地重新摄取所有文档，而是确保所有文档和Lucene段都被删除后的完全重建过程。这是因为Lucene索引是一个为快速搜索而设计的有损抽象，一旦文档添加到索引中，就不能假定原始数据仍然可用。</p>
+<h3 id="Solr模式与Lucene索引的关系"><a href="#Solr模式与Lucene索引的关系" class="headerlink" title="Solr模式与Lucene索引的关系"></a>Solr模式与Lucene索引的关系</h3><p>理解为什么需要重新索引的关键是了解Solr模式和底层Lucene索引之间的关系：</p>
+<ul>
+<li><strong>Lucene不使用模式</strong>：模式是仅有的Solr概念</li>
+<li><strong>模式充当索引规则书</strong>：告诉Lucene如何解释发送的数据</li>
+<li><strong>一旦文档在Lucene中，模式就无法控制底层数据结构</strong></li>
+</ul>
+<p>这与大多数使用模式的数据库模型不同。当索引时，Solr的模式就像一个索引文档的规则书，告诉Lucene如何解释正在发送的数据。</p>
+<h2 id="需要重新索引的更改"><a href="#需要重新索引的更改" class="headerlink" title="需要重新索引的更改"></a>需要重新索引的更改</h2><h3 id="模式更改"><a href="#模式更改" class="headerlink" title="模式更改"></a>模式更改</h3><p>除少数例外，对集合模式的更改都需要重新索引。这是因为许多可用选项只在索引过程中应用，Solr无法在不重新索引数据的情况下实现所需的更改。</p>
+<h4 id="更改字段和字段类型属性"><a href="#更改字段和字段类型属性" class="headerlink" title="更改字段和字段类型属性"></a>更改字段和字段类型属性</h4><p>当您通过添加字段、删除字段或更改字段或字段类型定义来更改模式时，通常是为了让这些更改改变文档的搜索方式。这些更改的全部效果要到重新索引所有文档后才会在整个语料库中体现出来。</p>
+<p><strong>必须重新索引的字段类型属性更改</strong>：</p>
+<ul>
+<li><code>indexed</code>：影响字段是否可搜索</li>
+<li><code>stored</code>：影响字段值是否存储</li>
+<li><code>docValues</code>：影响排序、分面和分组</li>
+<li><code>multiValued</code>：影响字段值数量</li>
+<li><code>required</code>：影响文档验证</li>
+<li><code>termVectors</code>：影响高亮和相似性计算</li>
+</ul>
+<p><strong>注意事项</strong>：<br>不建议在不重新索引的情况下更改影响索引的字段属性。只有对后果有透彻理解时才应尝试此操作。对用户的负面影响可能不会立即显现。</p>
+<h4 id="更改字段分析"><a href="#更改字段分析" class="headerlink" title="更改字段分析"></a>更改字段分析</h4><p>分析链也在字段类型上配置，并在索引和查询时应用：</p>
+<ul>
+<li><strong>仅查询时分析链更改</strong>：如果为字段定义了单独的查询和索引分析链，且您只更改查询时分析链，则不需要重新索引</li>
+<li><strong>索引时分析链更改</strong>：对索引时分析链的任何更改几乎在所有情况下都需要重新索引</li>
+</ul>
+<h3 id="Solrconfig更改"><a href="#Solrconfig更改" class="headerlink" title="Solrconfig更改"></a>Solrconfig更改</h3><p>识别需要重新索引的solrconfig.xml更改不那么直观。一般规则是”任何改变索引中存储内容的更改都需要重新索引”。</p>
+<h4 id="已知需要重新索引的配置更改"><a href="#已知需要重新索引的配置更改" class="headerlink" title="已知需要重新索引的配置更改"></a>已知需要重新索引的配置更改</h4><p><strong>luceneMatchVersion参数</strong>：</p>
+<ul>
+<li>控制Solr与Lucene的兼容性</li>
+<li>可能在幕后改变分析规则</li>
+<li>更改时总是建议重新索引</li>
+<li>通常只在主要升级时更改</li>
+</ul>
+<p><strong>更新请求处理器</strong>：</p>
+<ul>
+<li>如果更改了更新请求处理器，通常是为了改变更新请求（文档）的处理（索引）方式</li>
+<li>建议重新索引文档以实现所做的更改</li>
+</ul>
+<p><strong>codecFactory参数</strong>：</p>
+<ul>
+<li>如果更改了solrconfig.xml中的codecFactory参数</li>
+<li>强烈建议计划重新索引文档以避免意外行为</li>
+</ul>
+<h3 id="版本更改"><a href="#版本更改" class="headerlink" title="版本更改"></a>版本更改</h3><p><strong>模式版本属性</strong>：<br>更改模式<code>version</code>属性等同于更改字段类型属性。这种更改通常只在主要升级期间或因主要升级而进行。</p>
+<h2 id="升级场景"><a href="#升级场景" class="headerlink" title="升级场景"></a>升级场景</h2><h3 id="主要版本升级"><a href="#主要版本升级" class="headerlink" title="主要版本升级"></a>主要版本升级</h3><p>当在主要版本之间升级（例如，从7.x版本到8.x）时，最佳实践是始终重新索引数据。原因是默认字段类型定义或底层代码可能发生微妙变化。</p>
+<h3 id="向后兼容性"><a href="#向后兼容性" class="headerlink" title="向后兼容性"></a>向后兼容性</h3><p><strong>Lucene兼容性保证</strong>：</p>
+<ul>
+<li>Lucene努力确保一个主要版本的向后兼容性</li>
+<li>Solr 8x可以与Solr 7x创建的索引一起工作</li>
+<li>但这种保证不适用于Solr X-2（在此例中是Solr 6x）</li>
+</ul>
+<h3 id="升级注意事项"><a href="#升级注意事项" class="headerlink" title="升级注意事项"></a>升级注意事项</h3><p><strong>次要版本升级</strong>：<br>如果作为从一个次要版本升级到另一个版本（如从7.x到更高的7.x版本）的一部分，您没有更改模式，通常可以跳过重新索引文档。但是，升级到主要版本时，应该计划重新索引文档。</p>
+<p><strong>旧版本索引</strong>：<br>当升级使用比X-1更旧的Solr版本生成的索引时，必须始终重新索引语料库。例如，如果您升级到Solr 8x，曾经被Solr 6x使用的索引必须删除并按下面概述的方式重新摄取。</p>
+<p>写入了标识用于摄取第一个文档的Lucene版本的标记。该标记在索引中永久保留，除非索引被完全删除。如果Lucene发现标记比X-1主要版本更旧，它将拒绝打开索引。</p>
+<h2 id="重新索引策略"><a href="#重新索引策略" class="headerlink" title="重新索引策略"></a>重新索引策略</h2><h3 id="删除所有文档策略"><a href="#删除所有文档策略" class="headerlink" title="删除所有文档策略"></a>删除所有文档策略</h3><p>最佳方法是首先从索引中删除所有内容，然后重新索引数据。</p>
+<h4 id="执行步骤"><a href="#执行步骤" class="headerlink" title="执行步骤"></a>执行步骤</h4><ol>
+<li><strong>删除所有文档</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> --data-binary <span class="string">&#x27;&#123;&quot;delete&quot;:&#123;&quot;query&quot;:&quot;*:*&quot; &#125;&#125;&#x27;</span> http://localhost:8983/solr/my_collection/update</span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>提交删除操作</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> --data-binary <span class="string">&#x27;&#123;&quot;commit&quot;:&#123;&#125;&#125;&#x27;</span> http://localhost:8983/solr/my_collection/update</span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>验证删除完成</strong>：</li>
+</ol>
+<ul>
+<li>确认所有文档都已删除</li>
+<li>检查data&#x2F;index目录并确认没有段文件</li>
+<li>在集群的每个节点的每个分片和每个副本中验证索引已被删除</li>
+</ul>
+<ol start="4">
+<li><strong>重新开始索引</strong>：<br>一旦索引被清除，您可以通过重新运行原始索引过程开始重新索引。</li>
+</ol>
+<h4 id="验证段删除"><a href="#验证段删除" class="headerlink" title="验证段删除"></a>验证段删除</h4><p><strong>检查索引段</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查索引目录</span></span><br><span class="line"><span class="built_in">ls</span> -la /path/to/solr/data/index/</span><br><span class="line"><span class="comment"># 确认没有段文件（如segments_N文件）</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>集群验证</strong>：<br>在SolrCloud环境中，需要在集群的每个节点、每个分片和每个副本上验证索引删除。仅查询文档数量是不够的，因为您可能没有文档但仍有索引段。</p>
+<h4 id="替代方案"><a href="#替代方案" class="headerlink" title="替代方案"></a>替代方案</h4><p>另一种方法是使用更新的模式删除并重新创建集合，然后重新索引，前提是您可以承担集合在重新索引过程中离线。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 删除集合</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=DELETE&amp;name=my_collection&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 重新创建集合</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=CREATE&amp;name=my_collection&amp;numShards=2&amp;replicationFactor=2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="索引到另一个集合策略"><a href="#索引到另一个集合策略" class="headerlink" title="索引到另一个集合策略"></a>索引到另一个集合策略</h3><p>另一种方法是索引到新集合并使用Solr的集合别名功能无缝地将应用程序指向新集合而不停机。</p>
+<h4 id="适用场景"><a href="#适用场景" class="headerlink" title="适用场景"></a>适用场景</h4><p>此选项仅适用于在SolrCloud模式下运行的Solr安装。</p>
+<h4 id="执行步骤-1"><a href="#执行步骤-1" class="headerlink" title="执行步骤"></a>执行步骤</h4><ol>
+<li><strong>创建新集合</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=CREATE&amp;name=my_collection_v2&amp;numShards=2&amp;replicationFactor=2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p><strong>索引到新集合</strong>：<br>使用更改将文档索引到使用您的更改的新集合中。</p>
+</li>
+<li><p><strong>测试新集合</strong>：<br>完成索引和测试后，验证新集合的功能。</p>
+</li>
+<li><p><strong>创建别名</strong>：</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=CREATEALIAS&amp;name=my_collection_alias&amp;collections=my_collection_v2&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="5">
+<li><p><strong>切换应用程序</strong>：<br>将前端应用程序指向别名，新查询和更新将无缝路由到新集合。</p>
+</li>
+<li><p><strong>清理旧集合</strong>：</p>
+</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=DELETE&amp;name=my_collection&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="优势和注意事项"><a href="#优势和注意事项" class="headerlink" title="优势和注意事项"></a>优势和注意事项</h4><p><strong>优势</strong>：</p>
+<ul>
+<li>如果发现测试未发现的问题，可以切换回旧集合</li>
+<li>零停机时间</li>
+</ul>
+<p><strong>注意事项</strong>：</p>
+<ul>
+<li>需要更多资源直到可以删除旧集合</li>
+<li>需要SolrCloud环境</li>
+</ul>
+<h3 id="蓝绿部署策略"><a href="#蓝绿部署策略" class="headerlink" title="蓝绿部署策略"></a>蓝绿部署策略</h3><h4 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h4><p>蓝绿部署是索引到另一个集合策略的扩展，维护两个完整的生产环境。</p>
+<h4 id="实施步骤"><a href="#实施步骤" class="headerlink" title="实施步骤"></a>实施步骤</h4><ol>
+<li><p><strong>维护两套环境</strong>：</p>
+<ul>
+<li>蓝色环境：当前生产环境</li>
+<li>绿色环境：新版本环境</li>
+</ul>
+</li>
+<li><p><strong>在绿色环境中重新索引</strong>：</p>
+<ul>
+<li>应用所有模式和配置更改</li>
+<li>完整重新索引数据</li>
+</ul>
+</li>
+<li><p><strong>测试绿色环境</strong>：</p>
+<ul>
+<li>进行全面功能测试</li>
+<li>性能测试</li>
+<li>数据一致性验证</li>
+</ul>
+</li>
+<li><p><strong>切换流量</strong>：</p>
+<ul>
+<li>使用负载均衡器或DNS切换</li>
+<li>监控切换后的系统状态</li>
+</ul>
+</li>
+<li><p><strong>保留蓝色环境</strong>：</p>
+<ul>
+<li>保留一段时间以便快速回滚</li>
+<li>确认绿色环境稳定后清理</li>
+</ul>
+</li>
+</ol>
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="准备工作"><a href="#准备工作" class="headerlink" title="准备工作"></a>准备工作</h3><h4 id="备份策略"><a href="#备份策略" class="headerlink" title="备份策略"></a>备份策略</h4><ol>
+<li><strong>数据备份</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建索引备份</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=BACKUP&amp;name=backup_name&amp;collection=my_collection&amp;location=/backup/location&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>配置备份</strong>：</li>
+</ol>
+<ul>
+<li>备份所有配置文件</li>
+<li>版本控制管理配置变更</li>
+<li>记录变更日志</li>
+</ul>
+<h4 id="测试环境"><a href="#测试环境" class="headerlink" title="测试环境"></a>测试环境</h4><ol>
+<li><p><strong>建立测试环境</strong>：</p>
+<ul>
+<li>复制生产环境配置</li>
+<li>使用生产数据样本</li>
+<li>验证重新索引过程</li>
+</ul>
+</li>
+<li><p><strong>性能测试</strong>：</p>
+<ul>
+<li>索引性能测试</li>
+<li>查询性能验证</li>
+<li>内存和磁盘使用监控</li>
+</ul>
+</li>
+</ol>
+<h3 id="执行过程"><a href="#执行过程" class="headerlink" title="执行过程"></a>执行过程</h3><h4 id="重新索引计划"><a href="#重新索引计划" class="headerlink" title="重新索引计划"></a>重新索引计划</h4><ol>
+<li><p><strong>制定详细计划</strong>：</p>
+<ul>
+<li>确定维护窗口</li>
+<li>评估索引时间</li>
+<li>准备回滚方案</li>
+</ul>
+</li>
+<li><p><strong>资源准备</strong>：</p>
+<ul>
+<li>确保足够的磁盘空间</li>
+<li>监控内存使用</li>
+<li>准备额外的计算资源</li>
+</ul>
+</li>
+</ol>
+<h4 id="监控和验证"><a href="#监控和验证" class="headerlink" title="监控和验证"></a>监控和验证</h4><ol>
+<li><strong>索引过程监控</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监控索引进度</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/my_collection/admin/mbeans?stats=true&amp;cat=UPDATE&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>数据验证</strong>：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查文档数量</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/my_collection/select?q=*:*&amp;rows=0&amp;wt=json&quot;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="3">
+<li><strong>功能测试</strong>：<ul>
+<li>验证搜索功能</li>
+<li>测试分面和排序</li>
+<li>检查高亮和建议功能</li>
+</ul>
+</li>
+</ol>
+<h3 id="风险控制"><a href="#风险控制" class="headerlink" title="风险控制"></a>风险控制</h3><h4 id="风险评估"><a href="#风险评估" class="headerlink" title="风险评估"></a>风险评估</h4><ol>
+<li><p><strong>数据风险</strong>：</p>
+<ul>
+<li>数据丢失风险</li>
+<li>索引不一致风险</li>
+<li>性能降级风险</li>
+</ul>
+</li>
+<li><p><strong>业务风险</strong>：</p>
+<ul>
+<li>服务中断风险</li>
+<li>用户体验影响</li>
+<li>数据查询准确性</li>
+</ul>
+</li>
+</ol>
+<h4 id="风险缓解"><a href="#风险缓解" class="headerlink" title="风险缓解"></a>风险缓解</h4><ol>
+<li><p><strong>渐进式部署</strong>：</p>
+<ul>
+<li>先在非生产环境测试</li>
+<li>分阶段推出到生产环境</li>
+<li>监控每个阶段的指标</li>
+</ul>
+</li>
+<li><p><strong>快速回滚机制</strong>：</p>
+<ul>
+<li>保留旧版本索引</li>
+<li>准备快速切换脚本</li>
+<li>建立告警和监控系统</li>
+</ul>
+</li>
+</ol>
+<h2 id="不需要重新索引的更改"><a href="#不需要重新索引的更改" class="headerlink" title="不需要重新索引的更改"></a>不需要重新索引的更改</h2><h3 id="配置更改"><a href="#配置更改" class="headerlink" title="配置更改"></a>配置更改</h3><p>不需要或强烈指示重新索引的更改类型是不影响索引的更改：</p>
+<ol>
+<li><p><strong>请求处理器更改</strong>：</p>
+<ul>
+<li>创建或修改请求处理器</li>
+<li>搜索组件配置</li>
+<li>solrconfig.xml的其他元素</li>
+</ul>
+</li>
+<li><p><strong>集群管理操作</strong>：</p>
+<ul>
+<li>添加节点、副本或新核心</li>
+<li>分片拆分</li>
+<li>集群管理操作</li>
+</ul>
+</li>
+</ol>
+<h3 id="查询相关配置"><a href="#查询相关配置" class="headerlink" title="查询相关配置"></a>查询相关配置</h3><ol>
+<li><strong>查询解析器配置</strong></li>
+<li><strong>响应编写器设置</strong></li>
+<li><strong>缓存配置</strong></li>
+<li><strong>日志配置</strong></li>
+</ol>
+<p>这些更改不会影响索引数据的存储方式，因此不需要重新索引。</p>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><h4 id="重新索引后性能下降"><a href="#重新索引后性能下降" class="headerlink" title="重新索引后性能下降"></a>重新索引后性能下降</h4><p><strong>可能原因</strong>：</p>
+<ul>
+<li>索引段过多</li>
+<li>内存配置不当</li>
+<li>字段配置变更影响查询性能</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化索引</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/my_collection/update?optimize=true&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查段信息</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/my_collection/admin/segments&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数据不一致"><a href="#数据不一致" class="headerlink" title="数据不一致"></a>数据不一致</h4><p><strong>检查步骤</strong>：</p>
+<ol>
+<li>验证所有文档都已重新索引</li>
+<li>检查字段映射配置</li>
+<li>验证分析器配置</li>
+</ol>
+<p><strong>解决方法</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查文档数量</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/my_collection/select?q=*:*&amp;rows=0&amp;facet=true&amp;facet.field=_version_&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="索引过程中断"><a href="#索引过程中断" class="headerlink" title="索引过程中断"></a>索引过程中断</h4><p><strong>恢复步骤</strong>：</p>
+<ol>
+<li>确定中断点</li>
+<li>清理部分索引数据</li>
+<li>重新开始索引过程</li>
+</ol>
+<h3 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h3><h4 id="日志分析"><a href="#日志分析" class="headerlink" title="日志分析"></a>日志分析</h4><ol>
+<li><strong>启用详细日志</strong>：</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;org.apache.solr.update&quot;</span> <span class="attr">level</span>=<span class="string">&quot;INFO&quot;</span>/&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">logger</span> <span class="attr">name</span>=<span class="string">&quot;org.apache.solr.core&quot;</span> <span class="attr">level</span>=<span class="string">&quot;DEBUG&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><strong>监控关键指标</strong>：<ul>
+<li>索引速度</li>
+<li>内存使用</li>
+<li>错误日志</li>
+</ul>
+</li>
+</ol>
+<h4 id="性能监控"><a href="#性能监控" class="headerlink" title="性能监控"></a>性能监控</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 监控JVM内存</span></span><br><span class="line">jstat -gc -h10 &lt;solr_pid&gt; 5s</span><br><span class="line"></span><br><span class="line"><span class="comment"># 监控索引统计</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/metrics?group=core&amp;prefix=CORE&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="自动化和脚本化"><a href="#自动化和脚本化" class="headerlink" title="自动化和脚本化"></a>自动化和脚本化</h2><h3 id="重新索引脚本示例"><a href="#重新索引脚本示例" class="headerlink" title="重新索引脚本示例"></a>重新索引脚本示例</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># reindex.sh - Solr重新索引脚本</span></span><br><span class="line"></span><br><span class="line">SOLR_URL=<span class="string">&quot;http://localhost:8983&quot;</span></span><br><span class="line">COLLECTION=<span class="string">&quot;my_collection&quot;</span></span><br><span class="line">BACKUP_NAME=<span class="string">&quot;backup_<span class="subst">$(date +%Y%m%d_%H%M%S)</span>&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;开始重新索引过程...&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 1. 创建备份</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;创建备份...&quot;</span></span><br><span class="line">curl <span class="string">&quot;<span class="variable">$&#123;SOLR_URL&#125;</span>/solr/admin/collections?action=BACKUP&amp;name=<span class="variable">$&#123;BACKUP_NAME&#125;</span>&amp;collection=<span class="variable">$&#123;COLLECTION&#125;</span>&amp;location=/backup&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 删除所有文档</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;删除所有文档...&quot;</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">     --data-binary <span class="string">&#x27;&#123;&quot;delete&quot;:&#123;&quot;query&quot;:&quot;*:*&quot;&#125;&#125;&#x27;</span> \</span><br><span class="line">     <span class="string">&quot;<span class="variable">$&#123;SOLR_URL&#125;</span>/solr/<span class="variable">$&#123;COLLECTION&#125;</span>/update&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 提交删除</span></span><br><span class="line">curl -X POST -H <span class="string">&#x27;Content-Type: application/json&#x27;</span> \</span><br><span class="line">     --data-binary <span class="string">&#x27;&#123;&quot;commit&quot;:&#123;&#125;&#125;&#x27;</span> \</span><br><span class="line">     <span class="string">&quot;<span class="variable">$&#123;SOLR_URL&#125;</span>/solr/<span class="variable">$&#123;COLLECTION&#125;</span>/update&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 验证删除</span></span><br><span class="line">DOC_COUNT=$(curl -s <span class="string">&quot;<span class="variable">$&#123;SOLR_URL&#125;</span>/solr/<span class="variable">$&#123;COLLECTION&#125;</span>/select?q=*:*&amp;rows=0&quot;</span> | jq <span class="string">&#x27;.response.numFound&#x27;</span>)</span><br><span class="line"><span class="keyword">if</span> [ <span class="string">&quot;<span class="variable">$DOC_COUNT</span>&quot;</span> -eq 0 ]; <span class="keyword">then</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;文档删除成功&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;文档删除失败，文档数量: <span class="variable">$DOC_COUNT</span>&quot;</span></span><br><span class="line">    <span class="built_in">exit</span> 1</span><br><span class="line"><span class="keyword">fi</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 重新索引</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;开始重新索引...&quot;</span></span><br><span class="line"><span class="comment"># 这里调用您的索引脚本</span></span><br><span class="line">./index_documents.sh</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;重新索引完成&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="监控脚本"><a href="#监控脚本" class="headerlink" title="监控脚本"></a>监控脚本</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># monitor_reindex.sh - 监控重新索引进度</span></span><br><span class="line"></span><br><span class="line">SOLR_URL=<span class="string">&quot;http://localhost:8983&quot;</span></span><br><span class="line">COLLECTION=<span class="string">&quot;my_collection&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">true</span>; <span class="keyword">do</span></span><br><span class="line">    DOC_COUNT=$(curl -s <span class="string">&quot;<span class="variable">$&#123;SOLR_URL&#125;</span>/solr/<span class="variable">$&#123;COLLECTION&#125;</span>/select?q=*:*&amp;rows=0&quot;</span> | jq <span class="string">&#x27;.response.numFound&#x27;</span>)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;<span class="subst">$(date)</span>: 当前文档数量: <span class="variable">$DOC_COUNT</span>&quot;</span></span><br><span class="line">    <span class="built_in">sleep</span> 30</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>重新索引是Solr维护中的重要操作，需要仔细计划和执行。理解何时需要重新索引、如何安全执行以及如何验证结果对于维护健康的Solr集群至关重要。</p>
+<h3 id="关键要点"><a href="#关键要点" class="headerlink" title="关键要点"></a>关键要点</h3><ol>
+<li><strong>预防胜于治疗</strong>：在生产环境应用更改之前，在测试环境中验证所有模式和配置更改</li>
+<li><strong>完整删除索引</strong>：确保删除所有文档和Lucene段，而不仅仅是重新摄取文档</li>
+<li><strong>选择合适的策略</strong>：根据业务需求和资源情况选择删除重建或蓝绿部署策略</li>
+<li><strong>监控和验证</strong>：持续监控重新索引过程并验证结果</li>
+<li><strong>准备回滚方案</strong>：始终准备好快速回滚机制以应对意外情况</li>
+</ol>
+<p>通过遵循这些最佳实践和策略，您可以确保重新索引过程的成功执行，同时最小化业务影响和数据风险。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7/">版本升级</a>
+  
+    <a class="article-tag" href="/tags/%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95/">重新索引</a>
+  
+    <a class="article-tag" href="/tags/%E6%A8%A1%E5%BC%8F%E5%8F%98%E6%9B%B4/">模式变更</a>
+  
+    <a class="article-tag" href="/tags/%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5/">索引策略</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9ASSL%E5%8A%A0%E5%AF%86%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E5%AE%89%E5%85%A8%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：SSL加密配置完整指南与安全实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/30/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E9%83%A8%E5%88%86%E6%96%87%E6%A1%A3%E6%9B%B4%E6%96%B0%E4%B8%8E%E5%8E%9F%E5%AD%90%E6%93%8D%E4%BD%9C%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr索引：部分文档更新与原子操作完整指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr索引：重新索引策略与最佳实践详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.2.</span> <span class="nav-text">重新索引的核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89%E4%B8%8E%E9%87%8D%E8%A6%81%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">定义与重要性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solr%E6%A8%A1%E5%BC%8F%E4%B8%8ELucene%E7%B4%A2%E5%BC%95%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">Solr模式与Lucene索引的关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9C%80%E8%A6%81%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.</span> <span class="nav-text">需要重新索引的更改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%BC%8F%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.1.</span> <span class="nav-text">模式更改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E5%AD%97%E6%AE%B5%E5%92%8C%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">更改字段和字段类型属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%94%B9%E5%AD%97%E6%AE%B5%E5%88%86%E6%9E%90"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">更改字段分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Solrconfig%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.2.</span> <span class="nav-text">Solrconfig更改</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E9%9C%80%E8%A6%81%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E9%85%8D%E7%BD%AE%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">已知需要重新索引的配置更改</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%89%88%E6%9C%AC%E6%9B%B4%E6%94%B9"><span class="nav-number">1.3.3.</span> <span class="nav-text">版本更改</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E5%9C%BA%E6%99%AF"><span class="nav-number">1.4.</span> <span class="nav-text">升级场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E7%89%88%E6%9C%AC%E5%8D%87%E7%BA%A7"><span class="nav-number">1.4.1.</span> <span class="nav-text">主要版本升级</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E5%90%8E%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">1.4.2.</span> <span class="nav-text">向后兼容性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.4.3.</span> <span class="nav-text">升级注意事项</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.</span> <span class="nav-text">重新索引策略</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%89%80%E6%9C%89%E6%96%87%E6%A1%A3%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.1.</span> <span class="nav-text">删除所有文档策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">执行步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E6%AE%B5%E5%88%A0%E9%99%A4"><span class="nav-number">1.5.1.2.</span> <span class="nav-text">验证段删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%BF%E4%BB%A3%E6%96%B9%E6%A1%88"><span class="nav-number">1.5.1.3.</span> <span class="nav-text">替代方案</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%88%B0%E5%8F%A6%E4%B8%80%E4%B8%AA%E9%9B%86%E5%90%88%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.2.</span> <span class="nav-text">索引到另一个集合策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%80%82%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">适用场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E6%AD%A5%E9%AA%A4-1"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">执行步骤</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BC%98%E5%8A%BF%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">优势和注意事项</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%93%9D%E7%BB%BF%E9%83%A8%E7%BD%B2%E7%AD%96%E7%95%A5"><span class="nav-number">1.5.3.</span> <span class="nav-text">蓝绿部署策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A6%82%E5%BF%B5"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">概念</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%96%BD%E6%AD%A5%E9%AA%A4"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">实施步骤</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.6.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.6.1.</span> <span class="nav-text">准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%87%E4%BB%BD%E7%AD%96%E7%95%A5"><span class="nav-number">1.6.1.1.</span> <span class="nav-text">备份策略</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%8E%AF%E5%A2%83"><span class="nav-number">1.6.1.2.</span> <span class="nav-text">测试环境</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B"><span class="nav-number">1.6.2.</span> <span class="nav-text">执行过程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E8%AE%A1%E5%88%92"><span class="nav-number">1.6.2.1.</span> <span class="nav-text">重新索引计划</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E9%AA%8C%E8%AF%81"><span class="nav-number">1.6.2.2.</span> <span class="nav-text">监控和验证</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E6%8E%A7%E5%88%B6"><span class="nav-number">1.6.3.</span> <span class="nav-text">风险控制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E8%AF%84%E4%BC%B0"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">风险评估</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%A3%8E%E9%99%A9%E7%BC%93%E8%A7%A3"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">风险缓解</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E9%9C%80%E8%A6%81%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E7%9A%84%E6%9B%B4%E6%94%B9"><span class="nav-number">1.7.</span> <span class="nav-text">不需要重新索引的更改</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9B%B4%E6%94%B9"><span class="nav-number">1.7.1.</span> <span class="nav-text">配置更改</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%9B%B8%E5%85%B3%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.2.</span> <span class="nav-text">查询相关配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.8.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.8.1.</span> <span class="nav-text">常见问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E5%90%8E%E6%80%A7%E8%83%BD%E4%B8%8B%E9%99%8D"><span class="nav-number">1.8.1.1.</span> <span class="nav-text">重新索引后性能下降</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E4%B8%8D%E4%B8%80%E8%87%B4"><span class="nav-number">1.8.1.2.</span> <span class="nav-text">数据不一致</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E8%BF%87%E7%A8%8B%E4%B8%AD%E6%96%AD"><span class="nav-number">1.8.1.3.</span> <span class="nav-text">索引过程中断</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number">1.8.2.</span> <span class="nav-text">调试技巧</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%A5%E5%BF%97%E5%88%86%E6%9E%90"><span class="nav-number">1.8.2.1.</span> <span class="nav-text">日志分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7"><span class="nav-number">1.8.2.2.</span> <span class="nav-text">性能监控</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%87%AA%E5%8A%A8%E5%8C%96%E5%92%8C%E8%84%9A%E6%9C%AC%E5%8C%96"><span class="nav-number">1.9.</span> <span class="nav-text">自动化和脚本化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%87%8D%E6%96%B0%E7%B4%A2%E5%BC%95%E8%84%9A%E6%9C%AC%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.9.1.</span> <span class="nav-text">重新索引脚本示例</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E8%84%9A%E6%9C%AC"><span class="nav-number">1.9.2.</span> <span class="nav-text">监控脚本</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.10.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E8%A6%81%E7%82%B9"><span class="nav-number">1.10.1.</span> <span class="nav-text">关键要点</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：隐式请求处理器详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="请求处理器Solr配置隐式请求处理器API端点参数集" />
+  
+  
+  
+  
+  <meta name="description" content="Solr自带许多开箱即用的请求处理器，它们被称为隐式的，因为在你能够使用它们之前不需要在solrconfig.xml中配置它们。 这些处理器具有预定义的默认参数，称为参数集，如有必要可以修改。 可用的隐式端点 注意：下面列出的所有端点路径都应放在Solr的主机和端口（如果使用端口）之后以构造URL。  管理处理器这些处理器中的许多在整个Admin UI中使用，以显示有关Solr的信息。 文件：返回">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：隐式请求处理器详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr自带许多开箱即用的请求处理器，它们被称为隐式的，因为在你能够使用它们之前不需要在solrconfig.xml中配置它们。 这些处理器具有预定义的默认参数，称为参数集，如有必要可以修改。 可用的隐式端点 注意：下面列出的所有端点路径都应放在Solr的主机和端口（如果使用端口）之后以构造URL。  管理处理器这些处理器中的许多在整个Admin UI中使用，以显示有关Solr的信息。 文件：返回">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-26T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:14:40.105Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="请求处理器">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="隐式请求处理器">
+<meta property="article:tag" content="API端点">
+<meta property="article:tag" content="参数集">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：隐式请求处理器详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：隐式请求处理器详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/26/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-26T16:00:00.000Z" itemprop="datePublished">一月 26, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Solr自带许多开箱即用的请求处理器，它们被称为隐式的，因为在你能够使用它们之前不需要在<code>solrconfig.xml</code>中配置它们。</p>
+<p>这些处理器具有预定义的默认参数，称为<strong>参数集</strong>，如有必要可以修改。</p>
+<h2 id="可用的隐式端点"><a href="#可用的隐式端点" class="headerlink" title="可用的隐式端点"></a>可用的隐式端点</h2><blockquote>
+<p><strong>注意</strong>：下面列出的所有端点路径都应放在Solr的主机和端口（如果使用端口）之后以构造URL。</p>
+</blockquote>
+<h3 id="管理处理器"><a href="#管理处理器" class="headerlink" title="管理处理器"></a>管理处理器</h3><p>这些处理器中的许多在整个Admin UI中使用，以显示有关Solr的信息。</p>
+<p><strong>文件</strong>：返回<code>$&#123;solr.home&#125;/conf/</code>中文件的内容。<br>此处理器必须在端点路径中包含集合名称。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/file</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/ShowFileRequestHandler.html">ShowFileRequestHandler</a></td>
+<td><code>_ADMIN_FILE</code></td>
+</tr>
+</tbody></table>
+<p><strong>健康检查</strong>：报告节点的健康状况（<strong>仅在SolrCloud模式下可用</strong>）</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/admin/info/health</code><br>v2: <code>api/node/health</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/HealthCheckHandler.html">HealthCheckHandler</a></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>此端点还接受其他请求参数。<br>详情请参见<a href="../javadocs/core/org/apache/solr/handler/admin/HealthCheckHandler.html">Javadocs</a>。</p>
+<p><strong>日志记录</strong>：检索和修改注册的记录器。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/admin/info/logging</code><br>v2: <code>api/node/logging</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/LoggingHandler.html">LoggingHandler</a></td>
+<td><code>_ADMIN_LOGGING</code></td>
+</tr>
+</tbody></table>
+<p><strong>Luke</strong>：公开内部Lucene索引。<br>此处理器必须在端点路径中包含集合名称。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:luke-request-handler">Luke请求处理器</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/luke</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/LukeRequestHandler.html">LukeRequestHandler</a></td>
+<td><code>_ADMIN_LUKE</code></td>
+</tr>
+</tbody></table>
+<p><strong>MBeans</strong>：提供有关所有注册<a href="../javadocs/core/org/apache/solr/core/SolrInfoBean.html">SolrInfoMBeans</a>的信息。<br>此处理器必须在端点路径中包含集合名称。</p>
+<p><strong>文档</strong>：<a href="deployment-guide:mbean-request-handler">MBean请求处理器</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/mbeans</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/SolrInfoMBeanHandler.html">SolrInfoMBeanHandler</a></td>
+<td><code>_ADMIN_MBEANS</code></td>
+</tr>
+</tbody></table>
+<p><strong>Ping</strong>：健康检查。<br>此处理器必须在端点路径中包含集合名称。</p>
+<p><strong>文档</strong>：<a href="deployment-guide:ping">Ping</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/ping</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/PingRequestHandler.html">PingRequestHandler</a></td>
+<td><code>_ADMIN_PING</code></td>
+</tr>
+</tbody></table>
+<p><strong>插件</strong>：返回有关所有注册插件的信息。<br>此处理器必须在端点路径中包含集合名称。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/plugins</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/PluginInfoHandler.html">PluginInfoHandler</a></td>
+<td>None.</td>
+</tr>
+</tbody></table>
+<p><strong>系统属性</strong>：返回JRE系统属性。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/admin/info/properties</code><br>v2: <code>api/node/properties</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/PropertiesRequestHandler.html">PropertiesRequestHandler</a></td>
+<td><code>_ADMIN_PROPERTIES</code></td>
+</tr>
+</tbody></table>
+<p><strong>段</strong>：返回最后提交生成的Lucene索引段信息。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/admin/segments</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/SegmentsInfoRequestHandler.html">SegmentsInfoRequestHandler</a></td>
+<td><code>_ADMIN_SEGMENTS</code></td>
+</tr>
+</tbody></table>
+<p><strong>系统信息</strong>：返回服务器统计信息和设置。</p>
+<p><strong>文档</strong>：<a href="system-info-handler">系统信息处理器</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/admin/info/system</code><br>v2: <code>api/node/system</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/SystemInfoHandler.html">SystemInfoHandler</a></td>
+<td><code>_ADMIN_SYSTEM</code></td>
+</tr>
+</tbody></table>
+<p>此端点还可以在路径中包含集合或核心名称（<code>solr/&lt;collection&gt;/admin/system</code>或<code>solr/&lt;core&gt;/admin/system</code>），这将包括所有系统级别信息和有关服务请求的特定核心的附加信息。</p>
+<p><strong>线程</strong>：返回有关所有JVM线程的信息。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/admin/info/threads</code><br>v2: <code>api/node/threads</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/admin/ThreadDumpHandler.html">ThreadDumpHandler</a></td>
+<td><code>_ADMIN_THREADS</code></td>
+</tr>
+</tbody></table>
+<h3 id="分析处理器"><a href="#分析处理器" class="headerlink" title="分析处理器"></a>分析处理器</h3><p><strong>文档分析</strong>：返回给定文档的分析过程分解。</p>
+<p><strong>文档</strong>：<a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/solr/AnalysisRequestHandler">AnalysisRequestHandler</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/analysis/document</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/DocumentAnalysisRequestHandler.html">DocumentAnalysisRequestHandler</a></td>
+<td><code>_ANALYSIS_DOCUMENT</code></td>
+</tr>
+</tbody></table>
+<p><strong>字段分析</strong>：返回给定字段&#x2F;字段类型的索引时和查询时分析。<br>此处理器驱动Solr Admin UI中的<a href="indexing-guide:analysis-screen">分析界面</a>。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/analysis/field</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/FieldAnalysisRequestHandler.html">FieldAnalysisRequestHandler</a></td>
+<td><code>_ANALYSIS_FIELD</code></td>
+</tr>
+</tbody></table>
+<h3 id="配置处理器"><a href="#配置处理器" class="headerlink" title="配置处理器"></a>配置处理器</h3><p><strong>Config API</strong>：检索和修改Solr配置。</p>
+<p><strong>文档</strong>：<a href="config-api">Config API</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/&lt;collection&gt;/config</code><br>v2: <code>api/collections/&lt;collection&gt;/config</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/SolrConfigHandler.html">SolrConfigHandler</a></td>
+<td><code>_CONFIG</code></td>
+</tr>
+</tbody></table>
+<p><strong>Dump</strong>：将请求内容回显给客户端。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/debug/dump</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/DumpRequestHandler.html">DumpRequestHandler</a></td>
+<td><code>_DEBUG_DUMP</code></td>
+</tr>
+</tbody></table>
+<p><strong>复制</strong>：为SolrCloud恢复和用户管理集群索引分发复制索引。<br>此处理器必须在端点路径中包含核心名称。</p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;core&gt;/replication</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/ReplicationHandler.html">ReplicationHandler</a></td>
+<td><code>_REPLICATION</code></td>
+</tr>
+</tbody></table>
+<p><strong>Schema API</strong>：检索和修改Solr schema。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:schema-api">Schema API</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>v1: <code>solr/&lt;collection&gt;/schema</code>, <code>solr/&lt;core&gt;/schema</code><br>v2: <code>api/collections/&lt;collection&gt;/schema</code>, <code>api/cores/&lt;core&gt;/schema</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/SchemaHandler.html">SchemaHandler</a></td>
+<td><code>_SCHEMA</code></td>
+</tr>
+</tbody></table>
+<h3 id="查询处理器"><a href="#查询处理器" class="headerlink" title="查询处理器"></a>查询处理器</h3><p><strong>导出</strong>：导出完整排序的结果集。</p>
+<p><strong>文档</strong>：<a href="query-guide:exporting-result-sets">导出结果集</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/export</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/ExportHandler.html">ExportHandler</a></td>
+<td><code>_EXPORT</code></td>
+</tr>
+</tbody></table>
+<p><strong>实时获取</strong>：低延迟检索文档的最新版本。</p>
+<p><strong>文档</strong>：<a href="realtime-get">实时获取</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/get</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/RealTimeGetHandler.html">RealTimeGetHandler</a></td>
+<td><code>_GET</code></td>
+</tr>
+</tbody></table>
+<p><strong>图遍历</strong>：从<code>gatherNodes</code>流表达式返回<a target="_blank" rel="noopener" href="http://graphml.graphdrawing.org/">GraphML</a>格式的输出。</p>
+<p><strong>文档</strong>：<a href="query-guide:graph-traversal">图遍历</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/graph</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/GraphHandler.html">GraphHandler</a></td>
+<td><code>_ADMIN_GRAPH</code></td>
+</tr>
+</tbody></table>
+<p><strong>SQL</strong>：SQL查询支持。</p>
+<p><strong>文档</strong>：<a href="query-guide:sql-query#sql-request-handler">SQL请求处理器</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/sql</code></td>
+<td><a href="../javadocs/modules/sql/org/apache/solr/handler/sql/SQLHandler.html">SQLHandler</a></td>
+<td><code>_SQL</code></td>
+</tr>
+</tbody></table>
+<p><strong>流表达式</strong>：分布式流处理。</p>
+<p><strong>文档</strong>：<a href="query-guide:streaming-expressions#streaming-requests-and-responses">流请求和响应</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/stream</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/StreamHandler.html">StreamHandler</a></td>
+<td><code>_STREAM</code></td>
+</tr>
+</tbody></table>
+<p><strong>词条</strong>：返回字段的索引词条和包含每个词条的文档数。</p>
+<p><strong>文档</strong>：<a href="query-guide:terms-component#using-the-terms-component-in-a-request-handler">在请求处理器中使用词条组件</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/terms</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/component/SearchHandler.html">SearchHandler</a></td>
+<td><code>_TERMS</code></td>
+</tr>
+</tbody></table>
+<h3 id="更新处理器"><a href="#更新处理器" class="headerlink" title="更新处理器"></a>更新处理器</h3><p><strong>更新</strong>：添加、删除和更新格式化为SolrXML、CSV、SolrJSON或javabin的索引文档。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:indexing-with-update-handlers">使用更新处理器索引</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/update</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/UpdateRequestHandler.html">UpdateRequestHandler</a></td>
+<td><code>_UPDATE</code></td>
+</tr>
+</tbody></table>
+<p><strong>CSV更新</strong>：添加和更新CSV格式的文档。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:indexing-with-update-handlers#csv-update-convenience-paths">CSV更新便捷路径</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/update/csv</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/UpdateRequestHandler.html">UpdateRequestHandler</a></td>
+<td><code>_UPDATE_CSV</code></td>
+</tr>
+</tbody></table>
+<p><strong>JSON更新</strong>：添加、删除和更新SolrJSON格式的文档。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:indexing-with-update-handlers#json-update-convenience-paths">JSON更新便捷路径</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/update/json</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/UpdateRequestHandler.html">UpdateRequestHandler</a></td>
+<td><code>_UPDATE_JSON</code></td>
+</tr>
+</tbody></table>
+<p><strong>自定义JSON更新</strong>：添加和更新自定义JSON格式的文档。</p>
+<p><strong>文档</strong>：<a href="indexing-guide:transforming-and-indexing-custom-json">转换和索引自定义JSON</a></p>
+<table>
+<thead>
+<tr>
+<th>API端点</th>
+<th>类和Javadocs</th>
+<th>参数集</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>solr/&lt;collection&gt;/update/json/docs</code></td>
+<td><a href="../javadocs/core/org/apache/solr/handler/UpdateRequestHandler.html">UpdateRequestHandler</a></td>
+<td><code>_UPDATE_JSON_DOCS</code></td>
+</tr>
+</tbody></table>
+<h2 id="如何查看隐式处理器参数集"><a href="#如何查看隐式处理器参数集" class="headerlink" title="如何查看隐式处理器参数集"></a>如何查看隐式处理器参数集</h2><p>你可以通过<a href="config-api">Config API</a>查看所有请求处理器的配置，包括隐式请求处理器。</p>
+<p>要在响应中包含展开的参数集，以及通过将参数集参数与内置参数合并得到的有效参数，请使用<code>expandParams</code>请求参数。</p>
+<p>例如，对于<code>/export</code>请求处理器，你可以发出这样的请求：</p>
+<h3 id="V1-API"><a href="#V1-API" class="headerlink" title="V1 API"></a>V1 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/gettingstarted/config/requestHandler?componentName=/export&amp;expandParams=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="V2-API"><a href="#V2-API" class="headerlink" title="V2 API"></a>V2 API</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/api/collections/gettingstarted/config/requestHandler?componentName=/export&amp;expandParams=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<p>响应将类似于：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;config&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;requestHandler&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;/export&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.ExportHandler&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;useParams&quot;</span><span class="punctuation">:</span> <span class="string">&quot;_EXPORT&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;components&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;query&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;defaults&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;wt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;json&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;invariants&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;rq&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;!xport&#125;&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;distrib&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/export&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;_useParamsExpanded_&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;_EXPORT&quot;</span><span class="punctuation">:</span> <span class="string">&quot;[NOT AVAILABLE]&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;_effectiveParams_&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">          <span class="attr">&quot;distrib&quot;</span><span class="punctuation">:</span> <span class="string">&quot;false&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;omitHeader&quot;</span><span class="punctuation">:</span> <span class="string">&quot;true&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;wt&quot;</span><span class="punctuation">:</span> <span class="string">&quot;json&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;rq&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;!xport&#125;&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="如何编辑隐式处理器参数集"><a href="#如何编辑隐式处理器参数集" class="headerlink" title="如何编辑隐式处理器参数集"></a>如何编辑隐式处理器参数集</h2><p>由于隐式请求处理器不存在于<code>solrconfig.xml</code>中，可以通过使用上表中列出的参数集的<a href="request-parameters-api">请求参数API</a>来编辑其关联的<code>default</code>、<code>invariant</code>和<code>appends</code>参数的配置。<br>但是，不能修改其他参数，包括SearchHandler组件。<br>隐式配置中指定的不变量和附加项无法被覆盖。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">请求处理器</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/%E9%9A%90%E5%BC%8F%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">隐式请求处理器</a>
+  
+    <a class="article-tag" href="/tags/API%E7%AB%AF%E7%82%B9/">API端点</a>
+  
+    <a class="article-tag" href="/tags/%E5%8F%82%E6%95%B0%E9%9B%86/">参数集</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/27/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：索引位置格式详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/25/Apache-Solr-9-8-0-%E5%8F%91%E5%B8%83-%E8%B7%A8%E6%95%B0%E6%8D%AE%E4%B8%AD%E5%BF%83%E4%B8%8E%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86%E7%AA%81%E7%A0%B4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Apache Solr 9.8.0 发布：跨数据中心与内存管理突破</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%AF%E7%94%A8%E7%9A%84%E9%9A%90%E5%BC%8F%E7%AB%AF%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">可用的隐式端点</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.1.</span> <span class="nav-text">管理处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%86%E6%9E%90%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.2.</span> <span class="nav-text">分析处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.3.</span> <span class="nav-text">配置处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">查询处理器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">更新处理器</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E6%9F%A5%E7%9C%8B%E9%9A%90%E5%BC%8F%E5%A4%84%E7%90%86%E5%99%A8%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">2.</span> <span class="nav-text">如何查看隐式处理器参数集</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#V1-API"><span class="nav-number">2.1.</span> <span class="nav-text">V1 API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#V2-API"><span class="nav-number">2.2.</span> <span class="nav-text">V2 API</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%BC%96%E8%BE%91%E9%9A%90%E5%BC%8F%E5%A4%84%E7%90%86%E5%99%A8%E5%8F%82%E6%95%B0%E9%9B%86"><span class="nav-number">3.</span> <span class="nav-text">如何编辑隐式处理器参数集</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

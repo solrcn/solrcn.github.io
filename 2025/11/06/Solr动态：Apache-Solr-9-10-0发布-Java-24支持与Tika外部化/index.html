@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>apache solr 9.10.0重磅发布 - java 24兼容与微服务架构演进 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+    <meta name="keywords" content="Solr 9.10.0, Java 24, Tika Server, SolrCloud, Lucene 9.12.3, 微服务架构, 云原生, 性能优化" />
+  
+  
+  
+  
+  <meta name="description" content="Apache Solr 9.10.0正式发布，带来Java 24支持、Tika Server外部化、SolrCloud集群版本保护、性能优化等重大改进，Lucene升级至9.12.3，37项依赖升级，为Solr 10奠定坚实基础。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache Solr 9.10.0重磅发布 - Java 24兼容与微服务架构演进">
+<meta property="og:url" content="https://solrcn.github.io/2025/11/06/Solr%E5%8A%A8%E6%80%81%EF%BC%9AApache-Solr-9-10-0%E5%8F%91%E5%B8%83-Java-24%E6%94%AF%E6%8C%81%E4%B8%8ETika%E5%A4%96%E9%83%A8%E5%8C%96/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Apache Solr 9.10.0正式发布，带来Java 24支持、Tika Server外部化、SolrCloud集群版本保护、性能优化等重大改进，Lucene升级至9.12.3，37项依赖升级，为Solr 10奠定坚实基础。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-11-06T00:00:00.000Z">
+<meta property="article:modified_time" content="2025-11-11T00:00:00.000Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="版本发布">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="云原生">
+<meta property="article:tag" content="Apache Solr">
+<meta property="article:tag" content="Solr 9.10.0">
+<meta property="article:tag" content="Java 24">
+<meta property="article:tag" content="Tika Server">
+<meta property="article:tag" content="分布式系统">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr动态：Apache-Solr-9-10-0发布-Java-24支持与Tika外部化" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Apache Solr 9.10.0重磅发布 - Java 24兼容与微服务架构演进
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/11/06/Solr%E5%8A%A8%E6%80%81%EF%BC%9AApache-Solr-9-10-0%E5%8F%91%E5%B8%83-Java-24%E6%94%AF%E6%8C%81%E4%B8%8ETika%E5%A4%96%E9%83%A8%E5%8C%96/" class="article-date">
+	  <time datetime="2025-11-06T00:00:00.000Z" itemprop="datePublished">十一月 6, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="发布概览"><a href="#发布概览" class="headerlink" title="发布概览"></a>发布概览</h2><p><strong>Apache Solr 9.10.0</strong> 于 2025年11月6日 正式发布，这是Solr 9系列的一次重要更新，标志着Solr在现代化进程中的重要里程碑。本次发布聚焦于<strong>云原生架构演进</strong>、<strong>微服务解耦</strong>和<strong>性能优化</strong>，为Solr 10.x的重大变革铺平道路。</p>
+<h3 id="核心亮点"><a href="#核心亮点" class="headerlink" title="核心亮点"></a>核心亮点</h3><ul>
+<li>✅ <strong>Java 24+兼容性</strong>：支持最新JDK，适应现代Java生态</li>
+<li>🏗️ <strong>Tika Server外部化</strong>：文档解析微服务化，系统稳定性大幅提升</li>
+<li>🔐 <strong>集群版本保护机制</strong>：防止版本不兼容节点加入集群</li>
+<li>🚀 <strong>分布式性能优化</strong>：集群状态缓存、后台节点刷新降低延迟</li>
+<li>📊 <strong>流式计算增强</strong>：fullOuterJoin函数支持完整外连接</li>
+<li>🔧 <strong>Lucene 9.12.3</strong>：底层引擎升级，37项依赖更新</li>
+</ul>
+<span id="more"></span>
+
+<hr>
+<h2 id="一、核心新特性"><a href="#一、核心新特性" class="headerlink" title="一、核心新特性"></a>一、核心新特性</h2><h3 id="1-1-Java-24-支持"><a href="#1-1-Java-24-支持" class="headerlink" title="1.1 Java 24+ 支持"></a>1.1 Java 24+ 支持</h3><p><strong>技术背景</strong>：<br>随着Java生态快速演进，Java 21 LTS已成为企业主流，Java 24引入了虚拟线程、模式匹配等现代特性。Solr 9.10.0通过禁用安全管理器（Security Manager已在Java 17+弃用）实现对Java 24及更高版本的兼容。</p>
+<p><strong>实现细节</strong>（SOLR-17641）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动命令示例</span></span><br><span class="line">java -jar start.jar --module=http</span><br></pre></td></tr></table></figure>
+
+<p><strong>业务价值</strong>：</p>
+<ul>
+<li>与现代Java工具链无缝集成（GraalVM、Project Loom）</li>
+<li>利用虚拟线程提升并发处理能力</li>
+<li>为未来模块化架构改造预留空间</li>
+</ul>
+<h3 id="1-2-Tika-Server-外部委托"><a href="#1-2-Tika-Server-外部委托" class="headerlink" title="1.2 Tika Server 外部委托"></a>1.2 Tika Server 外部委托</h3><p><strong>核心变革</strong>（SOLR-7632）：<br>将文档解析从Solr进程中剥离，支持委托给独立的Tika Server服务。这一架构调整具有革命性意义。</p>
+<p><strong>架构对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>维度</th>
+<th>传统内嵌Tika</th>
+<th>Tika Server外部化</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>隔离性</td>
+<td>❌ 解析崩溃影响Solr</td>
+<td>✅ 故障隔离</td>
+</tr>
+<tr>
+<td>扩展性</td>
+<td>❌ 受Solr JVM限制</td>
+<td>✅ 独立横向扩展</td>
+</tr>
+<tr>
+<td>资源管理</td>
+<td>❌ 共享堆内存</td>
+<td>✅ 独立资源配额</td>
+</tr>
+<tr>
+<td>升级灵活性</td>
+<td>❌ 需重启Solr</td>
+<td>✅ 热升级Tika</td>
+</tr>
+</tbody></table>
+<p><strong>配置示例</strong>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- solrconfig.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/update/extract&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.extraction.ExtractingRequestHandler&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;tika.server.url&quot;</span>&gt;</span>http://tika-server:9998<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;tika.timeout&quot;</span>&gt;</span>300000<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>企业应用场景</strong>：</p>
+<ol>
+<li><strong>大规模文档处理</strong>：Tika Server可部署为容器集群，处理PDF&#x2F;Word&#x2F;PPT高峰流量</li>
+<li><strong>多租户SaaS</strong>：不同租户使用独立Tika实例，避免资源争抢</li>
+<li><strong>安全隔离</strong>：解析用户上传文件的风险与搜索服务隔离</li>
+</ol>
+<p><strong>迁移路径</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">阶段1（现在）：保留内嵌Tika，添加Tika Server选项（已弃用内嵌）</span><br><span class="line">阶段2（Solr 10）：强制使用外部Tika Server</span><br><span class="line">阶段3（未来）：完全移除内嵌Tika</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-集群版本保护机制"><a href="#1-3-集群版本保护机制" class="headerlink" title="1.3 集群版本保护机制"></a>1.3 集群版本保护机制</h3><p><strong>问题背景</strong>：<br>在滚动升级场景，旧版本节点可能意外加入已升级的集群，导致：</p>
+<ul>
+<li>不兼容的序列化协议</li>
+<li>功能降级（新特性失效）</li>
+<li>数据一致性风险</li>
+</ul>
+<p><strong>解决方案</strong>（SOLR-17879）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">节点启动时验证主次版本号：</span><br><span class="line">- 若节点版本 &lt; min(集群现有节点版本) → 启动失败</span><br><span class="line">- 例：9.9节点尝试加入9.10集群 → 拒绝</span><br></pre></td></tr></table></figure>
+
+<p><strong>运维影响</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动日志示例</span></span><br><span class="line">ERROR - Solr 9.9.0 cannot <span class="built_in">join</span> cluster with minimum version 9.10.0</span><br><span class="line">Shutting down...</span><br></pre></td></tr></table></figure>
+
+<p><strong>最佳实践</strong>：</p>
+<ol>
+<li>使用CI&#x2F;CD管道统一版本部署</li>
+<li>监控集群版本分布（Prometheus指标）</li>
+<li>蓝绿部署替代滚动升级</li>
+</ol>
+<h3 id="1-4-fullOuterJoin-流式函数"><a href="#1-4-fullOuterJoin-流式函数" class="headerlink" title="1.4 fullOuterJoin 流式函数"></a>1.4 fullOuterJoin 流式函数</h3><p><strong>技术实现</strong>（SOLR-17923）：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 流式表达式示例</span></span><br><span class="line">fullOuterJoin(</span><br><span class="line">  search(collection1, q=<span class="string">&quot;*:*&quot;</span>, fl=<span class="string">&quot;id,product_name&quot;</span>, sort=<span class="string">&quot;id asc&quot;</span>),</span><br><span class="line">  search(collection2, q=<span class="string">&quot;*:*&quot;</span>, fl=<span class="string">&quot;id,inventory&quot;</span>, sort=<span class="string">&quot;id asc&quot;</span>),</span><br><span class="line">  on=<span class="string">&quot;id&quot;</span></span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
+<p><strong>与LEFT&#x2F;INNER JOIN对比</strong>：</p>
+<table>
+<thead>
+<tr>
+<th>JOIN类型</th>
+<th>左集合无匹配</th>
+<th>右集合无匹配</th>
+<th>使用场景</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>innerJoin</td>
+<td>丢弃</td>
+<td>丢弃</td>
+<td>严格匹配</td>
+</tr>
+<tr>
+<td>leftOuterJoin</td>
+<td>保留</td>
+<td>丢弃</td>
+<td>左集合为主</td>
+</tr>
+<tr>
+<td><strong>fullOuterJoin</strong></td>
+<td><strong>保留</strong></td>
+<td><strong>保留</strong></td>
+<td><strong>完整数据集</strong></td>
+</tr>
+</tbody></table>
+<p><strong>企业场景</strong>：</p>
+<ul>
+<li><strong>库存对账</strong>：商品表 FULL JOIN 库存表，找出缺失库存的商品</li>
+<li><strong>日志关联</strong>：应用日志 FULL JOIN 访问日志，定位丢失事件</li>
+<li><strong>数据完整性检查</strong>：订单表 FULL JOIN 支付表，发现未关联记录</li>
+</ul>
+<h3 id="1-5-副本路由优化"><a href="#1-5-副本路由优化" class="headerlink" title="1.5 副本路由优化"></a>1.5 副本路由优化</h3><p><strong>新特性</strong>（SOLR-17915）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">shards.preference=replica.location:host</span><br></pre></td></tr></table></figure>
+
+<p><strong>场景价值</strong>：<br>在Kubernetes环境中，将查询路由到<strong>同一Pod&#x2F;主机</strong>上的副本，利用：</p>
+<ul>
+<li>本地缓存（Linux Page Cache）</li>
+<li>减少网络RTT</li>
+<li>提升CPU缓存命中率</li>
+</ul>
+<p><strong>性能对比</strong>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">场景：10万QPS聚合查询</span><br><span class="line">- 跨主机路由：P99延迟 120ms</span><br><span class="line">- 同主机路由：P99延迟 45ms（↓62.5%）</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、性能与架构优化"><a href="#二、性能与架构优化" class="headerlink" title="二、性能与架构优化"></a>二、性能与架构优化</h2><h3 id="2-1-远程代理高QPS优化"><a href="#2-1-远程代理高QPS优化" class="headerlink" title="2.1 远程代理高QPS优化"></a>2.1 远程代理高QPS优化</h3><p><strong>技术细节</strong>（SOLR-17893）：<br>通过<strong>集群状态缓存</strong>（Cluster State Cache）加速远程代理查询：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 优化前：每次查询都获取集群状态</span></span><br><span class="line"><span class="type">ClusterState</span> <span class="variable">state</span> <span class="operator">=</span> zkClient.getClusterState();</span><br><span class="line"></span><br><span class="line"><span class="comment">// 优化后：使用带TTL的缓存</span></span><br><span class="line"><span class="type">ClusterState</span> <span class="variable">state</span> <span class="operator">=</span> cacheManager.getCachedState(TTL=5s);</span><br></pre></td></tr></table></figure>
+
+<p><strong>性能提升</strong>：</p>
+<ul>
+<li>ZooKeeper读请求减少90%</li>
+<li>代理查询延迟降低30-50ms</li>
+<li>支持更高查询并发度</li>
+</ul>
+<p><strong>适用场景</strong>：</p>
+<ul>
+<li>API网关代理多个Solr集群</li>
+<li>跨数据中心查询聚合</li>
+<li>高QPS搜索服务（10k+ QPS）</li>
+</ul>
+<h3 id="2-2-CloudSolrClient-后台节点刷新"><a href="#2-2-CloudSolrClient-后台节点刷新" class="headerlink" title="2.2 CloudSolrClient 后台节点刷新"></a>2.2 CloudSolrClient 后台节点刷新</h3><p><strong>问题场景</strong>（SOLR-17921）：<br>当集群扩容&#x2F;缩容时，客户端节点列表缓存过期，导致：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">请求 → 已下线节点 → 超时 → 刷新节点列表 → 重试</span><br><span class="line">         ↓</span><br><span class="line">   延迟峰值 300-500ms</span><br></pre></td></tr></table></figure>
+
+<p><strong>优化方案</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 后台定期刷新活跃节点（异步）</span></span><br><span class="line">scheduler.scheduleAtFixedRate(() -&gt; &#123;</span><br><span class="line">  liveNodes = fetchLiveNodes();</span><br><span class="line">&#125;, initialDelay=<span class="number">0</span>, period=30s);</span><br></pre></td></tr></table></figure>
+
+<p><strong>效果</strong>：</p>
+<ul>
+<li>消除缓存失效引起的延迟尖刺</li>
+<li>P99延迟改善40-60%</li>
+<li>提升集群弹性伸缩体验</li>
+</ul>
+<h3 id="2-3-PULL副本功能增强"><a href="#2-3-PULL副本功能增强" class="headerlink" title="2.3 PULL副本功能增强"></a>2.3 PULL副本功能增强</h3><p><strong>变更内容</strong>（SOLR-17860）：<br><code>DocBasedVersionConstraintsProcessorFactory</code> 现支持 PULL 副本类型。</p>
+<p><strong>技术背景</strong>：</p>
+<ul>
+<li><strong>NRT副本</strong>：实时索引，强一致性</li>
+<li><strong>TLOG副本</strong>：事务日志复制，最终一致性</li>
+<li><strong>PULL副本</strong>：只读，从Leader拉取段文件</li>
+</ul>
+<p><strong>应用价值</strong>：<br>PULL副本适用于：</p>
+<ul>
+<li>只读查询节点（降低Leader压力）</li>
+<li>地理分布式部署（跨区域复制）</li>
+<li>降低存储成本（按需拉取段）</li>
+</ul>
+<p><strong>配置示例</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/collections?action=ADDREPLICA&amp;collection=products&amp;shard=shard1&amp;type=PULL&amp;node=solr-read-1&quot;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、关键Bug修复"><a href="#三、关键Bug修复" class="headerlink" title="三、关键Bug修复"></a>三、关键Bug修复</h2><h3 id="3-1-授权头传递问题"><a href="#3-1-授权头传递问题" class="headerlink" title="3.1 授权头传递问题"></a>3.1 授权头传递问题</h3><p><strong>问题描述</strong>（SOLR-17789）：<br>在分布式查询中，请求转发时Authorization头未正确传递，导致：</p>
+<ul>
+<li>身份验证失败（401 Unauthorized）</li>
+<li>影响启用BasicAuth&#x2F;JWT的集群</li>
+</ul>
+<p><strong>修复验证</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 测试脚本</span></span><br><span class="line">curl -H <span class="string">&quot;Authorization: Bearer <span class="variable">$TOKEN</span>&quot;</span> \</span><br><span class="line">  <span class="string">&quot;http://coordinator:8983/solr/collection1/select?q=*:*&amp;distrib=true&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证转发节点日志</span></span><br><span class="line">grep <span class="string">&quot;Authorization: Bearer&quot;</span> solr.log</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-2-原子更新NPE修复"><a href="#3-2-原子更新NPE修复" class="headerlink" title="3.2 原子更新NPE修复"></a>3.2 原子更新NPE修复</h3><p><strong>场景复现</strong>（SOLR-17721）：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在null字段上使用&quot;Add Distinct&quot;触发空指针异常</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;doc1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;add-distinct&quot;</span><span class="punctuation">:</span> <span class="string">&quot;new_tag&quot;</span><span class="punctuation">&#125;</span>  <span class="comment">// tags字段为null时崩溃</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>修复后行为</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 自动初始化null字段</span></span><br><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;id&quot;</span><span class="punctuation">:</span> <span class="string">&quot;doc1&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;tags&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;new_tag&quot;</span><span class="punctuation">]</span>  <span class="comment">// 正确处理</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-3-领导者选举竞态条件"><a href="#3-3-领导者选举竞态条件" class="headerlink" title="3.3 领导者选举竞态条件"></a>3.3 领导者选举竞态条件</h3><p><strong>技术细节</strong>（SOLR-17863）：<br>SolrCore指纹缓存的并发访问导致：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">线程A：计算指纹 → 写缓存</span><br><span class="line">线程B：读缓存（脏数据）→ 选举失败 → 集群挂起</span><br></pre></td></tr></table></figure>
+
+<p><strong>修复方案</strong>：<br>使用 <code>ConcurrentHashMap.computeIfAbsent()</code> 确保原子性：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 修复前</span></span><br><span class="line"><span class="keyword">if</span> (!cache.containsKey(core)) &#123;</span><br><span class="line">  cache.put(core, computeFingerprint(core)); <span class="comment">// 竞态窗口</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 修复后</span></span><br><span class="line">cache.computeIfAbsent(core, k -&gt; computeFingerprint(k));</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、依赖升级与生态"><a href="#四、依赖升级与生态" class="headerlink" title="四、依赖升级与生态"></a>四、依赖升级与生态</h2><h3 id="4-1-核心依赖版本"><a href="#4-1-核心依赖版本" class="headerlink" title="4.1 核心依赖版本"></a>4.1 核心依赖版本</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>旧版本</th>
+<th>新版本</th>
+<th>主要改进</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Lucene</strong></td>
+<td>9.12.2</td>
+<td><strong>9.12.3</strong></td>
+<td>索引稳定性修复</td>
+</tr>
+<tr>
+<td><strong>Jetty</strong></td>
+<td>10.0.24</td>
+<td><strong>10.0.26</strong></td>
+<td>HTTP&#x2F;2性能优化</td>
+</tr>
+<tr>
+<td><strong>ZooKeeper</strong></td>
+<td>3.9.3</td>
+<td><strong>3.9.4</strong></td>
+<td>安全补丁</td>
+</tr>
+<tr>
+<td><strong>Kafka</strong></td>
+<td>3.9.0</td>
+<td><strong>3.9.1</strong></td>
+<td>流处理bug修复</td>
+</tr>
+<tr>
+<td><strong>OpenTelemetry</strong></td>
+<td>1.52.0</td>
+<td><strong>1.53.0</strong></td>
+<td>分布式追踪增强</td>
+</tr>
+</tbody></table>
+<h3 id="4-2-供应链安全"><a href="#4-2-供应链安全" class="headerlink" title="4.2 供应链安全"></a>4.2 供应链安全</h3><p><strong>37项依赖升级</strong>反映了对安全的重视：</p>
+<ul>
+<li>Commons-Compress 1.28.0（修复CVE漏洞）</li>
+<li>Netty 4.2.6.Final（内存泄漏修复）</li>
+<li>Jackson（防御性编程增强）</li>
+</ul>
+<p><strong>最佳实践</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 使用Dependency-Check扫描</span></span><br><span class="line">./gradlew dependencyCheckAnalyze</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动化漏洞监控</span></span><br><span class="line">integrate with Snyk/Dependabot</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、弃用与向后兼容性"><a href="#五、弃用与向后兼容性" class="headerlink" title="五、弃用与向后兼容性"></a>五、弃用与向后兼容性</h2><h3 id="5-1-重要弃用清单"><a href="#5-1-重要弃用清单" class="headerlink" title="5.1 重要弃用清单"></a>5.1 重要弃用清单</h3><table>
+<thead>
+<tr>
+<th>组件</th>
+<th>弃用版本</th>
+<th>移除版本</th>
+<th>替代方案</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>内嵌Tika</td>
+<td>9.10.0</td>
+<td>10.x</td>
+<td>外部Tika Server</td>
+</tr>
+<tr>
+<td>XLSXResponseWriter</td>
+<td>9.10.0</td>
+<td>11.x</td>
+<td>自定义导出工具</td>
+</tr>
+<tr>
+<td>Tika语言识别器</td>
+<td>9.10.0</td>
+<td>10.x</td>
+<td>外部NLP服务</td>
+</tr>
+<tr>
+<td>CloudSolrClient.Builder</td>
+<td>9.10.0</td>
+<td>10.x</td>
+<td>CloudHttp2SolrClient</td>
+</tr>
+<tr>
+<td>waitForFinalState参数</td>
+<td>9.10.0</td>
+<td>11.x</td>
+<td>异步状态轮询</td>
+</tr>
+</tbody></table>
+<h3 id="5-2-SolrJ客户端简化"><a href="#5-2-SolrJ客户端简化" class="headerlink" title="5.2 SolrJ客户端简化"></a>5.2 SolrJ客户端简化</h3><p><strong>依赖优化</strong>（SOLR-17884）：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 不使用旧版HttpSolrClient时可排除 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.solr<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>solr-solrj<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.httpcomponents<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>httpclient<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>收益</strong>：</p>
+<ul>
+<li>JAR包体积减少 ~2MB</li>
+<li>依赖冲突风险降低</li>
+<li>推动HTTP&#x2F;2客户端迁移</li>
+</ul>
+<hr>
+<h2 id="六、升级指南"><a href="#六、升级指南" class="headerlink" title="六、升级指南"></a>六、升级指南</h2><h3 id="6-1-兼容性评估"><a href="#6-1-兼容性评估" class="headerlink" title="6.1 兼容性评估"></a>6.1 兼容性评估</h3><p><strong>自检清单</strong>：</p>
+<ul>
+<li><input disabled="" type="checkbox"> 当前版本 ≥ 9.0.0（不支持从8.x直接升级）</li>
+<li><input disabled="" type="checkbox"> Java版本 ≥ 17（建议Java 21）</li>
+<li><input disabled="" type="checkbox"> 使用Tika的用户需规划外部化迁移</li>
+<li><input disabled="" type="checkbox"> SolrJ客户端代码审查（弃用API）</li>
+<li><input disabled="" type="checkbox"> 集群版本一致性（避免混合版本）</li>
+</ul>
+<h3 id="6-2-升级步骤"><a href="#6-2-升级步骤" class="headerlink" title="6.2 升级步骤"></a>6.2 升级步骤</h3><p><strong>推荐策略：蓝绿部署</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 1. 部署新版本集群（9.10.0）</span></span><br><span class="line">docker-compose -f solr-9.10.yml up -d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 2. 创建集合别名（流量切换）</span></span><br><span class="line">curl <span class="string">&quot;http://new-cluster:8983/solr/admin/collections?action=CREATEALIAS&amp;name=products_active&amp;collections=products_v2&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 3. 数据迁移</span></span><br><span class="line">java -jar solr-migration-tool.jar \</span><br><span class="line">  --<span class="built_in">source</span> http://old-cluster:8983 \</span><br><span class="line">  --target http://new-cluster:8983 \</span><br><span class="line">  --collection products</span><br><span class="line"></span><br><span class="line"><span class="comment"># 4. 验证查询一致性</span></span><br><span class="line">./scripts/validate-query-results.sh</span><br><span class="line"></span><br><span class="line"><span class="comment"># 5. 切换流量（修改负载均衡配置）</span></span><br><span class="line"><span class="comment"># Nginx/Consul/K8s Service更新</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 6. 监控观察7天后下线旧集群</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-滚动升级注意事项"><a href="#6-3-滚动升级注意事项" class="headerlink" title="6.3 滚动升级注意事项"></a>6.3 滚动升级注意事项</h3><p><strong>重要警告</strong>：<br>由于版本保护机制（SOLR-17879），不能混合运行9.9和9.10节点！</p>
+<p><strong>安全滚动升级</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 步骤1：升级Overseer节点</span></span><br><span class="line">bin/solr stop -p 8983</span><br><span class="line">bin/solr-9.10 start -c -p 8983</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤2：等待集群稳定（检查版本号）</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/solr/admin/info/system&quot;</span> | jq .lucene.solr-spec-version</span><br><span class="line"></span><br><span class="line"><span class="comment"># 步骤3：逐个升级其他节点</span></span><br><span class="line"><span class="keyword">for</span> node <span class="keyword">in</span> solr-&#123;2..5&#125;:8983; <span class="keyword">do</span></span><br><span class="line">  ssh <span class="variable">$node</span> <span class="string">&quot;systemctl stop solr &amp;&amp; systemctl start solr-9.10&quot;</span></span><br><span class="line">  <span class="built_in">sleep</span> 60  <span class="comment"># 等待副本恢复</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-4-Tika外部化迁移"><a href="#6-4-Tika外部化迁移" class="headerlink" title="6.4 Tika外部化迁移"></a>6.4 Tika外部化迁移</h3><p><strong>阶段性方案</strong>：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># docker-compose.yml</span></span><br><span class="line"><span class="attr">services:</span></span><br><span class="line">  <span class="attr">tika-server:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">apache/tika:2.9.0</span></span><br><span class="line">    <span class="attr">ports:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">&quot;9998:9998&quot;</span></span><br><span class="line">    <span class="attr">deploy:</span></span><br><span class="line">      <span class="attr">resources:</span></span><br><span class="line">        <span class="attr">limits:</span></span><br><span class="line">          <span class="attr">memory:</span> <span class="string">4G</span></span><br><span class="line"></span><br><span class="line">  <span class="attr">solr:</span></span><br><span class="line">    <span class="attr">image:</span> <span class="string">solr:9.10.0</span></span><br><span class="line">    <span class="attr">environment:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="string">TIKA_SERVER_URL=http://tika-server:9998</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>性能测试</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基准测试：解析1000个PDF文档</span></span><br><span class="line"><span class="keyword">time</span> curl -X POST -H <span class="string">&quot;Content-Type: application/pdf&quot;</span> \</span><br><span class="line">  --data-binary @sample.pdf \</span><br><span class="line">  <span class="string">&quot;http://localhost:8983/solr/docs/update/extract?literal.id=doc1&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 监控指标</span></span><br><span class="line">- Tika Server响应时间</span><br><span class="line">- Solr索引吞吐量</span><br><span class="line">- 内存使用对比（内嵌vs外部）</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、性能优化建议"><a href="#七、性能优化建议" class="headerlink" title="七、性能优化建议"></a>七、性能优化建议</h2><h3 id="7-1-Java虚拟线程应用"><a href="#7-1-Java虚拟线程应用" class="headerlink" title="7.1 Java虚拟线程应用"></a>7.1 Java虚拟线程应用</h3><p><strong>Java 21+ 特性利用</strong>：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 在Jetty中启用虚拟线程（实验性）</span></span><br><span class="line">System.setProperty(<span class="string">&quot;jetty.threadPool.virtual&quot;</span>, <span class="string">&quot;true&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p><strong>预期收益</strong>：</p>
+<ul>
+<li>并发处理能力提升 2-3x</li>
+<li>线程池开销降低 80%</li>
+<li>适合I&#x2F;O密集型查询场景</li>
+</ul>
+<h3 id="7-2-集群状态缓存调优"><a href="#7-2-集群状态缓存调优" class="headerlink" title="7.2 集群状态缓存调优"></a>7.2 集群状态缓存调优</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- solr.xml --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">solr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">solrcloud</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;zkClientTimeout&quot;</span>&gt;</span>30000<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;distribUpdateConnTimeout&quot;</span>&gt;</span>60000<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;clusterStateCacheTTL&quot;</span>&gt;</span>5000<span class="tag">&lt;/<span class="name">str</span>&gt;</span> <span class="comment">&lt;!-- 新参数 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">solrcloud</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>调优原则</strong>：</p>
+<ul>
+<li>稳定集群：TTL&#x3D;30s（减少ZK负载）</li>
+<li>动态集群：TTL&#x3D;5s（快速感知变化）</li>
+<li>监控缓存命中率（Prometheus指标）</li>
+</ul>
+<h3 id="7-3-副本策略优化"><a href="#7-3-副本策略优化" class="headerlink" title="7.3 副本策略优化"></a>7.3 副本策略优化</h3><p><strong>推荐配置</strong>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;replica-placement&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;org.apache.solr.cluster.placement.impl.AffinityPlacementFactory&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;withCollection&quot;</span><span class="punctuation">:</span> <span class="string">&quot;products&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;nodePreference&quot;</span><span class="punctuation">:</span> <span class="string">&quot;replica.location:host&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="八、监控与运维"><a href="#八、监控与运维" class="headerlink" title="八、监控与运维"></a>八、监控与运维</h2><h3 id="8-1-新增Prometheus指标"><a href="#8-1-新增Prometheus指标" class="headerlink" title="8.1 新增Prometheus指标"></a>8.1 新增Prometheus指标</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"># 集群状态缓存命中率</span><br><span class="line">solr_cluster_state_cache_hit_rate&#123;cluster=&quot;prod&quot;&#125; 0.95</span><br><span class="line"></span><br><span class="line"># Tika Server请求指标</span><br><span class="line">solr_tika_server_requests_total&#123;status=&quot;success&quot;&#125; 12543</span><br><span class="line">solr_tika_server_duration_seconds&#123;quantile=&quot;0.99&quot;&#125; 2.3</span><br><span class="line"></span><br><span class="line"># 版本保护拦截次数</span><br><span class="line">solr_version_check_rejections_total&#123;reason=&quot;version_too_old&quot;&#125; 3</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-健康检查增强"><a href="#8-2-健康检查增强" class="headerlink" title="8.2 健康检查增强"></a>8.2 健康检查增强</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 集群版本一致性检查</span></span><br><span class="line">curl <span class="string">&quot;http://localhost:8983/api/cluster/nodes&quot;</span> | jq -r \</span><br><span class="line">  <span class="string">&#x27;.[] | &quot;\(.node_name): \(.version)&quot;&#x27;</span> | <span class="built_in">sort</span> -u</span><br><span class="line"></span><br><span class="line"><span class="comment"># 预期输出（健康状态）</span></span><br><span class="line">solr-1:8983: 9.10.0</span><br><span class="line">solr-2:8983: 9.10.0</span><br><span class="line">solr-3:8983: 9.10.0</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="九、业务价值总结"><a href="#九、业务价值总结" class="headerlink" title="九、业务价值总结"></a>九、业务价值总结</h2><h3 id="9-1-TCO（总拥有成本）影响"><a href="#9-1-TCO（总拥有成本）影响" class="headerlink" title="9.1 TCO（总拥有成本）影响"></a>9.1 TCO（总拥有成本）影响</h3><table>
+<thead>
+<tr>
+<th>维度</th>
+<th>改进</th>
+<th>年节省（假设1000核集群）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Tika外部化</td>
+<td>故障隔离</td>
+<td>减少停机时间 ~$50K</td>
+</tr>
+<tr>
+<td>性能优化</td>
+<td>降低延迟</td>
+<td>节省服务器成本 ~$30K</td>
+</tr>
+<tr>
+<td>依赖升级</td>
+<td>减少CVE</td>
+<td>降低安全事件风险 ~$100K</td>
+</tr>
+</tbody></table>
+<h3 id="9-2-技术债务清偿"><a href="#9-2-技术债务清偿" class="headerlink" title="9.2 技术债务清偿"></a>9.2 技术债务清偿</h3><ul>
+<li>✅ 移除安全管理器依赖（Java模块化准备）</li>
+<li>✅ HTTP&#x2F;2客户端统一（简化技术栈）</li>
+<li>✅ 微服务架构演进（Tika外部化）</li>
+<li>🚧 为Solr 10重大架构调整铺路</li>
+</ul>
+<hr>
+<h2 id="十、未来展望"><a href="#十、未来展望" class="headerlink" title="十、未来展望"></a>十、未来展望</h2><h3 id="10-1-Solr-10-x路线图预测"><a href="#10-1-Solr-10-x路线图预测" class="headerlink" title="10.1 Solr 10.x路线图预测"></a>10.1 Solr 10.x路线图预测</h3><p>基于9.10.0的弃用策略，预计Solr 10将包含：</p>
+<ol>
+<li><strong>完全移除内嵌Tika</strong>：强制外部Tika Server</li>
+<li><strong>Java 21 LTS为最低版本</strong>：利用虚拟线程、模式匹配</li>
+<li><strong>SolrJ API重构</strong>：彻底迁移到HTTP&#x2F;2</li>
+<li><strong>模块化插件系统</strong>：OSGi&#x2F;JPMS支持</li>
+<li><strong>原生云架构</strong>：Kubernetes Operator、容器优先</li>
+</ol>
+<h3 id="10-2-生态系统趋势"><a href="#10-2-生态系统趋势" class="headerlink" title="10.2 生态系统趋势"></a>10.2 生态系统趋势</h3><ul>
+<li><strong>AI原生搜索</strong>：增强向量搜索、LLM集成（延续9.9.0方向）</li>
+<li><strong>ClickHouse集成</strong>：实时分析查询卸载</li>
+<li><strong>Pulsar支持</strong>：替代Kafka的流式索引</li>
+<li><strong>WebAssembly插件</strong>：跨语言扩展机制</li>
+</ul>
+<hr>
+<h2 id="参考资源"><a href="#参考资源" class="headerlink" title="参考资源"></a>参考资源</h2><ul>
+<li><strong>官方文档</strong>：<a target="_blank" rel="noopener" href="https://solr.apache.org/guide/solr/9_10/">https://solr.apache.org/guide/solr/9_10/</a></li>
+<li><strong>升级说明</strong>：<a target="_blank" rel="noopener" href="https://solr.apache.org/guide/solr/9_10/upgrade-notes/">https://solr.apache.org/guide/solr/9_10/upgrade-notes/</a></li>
+<li><strong>完整变更日志</strong>：<a target="_blank" rel="noopener" href="https://solr.apache.org/9_10_0/changes/Changes.html">https://solr.apache.org/9_10_0/changes/Changes.html</a></li>
+<li><strong>JIRA发布说明</strong>：<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/SOLR/fixforversion/12356181">https://issues.apache.org/jira/browse/SOLR/fixforversion/12356181</a></li>
+<li><strong>下载地址</strong>：<a target="_blank" rel="noopener" href="https://solr.apache.org/downloads.html">https://solr.apache.org/downloads.html</a></li>
+</ul>
+<hr>
+<h2 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h2><p>Apache Solr 9.10.0是一次<strong>战略性升级</strong>，通过Tika外部化、Java 24支持、性能优化等举措，验证了Solr团队对现代化架构的坚定承诺。对于企业用户，建议：</p>
+<ol>
+<li><strong>评估Tika使用场景</strong>，制定外部化迁移计划</li>
+<li><strong>规划Java 21升级路径</strong>，利用新语言特性</li>
+<li><strong>测试性能优化效果</strong>，量化业务收益</li>
+<li><strong>关注Solr 10动态</strong>，为重大架构变革做好准备</li>
+</ol>
+<p>Solr不仅在延续其搜索引擎的核心能力，更在向<strong>云原生、微服务化、AI增强</strong>的方向加速演进。9.10.0是这一旅程中的重要里程碑。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E5%8A%A8%E6%80%81/">Solr动态</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">云原生</a>
+  
+    <a class="article-tag" href="/tags/Apache-Solr/">Apache Solr</a>
+  
+    <a class="article-tag" href="/tags/Solr-9-10-0/">Solr 9.10.0</a>
+  
+    <a class="article-tag" href="/tags/Java-24/">Java 24</a>
+  
+    <a class="article-tag" href="/tags/Tika-Server/">Tika Server</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">分布式系统</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2025/07/23/Apache-Solr-9-9-0-%E5%8F%91%E5%B8%83-AI-%E5%90%91%E9%87%8F%E5%8C%96%E4%B8%8E%E6%80%A7%E8%83%BD%E7%AA%81%E7%A0%B4/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Apache Solr 9.9.0 发布：AI 向量化与性能突破</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%91%E5%B8%83%E6%A6%82%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">发布概览</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E4%BA%AE%E7%82%B9"><span class="nav-number">1.1.</span> <span class="nav-text">核心亮点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E6%A0%B8%E5%BF%83%E6%96%B0%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">一、核心新特性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-Java-24-%E6%94%AF%E6%8C%81"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 Java 24+ 支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-Tika-Server-%E5%A4%96%E9%83%A8%E5%A7%94%E6%89%98"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 Tika Server 外部委托</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-3-%E9%9B%86%E7%BE%A4%E7%89%88%E6%9C%AC%E4%BF%9D%E6%8A%A4%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 集群版本保护机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-fullOuterJoin-%E6%B5%81%E5%BC%8F%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">1.4 fullOuterJoin 流式函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-5-%E5%89%AF%E6%9C%AC%E8%B7%AF%E7%94%B1%E4%BC%98%E5%8C%96"><span class="nav-number">2.5.</span> <span class="nav-text">1.5 副本路由优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E6%80%A7%E8%83%BD%E4%B8%8E%E6%9E%B6%E6%9E%84%E4%BC%98%E5%8C%96"><span class="nav-number">3.</span> <span class="nav-text">二、性能与架构优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E8%BF%9C%E7%A8%8B%E4%BB%A3%E7%90%86%E9%AB%98QPS%E4%BC%98%E5%8C%96"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 远程代理高QPS优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-CloudSolrClient-%E5%90%8E%E5%8F%B0%E8%8A%82%E7%82%B9%E5%88%B7%E6%96%B0"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 CloudSolrClient 后台节点刷新</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-PULL%E5%89%AF%E6%9C%AC%E5%8A%9F%E8%83%BD%E5%A2%9E%E5%BC%BA"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 PULL副本功能增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E5%85%B3%E9%94%AEBug%E4%BF%AE%E5%A4%8D"><span class="nav-number">4.</span> <span class="nav-text">三、关键Bug修复</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%8E%88%E6%9D%83%E5%A4%B4%E4%BC%A0%E9%80%92%E9%97%AE%E9%A2%98"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 授权头传递问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%8E%9F%E5%AD%90%E6%9B%B4%E6%96%B0NPE%E4%BF%AE%E5%A4%8D"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 原子更新NPE修复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E9%A2%86%E5%AF%BC%E8%80%85%E9%80%89%E4%B8%BE%E7%AB%9E%E6%80%81%E6%9D%A1%E4%BB%B6"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 领导者选举竞态条件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E4%BE%9D%E8%B5%96%E5%8D%87%E7%BA%A7%E4%B8%8E%E7%94%9F%E6%80%81"><span class="nav-number">5.</span> <span class="nav-text">四、依赖升级与生态</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%A0%B8%E5%BF%83%E4%BE%9D%E8%B5%96%E7%89%88%E6%9C%AC"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 核心依赖版本</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E4%BE%9B%E5%BA%94%E9%93%BE%E5%AE%89%E5%85%A8"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 供应链安全</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E5%BC%83%E7%94%A8%E4%B8%8E%E5%90%91%E5%90%8E%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">6.</span> <span class="nav-text">五、弃用与向后兼容性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E9%87%8D%E8%A6%81%E5%BC%83%E7%94%A8%E6%B8%85%E5%8D%95"><span class="nav-number">6.1.</span> <span class="nav-text">5.1 重要弃用清单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-SolrJ%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%AE%80%E5%8C%96"><span class="nav-number">6.2.</span> <span class="nav-text">5.2 SolrJ客户端简化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E5%8D%87%E7%BA%A7%E6%8C%87%E5%8D%97"><span class="nav-number">7.</span> <span class="nav-text">六、升级指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#6-1-%E5%85%BC%E5%AE%B9%E6%80%A7%E8%AF%84%E4%BC%B0"><span class="nav-number">7.1.</span> <span class="nav-text">6.1 兼容性评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-2-%E5%8D%87%E7%BA%A7%E6%AD%A5%E9%AA%A4"><span class="nav-number">7.2.</span> <span class="nav-text">6.2 升级步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-3-%E6%BB%9A%E5%8A%A8%E5%8D%87%E7%BA%A7%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">7.3.</span> <span class="nav-text">6.3 滚动升级注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-4-Tika%E5%A4%96%E9%83%A8%E5%8C%96%E8%BF%81%E7%A7%BB"><span class="nav-number">7.4.</span> <span class="nav-text">6.4 Tika外部化迁移</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E5%BB%BA%E8%AE%AE"><span class="nav-number">8.</span> <span class="nav-text">七、性能优化建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#7-1-Java%E8%99%9A%E6%8B%9F%E7%BA%BF%E7%A8%8B%E5%BA%94%E7%94%A8"><span class="nav-number">8.1.</span> <span class="nav-text">7.1 Java虚拟线程应用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-2-%E9%9B%86%E7%BE%A4%E7%8A%B6%E6%80%81%E7%BC%93%E5%AD%98%E8%B0%83%E4%BC%98"><span class="nav-number">8.2.</span> <span class="nav-text">7.2 集群状态缓存调优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-3-%E5%89%AF%E6%9C%AC%E7%AD%96%E7%95%A5%E4%BC%98%E5%8C%96"><span class="nav-number">8.3.</span> <span class="nav-text">7.3 副本策略优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E7%9B%91%E6%8E%A7%E4%B8%8E%E8%BF%90%E7%BB%B4"><span class="nav-number">9.</span> <span class="nav-text">八、监控与运维</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#8-1-%E6%96%B0%E5%A2%9EPrometheus%E6%8C%87%E6%A0%87"><span class="nav-number">9.1.</span> <span class="nav-text">8.1 新增Prometheus指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#8-2-%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E5%A2%9E%E5%BC%BA"><span class="nav-number">9.2.</span> <span class="nav-text">8.2 健康检查增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E4%B8%9A%E5%8A%A1%E4%BB%B7%E5%80%BC%E6%80%BB%E7%BB%93"><span class="nav-number">10.</span> <span class="nav-text">九、业务价值总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-1-TCO%EF%BC%88%E6%80%BB%E6%8B%A5%E6%9C%89%E6%88%90%E6%9C%AC%EF%BC%89%E5%BD%B1%E5%93%8D"><span class="nav-number">10.1.</span> <span class="nav-text">9.1 TCO（总拥有成本）影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-%E6%8A%80%E6%9C%AF%E5%80%BA%E5%8A%A1%E6%B8%85%E5%81%BF"><span class="nav-number">10.2.</span> <span class="nav-text">9.2 技术债务清偿</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%81%E3%80%81%E6%9C%AA%E6%9D%A5%E5%B1%95%E6%9C%9B"><span class="nav-number">11.</span> <span class="nav-text">十、未来展望</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#10-1-Solr-10-x%E8%B7%AF%E7%BA%BF%E5%9B%BE%E9%A2%84%E6%B5%8B"><span class="nav-number">11.1.</span> <span class="nav-text">10.1 Solr 10.x路线图预测</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#10-2-%E7%94%9F%E6%80%81%E7%B3%BB%E7%BB%9F%E8%B6%8B%E5%8A%BF"><span class="nav-number">11.2.</span> <span class="nav-text">10.2 生态系统趋势</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%BA%90"><span class="nav-number">12.</span> <span class="nav-text">参考资源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%93%E8%AF%AD"><span class="nav-number">13.</span> <span class="nav-text">结语</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,728 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：prometheus和grafana监控系统完整搭建指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能监控Prometheus监控Solr部署Grafana可视化指标收集运维监控" />
+  
+  
+  
+  
+  <meta name="description" content="详细介绍如何使用Prometheus和Grafana搭建Apache Solr监控系统，包括Prometheus Exporter配置、指标收集、仪表板设置和运维最佳实践">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：Prometheus和Grafana监控系统完整搭建指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/04/10/Solr%E9%83%A8%E7%BD%B2%EF%BC%9APrometheus%E5%92%8CGrafana%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="详细介绍如何使用Prometheus和Grafana搭建Apache Solr监控系统，包括Prometheus Exporter配置、指标收集、仪表板设置和运维最佳实践">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:21:57.145Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能监控">
+<meta property="article:tag" content="Prometheus监控">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="Grafana可视化">
+<meta property="article:tag" content="指标收集">
+<meta property="article:tag" content="运维监控">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：Prometheus和Grafana监控系统完整搭建指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：Prometheus和Grafana监控系统完整搭建指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/04/10/Solr%E9%83%A8%E7%BD%B2%EF%BC%9APrometheus%E5%92%8CGrafana%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-04-10T16:00:00.000Z" itemprop="datePublished">四月 10, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr部署：Prometheus和Grafana监控系统完整搭建指南"><a href="#Solr部署：Prometheus和Grafana监控系统完整搭建指南" class="headerlink" title="Solr部署：Prometheus和Grafana监控系统完整搭建指南"></a>Solr部署：Prometheus和Grafana监控系统完整搭建指南</h1><p>如果您使用<a target="_blank" rel="noopener" href="https://prometheus.io/">Prometheus</a>和<a target="_blank" rel="noopener" href="https://grafana.com/">Grafana</a>进行指标存储和数据可视化，Solr提供了两种解决方案来收集指标和其他数据：</p>
+<ul>
+<li><strong>Prometheus Exporter</strong>：功能丰富的导出器，支持自定义配置</li>
+<li><strong>带Prometheus格式的Metrics API</strong>：原生支持，更高效但配置固化</li>
+</ul>
+<p>本文将详细介绍如何配置和使用这两种方案来构建完整的Solr监控系统。</p>
+<h2 id="监控方案概述"><a href="#监控方案概述" class="headerlink" title="监控方案概述"></a>监控方案概述</h2><h3 id="Prometheus-Exporter特性"><a href="#Prometheus-Exporter特性" class="headerlink" title="Prometheus Exporter特性"></a>Prometheus Exporter特性</h3><p>Prometheus导出器（<code>solr-exporter</code>）不仅可以监控来自Metrics API的Solr指标，还可以监控：</p>
+<ul>
+<li>来自分面查询的分面计数</li>
+<li>Collections API命令响应</li>
+<li>Ping请求响应</li>
+<li>自定义查询结果</li>
+</ul>
+<h3 id="Metrics-API-Prometheus格式"><a href="#Metrics-API-Prometheus格式" class="headerlink" title="Metrics API Prometheus格式"></a>Metrics API Prometheus格式</h3><p>Metrics API提供了Prometheus响应写入器来原生输出Solr指标进行抓取。它更高效，无需运行Prometheus Exporter，但输出格式固定，配置灵活性较低。</p>
+<h2 id="Prometheus-Exporter详细配置"><a href="#Prometheus-Exporter详细配置" class="headerlink" title="Prometheus Exporter详细配置"></a>Prometheus Exporter详细配置</h2><h3 id="架构概述"><a href="#架构概述" class="headerlink" title="架构概述"></a>架构概述</h3><p>以下图表提供了更详细的架构视图：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">┌─────────────────┐    HTTP请求     ┌─────────────────┐    指标查询      ┌─────────────────┐</span><br><span class="line">│   Prometheus    │ ──────────────► │ solr-exporter   │ ──────────────► │      Solr       │</span><br><span class="line">│     Server      │                 │                 │                 │    Cluster      │</span><br><span class="line">└─────────────────┘                 └─────────────────┘                 └─────────────────┘</span><br><span class="line">         │                                   │</span><br><span class="line">         │ 指标数据                          │ XML配置</span><br><span class="line">         ▼                                   ▼</span><br><span class="line">┌─────────────────┐                 ┌─────────────────┐</span><br><span class="line">│     Grafana     │                 │  配置文件        │</span><br><span class="line">│   Dashboard     │                 │solr-exporter-   │</span><br><span class="line">└─────────────────┘                 │    config.xml   │</span><br><span class="line">                                     └─────────────────┘</span><br></pre></td></tr></table></figure>
+
+<h3 id="运行Prometheus-Exporter的三个关键方面"><a href="#运行Prometheus-Exporter的三个关键方面" class="headerlink" title="运行Prometheus Exporter的三个关键方面"></a>运行Prometheus Exporter的三个关键方面</h3><ol>
+<li>**修改<code>solr-exporter-config.xml</code>**定义要收集的数据</li>
+<li><strong>从Solr内部启动导出器</strong></li>
+<li><strong>修改Prometheus配置</strong>监听正确的端口</li>
+</ol>
+<h2 id="启动Exporter"><a href="#启动Exporter" class="headerlink" title="启动Exporter"></a>启动Exporter</h2><h3 id="基本启动命令"><a href="#基本启动命令" class="headerlink" title="基本启动命令"></a>基本启动命令</h3><p>您可以通过在<code>prometheus-exporter/</code>目录中运行<code>./bin/solr-exporter</code>（Linux）或<code>.\bin\solr-exporter.cmd</code>（Windows）来启动<code>solr-exporter</code>。</p>
+<h3 id="不同操作系统和模式的启动命令"><a href="#不同操作系统和模式的启动命令" class="headerlink" title="不同操作系统和模式的启动命令"></a>不同操作系统和模式的启动命令</h3><h4 id="Linux系统"><a href="#Linux系统" class="headerlink" title="Linux系统"></a>Linux系统</h4><p><strong>用户管理&#x2F;单节点模式：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> prometheus-exporter</span><br><span class="line">./bin/solr-exporter -p 9854 -b http://localhost:8983/solr \</span><br><span class="line">  --config-file ./conf/solr-exporter-config.xml --num-threads 8</span><br></pre></td></tr></table></figure>
+
+<p><strong>SolrCloud模式：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> prometheus-exporter</span><br><span class="line">./bin/solr-exporter -p 9854 -z localhost:2181/solr \</span><br><span class="line">  --config-file ./conf/solr-exporter-config.xml --num-threads 16</span><br></pre></td></tr></table></figure>
+
+<h4 id="Windows系统"><a href="#Windows系统" class="headerlink" title="Windows系统"></a>Windows系统</h4><p><strong>用户管理&#x2F;单节点模式：</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> prometheus-exporter</span><br><span class="line">.\bin\solr-exporter.<span class="built_in">cmd</span> -p <span class="number">9854</span> -b http://localhost:<span class="number">8983</span>/solr ^</span><br><span class="line">  --config-file .\conf\solr-exporter-config.xml --num-threads <span class="number">8</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>SolrCloud模式：</strong></p>
+<figure class="highlight cmd"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> prometheus-exporter</span><br><span class="line">.\bin\solr-exporter.<span class="built_in">cmd</span> -p <span class="number">9854</span> -z localhost:<span class="number">2181</span>/solr ^</span><br><span class="line">  --config-file .\conf\solr-exporter-config.xml --num-threads <span class="number">16</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="命令行参数详解"><a href="#命令行参数详解" class="headerlink" title="命令行参数详解"></a>命令行参数详解</h3><h4 id="基本参数"><a href="#基本参数" class="headerlink" title="基本参数"></a>基本参数</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>-h</code>, <code>--help</code></td>
+<td>显示命令行帮助和用法</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>-p</code>, <code>--port</code></td>
+<td>Prometheus监听端口</td>
+<td><code>8989</code></td>
+</tr>
+<tr>
+<td><code>--scrape-interval</code></td>
+<td>从Solr收集指标的间隔（秒）</td>
+<td><code>60</code></td>
+</tr>
+<tr>
+<td><code>--num-threads</code></td>
+<td>线程池大小</td>
+<td><code>1</code></td>
+</tr>
+</tbody></table>
+<h4 id="连接参数"><a href="#连接参数" class="headerlink" title="连接参数"></a>连接参数</h4><p><strong><code>-b</code>, <code>--baseurl</code></strong></p>
+<ul>
+<li><strong>用途</strong>：用户管理集群或单节点安装的Solr基础URL</li>
+<li><strong>示例</strong>：<code>http://localhost:8983/solr</code></li>
+<li><strong>注意</strong>：不要与<code>-z</code>参数同时使用</li>
+</ul>
+<p><strong><code>-z</code>, <code>--zk-host</code></strong></p>
+<ul>
+<li><strong>用途</strong>：SolrCloud的ZooKeeper连接字符串</li>
+<li><strong>示例</strong>：<code>localhost:9983</code> 或 <code>localhost:2181/solr</code></li>
+<li><strong>注意</strong>：不要与<code>-b</code>参数同时使用</li>
+</ul>
+<h4 id="配置参数"><a href="#配置参数" class="headerlink" title="配置参数"></a>配置参数</h4><p><strong><code>--config-file</code></strong></p>
+<ul>
+<li><strong>默认值</strong>：<code>prometheus-exporter/conf/solr-exporter-config.xml</code></li>
+<li><strong>作用</strong>：定义要读取的Solr指标的配置文件路径</li>
+</ul>
+<p><strong><code>--cluster-id</code></strong></p>
+<ul>
+<li><strong>作用</strong>：监控集群的唯一ID，作为所有指标的<code>cluster_id</code>标签</li>
+<li><strong>默认</strong>：使用<code>baseUrl</code>或<code>zkHost</code>的哈希值</li>
+</ul>
+<h4 id="安全参数"><a href="#安全参数" class="headerlink" title="安全参数"></a>安全参数</h4><p><strong><code>-u</code>, <code>--credentials</code></strong></p>
+<ul>
+<li><strong>格式</strong>：<code>username:password</code></li>
+<li><strong>示例</strong>：<code>--credentials solr:SolrRocks</code></li>
+</ul>
+<p><strong><code>--ssl-enabled</code></strong></p>
+<ul>
+<li><strong>作用</strong>：启用mTLS连接到Solr</li>
+<li><strong>环境变量要求</strong>：<ul>
+<li><code>SOLR_SSL_KEY_STORE</code></li>
+<li><code>SOLR_SSL_KEY_STORE_PASSWORD</code></li>
+<li><code>SOLR_SSL_TRUST_STORE</code></li>
+<li><code>SOLR_SSL_TRUST_STORE_PASSWORD</code></li>
+</ul>
+</li>
+</ul>
+<h3 id="环境变量选项"><a href="#环境变量选项" class="headerlink" title="环境变量选项"></a>环境变量选项</h3><h4 id="JVM配置"><a href="#JVM配置" class="headerlink" title="JVM配置"></a>JVM配置</h4><table>
+<thead>
+<tr>
+<th>环境变量</th>
+<th>说明</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>JAVA_HEAP</code></td>
+<td>设置初始和最大Java堆大小</td>
+<td><code>512m</code></td>
+</tr>
+<tr>
+<td><code>JAVA_MEM</code></td>
+<td>自定义Java内存设置</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>GC_TUNE</code></td>
+<td>自定义垃圾收集设置</td>
+<td><code>-XX:+UseG1GC</code></td>
+</tr>
+<tr>
+<td><code>JAVA_OPTS</code></td>
+<td>额外的JVM选项</td>
+<td>-</td>
+</tr>
+</tbody></table>
+<h4 id="特殊配置"><a href="#特殊配置" class="headerlink" title="特殊配置"></a>特殊配置</h4><p><strong><code>ZK_CREDS_AND_ACLS</code></strong></p>
+<ul>
+<li><strong>作用</strong>：连接受ACL保护的ZooKeeper主机的凭据</li>
+<li><strong>参考</strong>：ZooKeeper访问控制文档</li>
+</ul>
+<p><strong><code>CLASSPATH_PREFIX</code></strong></p>
+<ul>
+<li><strong>作用</strong>：启动<code>solr-exporter</code>时加载额外库的位置</li>
+</ul>
+<h2 id="安全Solr集群的指标获取"><a href="#安全Solr集群的指标获取" class="headerlink" title="安全Solr集群的指标获取"></a>安全Solr集群的指标获取</h2><h3 id="安全配置注入"><a href="#安全配置注入" class="headerlink" title="安全配置注入"></a>安全配置注入</h3><p>您的SolrCloud安全配置可以使用环境变量注入到<code>solr-exporter</code>中，类似于使用SolrJ的其他客户端。</p>
+<h3 id="安全集群配置示例"><a href="#安全集群配置示例" class="headerlink" title="安全集群配置示例"></a>安全集群配置示例</h3><p>假设您有一个由基础认证、SSL和ZooKeeper访问控制保护的SolrCloud实例。</p>
+<h4 id="基础认证文件"><a href="#基础认证文件" class="headerlink" title="基础认证文件"></a>基础认证文件</h4><p>创建<code>basicauth.properties</code>文件：</p>
+<figure class="highlight properties"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">httpBasicAuthUser</span>=<span class="string">myUser</span></span><br><span class="line"><span class="attr">httpBasicAuthPassword</span>=<span class="string">myPassword</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="启动安全导出器"><a href="#启动安全导出器" class="headerlink" title="启动安全导出器"></a>启动安全导出器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> prometheus-exporter</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置SSL和基础认证</span></span><br><span class="line"><span class="built_in">export</span> JAVA_OPTS=<span class="string">&quot;-Djavax.net.ssl.trustStore=truststore.p12 \</span></span><br><span class="line"><span class="string">  -Djavax.net.ssl.trustStorePassword=truststorePassword \</span></span><br><span class="line"><span class="string">  -Dsolr.httpclient.builder.factory=org.apache.solr.client.solrj.impl.PreemptiveBasicAuthClientBuilderFactory \</span></span><br><span class="line"><span class="string">  -Dsolr.httpclient.config=basicauth.properties&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置ZooKeeper凭据</span></span><br><span class="line"><span class="built_in">export</span> ZK_CREDS_AND_ACLS=<span class="string">&quot;-DzkCredentialsProvider=org.apache.solr.common.cloud.VMParamsSingleSetCredentialsDigestZkCredentialsProvider \</span></span><br><span class="line"><span class="string">  -DzkDigestUsername=readonly-user \</span></span><br><span class="line"><span class="string">  -DzkDigestPassword=zkUserPassword&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置classpath</span></span><br><span class="line"><span class="built_in">export</span> CLASSPATH_PREFIX=<span class="string">&quot;../server/solr-webapp/webapp/WEB-INF/lib/commons-codec-1.11.jar&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动导出器</span></span><br><span class="line">./bin/solr-exporter -p 9854 -z zk1:2181,zk2:2181,zk3:2181 \</span><br><span class="line">  --config-file ./conf/solr-exporter-config.xml --num-threads 16</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>注意</strong>：导出器需要<code>commons-codec</code>库用于SSL&#x2F;BasicAuth，但没有自带。示例从Solr Web应用程序重用它。</p>
+</blockquote>
+<h2 id="Exporter配置详解"><a href="#Exporter配置详解" class="headerlink" title="Exporter配置详解"></a>Exporter配置详解</h2><h3 id="配置文件结构"><a href="#配置文件结构" class="headerlink" title="配置文件结构"></a>配置文件结构</h3><p><code>solr-exporter</code>的配置定义了从Solr获取的数据。这包括指标，也可以包括对PingRequestHandler、Collections API的查询，以及对任何查询请求处理程序的查询。</p>
+<h4 id="默认配置示例"><a href="#默认配置示例" class="headerlink" title="默认配置示例"></a>默认配置示例</h4><p>默认示例配置位于<code>prometheus-exporter/conf/solr-exporter-config.xml</code>：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">config</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rules</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">ping</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;request&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;path&quot;</span>&gt;</span>/admin/ping<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;jsonQueries&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span>&gt;</span></span><br><span class="line">            . as $object | $object |</span><br><span class="line">            (if $object.status == &quot;OK&quot; then 1.0 else 0.0 end) as $value |</span><br><span class="line">            &#123;</span><br><span class="line">              name         : &quot;solr_ping&quot;,</span><br><span class="line">              type         : &quot;GAUGE&quot;, </span><br><span class="line">              help         : &quot;See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/ping.html&quot;,</span><br><span class="line">              label_names  : [],</span><br><span class="line">              label_values : [],</span><br><span class="line">              value        : $value</span><br><span class="line">            &#125;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">ping</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">metrics</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;request&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;path&quot;</span>&gt;</span>/admin/metrics<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;params&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;group&quot;</span>&gt;</span>all<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;type&quot;</span>&gt;</span>all<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;prefix&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;property&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;jsonQueries&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span>&gt;</span></span><br><span class="line">            .metrics[&quot;solr.jetty&quot;] | to_entries | .[] | </span><br><span class="line">            select(.key | startswith(&quot;org.eclipse.jetty.server.handler.DefaultHandler&quot;)) | </span><br><span class="line">            select(.key | endswith(&quot;xx-responses&quot;)) as $object |</span><br><span class="line">            $object.key | split(&quot;.&quot;) | last | split(&quot;-&quot;) | first as $status |</span><br><span class="line">            $object.value.count as $value |</span><br><span class="line">            &#123;</span><br><span class="line">              name         : &quot;solr_metrics_jetty_response_total&quot;,</span><br><span class="line">              type         : &quot;COUNTER&quot;,</span><br><span class="line">              help         : &quot;See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/metrics-reporting.html&quot;,</span><br><span class="line">              label_names  : [&quot;status&quot;],</span><br><span class="line">              label_values : [$status],</span><br><span class="line">              value        : $value</span><br><span class="line">            &#125;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">metrics</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">collections</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;request&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;path&quot;</span>&gt;</span>/admin/collections<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;params&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;action&quot;</span>&gt;</span>CLUSTERSTATUS<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;jsonQueries&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span>&gt;</span></span><br><span class="line">            .cluster.live_nodes | length as $value |</span><br><span class="line">            &#123;</span><br><span class="line">              name         : &quot;solr_collections_live_nodes&quot;,</span><br><span class="line">              type         : &quot;GAUGE&quot;,</span><br><span class="line">              help         : &quot;See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/cluster-node-management.html#clusterstatus&quot;,</span><br><span class="line">              label_names  : [],</span><br><span class="line">              label_values : [],</span><br><span class="line">              value        : $value</span><br><span class="line">            &#125;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">collections</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">search</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;request&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;query&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;collection&quot;</span>&gt;</span>collection1<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;path&quot;</span>&gt;</span>/select<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;params&quot;</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;q&quot;</span>&gt;</span>*:*<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;start&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;rows&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;json.facet&quot;</span>&gt;</span></span><br><span class="line">              &#123;</span><br><span class="line">                category: &#123;</span><br><span class="line">                  type: terms,</span><br><span class="line">                  field: cat</span><br><span class="line">                &#125;</span><br><span class="line">              &#125;</span><br><span class="line">            <span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;jsonQueries&quot;</span>&gt;</span></span><br><span class="line">          <span class="tag">&lt;<span class="name">str</span>&gt;</span></span><br><span class="line">            .facets.category.buckets[] as $object |</span><br><span class="line">            $object.val as $term |</span><br><span class="line">            $object.count as $value |</span><br><span class="line">            &#123;</span><br><span class="line">              name         : &quot;solr_facets_category&quot;,</span><br><span class="line">              type         : &quot;GAUGE&quot;,</span><br><span class="line">              help         : &quot;Category facets&quot;,</span><br><span class="line">              label_names  : [&quot;term&quot;], </span><br><span class="line">              label_values : [$term],</span><br><span class="line">              value        : $value</span><br><span class="line">            &#125;</span><br><span class="line">          <span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">search</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rules</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置标签和元素"><a href="#配置标签和元素" class="headerlink" title="配置标签和元素"></a>配置标签和元素</h3><h4 id="基本结构"><a href="#基本结构" class="headerlink" title="基本结构"></a>基本结构</h4><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">config</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">rules</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!-- 数据定义 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">rules</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="请求类型"><a href="#请求类型" class="headerlink" title="请求类型"></a>请求类型</h4><table>
+<thead>
+<tr>
+<th>请求类型</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>&lt;ping&gt;</code></td>
+<td>抓取Ping请求的响应</td>
+</tr>
+<tr>
+<td><code>&lt;metrics&gt;</code></td>
+<td>抓取Metrics API请求的响应</td>
+</tr>
+<tr>
+<td><code>&lt;collections&gt;</code></td>
+<td>抓取Collections API请求的响应</td>
+</tr>
+<tr>
+<td><code>&lt;search&gt;</code></td>
+<td>抓取查询请求的响应</td>
+</tr>
+</tbody></table>
+<h4 id="查询配置属性"><a href="#查询配置属性" class="headerlink" title="查询配置属性"></a>查询配置属性</h4><p><strong>collection</strong></p>
+<ul>
+<li><strong>可选</strong>：仅用于SolrCloud集群</li>
+<li><strong>作用</strong>：发出查询的集合</li>
+</ul>
+<p><strong>core</strong></p>
+<ul>
+<li><strong>可选</strong>：仅用于用户管理集群或单节点安装</li>
+<li><strong>作用</strong>：发出查询的核心</li>
+</ul>
+<p><strong>path</strong></p>
+<ul>
+<li><strong>作用</strong>：请求发送到的查询端点路径</li>
+<li><strong>示例</strong>：<code>admin/metrics</code>、<code>/select</code>、<code>admin/collections</code></li>
+</ul>
+<p><strong>params</strong></p>
+<ul>
+<li><strong>作用</strong>：额外的查询参数</li>
+<li><strong>示例</strong>：Metrics端点的group和prefix参数</li>
+</ul>
+<h4 id="JSON查询配置"><a href="#JSON查询配置" class="headerlink" title="JSON查询配置"></a>JSON查询配置</h4><p><code>&lt;jsonQueries&gt;</code>是一个数组，定义了一个或多个jq语法的JSON查询。有关如何构建这些查询的详细信息，请参见<a target="_blank" rel="noopener" href="https://stedolan.github.io/jq/manual/">jq用户手册</a>。</p>
+<p><strong>jq查询输出格式：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr_ping&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GAUGE&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;help&quot;</span><span class="punctuation">:</span> <span class="string">&quot;See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/ping.html&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label_names&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;base_url&quot;</span><span class="punctuation">,</span><span class="string">&quot;core&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label_values&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;http://localhost:8983/solr&quot;</span><span class="punctuation">,</span><span class="string">&quot;collection1&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="number">1.0</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="输出格式"><a href="#输出格式" class="headerlink" title="输出格式"></a>输出格式</h3><h4 id="Prometheus格式转换"><a href="#Prometheus格式转换" class="headerlink" title="Prometheus格式转换"></a>Prometheus格式转换</h4><p><code>solr-exporter</code>将JSON转换为以下输出格式：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># TYPE &lt;name&gt; &lt;type&gt;</span><br><span class="line"># HELP &lt;name&gt; &lt;help&gt;</span><br><span class="line">&lt;name&gt;&#123;&lt;label_names[0]&gt;=&lt;label_values[0]&gt;,&lt;label_names[1]&gt;=&lt;label_values[1]&gt;,...&#125; &lt;value&gt;</span><br></pre></td></tr></table></figure>
+
+<h4 id="参数说明"><a href="#参数说明" class="headerlink" title="参数说明"></a>参数说明</h4><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>指标名称，遵循Prometheus命名最佳实践</td>
+</tr>
+<tr>
+<td><code>type</code></td>
+<td>指标类型：<code>COUNTER</code>、<code>GAUGE</code>、<code>SUMMARY</code>、<code>HISTOGRAM</code>或<code>UNTYPED</code></td>
+</tr>
+<tr>
+<td><code>help</code></td>
+<td>指标帮助文本</td>
+</tr>
+<tr>
+<td><code>label_names</code></td>
+<td>指标标签名称</td>
+</tr>
+<tr>
+<td><code>label_values</code></td>
+<td>指标标签值</td>
+</tr>
+<tr>
+<td><code>value</code></td>
+<td>指标值（必须是Double类型）</td>
+</tr>
+</tbody></table>
+<h4 id="转换示例"><a href="#转换示例" class="headerlink" title="转换示例"></a>转换示例</h4><p><strong>JSON输入：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr_ping&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;GAUGE&quot;</span><span class="punctuation">,</span> </span><br><span class="line">  <span class="attr">&quot;help&quot;</span><span class="punctuation">:</span> <span class="string">&quot;See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/ping.html&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label_names&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;base_url&quot;</span><span class="punctuation">,</span><span class="string">&quot;core&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;label_values&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;http://localhost:8983/solr&quot;</span><span class="punctuation">,</span><span class="string">&quot;collection1&quot;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="number">1.0</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>Prometheus输出：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"># TYPE solr_ping gauge</span><br><span class="line"># HELP solr_ping See following URL: https://solr.apache.org/guide/solr/latest/deployment-guide/ping.html</span><br><span class="line">solr_ping&#123;base_url=&quot;http://localhost:8983/solr&quot;,core=&quot;collection1&quot;&#125; 1.0</span><br></pre></td></tr></table></figure>
+
+<h2 id="Prometheus配置"><a href="#Prometheus配置" class="headerlink" title="Prometheus配置"></a>Prometheus配置</h2><h3 id="Prometheus服务器设置"><a href="#Prometheus服务器设置" class="headerlink" title="Prometheus服务器设置"></a>Prometheus服务器设置</h3><p>Prometheus是一个需要单独下载和部署的独立服务器。更多信息可以在Prometheus<a target="_blank" rel="noopener" href="https://prometheus.io/docs/prometheus/latest/getting_started/">入门指南</a>页面找到。</p>
+<h3 id="配置Prometheus抓取Solr指标"><a href="#配置Prometheus抓取Solr指标" class="headerlink" title="配置Prometheus抓取Solr指标"></a>配置Prometheus抓取Solr指标</h3><p>为了让Prometheus知道<code>solr-exporter</code>的存在，必须将监听地址添加到Prometheus服务器的<code>prometheus.yml</code>配置文件中：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:9854&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="高级Prometheus配置"><a href="#高级Prometheus配置" class="headerlink" title="高级Prometheus配置"></a>高级Prometheus配置</h3><h4 id="多个Exporter实例"><a href="#多个Exporter实例" class="headerlink" title="多个Exporter实例"></a>多个Exporter实例</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr-cluster-1&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;solr1:9854&#x27;</span>, <span class="string">&#x27;solr2:9854&#x27;</span>, <span class="string">&#x27;solr3:9854&#x27;</span>]</span><br><span class="line">    <span class="attr">scrape_interval:</span> <span class="string">30s</span></span><br><span class="line">    </span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr-cluster-2&#x27;</span> </span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;solr4:9854&#x27;</span>, <span class="string">&#x27;solr5:9854&#x27;</span>, <span class="string">&#x27;solr6:9854&#x27;</span>]</span><br><span class="line">    <span class="attr">scrape_interval:</span> <span class="string">30s</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="带标签的配置"><a href="#带标签的配置" class="headerlink" title="带标签的配置"></a>带标签的配置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:9854&#x27;</span>]</span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">environment:</span> <span class="string">&#x27;production&#x27;</span></span><br><span class="line">          <span class="attr">cluster:</span> <span class="string">&#x27;main&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="验证配置"><a href="#验证配置" class="headerlink" title="验证配置"></a>验证配置</h3><p>应用设置到Prometheus后，它将开始从<code>solr-exporter</code>拉取Solr的指标。您可以通过浏览<code>http://localhost:9090</code>并在Prometheus GUI中查询<code>solr_ping</code>指标来测试Prometheus服务器、<code>solr-exporter</code>和Solr是否协同工作。</p>
+<h2 id="Grafana仪表板配置"><a href="#Grafana仪表板配置" class="headerlink" title="Grafana仪表板配置"></a>Grafana仪表板配置</h2><h3 id="Grafana部署"><a href="#Grafana部署" class="headerlink" title="Grafana部署"></a>Grafana部署</h3><p>要使用Grafana进行可视化，必须单独下载和部署。更多信息可以在Grafana<a target="_blank" rel="noopener" href="https://grafana.com/docs/grafana/latest/">文档</a>网站找到。Grafana从许多来源消费数据，包括您之前设置的Prometheus服务器。</p>
+<h3 id="示例仪表板"><a href="#示例仪表板" class="headerlink" title="示例仪表板"></a>示例仪表板</h3><h4 id="导入预构建仪表板"><a href="#导入预构建仪表板" class="headerlink" title="导入预构建仪表板"></a>导入预构建仪表板</h4><p>Grafana示例仪表板在以下JSON文件中提供：<code>prometheus-exporter/conf/grafana-solr-dashboard.json</code>。您可以将此文件与其他Grafana仪表板配置一起放置，并根据对<code>solr-exporter</code>配置所做的任何自定义进行必要修改。</p>
+<p>**快速导入：**您可以通过使用仪表板ID <code>12456</code>的导入功能，直接<a target="_blank" rel="noopener" href="https://grafana.com/grafana/dashboards/12456">通过grafana.com</a>导入Solr仪表板。</p>
+<h4 id="自定义仪表板示例"><a href="#自定义仪表板示例" class="headerlink" title="自定义仪表板示例"></a>自定义仪表板示例</h4><p><strong>核心指标面板配置：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Solr Query Rate&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;graph&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;targets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;expr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;rate(solr_metrics_core_requests_total[5m])&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;legendFormat&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;&#123;core&#125;&#125; - &#123;&#123;handler&#125;&#125;&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;yAxes&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;label&quot;</span><span class="punctuation">:</span> <span class="string">&quot;Queries per second&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;min&quot;</span><span class="punctuation">:</span> <span class="number">0</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>内存使用面板：</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;title&quot;</span><span class="punctuation">:</span> <span class="string">&quot;JVM Memory Usage&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;graph&quot;</span><span class="punctuation">,</span> </span><br><span class="line">  <span class="attr">&quot;targets&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;expr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr_metrics_jvm_memory_heap_used&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;legendFormat&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;&#123;instance&#125;&#125; - Heap Used&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;expr&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr_metrics_jvm_memory_heap_max&quot;</span><span class="punctuation">,</span> </span><br><span class="line">      <span class="attr">&quot;legendFormat&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&#123;&#123;instance&#125;&#125; - Heap Max&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">]</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="使用Metrics-API的Prometheus格式"><a href="#使用Metrics-API的Prometheus格式" class="headerlink" title="使用Metrics API的Prometheus格式"></a>使用Metrics API的Prometheus格式</h2><h3 id="原生Prometheus指标"><a href="#原生Prometheus指标" class="headerlink" title="原生Prometheus指标"></a>原生Prometheus指标</h3><p>Prometheus指标可直接从Solr通过Metrics API获得，通过设置<code>wt</code>参数为<code>prometheus</code>：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/metrics?wt=prometheus</span><br></pre></td></tr></table></figure>
+
+<h3 id="API特性"><a href="#API特性" class="headerlink" title="API特性"></a>API特性</h3><ul>
+<li><strong>效率更高</strong>：无需运行独立的exporter</li>
+<li><strong>固定输出</strong>：不提供配置能力</li>
+<li><strong>原生集成</strong>：直接从Solr获取指标</li>
+</ul>
+<h3 id="Prometheus配置（Metrics-API）"><a href="#Prometheus配置（Metrics-API）" class="headerlink" title="Prometheus配置（Metrics API）"></a>Prometheus配置（Metrics API）</h3><h4 id="直接抓取配置"><a href="#直接抓取配置" class="headerlink" title="直接抓取配置"></a>直接抓取配置</h4><p>与Prometheus Exporter类似，需要配置<code>prometheus.yml</code>让Prometheus服务器摄取指标。区别是必须直接从运行Solr的每个主机&#x2F;端口抓取带有<code>wt=prometheus</code>参数的Metrics API：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">metrics_path:</span> <span class="string">&quot;/solr/admin/metrics&quot;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:8983&#x27;</span>, <span class="string">&#x27;localhost:7574&#x27;</span>]</span><br><span class="line">    <span class="attr">params:</span></span><br><span class="line">      <span class="attr">wt:</span> [<span class="string">&#x27;prometheus&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<h4 id="高级抓取配置"><a href="#高级抓取配置" class="headerlink" title="高级抓取配置"></a>高级抓取配置</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr-metrics&#x27;</span></span><br><span class="line">    <span class="attr">metrics_path:</span> <span class="string">&quot;/solr/admin/metrics&quot;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;solr1:8983&#x27;</span>, <span class="string">&#x27;solr2:8983&#x27;</span>, <span class="string">&#x27;solr3:8983&#x27;</span>]</span><br><span class="line">    <span class="attr">params:</span></span><br><span class="line">      <span class="attr">wt:</span> [<span class="string">&#x27;prometheus&#x27;</span>]</span><br><span class="line">      <span class="attr">group:</span> [<span class="string">&#x27;jvm&#x27;</span>, <span class="string">&#x27;jetty&#x27;</span>, <span class="string">&#x27;core&#x27;</span>]</span><br><span class="line">      <span class="attr">type:</span> [<span class="string">&#x27;counter&#x27;</span>, <span class="string">&#x27;gauge&#x27;</span>]</span><br><span class="line">    <span class="attr">scrape_interval:</span> <span class="string">15s</span></span><br><span class="line">    <span class="attr">scrape_timeout:</span> <span class="string">10s</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="生产环境最佳实践"><a href="#生产环境最佳实践" class="headerlink" title="生产环境最佳实践"></a>生产环境最佳实践</h2><h3 id="1-性能优化"><a href="#1-性能优化" class="headerlink" title="1. 性能优化"></a>1. 性能优化</h3><h4 id="Exporter性能调优"><a href="#Exporter性能调优" class="headerlink" title="Exporter性能调优"></a>Exporter性能调优</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 优化线程数</span></span><br><span class="line">--num-threads 16</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整抓取间隔</span></span><br><span class="line">--scrape-interval 30</span><br><span class="line"></span><br><span class="line"><span class="comment"># JVM优化</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HEAP=<span class="string">&quot;1g&quot;</span></span><br><span class="line"><span class="built_in">export</span> GC_TUNE=<span class="string">&quot;-XX:+UseG1GC -XX:MaxGCPauseMillis=200&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="Prometheus配置优化"><a href="#Prometheus配置优化" class="headerlink" title="Prometheus配置优化"></a>Prometheus配置优化</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">scrape_interval:</span> <span class="string">15s</span></span><br><span class="line">  <span class="attr">evaluation_interval:</span> <span class="string">15s</span></span><br><span class="line">  <span class="attr">external_labels:</span></span><br><span class="line">    <span class="attr">monitor:</span> <span class="string">&#x27;solr-monitor&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">rule_files:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="string">&quot;solr_rules.yml&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">scrape_interval:</span> <span class="string">30s</span></span><br><span class="line">    <span class="attr">scrape_timeout:</span> <span class="string">10s</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:9854&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-监控告警规则"><a href="#2-监控告警规则" class="headerlink" title="2. 监控告警规则"></a>2. 监控告警规则</h3><h4 id="Prometheus告警规则"><a href="#Prometheus告警规则" class="headerlink" title="Prometheus告警规则"></a>Prometheus告警规则</h4><p>创建<code>solr_rules.yml</code>文件：</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">groups:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">name:</span> <span class="string">solr</span></span><br><span class="line">    <span class="attr">rules:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">alert:</span> <span class="string">SolrDown</span></span><br><span class="line">        <span class="attr">expr:</span> <span class="string">solr_ping</span> <span class="string">==</span> <span class="number">0</span></span><br><span class="line">        <span class="attr">for:</span> <span class="string">1m</span></span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">severity:</span> <span class="string">critical</span></span><br><span class="line">        <span class="attr">annotations:</span></span><br><span class="line">          <span class="attr">summary:</span> <span class="string">&quot;Solr instance is down&quot;</span></span><br><span class="line">          <span class="attr">description:</span> <span class="string">&quot;Solr instance <span class="template-variable">&#123;&#123; $labels.instance &#125;&#125;</span> has been down for more than 1 minute.&quot;</span></span><br><span class="line">          </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">alert:</span> <span class="string">SolrHighMemoryUsage</span></span><br><span class="line">        <span class="attr">expr:</span> <span class="string">(solr_metrics_jvm_memory_heap_used</span> <span class="string">/</span> <span class="string">solr_metrics_jvm_memory_heap_max)</span> <span class="string">&gt;</span> <span class="number">0.85</span></span><br><span class="line">        <span class="attr">for:</span> <span class="string">5m</span></span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">severity:</span> <span class="string">warning</span></span><br><span class="line">        <span class="attr">annotations:</span></span><br><span class="line">          <span class="attr">summary:</span> <span class="string">&quot;Solr high memory usage&quot;</span></span><br><span class="line">          <span class="attr">description:</span> <span class="string">&quot;Solr instance <span class="template-variable">&#123;&#123; $labels.instance &#125;&#125;</span> memory usage is above 85% for more than 5 minutes.&quot;</span></span><br><span class="line">          </span><br><span class="line">      <span class="bullet">-</span> <span class="attr">alert:</span> <span class="string">SolrSlowQueries</span></span><br><span class="line">        <span class="attr">expr:</span> <span class="string">rate(solr_metrics_core_requests_time_total[5m])</span> <span class="string">/</span> <span class="string">rate(solr_metrics_core_requests_total[5m])</span> <span class="string">&gt;</span> <span class="number">1000</span></span><br><span class="line">        <span class="attr">for:</span> <span class="string">2m</span></span><br><span class="line">        <span class="attr">labels:</span></span><br><span class="line">          <span class="attr">severity:</span> <span class="string">warning</span></span><br><span class="line">        <span class="attr">annotations:</span></span><br><span class="line">          <span class="attr">summary:</span> <span class="string">&quot;Solr slow queries detected&quot;</span></span><br><span class="line">          <span class="attr">description:</span> <span class="string">&quot;Average query time on <span class="template-variable">&#123;&#123; $labels.instance &#125;&#125;</span>/<span class="template-variable">&#123;&#123; $labels.core &#125;&#125;</span> is above 1000ms.&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-高可用配置"><a href="#3-高可用配置" class="headerlink" title="3. 高可用配置"></a>3. 高可用配置</h3><h4 id="多Exporter部署"><a href="#多Exporter部署" class="headerlink" title="多Exporter部署"></a>多Exporter部署</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 主Exporter</span></span><br><span class="line">./bin/solr-exporter -p 9854 -z zk1:2181,zk2:2181,zk3:2181 \</span><br><span class="line">  --cluster-id main-cluster</span><br><span class="line"></span><br><span class="line"><span class="comment"># 备用Exporter</span></span><br><span class="line">./bin/solr-exporter -p 9855 -z zk1:2181,zk2:2181,zk3:2181 \</span><br><span class="line">  --cluster-id main-cluster-backup</span><br></pre></td></tr></table></figure>
+
+<h4 id="Prometheus高可用"><a href="#Prometheus高可用" class="headerlink" title="Prometheus高可用"></a>Prometheus高可用</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># prometheus-ha.yml</span></span><br><span class="line"><span class="attr">global:</span></span><br><span class="line">  <span class="attr">external_labels:</span></span><br><span class="line">    <span class="attr">replica:</span> <span class="string">prometheus-1</span></span><br><span class="line"></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;exporter1:9854&#x27;</span>, <span class="string">&#x27;exporter2:9855&#x27;</span>]</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-安全配置"><a href="#4-安全配置" class="headerlink" title="4. 安全配置"></a>4. 安全配置</h3><h4 id="HTTPS和认证"><a href="#HTTPS和认证" class="headerlink" title="HTTPS和认证"></a>HTTPS和认证</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用SSL的Exporter</span></span><br><span class="line"><span class="built_in">export</span> JAVA_OPTS=<span class="string">&quot;-Djavax.net.ssl.trustStore=/path/to/truststore.p12 \</span></span><br><span class="line"><span class="string">  -Djavax.net.ssl.trustStorePassword=password&quot;</span></span><br><span class="line"></span><br><span class="line">./bin/solr-exporter -p 9854 --ssl-enabled \</span><br><span class="line">  -u admin:password -z zk1:2181,zk2:2181,zk3:2181</span><br></pre></td></tr></table></figure>
+
+<h4 id="网络访问控制"><a href="#网络访问控制" class="headerlink" title="网络访问控制"></a>网络访问控制</h4><figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># prometheus.yml with basic auth</span></span><br><span class="line"><span class="attr">scrape_configs:</span></span><br><span class="line">  <span class="bullet">-</span> <span class="attr">job_name:</span> <span class="string">&#x27;solr&#x27;</span></span><br><span class="line">    <span class="attr">static_configs:</span></span><br><span class="line">      <span class="bullet">-</span> <span class="attr">targets:</span> [<span class="string">&#x27;localhost:9854&#x27;</span>]</span><br><span class="line">    <span class="attr">basic_auth:</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">monitor</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">monitor_password</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="5-存储和保留策略"><a href="#5-存储和保留策略" class="headerlink" title="5. 存储和保留策略"></a>5. 存储和保留策略</h3><h4 id="Prometheus存储配置"><a href="#Prometheus存储配置" class="headerlink" title="Prometheus存储配置"></a>Prometheus存储配置</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启动Prometheus时设置保留策略</span></span><br><span class="line">./prometheus \</span><br><span class="line">  --config.file=prometheus.yml \</span><br><span class="line">  --storage.tsdb.path=./data \</span><br><span class="line">  --storage.tsdb.retention.time=30d \</span><br><span class="line">  --storage.tsdb.retention.size=10GB</span><br></pre></td></tr></table></figure>
+
+<h4 id="数据备份"><a href="#数据备份" class="headerlink" title="数据备份"></a>数据备份</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># prometheus-backup.sh</span></span><br><span class="line">DATE=$(<span class="built_in">date</span> +%Y%m%d_%H%M%S)</span><br><span class="line">tar -czf prometheus-data-<span class="variable">$&#123;DATE&#125;</span>.tar.gz /path/to/prometheus/data/</span><br></pre></td></tr></table></figure>
+
+<h2 id="故障排除指南"><a href="#故障排除指南" class="headerlink" title="故障排除指南"></a>故障排除指南</h2><h3 id="常见问题及解决方案"><a href="#常见问题及解决方案" class="headerlink" title="常见问题及解决方案"></a>常见问题及解决方案</h3><h4 id="1-Exporter连接失败"><a href="#1-Exporter连接失败" class="headerlink" title="1. Exporter连接失败"></a>1. Exporter连接失败</h4><p><strong>问题症状：</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ERROR: Failed to connect to Solr at http://localhost:8983/solr</span><br></pre></td></tr></table></figure>
+
+<p><strong>解决步骤：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查Solr状态</span></span><br><span class="line">curl http://localhost:8983/solr/admin/info/system</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查防火墙</span></span><br><span class="line"><span class="built_in">sudo</span> iptables -L | grep 8983</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证网络连通性</span></span><br><span class="line">telnet localhost 8983</span><br></pre></td></tr></table></figure>
+
+<h4 id="2-指标缺失"><a href="#2-指标缺失" class="headerlink" title="2. 指标缺失"></a>2. 指标缺失</h4><p>**问题症状：**Prometheus中看不到某些Solr指标</p>
+<p><strong>排查步骤：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接访问exporter端点</span></span><br><span class="line">curl http://localhost:9854/metrics</span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查配置文件语法</span></span><br><span class="line">xmllint --format ./conf/solr-exporter-config.xml</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看exporter日志</span></span><br><span class="line">./bin/solr-exporter --<span class="built_in">help</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="3-性能问题"><a href="#3-性能问题" class="headerlink" title="3. 性能问题"></a>3. 性能问题</h4><p>**问题症状：**导出器响应慢或资源占用高</p>
+<p><strong>优化措施：</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 增加线程数</span></span><br><span class="line">--num-threads 32</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调整抓取间隔</span></span><br><span class="line">--scrape-interval 60</span><br><span class="line"></span><br><span class="line"><span class="comment"># 优化JVM参数</span></span><br><span class="line"><span class="built_in">export</span> JAVA_HEAP=<span class="string">&quot;2g&quot;</span></span><br><span class="line"><span class="built_in">export</span> JAVA_OPTS=<span class="string">&quot;-XX:+UseG1GC -XX:MaxGCPauseMillis=200&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="监控诊断工具"><a href="#监控诊断工具" class="headerlink" title="监控诊断工具"></a>监控诊断工具</h3><h4 id="健康检查脚本"><a href="#健康检查脚本" class="headerlink" title="健康检查脚本"></a>健康检查脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># solr-monitoring-health-check.sh</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== Solr Monitoring Health Check ===&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查Solr状态</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;1. Checking Solr...&quot;</span></span><br><span class="line">curl -f http://localhost:8983/solr/admin/ping || <span class="built_in">echo</span> <span class="string">&quot;❌ Solr is down&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查Exporter状态  </span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;2. Checking Solr Exporter...&quot;</span></span><br><span class="line">curl -f http://localhost:9854/metrics &gt; /dev/null || <span class="built_in">echo</span> <span class="string">&quot;❌ Exporter is down&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查Prometheus状态</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;3. Checking Prometheus...&quot;</span></span><br><span class="line">curl -f http://localhost:9090/-/healthy || <span class="built_in">echo</span> <span class="string">&quot;❌ Prometheus is down&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 检查Grafana状态</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;4. Checking Grafana...&quot;</span></span><br><span class="line">curl -f http://localhost:3000/api/health || <span class="built_in">echo</span> <span class="string">&quot;❌ Grafana is down&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;=== Health Check Complete ===&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>通过本指南，您应该能够成功搭建基于Prometheus和Grafana的完整Solr监控系统。关键要点包括：</p>
+<ol>
+<li><strong>选择合适的方案</strong>：Prometheus Exporter提供更多灵活性，Metrics API更简单高效</li>
+<li><strong>正确配置安全</strong>：在生产环境中启用SSL和认证</li>
+<li><strong>优化性能</strong>：调整线程数、抓取间隔和JVM参数</li>
+<li><strong>设置告警</strong>：配置关键指标的监控告警</li>
+<li><strong>定期维护</strong>：监控系统本身也需要监控和维护</li>
+</ol>
+<p>建议在测试环境中充分验证配置后再部署到生产环境，并建立定期的监控系统健康检查流程。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E7%9B%91%E6%8E%A7/">性能监控</a>
+  
+    <a class="article-tag" href="/tags/Prometheus%E7%9B%91%E6%8E%A7/">Prometheus监控</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/Grafana%E5%8F%AF%E8%A7%86%E5%8C%96/">Grafana可视化</a>
+  
+    <a class="article-tag" href="/tags/%E6%8C%87%E6%A0%87%E6%94%B6%E9%9B%86/">指标收集</a>
+  
+    <a class="article-tag" href="/tags/%E8%BF%90%E7%BB%B4%E7%9B%91%E6%8E%A7/">运维监控</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/11/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AZooKeeper%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：ZooKeeper集群配置完整指南与最佳实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/04/09/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E9%83%A8%E7%BD%B2%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：生产环境部署完整指南与最佳实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9APrometheus%E5%92%8CGrafana%E7%9B%91%E6%8E%A7%E7%B3%BB%E7%BB%9F%E5%AE%8C%E6%95%B4%E6%90%AD%E5%BB%BA%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：Prometheus和Grafana监控系统完整搭建指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E6%96%B9%E6%A1%88%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">监控方案概述</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prometheus-Exporter%E7%89%B9%E6%80%A7"><span class="nav-number">1.1.1.</span> <span class="nav-text">Prometheus Exporter特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Metrics-API-Prometheus%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">Metrics API Prometheus格式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prometheus-Exporter%E8%AF%A6%E7%BB%86%E9%85%8D%E7%BD%AE"><span class="nav-number">1.2.</span> <span class="nav-text">Prometheus Exporter详细配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9E%B6%E6%9E%84%E6%A6%82%E8%BF%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">架构概述</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E8%A1%8CPrometheus-Exporter%E7%9A%84%E4%B8%89%E4%B8%AA%E5%85%B3%E9%94%AE%E6%96%B9%E9%9D%A2"><span class="nav-number">1.2.2.</span> <span class="nav-text">运行Prometheus Exporter的三个关键方面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8Exporter"><span class="nav-number">1.3.</span> <span class="nav-text">启动Exporter</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本启动命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F%E5%92%8C%E6%A8%A1%E5%BC%8F%E7%9A%84%E5%90%AF%E5%8A%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.3.2.</span> <span class="nav-text">不同操作系统和模式的启动命令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Linux%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Linux系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Windows%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Windows系统</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E8%A1%8C%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.3.3.</span> <span class="nav-text">命令行参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">基本参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9E%E6%8E%A5%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.2.</span> <span class="nav-text">连接参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.3.</span> <span class="nav-text">配置参数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.3.3.4.</span> <span class="nav-text">安全参数</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%80%89%E9%A1%B9"><span class="nav-number">1.3.4.</span> <span class="nav-text">环境变量选项</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#JVM%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.4.1.</span> <span class="nav-text">JVM配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.4.2.</span> <span class="nav-text">特殊配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E5%85%A8Solr%E9%9B%86%E7%BE%A4%E7%9A%84%E6%8C%87%E6%A0%87%E8%8E%B7%E5%8F%96"><span class="nav-number">1.4.</span> <span class="nav-text">安全Solr集群的指标获取</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E6%B3%A8%E5%85%A5"><span class="nav-number">1.4.1.</span> <span class="nav-text">安全配置注入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.2.</span> <span class="nav-text">安全集群配置示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%A4%E8%AF%81%E6%96%87%E4%BB%B6"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">基础认证文件</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%AF%E5%8A%A8%E5%AE%89%E5%85%A8%E5%AF%BC%E5%87%BA%E5%99%A8"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">启动安全导出器</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Exporter%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.5.</span> <span class="nav-text">Exporter配置详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6%E7%BB%93%E6%9E%84"><span class="nav-number">1.5.1.</span> <span class="nav-text">配置文件结构</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">默认配置示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%A0%87%E7%AD%BE%E5%92%8C%E5%85%83%E7%B4%A0"><span class="nav-number">1.5.2.</span> <span class="nav-text">配置标签和元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="nav-number">1.5.2.1.</span> <span class="nav-text">基本结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.5.2.2.</span> <span class="nav-text">请求类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E9%85%8D%E7%BD%AE%E5%B1%9E%E6%80%A7"><span class="nav-number">1.5.2.3.</span> <span class="nav-text">查询配置属性</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#JSON%E6%9F%A5%E8%AF%A2%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.2.4.</span> <span class="nav-text">JSON查询配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%87%BA%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.5.3.</span> <span class="nav-text">输出格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Prometheus%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.5.3.1.</span> <span class="nav-text">Prometheus格式转换</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%82%E6%95%B0%E8%AF%B4%E6%98%8E"><span class="nav-number">1.5.3.2.</span> <span class="nav-text">参数说明</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.5.3.3.</span> <span class="nav-text">转换示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Prometheus%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.</span> <span class="nav-text">Prometheus配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Prometheus%E6%9C%8D%E5%8A%A1%E5%99%A8%E8%AE%BE%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">Prometheus服务器设置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEPrometheus%E6%8A%93%E5%8F%96Solr%E6%8C%87%E6%A0%87"><span class="nav-number">1.6.2.</span> <span class="nav-text">配置Prometheus抓取Solr指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7Prometheus%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.</span> <span class="nav-text">高级Prometheus配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AAExporter%E5%AE%9E%E4%BE%8B"><span class="nav-number">1.6.3.1.</span> <span class="nav-text">多个Exporter实例</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%A6%E6%A0%87%E7%AD%BE%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.3.2.</span> <span class="nav-text">带标签的配置</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AA%8C%E8%AF%81%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.4.</span> <span class="nav-text">验证配置</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Grafana%E4%BB%AA%E8%A1%A8%E6%9D%BF%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.</span> <span class="nav-text">Grafana仪表板配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Grafana%E9%83%A8%E7%BD%B2"><span class="nav-number">1.7.1.</span> <span class="nav-text">Grafana部署</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E4%BB%AA%E8%A1%A8%E6%9D%BF"><span class="nav-number">1.7.2.</span> <span class="nav-text">示例仪表板</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AF%BC%E5%85%A5%E9%A2%84%E6%9E%84%E5%BB%BA%E4%BB%AA%E8%A1%A8%E6%9D%BF"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">导入预构建仪表板</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BB%AA%E8%A1%A8%E6%9D%BF%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">自定义仪表板示例</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8Metrics-API%E7%9A%84Prometheus%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.8.</span> <span class="nav-text">使用Metrics API的Prometheus格式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E7%94%9FPrometheus%E6%8C%87%E6%A0%87"><span class="nav-number">1.8.1.</span> <span class="nav-text">原生Prometheus指标</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#API%E7%89%B9%E6%80%A7"><span class="nav-number">1.8.2.</span> <span class="nav-text">API特性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Prometheus%E9%85%8D%E7%BD%AE%EF%BC%88Metrics-API%EF%BC%89"><span class="nav-number">1.8.3.</span> <span class="nav-text">Prometheus配置（Metrics API）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%9B%B4%E6%8E%A5%E6%8A%93%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.8.3.1.</span> <span class="nav-text">直接抓取配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E6%8A%93%E5%8F%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.8.3.2.</span> <span class="nav-text">高级抓取配置</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.9.</span> <span class="nav-text">生产环境最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.1.</span> <span class="nav-text">1. 性能优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Exporter%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98"><span class="nav-number">1.9.1.1.</span> <span class="nav-text">Exporter性能调优</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Prometheus%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96"><span class="nav-number">1.9.1.2.</span> <span class="nav-text">Prometheus配置优化</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%9B%91%E6%8E%A7%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99"><span class="nav-number">1.9.2.</span> <span class="nav-text">2. 监控告警规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Prometheus%E5%91%8A%E8%AD%A6%E8%A7%84%E5%88%99"><span class="nav-number">1.9.2.1.</span> <span class="nav-text">Prometheus告警规则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E9%AB%98%E5%8F%AF%E7%94%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.3.</span> <span class="nav-text">3. 高可用配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9AExporter%E9%83%A8%E7%BD%B2"><span class="nav-number">1.9.3.1.</span> <span class="nav-text">多Exporter部署</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Prometheus%E9%AB%98%E5%8F%AF%E7%94%A8"><span class="nav-number">1.9.3.2.</span> <span class="nav-text">Prometheus高可用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.4.</span> <span class="nav-text">4. 安全配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#HTTPS%E5%92%8C%E8%AE%A4%E8%AF%81"><span class="nav-number">1.9.4.1.</span> <span class="nav-text">HTTPS和认证</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E8%AE%BF%E9%97%AE%E6%8E%A7%E5%88%B6"><span class="nav-number">1.9.4.2.</span> <span class="nav-text">网络访问控制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AD%98%E5%82%A8%E5%92%8C%E4%BF%9D%E7%95%99%E7%AD%96%E7%95%A5"><span class="nav-number">1.9.5.</span> <span class="nav-text">5. 存储和保留策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Prometheus%E5%AD%98%E5%82%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">1.9.5.1.</span> <span class="nav-text">Prometheus存储配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%A4%87%E4%BB%BD"><span class="nav-number">1.9.5.2.</span> <span class="nav-text">数据备份</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4%E6%8C%87%E5%8D%97"><span class="nav-number">1.10.</span> <span class="nav-text">故障排除指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%8F%8A%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">1.10.1.</span> <span class="nav-text">常见问题及解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-Exporter%E8%BF%9E%E6%8E%A5%E5%A4%B1%E8%B4%A5"><span class="nav-number">1.10.1.1.</span> <span class="nav-text">1. Exporter连接失败</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E6%8C%87%E6%A0%87%E7%BC%BA%E5%A4%B1"><span class="nav-number">1.10.1.2.</span> <span class="nav-text">2. 指标缺失</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-%E6%80%A7%E8%83%BD%E9%97%AE%E9%A2%98"><span class="nav-number">1.10.1.3.</span> <span class="nav-text">3. 性能问题</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E8%AF%8A%E6%96%AD%E5%B7%A5%E5%85%B7"><span class="nav-number">1.10.2.</span> <span class="nav-text">监控诊断工具</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%81%A5%E5%BA%B7%E6%A3%80%E6%9F%A5%E8%84%9A%E6%9C%AC"><span class="nav-number">1.10.2.1.</span> <span class="nav-text">健康检查脚本</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.11.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：分析表达式源 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr查询分析组件表达式数据源" />
+  
+  
+  
+  
+  <meta name="description" content="Solr查询：分析表达式源表达式源是在分析表达式中进行聚合的数据来源。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 这些源可以是使用docValues索引的Solr字段，或者是常量。 支持的字段类型支持以下Solr字段类型。这些类型的字段可以是多值的也可以是单值的。 在分析表达式中使用的所有字段必须启用docVa">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：分析表达式源">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/28/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr查询：分析表达式源表达式源是在分析表达式中进行聚合的数据来源。 警告： 分析组件已被弃用。我们建议查看JSON分面API中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。 这些源可以是使用docValues索引的Solr字段，或者是常量。 支持的字段类型支持以下Solr字段类型。这些类型的字段可以是多值的也可以是单值的。 在分析表达式中使用的所有字段必须启用docVa">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:16:12.797Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="分析组件">
+<meta property="article:tag" content="表达式">
+<meta property="article:tag" content="数据源">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：分析表达式源" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：分析表达式源
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/28/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90/" class="article-date">
+	  <time datetime="2025-01-28T16:00:00.000Z" itemprop="datePublished">一月 28, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr查询：分析表达式源"><a href="#Solr查询：分析表达式源" class="headerlink" title="Solr查询：分析表达式源"></a>Solr查询：分析表达式源</h1><p>表达式源是在<a href="analytics.html#expressions">分析表达式</a>中进行聚合的数据来源。</p>
+<p><strong>警告：</strong> 分析组件已被弃用。我们建议查看<a href="json-facet-api.html">JSON分面API</a>中的类似功能。如果JSON分面目前还没有涵盖您需要的功能，请通知项目组。</p>
+<p>这些源可以是使用docValues索引的Solr字段，或者是常量。</p>
+<h2 id="支持的字段类型"><a href="#支持的字段类型" class="headerlink" title="支持的字段类型"></a>支持的字段类型</h2><p>支持以下<a href="../indexing-guide/field-types-included-with-solr.html">Solr字段类型</a>。<br>这些类型的字段可以是多值的也可以是单值的。</p>
+<p>在分析表达式中使用的所有字段<strong>必须</strong>启用<a href="../indexing-guide/docvalues.html">docValues</a>。</p>
+<p>&#x2F;&#x2F; 由于从7.0开始Trie<em>字段已被弃用，我们应该考虑从此列表中移除Trie</em>字段…</p>
+<p><strong>字符串：</strong></p>
+<ul>
+<li>StrField</li>
+</ul>
+<p><strong>布尔值：</strong></p>
+<ul>
+<li>BoolField</li>
+</ul>
+<p><strong>整数：</strong></p>
+<ul>
+<li>TrieIntField</li>
+<li>IntPointField</li>
+</ul>
+<p><strong>长整数：</strong></p>
+<ul>
+<li>TrieLongField</li>
+<li>LongPointField</li>
+</ul>
+<p><strong>浮点数：</strong></p>
+<ul>
+<li>TrieFloatField</li>
+<li>FloatPointField</li>
+</ul>
+<p><strong>双精度：</strong></p>
+<ul>
+<li>TrieDoubleField</li>
+<li>DoublePointField</li>
+</ul>
+<p><strong>日期：</strong></p>
+<ul>
+<li>TrieDateField</li>
+<li>DatePointField</li>
+</ul>
+<h3 id="多值字段去重"><a href="#多值字段去重" class="headerlink" title="多值字段去重"></a>多值字段去重</h3><p><strong>警告：</strong> 除了PointFields外，所有多值字段类型都会进行去重，这意味着在索引期间会移除同一字段的重复值。<br>为了保存重复值，您必须使用PointField类型。</p>
+<h2 id="常量"><a href="#常量" class="headerlink" title="常量"></a>常量</h2><p>常量可以包含在表达式中，与字段和函数一起使用。<br>下面显示了可用的常量。<br>常量不需要被任何函数包围来定义它们，它们可以完全像字段一样在表达式中使用。</p>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><p>有两种指定常量字符串的方式，如下所示。</p>
+<ul>
+<li><p>被双引号包围，在引号内<code>&quot;</code>和<code>\</code>都必须用<code>\</code>字符转义。</p>
+<p><code>&quot;Inside of &#39;double&#39; \\ \&quot;quotes\&quot;&quot;</code> &#x3D;&gt; <code>Inside of &#39;double&#39; \ &quot;quotes&quot;</code></p>
+</li>
+<li><p>被单引号包围，在引号内<code>&#39;</code>和<code>\</code>都必须用<code>\</code>字符转义。</p>
+<p><code>&#39;Inside of &quot;single&quot; \\ \&#39;quotes\&#39;&#39;</code> &#x3D;&gt; <code>Inside of &quot;double&quot; \ &#39;quotes&#39;</code></p>
+</li>
+</ul>
+<h3 id="日期"><a href="#日期" class="headerlink" title="日期"></a>日期</h3><p>日期可以按与Solr查询中相同的方式指定。<br>只需使用ISO-8601格式。<br>有关更多信息，请参考<a href="../indexing-guide/date-formatting-math.html">日期格式化数学</a>。</p>
+<ul>
+<li><code>2017-07-17T19:35:08Z</code></li>
+</ul>
+<h3 id="数字"><a href="#数字" class="headerlink" title="数字"></a>数字</h3><p>任何非小数数字都将被读取为整数，如果对于整数来说太大，则为长整数。<br>所有小数数字都将被读取为双精度数。</p>
+<ul>
+<li><code>-123421</code>：整数</li>
+<li><code>800000000000</code>：长整数</li>
+<li><code>230.34</code>：双精度</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/%E5%88%86%E6%9E%90%E7%BB%84%E4%BB%B6/">分析组件</a>
+  
+    <a class="article-tag" href="/tags/%E8%A1%A8%E8%BE%BE%E5%BC%8F/">表达式</a>
+  
+    <a class="article-tag" href="/tags/%E6%95%B0%E6%8D%AE%E6%BA%90/">数据源</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/29/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E6%98%A0%E5%B0%84%E5%87%BD%E6%95%B0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr查询：分析映射函数
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/27/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%B4%A2%E5%BC%95%E4%BD%8D%E7%BD%AE%E6%A0%BC%E5%BC%8F%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：索引位置格式详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%88%86%E6%9E%90%E8%A1%A8%E8%BE%BE%E5%BC%8F%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：分析表达式源</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%9A%84%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.</span> <span class="nav-text">支持的字段类型</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E5%80%BC%E5%AD%97%E6%AE%B5%E5%8E%BB%E9%87%8D"><span class="nav-number">1.1.1.</span> <span class="nav-text">多值字段去重</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E9%87%8F"><span class="nav-number">1.2.</span> <span class="nav-text">常量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AD%97%E7%AC%A6%E4%B8%B2"><span class="nav-number">1.2.1.</span> <span class="nav-text">字符串</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%97%A5%E6%9C%9F"><span class="nav-number">1.2.2.</span> <span class="nav-text">日期</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E5%AD%97"><span class="nav-number">1.2.3.</span> <span class="nav-text">数字</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

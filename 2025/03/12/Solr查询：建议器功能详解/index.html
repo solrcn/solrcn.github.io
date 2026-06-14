@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：建议器功能详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr查询Solr建议器自动完成搜索建议SuggestComponent" />
+  
+  
+  
+  
+  <meta name="description" content="详细介绍Apache Solr建议器功能的配置和使用方法，包括各种查找实现（AnalyzingLookup、FuzzyLookup、InfixLookup等）和字典实现，以及上下文过滤、多字典支持等高级特性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：建议器功能详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/12/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%BB%BA%E8%AE%AE%E5%99%A8%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="详细介绍Apache Solr建议器功能的配置和使用方法，包括各种查找实现（AnalyzingLookup、FuzzyLookup、InfixLookup等）和字典实现，以及上下文过滤、多字典支持等高级特性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-12T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:08:33.760Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="建议器">
+<meta property="article:tag" content="自动完成">
+<meta property="article:tag" content="搜索建议">
+<meta property="article:tag" content="SuggestComponent">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：建议器功能详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：建议器功能详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/12/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%BB%BA%E8%AE%AE%E5%99%A8%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-12T16:00:00.000Z" itemprop="datePublished">三月 12, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr查询：建议器功能详解"><a href="#Solr查询：建议器功能详解" class="headerlink" title="Solr查询：建议器功能详解"></a>Solr查询：建议器功能详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Solr中的SuggestComponent为用户提供查询词的自动建议功能。</p>
+<p>您可以使用它在搜索应用程序中实现强大的自动建议功能。</p>
+<p>虽然可以使用拼写检查功能来支持自动建议行为，但Solr有专门为此功能设计的SuggestComponent。</p>
+<p>这种方法利用Lucene的Suggester实现，支持Lucene中所有可用的查找实现。</p>
+<p>此建议器的主要功能包括：</p>
+<ul>
+<li>查找实现可插拔性</li>
+<li>词典实现可插拔性，为您选择字典实现提供灵活性</li>
+<li>分布式支持</li>
+</ul>
+<p>Solr”techproducts”示例中的<code>solrconfig.xml</code>已经配置了建议器实现。有关搜索组件的更多信息，请参阅请求处理器和搜索组件部分。</p>
+<p>“techproducts”示例<code>solrconfig.xml</code>已经配置了<code>suggest</code>搜索组件和<code>/suggest</code>请求处理器。您可以将其作为配置的基础，或从头创建，如下详述。</p>
+<h2 id="添加建议搜索组件"><a href="#添加建议搜索组件" class="headerlink" title="添加建议搜索组件"></a>添加建议搜索组件</h2><p>第一步是在<code>solrconfig.xml</code>中添加搜索组件并告诉它使用SuggestComponent。以下是一些可以使用的示例代码。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;suggest&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SuggestComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;suggester&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>mySuggester<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;lookupImpl&quot;</span>&gt;</span>FuzzyLookupFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;dictionaryImpl&quot;</span>&gt;</span>DocumentDictionaryFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>cat<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;weightField&quot;</span>&gt;</span>price<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggestAnalyzerFieldType&quot;</span>&gt;</span>string<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;buildOnStartup&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="建议器搜索组件参数"><a href="#建议器搜索组件参数" class="headerlink" title="建议器搜索组件参数"></a>建议器搜索组件参数</h3><p>建议器搜索组件需要几个配置参数。</p>
+<p>查找实现（<code>lookupImpl</code>，如何在建议字典中找到术语）和字典实现（<code>dictionaryImpl</code>，如何在建议字典中存储术语）的选择将决定所需的一些参数。</p>
+<p>以下是无论使用什么查找或字典实现都可以使用的主要参数。在后面的部分中，为每个实现提供了额外的参数。</p>
+<p><strong>searchComponent name</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>整个搜索组件定义的任意名称</li>
+</ul>
+<p><strong>searchComponent class</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>建议器类。应定义为<code>solr.SuggestComponent</code></li>
+</ul>
+<p><strong>name</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>此建议器的符号名称。您可以在URL参数和SearchHandler配置中引用此名称。在一个<code>solrconfig.xml</code>文件中可以有多个这样的名称</li>
+</ul>
+<p><strong>lookupImpl</strong></p>
+<ul>
+<li>可选，默认：<code>JaspellLookupFactory</code></li>
+<li>查找实现。有几种可能的实现，在”查找实现”部分中描述</li>
+</ul>
+<p><strong>dictionaryImpl</strong></p>
+<ul>
+<li>可选，默认：见描述</li>
+<li>要使用的字典实现。有几种可能的实现，在”字典实现”部分中描述</li>
+<li>如果未设置，默认字典实现为<code>HighFrequencyDictionaryFactory</code>。但是，如果使用<code>sourceLocation</code>，字典实现将是<code>FileDictionaryFactory</code></li>
+</ul>
+<p><strong>field</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>索引中用作建议术语基础的字段。如果<code>sourceLocation</code>为空（意味着除<code>FileDictionaryFactory</code>之外的任何字典实现），则将使用索引中此字段的术语</li>
+<li>要用作建议的基础，字段必须是存储的。您可能希望使用copyField规则创建一个由文档中其他字段术语组成的特殊’suggest’字段</li>
+<li>您通常希望对字段进行最少的分析（无词干提取，无同义词等），因此一个选项是在模式中创建仅使用基本分词器或过滤器的字段类型。这样的字段类型示例如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">fieldType</span> <span class="attr">class</span>=<span class="string">&quot;solr.TextField&quot;</span> <span class="attr">name</span>=<span class="string">&quot;textSuggest&quot;</span> <span class="attr">positionIncrementGap</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">analyzer</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">tokenizer</span> <span class="attr">class</span>=<span class="string">&quot;solr.StandardTokenizerFactory&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">filter</span> <span class="attr">class</span>=<span class="string">&quot;solr.LowerCaseFilterFactory&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">analyzer</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">fieldType</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>但是，如果您希望对术语进行更多分析，则不需要这种最小分析。</p>
+<p>但是，如果使用<code>AnalyzingLookupFactory</code>作为您的<code>lookupImpl</code>，您可以选择定义用于索引和查询时分析的字段类型规则。</p>
+<p><strong>sourceLocation</strong></p>
+<ul>
+<li>可选，默认：见描述</li>
+<li>如果使用<code>FileDictionaryFactory</code>，字典文件的路径。如果此值为空，主索引将用作术语和权重的来源</li>
+</ul>
+<p><strong>storeDir</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>存储字典文件的位置</li>
+</ul>
+<p><strong>buildOnCommit和buildOnOptimize</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，查找数据结构将在软提交后重建。如果为<code>false</code>，则仅当URL参数<code>suggest.build=true</code>请求时才会构建查找数据</li>
+<li>使用<code>buildOnCommit</code>在每次软提交时重建字典，或使用<code>buildOnOptimize</code>仅在索引优化时构建字典</li>
+<li>某些查找实现可能需要很长时间来构建，特别是对于大型索引。在这种情况下，不建议使用<code>buildOnCommit</code>或<code>buildOnOptimize</code>，特别是在软提交频率很高的情况下。相反，通过手动发出带有<code>suggest.build=true</code>的请求以较低频率构建建议器</li>
+</ul>
+<p><strong>buildOnStartup</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，则在Solr启动或核心重新加载时将构建查找数据结构。如果未指定此参数，建议器将检查查找数据结构是否存在于磁盘上，如果未找到则构建它</li>
+<li>将此设置为<code>true</code>可能导致Solr加载（或重新加载）核心时间更长，因为构建建议器数据结构有时可能需要很长时间。通常最好将此设置为<code>false</code>，并使用<code>suggest.build=true</code>手动构建建议器</li>
+</ul>
+<h2 id="查找实现"><a href="#查找实现" class="headerlink" title="查找实现"></a>查找实现</h2><p><code>lookupImpl</code>参数定义用于在建议索引中查找术语的算法。有几种可能的实现可供选择，有些需要配置额外的参数。</p>
+<h3 id="AnalyzingLookupFactory"><a href="#AnalyzingLookupFactory" class="headerlink" title="AnalyzingLookupFactory"></a>AnalyzingLookupFactory</h3><p>首先分析输入文本并将分析形式添加到加权FST的查找，然后在查找时执行相同的操作。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>suggestAnalyzerFieldType</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>用于查询时和构建时术语建议分析的字段类型</li>
+</ul>
+<p><strong>exactMatchFirst</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，首先返回精确建议，即使它们是前缀或FST中的其他字符串具有更大的权重</li>
+</ul>
+<p><strong>preserveSep</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，则保留标记之间的分隔符。这意味着建议对分词敏感（例如，baseball与base ball不同）</li>
+</ul>
+<p><strong>preservePositionIncrements</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，建议器将保留位置增量。这意味着留下间隙的标记过滤器（例如，当StopFilter匹配停用词时）在构建建议器时会尊重位置</li>
+</ul>
+<h3 id="FuzzyLookupFactory"><a href="#FuzzyLookupFactory" class="headerlink" title="FuzzyLookupFactory"></a>FuzzyLookupFactory</h3><p>这是AnalyzingSuggester的扩展但本质上是模糊的建议器。相似性由Levenshtein算法衡量。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>exactMatchFirst</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，首先返回精确建议，即使它们是前缀或FST中的其他字符串具有更大的权重</li>
+</ul>
+<p><strong>preserveSep</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，则保留标记之间的分隔符。这意味着建议对分词敏感（例如，”baseball”与”base ball”不同）</li>
+</ul>
+<p><strong>maxSurfaceFormsPerAnalyzedForm</strong></p>
+<ul>
+<li>可选，默认：<code>256</code></li>
+<li>为单个分析形式保留的表面形式的最大数量。当表面形式太多时，我们丢弃权重最低的那些</li>
+</ul>
+<p><strong>maxGraphExpansions</strong></p>
+<ul>
+<li>可选，默认：<code>-1</code></li>
+<li>在构建FST（”索引时”）时，我们将每个通过分词流图的路径作为单独的条目添加。这对单个建议将添加多少扩展设置了上限</li>
+</ul>
+<p><strong>preservePositionIncrements</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，建议器将保留位置增量。这意味着留下间隙的标记过滤器（例如，当StopFilter匹配停用词时）在构建建议器时会尊重位置</li>
+</ul>
+<p><strong>maxEdits</strong></p>
+<ul>
+<li>可选，默认：<code>1</code></li>
+<li>允许的最大字符串编辑数。Solr的硬限制是<code>2</code></li>
+</ul>
+<p><strong>transpositions</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，转置应被视为原始编辑操作</li>
+</ul>
+<p><strong>nonFuzzyPrefix</strong></p>
+<ul>
+<li>可选，默认：<code>1</code></li>
+<li>必须匹配建议的公共非模糊前缀匹配的长度</li>
+</ul>
+<p><strong>minFuzzyLength</strong></p>
+<ul>
+<li>可选，默认：<code>3</code></li>
+<li>允许任何字符串编辑之前查询的最小长度</li>
+</ul>
+<p><strong>unicodeAware</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，<code>maxEdits</code>、<code>minFuzzyLength</code>、<code>transpositions</code>和<code>nonFuzzyPrefix</code>参数将以unicode代码点（实际字母）而不是字节来衡量</li>
+</ul>
+<h3 id="AnalyzingInfixLookupFactory"><a href="#AnalyzingInfixLookupFactory" class="headerlink" title="AnalyzingInfixLookupFactory"></a>AnalyzingInfixLookupFactory</h3><p>分析输入文本，然后根据对索引文本中任何标记的前缀匹配建议匹配。这使用Lucene索引作为其字典。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>indexPath</strong></p>
+<ul>
+<li>可选，默认：见描述</li>
+<li>使用<code>AnalyzingInfixSuggester</code>时，您可以提供将构建索引的自己的路径。默认值为<code>analyzingInfixSuggesterIndexDir</code>，将在您的集合的<code>data/</code>目录中创建</li>
+</ul>
+<p><strong>minPrefixChars</strong></p>
+<ul>
+<li>可选，默认：<code>4</code></li>
+<li>使用PrefixQuery之前的最小前导字符数。短于此的前缀被索引为字符ngrams（增加索引大小但使查找更快）</li>
+</ul>
+<p><strong>allTermsRequired</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>，将需要所有术语</li>
+</ul>
+<p><strong>highlight</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>高亮显示建议术语</li>
+</ul>
+<p>此实现支持上下文过滤。</p>
+<h3 id="BlendedInfixLookupFactory"><a href="#BlendedInfixLookupFactory" class="headerlink" title="BlendedInfixLookupFactory"></a>BlendedInfixLookupFactory</h3><p><code>AnalyzingInfixSuggester</code>的扩展，提供额外功能来权衡匹配文档中的前缀匹配。如果命中更接近建议的开始，它会得分更高。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>blenderType</strong></p>
+<ul>
+<li>可选，默认：<code>position_linear</code></li>
+<li>用于使用第一个匹配词的位置计算权重系数。可用选项有：</li>
+</ul>
+<ul>
+<li><p><code>position_linear</code>：开始的匹配将获得更高分数<br><code>weightFieldValue * (1 - 0.10*position)</code></p>
+</li>
+<li><p><code>position_reciprocal</code>：开始的匹配将获得更高分数。远离建议开始位置的匹配分数衰减比线性更快<br><code>weightFieldValue / (1 + position)</code></p>
+</li>
+<li><p><code>position_exponential_reciprocal</code>：开始的匹配将获得更高分数。远离建议开始位置的匹配分数衰减比倒数更快<br><code>weightFieldValue / pow(1 + position,exponent)</code></p>
+</li>
+</ul>
+<p>使用此blender类型时，有一个额外参数可用：<br>  ** <code>exponent</code>：控制分数下降的速度。默认<code>2.0</code></p>
+<p><strong>numFactor</strong></p>
+<ul>
+<li>可选，默认：<code>10</code></li>
+<li>将从中修剪结果的搜索元素数量的乘数因子</li>
+</ul>
+<p><strong>indexPath</strong></p>
+<ul>
+<li>可选，默认：见描述</li>
+<li>使用<code>BlendedInfixSuggester</code>时，您可以提供将构建索引的自己的路径。默认目录名为<code>blendedInfixSuggesterIndexDir</code>，将在您的集合数据目录中创建</li>
+</ul>
+<p><strong>minPrefixChars</strong></p>
+<ul>
+<li>可选，默认：<code>4</code></li>
+<li>使用PrefixQuery之前的最小前导字符数。短于此的前缀被索引为字符ngrams，这增加了索引大小但使查找更快</li>
+</ul>
+<p>此实现支持上下文过滤。</p>
+<h3 id="FreeTextLookupFactory"><a href="#FreeTextLookupFactory" class="headerlink" title="FreeTextLookupFactory"></a>FreeTextLookupFactory</h3><p>它查看最后的标记以及用户正在输入的任何最终标记的前缀（如果存在）来预测最可能的下一个标记。还可以指定需要考虑的先前标记数。此建议器仅在主建议器找不到任何建议时用作后备。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>suggestFreeTextAnalyzerFieldType</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>在”查询时”和”构建时”用于分析建议的字段类型</li>
+</ul>
+<p><strong>ngrams</strong></p>
+<ul>
+<li>可选，默认：<code>2</code></li>
+<li>将从中制作字典的单个标记的最大数量。增加这意味着您希望在提出建议时考虑超过前2个标记</li>
+</ul>
+<h3 id="FSTLookupFactory"><a href="#FSTLookupFactory" class="headerlink" title="FSTLookupFactory"></a>FSTLookupFactory</h3><p>基于自动机的查找。此实现构建较慢，但提供最低的内存成本。我们建议使用此实现，除非您需要更复杂的匹配结果，在这种情况下应该使用Jaspell实现。</p>
+<p>此实现使用以下附加属性：</p>
+<p><strong>exactMatchFirst</strong></p>
+<ul>
+<li>可选，默认：<code>true</code></li>
+<li>如果为<code>true</code>（默认值），首先返回精确建议，即使它们是前缀或FST中的其他字符串具有更大的权重</li>
+</ul>
+<p><strong>weightBuckets</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>建议器在构建其字典时将使用的权重的单独桶数</li>
+</ul>
+<h3 id="TSTLookupFactory"><a href="#TSTLookupFactory" class="headerlink" title="TSTLookupFactory"></a>TSTLookupFactory</h3><p>基于简单紧凑三元树的查找。</p>
+<h3 id="WFSTLookupFactory"><a href="#WFSTLookupFactory" class="headerlink" title="WFSTLookupFactory"></a>WFSTLookupFactory</h3><p>加权自动机表示，是用于更细粒度排名的<code>FSTLookup</code>的替代方案。<code>WFSTLookup</code>不使用桶，而是使用最短路径算法。</p>
+<p>注意它期望权重为整数。如果权重丢失，假定为<code>1.0</code>。当选择<code>spellcheck.onlyMorePopular=true</code>时，权重影响匹配建议的排序：权重被视为”受欢迎程度”分数，更高权重比较低权重的建议更受欢迎。</p>
+<h3 id="JaspellLookupFactory"><a href="#JaspellLookupFactory" class="headerlink" title="JaspellLookupFactory"></a>JaspellLookupFactory</h3><p>基于JaSpell项目中三元树的更复杂查找。如果您需要更复杂的匹配结果，请使用此实现。</p>
+<h2 id="字典实现"><a href="#字典实现" class="headerlink" title="字典实现"></a>字典实现</h2><p>字典实现定义术语如何存储。有几个选项，如果需要，可以在单个请求中使用多个字典。</p>
+<h3 id="DocumentDictionaryFactory"><a href="#DocumentDictionaryFactory" class="headerlink" title="DocumentDictionaryFactory"></a>DocumentDictionaryFactory</h3><p>具有从索引中获取的术语、权重和可选负载的字典。</p>
+<p>此字典实现除了建议器通常描述的参数和查找实现的参数外，还采用以下参数：</p>
+<p><strong>weightField</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>存储的字段或数值DocValue字段</li>
+</ul>
+<p><strong>payloadField</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li><code>payloadField</code>应该是存储的字段</li>
+</ul>
+<p><strong>contextField</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>用于上下文过滤的字段。请注意，只有某些查找实现支持过滤</li>
+</ul>
+<h3 id="DocumentExpressionDictionaryFactory"><a href="#DocumentExpressionDictionaryFactory" class="headerlink" title="DocumentExpressionDictionaryFactory"></a>DocumentExpressionDictionaryFactory</h3><p>此字典实现与<code>DocumentDictionaryFactory</code>相同，但允许用户在<code>weightExpression</code>标签中指定任意表达式。</p>
+<p>此字典实现除了建议器通常描述的参数和查找实现的参数外，还采用以下参数：</p>
+<p><strong>payloadField</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li><code>payloadField</code>应该是存储的字段</li>
+</ul>
+<p><strong>weightExpression</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>用于为建议评分的任意表达式。使用的字段必须是数值字段</li>
+</ul>
+<p><strong>contextField</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>用于上下文过滤的字段。请注意，只有某些查找实现支持过滤</li>
+</ul>
+<h3 id="HighFrequencyDictionaryFactory"><a href="#HighFrequencyDictionaryFactory" class="headerlink" title="HighFrequencyDictionaryFactory"></a>HighFrequencyDictionaryFactory</h3><p>此字典实现允许添加阈值来修剪非常常见的术语可能压倒其他术语的情况下的不太频繁的术语。</p>
+<p>此字典实现除了建议器通常描述的参数和查找实现的参数外，还采用一个参数：</p>
+<p><strong>threshold</strong></p>
+<ul>
+<li>可选，默认：<code>0</code></li>
+<li>0到1之间的值，表示术语为了添加到查找字典中应该出现在总文档中的最小分数</li>
+</ul>
+<h3 id="FileDictionaryFactory"><a href="#FileDictionaryFactory" class="headerlink" title="FileDictionaryFactory"></a>FileDictionaryFactory</h3><p>此字典实现允许使用包含建议条目的外部文件。也可以使用权重和负载。</p>
+<p>如果使用字典文件，它应该是UTF-8编码的纯文本文件。您可以在字典文件中使用单个术语和短语。如果添加权重或负载，那些应该使用<code>fieldDelimiter</code>属性定义的分隔符与术语分开（默认是<code>\t</code>，制表符表示）。如果使用负载，文件中的第一行必须指定负载。</p>
+<p>此字典实现除了建议器通常描述的参数和查找实现的参数外，还采用一个参数：</p>
+<p><strong>fieldDelimiter</strong></p>
+<ul>
+<li>可选，默认：<code>\t</code></li>
+<li>指定用于分隔条目、权重和负载的分隔符。默认是制表符（<code>\t</code>）</li>
+</ul>
+<p>示例文件：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">acquire</span><br><span class="line">accidentally    2.0</span><br><span class="line">accommodate 3.0</span><br></pre></td></tr></table></figure>
+
+<h3 id="多个字典"><a href="#多个字典" class="headerlink" title="多个字典"></a>多个字典</h3><p>可以在单个SuggestComponent定义中包含多个<code>dictionaryImpl</code>定义。</p>
+<p>要做到这一点，只需定义单独的建议器，如此示例：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;suggest&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SuggestComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;suggester&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>mySuggester<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;lookupImpl&quot;</span>&gt;</span>FuzzyLookupFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;dictionaryImpl&quot;</span>&gt;</span>DocumentDictionaryFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>cat<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;weightField&quot;</span>&gt;</span>price<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggestAnalyzerFieldType&quot;</span>&gt;</span>string<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;suggester&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>altSuggester<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;dictionaryImpl&quot;</span>&gt;</span>DocumentExpressionDictionaryFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;lookupImpl&quot;</span>&gt;</span>FuzzyLookupFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>product_name<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;weightExpression&quot;</span>&gt;</span>((price * 2) + ln(popularity))<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sortField&quot;</span>&gt;</span>weight<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sortField&quot;</span>&gt;</span>price<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;storeDir&quot;</span>&gt;</span>suggest_fuzzy_doc_expr_dict<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggestAnalyzerFieldType&quot;</span>&gt;</span>text_en<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在查询中使用这些建议器时，您将在请求中定义多个<code>suggest.dictionary</code>参数，引用搜索组件定义中每个建议器给定的名称。响应将在每个建议器的部分中包含术语。</p>
+<h2 id="添加建议请求处理器"><a href="#添加建议请求处理器" class="headerlink" title="添加建议请求处理器"></a>添加建议请求处理器</h2><p>添加搜索组件后，必须在<code>solrconfig.xml</code>中添加请求处理器。此请求处理器的工作方式与任何其他请求处理器相同，允许您配置用于服务建议请求的默认参数。请求处理器定义必须包含先前定义的”suggest”搜索组件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">requestHandler</span> <span class="attr">name</span>=<span class="string">&quot;/suggest&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SearchHandler&quot;</span> <span class="attr">startup</span>=<span class="string">&quot;lazy&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;defaults&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggest&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggest.count&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;components&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span>&gt;</span>suggest<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">requestHandler</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="建议请求处理器参数"><a href="#建议请求处理器参数" class="headerlink" title="建议请求处理器参数"></a>建议请求处理器参数</h3><p>以下参数允许您为建议请求处理器设置默认值：</p>
+<p><strong>suggest</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>此参数应始终为<code>true</code>，因为我们始终希望为提交给此处理器的查询运行建议器</li>
+</ul>
+<p><strong>suggest.dictionary</strong></p>
+<ul>
+<li>必需，默认：无</li>
+<li>在搜索组件中配置的字典组件的名称。可以在请求处理器中设置，或在查询时作为参数发送</li>
+</ul>
+<p><strong>suggest.q</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>用于建议查找的查询。如果未提供，使用<code>q</code>参数</li>
+</ul>
+<p><strong>suggest.count</strong></p>
+<ul>
+<li>可选，默认：<code>1</code></li>
+<li>指定Solr返回的建议数量</li>
+</ul>
+<p><strong>suggest.cfq</strong></p>
+<ul>
+<li>可选，默认：无</li>
+<li>如果建议器支持，用于根据上下文字段过滤建议的上下文过滤查询</li>
+<li>目前只有<code>AnalyzingInfixLookupFactory</code>和<code>BlendedInfixLookupFactory</code>支持上下文过滤，并且只有当由<code>Document*Dictionary</code>支持时。所有其他实现将返回未过滤的匹配，就像没有请求过滤一样</li>
+</ul>
+<p><strong>suggest.build</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，将构建建议器索引。这可能仅对初始请求有用；您可能不希望在每个请求上构建字典，特别是在生产系统中。如果您希望保持字典更新，应该为搜索组件使用<code>buildOnCommit</code>或<code>buildOnOptimize</code>参数</li>
+</ul>
+<p><strong>suggest.reload</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，将重新加载建议器索引</li>
+</ul>
+<p><strong>suggest.buildAll</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，将构建所有建议器索引</li>
+</ul>
+<p><strong>suggest.reloadAll</strong></p>
+<ul>
+<li>可选，默认：<code>false</code></li>
+<li>如果为<code>true</code>，将重新加载所有建议器索引</li>
+</ul>
+<p>这些属性也可以在查询时覆盖，或完全不在请求处理器中设置而始终在查询时发送。</p>
+<h2 id="使用示例"><a href="#使用示例" class="headerlink" title="使用示例"></a>使用示例</h2><h3 id="获取带权重的建议"><a href="#获取带权重的建议" class="headerlink" title="获取带权重的建议"></a>获取带权重的建议</h3><p>这是使用单个字典和单个Solr核心的基本建议。</p>
+<p>示例查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/suggest?suggest=true&amp;suggest.build=true&amp;suggest.dictionary=mySuggester&amp;suggest.q=elec</span><br></pre></td></tr></table></figure>
+
+<p>在此示例中，我们简单地使用<code>suggest.q</code>参数请求字符串’elec’，并请求使用<code>suggest.build</code>构建建议字典（但请注意，您可能不希望在每个查询上构建索引——相反，如果您有定期更改的文档，应该使用<code>buildOnCommit</code>或<code>buildOnOptimize</code>）。</p>
+<p>示例响应：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;responseHeader&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;QTime&quot;</span><span class="punctuation">:</span> <span class="number">35</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;command&quot;</span><span class="punctuation">:</span> <span class="string">&quot;build&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;suggest&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;mySuggester&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;elec&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;numFound&quot;</span><span class="punctuation">:</span> <span class="number">3</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;suggestions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electronics and computer1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;weight&quot;</span><span class="punctuation">:</span> <span class="number">2199</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electronics&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;weight&quot;</span><span class="punctuation">:</span> <span class="number">649</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electronics and stuff2&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;weight&quot;</span><span class="punctuation">:</span> <span class="number">279</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="使用多个字典"><a href="#使用多个字典" class="headerlink" title="使用多个字典"></a>使用多个字典</h3><p>如果您定义了多个字典，可以在查询中使用它们。</p>
+<p>示例查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/suggest?suggest=true&amp;suggest.dictionary=mySuggester&amp;suggest.dictionary=altSuggester&amp;suggest.q=elec</span><br></pre></td></tr></table></figure>
+
+<p>在此示例中，我们将字符串’elec’作为<code>suggest.q</code>参数发送，并命名了两个要使用的<code>suggest.dictionary</code>定义。</p>
+<p>示例响应：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;responseHeader&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;status&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;QTime&quot;</span><span class="punctuation">:</span> <span class="number">3</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;suggest&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;mySuggester&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;elec&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;numFound&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;suggestions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electronics and computer1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;weight&quot;</span><span class="punctuation">:</span> <span class="number">100</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;altSuggester&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;elec&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;numFound&quot;</span><span class="punctuation">:</span> <span class="number">1</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;suggestions&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">          <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;term&quot;</span><span class="punctuation">:</span> <span class="string">&quot;electronics and computer1&quot;</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;weight&quot;</span><span class="punctuation">:</span> <span class="number">10</span><span class="punctuation">,</span></span><br><span class="line">            <span class="attr">&quot;payload&quot;</span><span class="punctuation">:</span> <span class="string">&quot;&quot;</span></span><br><span class="line">          <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="上下文过滤"><a href="#上下文过滤" class="headerlink" title="上下文过滤"></a>上下文过滤</h3><p>上下文过滤让您根据单独的上下文字段（如类别、部门或任何其他标记）过滤建议。<code>AnalyzingInfixLookupFactory</code>和<code>BlendedInfixLookupFactory</code>目前支持此功能，当由<code>DocumentDictionaryFactory</code>支持时。</p>
+<p>在建议器配置中添加<code>contextField</code>。此示例将建议名称并允许按类别过滤：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">searchComponent</span> <span class="attr">name</span>=<span class="string">&quot;suggest&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.SuggestComponent&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;suggester&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span>&gt;</span>mySuggester<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;lookupImpl&quot;</span>&gt;</span>AnalyzingInfixLookupFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;dictionaryImpl&quot;</span>&gt;</span>DocumentDictionaryFactory<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;field&quot;</span>&gt;</span>name<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;weightField&quot;</span>&gt;</span>price<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;contextField&quot;</span>&gt;</span>cat<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;suggestAnalyzerFieldType&quot;</span>&gt;</span>string<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;buildOnStartup&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">searchComponent</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>示例上下文过滤建议查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/suggest?suggest=true&amp;suggest.build=true&amp;suggest.dictionary=mySuggester&amp;suggest.q=c&amp;suggest.cfq=memory</span><br></pre></td></tr></table></figure>
+
+<p>建议器将仅返回标记为’cat&#x3D;memory’的产品建议。</p>
+<hr>
+<p><em>本文档翻译自Apache Solr官方参考指南，旨在为中文用户提供完整的建议器功能使用指南。</em></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E5%BB%BA%E8%AE%AE%E5%99%A8/">建议器</a>
+  
+    <a class="article-tag" href="/tags/%E8%87%AA%E5%8A%A8%E5%AE%8C%E6%88%90/">自动完成</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E5%BB%BA%E8%AE%AE/">搜索建议</a>
+  
+    <a class="article-tag" href="/tags/SuggestComponent/">SuggestComponent</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/13/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%8B%BC%E5%86%99%E6%A3%80%E6%9F%A5%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr查询：拼写检查功能详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/11/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95%E4%B8%8E%E8%A7%A3%E6%9E%90%E5%99%A8%E6%A6%82%E8%A7%88/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr查询：查询语法与解析器概览</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%BB%BA%E8%AE%AE%E5%99%A8%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：建议器功能详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%BB%BA%E8%AE%AE%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">添加建议搜索组件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E5%99%A8%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">建议器搜索组件参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E6%89%BE%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.3.</span> <span class="nav-text">查找实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AnalyzingLookupFactory"><span class="nav-number">1.3.1.</span> <span class="nav-text">AnalyzingLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FuzzyLookupFactory"><span class="nav-number">1.3.2.</span> <span class="nav-text">FuzzyLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AnalyzingInfixLookupFactory"><span class="nav-number">1.3.3.</span> <span class="nav-text">AnalyzingInfixLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BlendedInfixLookupFactory"><span class="nav-number">1.3.4.</span> <span class="nav-text">BlendedInfixLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FreeTextLookupFactory"><span class="nav-number">1.3.5.</span> <span class="nav-text">FreeTextLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FSTLookupFactory"><span class="nav-number">1.3.6.</span> <span class="nav-text">FSTLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TSTLookupFactory"><span class="nav-number">1.3.7.</span> <span class="nav-text">TSTLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WFSTLookupFactory"><span class="nav-number">1.3.8.</span> <span class="nav-text">WFSTLookupFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JaspellLookupFactory"><span class="nav-number">1.3.9.</span> <span class="nav-text">JaspellLookupFactory</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E5%85%B8%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.4.</span> <span class="nav-text">字典实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#DocumentDictionaryFactory"><span class="nav-number">1.4.1.</span> <span class="nav-text">DocumentDictionaryFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DocumentExpressionDictionaryFactory"><span class="nav-number">1.4.2.</span> <span class="nav-text">DocumentExpressionDictionaryFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#HighFrequencyDictionaryFactory"><span class="nav-number">1.4.3.</span> <span class="nav-text">HighFrequencyDictionaryFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FileDictionaryFactory"><span class="nav-number">1.4.4.</span> <span class="nav-text">FileDictionaryFactory</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E4%B8%AA%E5%AD%97%E5%85%B8"><span class="nav-number">1.4.5.</span> <span class="nav-text">多个字典</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E5%BB%BA%E8%AE%AE%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8"><span class="nav-number">1.5.</span> <span class="nav-text">添加建议请求处理器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BB%BA%E8%AE%AE%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.1.</span> <span class="nav-text">建议请求处理器参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">使用示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E5%B8%A6%E6%9D%83%E9%87%8D%E7%9A%84%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">获取带权重的建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E5%A4%9A%E4%B8%AA%E5%AD%97%E5%85%B8"><span class="nav-number">1.6.2.</span> <span class="nav-text">使用多个字典</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8A%E4%B8%8B%E6%96%87%E8%BF%87%E6%BB%A4"><span class="nav-number">1.6.3.</span> <span class="nav-text">上下文过滤</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

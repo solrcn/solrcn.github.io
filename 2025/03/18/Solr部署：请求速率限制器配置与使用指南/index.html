@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：请求速率限制器配置与使用指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能优化SolrCloudSolr部署速率限制资源管理" />
+  
+  
+  
+  
+  <meta name="description" content="详细解析SolrCloud请求速率限制器的配置和使用方法，包括查询限流、槽位管理、借用机制等核心功能的配置优化指南。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：请求速率限制器配置与使用指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/18/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AF%B7%E6%B1%82%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6%E5%99%A8%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="详细解析SolrCloud请求速率限制器的配置和使用方法，包括查询限流、槽位管理、借用机制等核心功能的配置优化指南。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T15:25:39.325Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能优化">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="速率限制">
+<meta property="article:tag" content="资源管理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：请求速率限制器配置与使用指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：请求速率限制器配置与使用指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/18/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AF%B7%E6%B1%82%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6%E5%99%A8%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-03-18T16:00:00.000Z" itemprop="datePublished">三月 18, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Solr允许按请求类型进行速率限制。每个请求类型可以分配允许同时活跃的并发请求的最大数量。默认情况下实现了对更新和搜索的速率限制。</p>
+<p>当请求超过请求配额时，进一步的传入请求将被拒绝，并返回HTTP错误代码429（Too Many Requests）。</p>
+<span id="more"></span>
+
+<h2 id="核心概念"><a href="#核心概念" class="headerlink" title="核心概念"></a>核心概念</h2><h3 id="实例级限制"><a href="#实例级限制" class="headerlink" title="实例级限制"></a>实例级限制</h3><p>速率限制在实例（JVM）级别工作，而不是在集合或核心级别。在规划容量时需要考虑这一点。未来计划在此处实现更细粒度的执行（<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/SOLR-14710">SOLR-14710</a>）。</p>
+<h3 id="请求类型识别"><a href="#请求类型识别" class="headerlink" title="请求类型识别"></a>请求类型识别</h3><p>请求的速率限制桶由该请求的唯一<code>Solr-Request-Type</code> HTTP标头的值确定。没有<code>Solr-Request-Type</code>标头的请求将被接受并处理，不受速率限制。</p>
+<h3 id="当前支持的请求类型"><a href="#当前支持的请求类型" class="headerlink" title="当前支持的请求类型"></a>当前支持的请求类型</h3><p>目前只有一个<code>Solr-Request-Type</code>值被识别用于速率限制：字面字符串值<code>QUERY</code>。只有指定标头<code>Solr-Request-Type: QUERY</code>的请求将受到速率限制。</p>
+<blockquote>
+<p><strong>注意</strong>：在支持多个请求类型之前，其他<code>Solr-Request-Type</code>规范完全不受速率限制，”槽位借用”和”保证槽位”的概念（仅在多个请求类型间才有意义）没有实际效果。</p>
+</blockquote>
+<h2 id="何时使用速率限制器"><a href="#何时使用速率限制器" class="headerlink" title="何时使用速率限制器"></a>何时使用速率限制器</h2><p>速率限制器应该在用户希望为特定请求类型分配请求线程池的保证容量时使用。索引和搜索请求主要在CPU资源方面相互竞争。这在生产工作负载的高压力下变得尤其明显。当前实现具有查询速率限制器，可以为索引释放资源。</p>
+<h2 id="速率限制器配置"><a href="#速率限制器配置" class="headerlink" title="速率限制器配置"></a>速率限制器配置</h2><p>默认的速率限制器是搜索速率限制器。可以使用以下命令进行配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;set-ratelimiter&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;enabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;guaranteedSlots&quot;: 5,</span></span><br><span class="line"><span class="string">    &quot;allowedRequests&quot;: 20,</span></span><br><span class="line"><span class="string">    &quot;slotBorrowingEnabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;slotAcquisitionTimeoutInMS&quot;: 70</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster</span><br></pre></td></tr></table></figure>
+
+<h3 id="配置参数详解"><a href="#配置参数详解" class="headerlink" title="配置参数详解"></a>配置参数详解</h3><h4 id="enabled：启用查询速率限制器"><a href="#enabled：启用查询速率限制器" class="headerlink" title="enabled：启用查询速率限制器"></a>enabled：启用查询速率限制器</h4><ul>
+<li><strong>类型</strong>：布尔值</li>
+<li><strong>默认值</strong>：<code>false</code></li>
+<li><strong>说明</strong>：控制查询速率限制器的启用状态</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br></pre></td></tr></table></figure>
+
+<h4 id="allowedRequests：最大并发请求数"><a href="#allowedRequests：最大并发请求数" class="headerlink" title="allowedRequests：最大并发请求数"></a>allowedRequests：最大并发请求数</h4><ul>
+<li><strong>类型</strong>：整数</li>
+<li><strong>默认值</strong>：核心数 × 3</li>
+<li><strong>说明</strong>：允许在给定时间点设置最大并发搜索请求数</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;allowedRequests&quot;</span><span class="punctuation">:</span> <span class="number">20</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>容量规划建议</strong>：</p>
+<ul>
+<li><strong>轻量级查询</strong>：可以设置较高的并发数</li>
+<li><strong>复杂查询</strong>：应该设置较低的并发数以避免资源耗尽</li>
+<li><strong>混合负载</strong>：根据查询复杂度和硬件资源平衡设置</li>
+</ul>
+<h4 id="slotAcquisitionTimeoutInMS：请求槽位分配等待时间"><a href="#slotAcquisitionTimeoutInMS：请求槽位分配等待时间" class="headerlink" title="slotAcquisitionTimeoutInMS：请求槽位分配等待时间"></a>slotAcquisitionTimeoutInMS：请求槽位分配等待时间</h4><ul>
+<li><strong>类型</strong>：整数（毫秒）</li>
+<li><strong>默认值</strong>：<code>-1</code>（表示不等待）</li>
+<li><strong>说明</strong>：当所有槽位都满时，请求在进入等待队列之前等待槽位可用的时间</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;slotAcquisitionTimeoutInMS&quot;</span><span class="punctuation">:</span> <span class="number">70</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>超时设置策略</strong>：</p>
+<ul>
+<li><strong><code>-1</code>或<code>0</code></strong>：不等待，立即进入队列或拒绝</li>
+<li><strong>短超时（10-50ms）</strong>：适用于实时性要求高的场景</li>
+<li><strong>中等超时（50-200ms）</strong>：平衡响应时间和成功率</li>
+<li><strong>长超时（&gt;200ms）</strong>：可能导致查询响应时间过长</li>
+</ul>
+<p><strong>注意</strong>：较高的请求分配时间可能导致更大的队列时间，并可能导致查询等待时间更长。</p>
+<h4 id="slotBorrowingEnabled：槽位借用启用"><a href="#slotBorrowingEnabled：槽位借用启用" class="headerlink" title="slotBorrowingEnabled：槽位借用启用"></a>slotBorrowingEnabled：槽位借用启用</h4><ul>
+<li><strong>类型</strong>：布尔值</li>
+<li><strong>默认值</strong>：<code>false</code></li>
+<li><strong>说明</strong>：是否启用槽位借用机制</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;slotBorrowingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p><strong>实验性功能</strong>：此功能是实验性的，如果借用请求是长期存在的，可能导致槽位被阻塞。</p>
+</blockquote>
+<h4 id="guaranteedSlots：保证槽位"><a href="#guaranteedSlots：保证槽位" class="headerlink" title="guaranteedSlots：保证槽位"></a>guaranteedSlots：保证槽位</h4><ul>
+<li><strong>类型</strong>：整数</li>
+<li><strong>默认值</strong>：允许的并发请求数 &#x2F; 2</li>
+<li><strong>说明</strong>：查询速率限制器将保留的保证槽位数量，无论查询请求的负载如何</li>
+</ul>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;guaranteedSlots&quot;</span><span class="punctuation">:</span> <span class="number">5</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>使用场景</strong>：</p>
+<ul>
+<li>仅在启用槽位借用时使用</li>
+<li>作为查询速率限制器不允许其他请求类型从其配额借用槽位的阈值</li>
+<li>确保关键查询始终有可用资源</li>
+</ul>
+<blockquote>
+<p><strong>实验性功能</strong>：此功能是实验性的，如果借用请求是长期存在的，可能导致槽位被阻塞。</p>
+</blockquote>
+<h2 id="重要特性和注意事项"><a href="#重要特性和注意事项" class="headerlink" title="重要特性和注意事项"></a>重要特性和注意事项</h2><h3 id="超额订阅（Over-Subscribing）"><a href="#超额订阅（Over-Subscribing）" class="headerlink" title="超额订阅（Over Subscribing）"></a>超额订阅（Over Subscribing）</h3><p>可以为请求类型定义超过可用线程池大小的配额大小。Solr不会强制执行可为请求类型定义的配额大小规则。这是故意这样做的，以允许用户完全控制其配额分配。</p>
+<p><strong>影响</strong>：</p>
+<ul>
+<li>如果配额超过可用线程池的大小，线程池的标准队列策略将启动</li>
+<li>可能导致请求排队等待而不是立即执行</li>
+<li>需要根据实际硬件资源合理设置配额</li>
+</ul>
+<h3 id="槽位借用（Slot-Borrowing）"><a href="#槽位借用（Slot-Borrowing）" class="headerlink" title="槽位借用（Slot Borrowing）"></a>槽位借用（Slot Borrowing）</h3><p>如果某个配额没有积压但其他配额有积压，那么相对较不繁忙的配额可以从较繁忙的配额”借用”槽位。目前这是基于轮询方式完成的，未来计划将其改为基于优先级的模型（<a target="_blank" rel="noopener" href="https://issues.apache.org/jira/browse/SOLR-14709">SOLR-14709</a>）。</p>
+<p><strong>机制说明</strong>：</p>
+<ol>
+<li><strong>负载检测</strong>：系统监控各请求类型的负载情况</li>
+<li><strong>槽位分配</strong>：空闲的请求类型可以借用繁忙请求类型的槽位</li>
+<li><strong>轮询分配</strong>：按照轮询方式分配借用的槽位</li>
+<li><strong>动态调整</strong>：根据负载变化动态调整槽位分配</li>
+</ol>
+<p><strong>限制</strong>：</p>
+<ul>
+<li>这是实验性功能，不保证借用的槽位能及时返还</li>
+<li>长期运行的借用请求可能导致槽位长期被占用</li>
+<li>可能影响原配额的性能表现</li>
+</ul>
+<h2 id="配置示例和使用场景"><a href="#配置示例和使用场景" class="headerlink" title="配置示例和使用场景"></a>配置示例和使用场景</h2><h3 id="基础配置示例"><a href="#基础配置示例" class="headerlink" title="基础配置示例"></a>基础配置示例</h3><h4 id="保守配置（适用于稳定环境）"><a href="#保守配置（适用于稳定环境）" class="headerlink" title="保守配置（适用于稳定环境）"></a>保守配置（适用于稳定环境）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;set-ratelimiter&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;enabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;allowedRequests&quot;: 10,</span></span><br><span class="line"><span class="string">    &quot;slotAcquisitionTimeoutInMS&quot;: 0,</span></span><br><span class="line"><span class="string">    &quot;slotBorrowingEnabled&quot;: false</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster</span><br></pre></td></tr></table></figure>
+
+<h4 id="平衡配置（适用于混合负载）"><a href="#平衡配置（适用于混合负载）" class="headerlink" title="平衡配置（适用于混合负载）"></a>平衡配置（适用于混合负载）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;set-ratelimiter&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;enabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;allowedRequests&quot;: 20,</span></span><br><span class="line"><span class="string">    &quot;slotAcquisitionTimeoutInMS&quot;: 100,</span></span><br><span class="line"><span class="string">    &quot;slotBorrowingEnabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;guaranteedSlots&quot;: 8</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster</span><br></pre></td></tr></table></figure>
+
+<h4 id="激进配置（适用于高吞吐环境）"><a href="#激进配置（适用于高吞吐环境）" class="headerlink" title="激进配置（适用于高吞吐环境）"></a>激进配置（适用于高吞吐环境）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type:application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">  &quot;set-ratelimiter&quot;: &#123;</span></span><br><span class="line"><span class="string">    &quot;enabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;allowedRequests&quot;: 50,</span></span><br><span class="line"><span class="string">    &quot;slotAcquisitionTimeoutInMS&quot;: 200,</span></span><br><span class="line"><span class="string">    &quot;slotBorrowingEnabled&quot;: true,</span></span><br><span class="line"><span class="string">    &quot;guaranteedSlots&quot;: 20</span></span><br><span class="line"><span class="string">  &#125;</span></span><br><span class="line"><span class="string">&#125;&#x27;</span> http://localhost:8983/api/cluster</span><br></pre></td></tr></table></figure>
+
+<h3 id="不同场景的配置策略"><a href="#不同场景的配置策略" class="headerlink" title="不同场景的配置策略"></a>不同场景的配置策略</h3><h4 id="读多写少场景"><a href="#读多写少场景" class="headerlink" title="读多写少场景"></a>读多写少场景</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;set-ratelimiter&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowedRequests&quot;</span><span class="punctuation">:</span> <span class="number">30</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotAcquisitionTimeoutInMS&quot;</span><span class="punctuation">:</span> <span class="number">50</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotBorrowingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">false</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;guaranteedSlots&quot;</span><span class="punctuation">:</span> <span class="number">15</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>较高的并发查询数</li>
+<li>不启用借用机制，确保查询性能稳定</li>
+<li>保证足够的槽位用于查询</li>
+</ul>
+<h4 id="写多读少场景"><a href="#写多读少场景" class="headerlink" title="写多读少场景"></a>写多读少场景</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;set-ratelimiter&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowedRequests&quot;</span><span class="punctuation">:</span> <span class="number">5</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotAcquisitionTimeoutInMS&quot;</span><span class="punctuation">:</span> <span class="number">0</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotBorrowingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;guaranteedSlots&quot;</span><span class="punctuation">:</span> <span class="number">2</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>较少的并发查询数，为写入预留资源</li>
+<li>启用借用机制，允许查询在负载低时使用更多资源</li>
+<li>保证最小查询能力</li>
+</ul>
+<h4 id="实时分析场景"><a href="#实时分析场景" class="headerlink" title="实时分析场景"></a>实时分析场景</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;set-ratelimiter&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;enabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;allowedRequests&quot;</span><span class="punctuation">:</span> <span class="number">15</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotAcquisitionTimeoutInMS&quot;</span><span class="punctuation">:</span> <span class="number">20</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;slotBorrowingEnabled&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;guaranteedSlots&quot;</span><span class="punctuation">:</span> <span class="number">10</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>特点</strong>：</p>
+<ul>
+<li>中等并发查询数</li>
+<li>短等待时间，保证实时响应</li>
+<li>启用借用机制，优化资源利用</li>
+</ul>
+<h2 id="监控和调优"><a href="#监控和调优" class="headerlink" title="监控和调优"></a>监控和调优</h2><h3 id="关键指标监控"><a href="#关键指标监控" class="headerlink" title="关键指标监控"></a>关键指标监控</h3><h4 id="请求队列长度"><a href="#请求队列长度" class="headerlink" title="请求队列长度"></a>请求队列长度</h4><ul>
+<li><strong>指标</strong>：等待队列中的请求数量</li>
+<li><strong>阈值</strong>：建议保持在较低水平（&lt;10）</li>
+<li><strong>调优</strong>：如果队列长度持续较高，考虑增加<code>allowedRequests</code></li>
+</ul>
+<h4 id="请求拒绝率"><a href="#请求拒绝率" class="headerlink" title="请求拒绝率"></a>请求拒绝率</h4><ul>
+<li><strong>指标</strong>：返回429错误的请求比例</li>
+<li><strong>阈值</strong>：建议保持在1%以下</li>
+<li><strong>调优</strong>：如果拒绝率过高，需要优化配置或增加硬件资源</li>
+</ul>
+<h4 id="平均响应时间"><a href="#平均响应时间" class="headerlink" title="平均响应时间"></a>平均响应时间</h4><ul>
+<li><strong>指标</strong>：查询平均执行时间</li>
+<li><strong>阈值</strong>：根据业务需求设定</li>
+<li><strong>调优</strong>：如果响应时间过长，可能需要降低并发数</li>
+</ul>
+<h4 id="槽位利用率"><a href="#槽位利用率" class="headerlink" title="槽位利用率"></a>槽位利用率</h4><ul>
+<li><strong>指标</strong>：活跃槽位数 &#x2F; 总槽位数</li>
+<li><strong>阈值</strong>：建议保持在70-90%</li>
+<li><strong>调优</strong>：利用率过低浪费资源，过高可能导致排队</li>
+</ul>
+<h3 id="性能调优建议"><a href="#性能调优建议" class="headerlink" title="性能调优建议"></a>性能调优建议</h3><h4 id="渐进式调优"><a href="#渐进式调优" class="headerlink" title="渐进式调优"></a>渐进式调优</h4><ol>
+<li><strong>基线测试</strong>：从保守配置开始，建立性能基线</li>
+<li><strong>逐步优化</strong>：逐步增加并发数，观察性能变化</li>
+<li><strong>压力测试</strong>：在接近生产负载的条件下测试</li>
+<li><strong>持续监控</strong>：部署后持续监控关键指标</li>
+</ol>
+<h4 id="配置优化策略"><a href="#配置优化策略" class="headerlink" title="配置优化策略"></a>配置优化策略</h4><ol>
+<li><p><strong>硬件资源评估</strong>：</p>
+<ul>
+<li>CPU核心数：影响并发处理能力</li>
+<li>内存大小：影响缓存和处理复杂查询的能力</li>
+<li>磁盘I&#x2F;O：影响索引访问速度</li>
+</ul>
+</li>
+<li><p><strong>查询模式分析</strong>：</p>
+<ul>
+<li>查询复杂度：复杂查询需要更多资源</li>
+<li>查询频率：高频查询需要更多并发槽位</li>
+<li>查询时间分布：了解峰值时间模式</li>
+</ul>
+</li>
+<li><p><strong>业务需求平衡</strong>：</p>
+<ul>
+<li>响应时间要求：实时性要求影响超时设置</li>
+<li>吞吐量要求：大批量处理需要更高并发</li>
+<li>可用性要求：高可用性需要保守的配置</li>
+</ul>
+</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题和解决方案"><a href="#常见问题和解决方案" class="headerlink" title="常见问题和解决方案"></a>常见问题和解决方案</h3><h4 id="问题1：大量429错误"><a href="#问题1：大量429错误" class="headerlink" title="问题1：大量429错误"></a>问题1：大量429错误</h4><p><strong>现象</strong>：客户端收到大量”Too Many Requests”错误</p>
+<p><strong>原因分析</strong>：</p>
+<ul>
+<li><code>allowedRequests</code>设置过低</li>
+<li>查询复杂度过高，处理时间过长</li>
+<li>客户端并发请求过多</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>增加<code>allowedRequests</code>值</li>
+<li>优化查询性能，减少处理时间</li>
+<li>在客户端实现重试和退避策略</li>
+<li>启用<code>slotAcquisitionTimeoutInMS</code>给予短暂等待时间</li>
+</ol>
+<h4 id="问题2：查询响应时间过长"><a href="#问题2：查询响应时间过长" class="headerlink" title="问题2：查询响应时间过长"></a>问题2：查询响应时间过长</h4><p><strong>现象</strong>：查询响应时间明显增加</p>
+<p><strong>原因分析</strong>：</p>
+<ul>
+<li><code>slotAcquisitionTimeoutInMS</code>设置过高</li>
+<li>槽位被长期占用</li>
+<li>槽位借用导致的延迟</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>减少<code>slotAcquisitionTimeoutInMS</code>值</li>
+<li>禁用<code>slotBorrowingEnabled</code></li>
+<li>增加<code>guaranteedSlots</code>确保核心查询不受影响</li>
+</ol>
+<h4 id="问题3：资源利用率不足"><a href="#问题3：资源利用率不足" class="headerlink" title="问题3：资源利用率不足"></a>问题3：资源利用率不足</h4><p><strong>现象</strong>：系统资源充足但并发度不高</p>
+<p><strong>原因分析</strong>：</p>
+<ul>
+<li><code>allowedRequests</code>设置过于保守</li>
+<li>没有启用槽位借用机制</li>
+</ul>
+<p><strong>解决方案</strong>：</p>
+<ol>
+<li>逐步增加<code>allowedRequests</code></li>
+<li>启用<code>slotBorrowingEnabled</code></li>
+<li>调整<code>guaranteedSlots</code>平衡不同请求类型</li>
+</ol>
+<h2 id="最佳实践总结"><a href="#最佳实践总结" class="headerlink" title="最佳实践总结"></a>最佳实践总结</h2><h3 id="配置原则"><a href="#配置原则" class="headerlink" title="配置原则"></a>配置原则</h3><ol>
+<li><strong>渐进调优</strong>：从保守配置开始，逐步优化</li>
+<li><strong>监控驱动</strong>：基于实际监控数据做调整决策</li>
+<li><strong>业务导向</strong>：配置应该服务于具体业务需求</li>
+<li><strong>测试验证</strong>：任何配置变更都应该经过充分测试</li>
+</ol>
+<h3 id="运维建议"><a href="#运维建议" class="headerlink" title="运维建议"></a>运维建议</h3><ol>
+<li><strong>建立基线</strong>：记录默认配置下的性能表现</li>
+<li><strong>设置告警</strong>：对关键指标设置监控告警</li>
+<li><strong>定期审查</strong>：定期审查配置是否仍然适合当前负载</li>
+<li><strong>文档记录</strong>：详细记录配置变更的原因和效果</li>
+</ol>
+<h3 id="容量规划"><a href="#容量规划" class="headerlink" title="容量规划"></a>容量规划</h3><ol>
+<li><strong>硬件匹配</strong>：配置应该与硬件能力匹配</li>
+<li><strong>负载预测</strong>：基于历史数据预测未来负载增长</li>
+<li><strong>弹性设计</strong>：配置应该能够适应负载波动</li>
+<li><strong>预留空间</strong>：为突发负载预留一定的处理能力</li>
+</ol>
+<p>速率限制器是SolrCloud中重要的资源管理工具，正确配置和使用可以有效提高系统稳定性和性能表现。通过合理的配置策略和持续的监控优化，可以在保证服务质量的同时最大化系统资源利用率。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96/">性能优化</a>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6/">速率限制</a>
+  
+    <a class="article-tag" href="/tags/%E8%B5%84%E6%BA%90%E7%AE%A1%E7%90%86/">资源管理</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/19/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E6%8C%87%E6%A0%87%E7%9B%91%E6%8E%A7%E6%8A%A5%E5%91%8A%E7%B3%BB%E7%BB%9F%E9%85%8D%E7%BD%AE%E4%B8%8E%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：指标监控报告系统配置与最佳实践
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/17/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%88%86%E7%89%87%E7%AE%A1%E7%90%86%E5%91%BD%E4%BB%A4%E6%B7%B1%E5%BA%A6%E8%A7%A3%E6%9E%90%E4%B8%8E%E8%BF%90%E7%BB%B4%E5%AE%9E%E8%B7%B5/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：分片管理命令深度解析与运维实践</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">2.</span> <span class="nav-text">核心概念</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E4%BE%8B%E7%BA%A7%E9%99%90%E5%88%B6"><span class="nav-number">2.1.</span> <span class="nav-text">实例级限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E7%B1%BB%E5%9E%8B%E8%AF%86%E5%88%AB"><span class="nav-number">2.2.</span> <span class="nav-text">请求类型识别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E6%94%AF%E6%8C%81%E7%9A%84%E8%AF%B7%E6%B1%82%E7%B1%BB%E5%9E%8B"><span class="nav-number">2.3.</span> <span class="nav-text">当前支持的请求类型</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%95%E6%97%B6%E4%BD%BF%E7%94%A8%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">何时使用速率限制器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6%E5%99%A8%E9%85%8D%E7%BD%AE"><span class="nav-number">4.</span> <span class="nav-text">速率限制器配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">4.1.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#enabled%EF%BC%9A%E5%90%AF%E7%94%A8%E6%9F%A5%E8%AF%A2%E9%80%9F%E7%8E%87%E9%99%90%E5%88%B6%E5%99%A8"><span class="nav-number">4.1.1.</span> <span class="nav-text">enabled：启用查询速率限制器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#allowedRequests%EF%BC%9A%E6%9C%80%E5%A4%A7%E5%B9%B6%E5%8F%91%E8%AF%B7%E6%B1%82%E6%95%B0"><span class="nav-number">4.1.2.</span> <span class="nav-text">allowedRequests：最大并发请求数</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slotAcquisitionTimeoutInMS%EF%BC%9A%E8%AF%B7%E6%B1%82%E6%A7%BD%E4%BD%8D%E5%88%86%E9%85%8D%E7%AD%89%E5%BE%85%E6%97%B6%E9%97%B4"><span class="nav-number">4.1.3.</span> <span class="nav-text">slotAcquisitionTimeoutInMS：请求槽位分配等待时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#slotBorrowingEnabled%EF%BC%9A%E6%A7%BD%E4%BD%8D%E5%80%9F%E7%94%A8%E5%90%AF%E7%94%A8"><span class="nav-number">4.1.4.</span> <span class="nav-text">slotBorrowingEnabled：槽位借用启用</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#guaranteedSlots%EF%BC%9A%E4%BF%9D%E8%AF%81%E6%A7%BD%E4%BD%8D"><span class="nav-number">4.1.5.</span> <span class="nav-text">guaranteedSlots：保证槽位</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E7%89%B9%E6%80%A7%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">5.</span> <span class="nav-text">重要特性和注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B6%85%E9%A2%9D%E8%AE%A2%E9%98%85%EF%BC%88Over-Subscribing%EF%BC%89"><span class="nav-number">5.1.</span> <span class="nav-text">超额订阅（Over Subscribing）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A7%BD%E4%BD%8D%E5%80%9F%E7%94%A8%EF%BC%88Slot-Borrowing%EF%BC%89"><span class="nav-number">5.2.</span> <span class="nav-text">槽位借用（Slot Borrowing）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B%E5%92%8C%E4%BD%BF%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="nav-number">6.</span> <span class="nav-text">配置示例和使用场景</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">6.1.</span> <span class="nav-text">基础配置示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BF%9D%E5%AE%88%E9%85%8D%E7%BD%AE%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8E%E7%A8%B3%E5%AE%9A%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="nav-number">6.1.1.</span> <span class="nav-text">保守配置（适用于稳定环境）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E9%85%8D%E7%BD%AE%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8E%E6%B7%B7%E5%90%88%E8%B4%9F%E8%BD%BD%EF%BC%89"><span class="nav-number">6.1.2.</span> <span class="nav-text">平衡配置（适用于混合负载）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%BF%80%E8%BF%9B%E9%85%8D%E7%BD%AE%EF%BC%88%E9%80%82%E7%94%A8%E4%BA%8E%E9%AB%98%E5%90%9E%E5%90%90%E7%8E%AF%E5%A2%83%EF%BC%89"><span class="nav-number">6.1.3.</span> <span class="nav-text">激进配置（适用于高吞吐环境）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%9C%BA%E6%99%AF%E7%9A%84%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">6.2.</span> <span class="nav-text">不同场景的配置策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%BB%E5%A4%9A%E5%86%99%E5%B0%91%E5%9C%BA%E6%99%AF"><span class="nav-number">6.2.1.</span> <span class="nav-text">读多写少场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%86%99%E5%A4%9A%E8%AF%BB%E5%B0%91%E5%9C%BA%E6%99%AF"><span class="nav-number">6.2.2.</span> <span class="nav-text">写多读少场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E5%88%86%E6%9E%90%E5%9C%BA%E6%99%AF"><span class="nav-number">6.2.3.</span> <span class="nav-text">实时分析场景</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E8%B0%83%E4%BC%98"><span class="nav-number">7.</span> <span class="nav-text">监控和调优</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E6%8C%87%E6%A0%87%E7%9B%91%E6%8E%A7"><span class="nav-number">7.1.</span> <span class="nav-text">关键指标监控</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E9%98%9F%E5%88%97%E9%95%BF%E5%BA%A6"><span class="nav-number">7.1.1.</span> <span class="nav-text">请求队列长度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82%E6%8B%92%E7%BB%9D%E7%8E%87"><span class="nav-number">7.1.2.</span> <span class="nav-text">请求拒绝率</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B9%B3%E5%9D%87%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4"><span class="nav-number">7.1.3.</span> <span class="nav-text">平均响应时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%A7%BD%E4%BD%8D%E5%88%A9%E7%94%A8%E7%8E%87"><span class="nav-number">7.1.4.</span> <span class="nav-text">槽位利用率</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98%E5%BB%BA%E8%AE%AE"><span class="nav-number">7.2.</span> <span class="nav-text">性能调优建议</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B8%90%E8%BF%9B%E5%BC%8F%E8%B0%83%E4%BC%98"><span class="nav-number">7.2.1.</span> <span class="nav-text">渐进式调优</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5"><span class="nav-number">7.2.2.</span> <span class="nav-text">配置优化策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">8.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E5%92%8C%E8%A7%A3%E5%86%B3%E6%96%B9%E6%A1%88"><span class="nav-number">8.1.</span> <span class="nav-text">常见问题和解决方案</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%981%EF%BC%9A%E5%A4%A7%E9%87%8F429%E9%94%99%E8%AF%AF"><span class="nav-number">8.1.1.</span> <span class="nav-text">问题1：大量429错误</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%982%EF%BC%9A%E6%9F%A5%E8%AF%A2%E5%93%8D%E5%BA%94%E6%97%B6%E9%97%B4%E8%BF%87%E9%95%BF"><span class="nav-number">8.1.2.</span> <span class="nav-text">问题2：查询响应时间过长</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%97%AE%E9%A2%983%EF%BC%9A%E8%B5%84%E6%BA%90%E5%88%A9%E7%94%A8%E7%8E%87%E4%B8%8D%E8%B6%B3"><span class="nav-number">8.1.3.</span> <span class="nav-text">问题3：资源利用率不足</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">9.</span> <span class="nav-text">最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8E%9F%E5%88%99"><span class="nav-number">9.1.</span> <span class="nav-text">配置原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%90%E7%BB%B4%E5%BB%BA%E8%AE%AE"><span class="nav-number">9.2.</span> <span class="nav-text">运维建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%B9%E9%87%8F%E8%A7%84%E5%88%92"><span class="nav-number">9.3.</span> <span class="nav-text">容量规划</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

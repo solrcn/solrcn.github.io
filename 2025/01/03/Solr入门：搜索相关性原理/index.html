@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr入门：搜索相关性原理 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr入门搜索相关性精确度召回率搜索质量用户体验" />
+  
+  
+  
+  
+  <meta name="description" content="相关性是指查询响应满足搜索信息用户需求的程度。理解搜索相关性对于构建有效的搜索应用至关重要。 相关性的语境依赖性查询响应的相关性取决于执行查询的语境。单个搜索应用可能会被具有不同需求和期望的用户在不同语境下使用。 实际应用示例考虑一个气候数据搜索引擎，可能被以下不同用户使用：    用户类型 需求描述 相关性标准    大学研究员 研究长期气候趋势 需要全面、准确的历史数据   农民 计算春季最后">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr入门：搜索相关性原理">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/03/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="相关性是指查询响应满足搜索信息用户需求的程度。理解搜索相关性对于构建有效的搜索应用至关重要。 相关性的语境依赖性查询响应的相关性取决于执行查询的语境。单个搜索应用可能会被具有不同需求和期望的用户在不同语境下使用。 实际应用示例考虑一个气候数据搜索引擎，可能被以下不同用户使用：    用户类型 需求描述 相关性标准    大学研究员 研究长期气候趋势 需要全面、准确的历史数据   农民 计算春季最后">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T07:39:55.862Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr入门">
+<meta property="article:tag" content="搜索相关性">
+<meta property="article:tag" content="精确度">
+<meta property="article:tag" content="召回率">
+<meta property="article:tag" content="搜索质量">
+<meta property="article:tag" content="用户体验">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr入门：搜索相关性原理" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr入门：搜索相关性原理
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/03/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E5%8E%9F%E7%90%86/" class="article-date">
+	  <time datetime="2025-01-03T16:00:00.000Z" itemprop="datePublished">一月 3, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><strong>相关性</strong>是指查询响应满足搜索信息用户需求的程度。理解搜索相关性对于构建有效的搜索应用至关重要。</p>
+<h2 id="相关性的语境依赖性"><a href="#相关性的语境依赖性" class="headerlink" title="相关性的语境依赖性"></a>相关性的语境依赖性</h2><p>查询响应的相关性取决于执行查询的语境。单个搜索应用可能会被具有不同需求和期望的用户在不同语境下使用。</p>
+<h3 id="实际应用示例"><a href="#实际应用示例" class="headerlink" title="实际应用示例"></a>实际应用示例</h3><p>考虑一个气候数据搜索引擎，可能被以下不同用户使用：</p>
+<table>
+<thead>
+<tr>
+<th>用户类型</th>
+<th>需求描述</th>
+<th>相关性标准</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>大学研究员</strong></td>
+<td>研究长期气候趋势</td>
+<td>需要全面、准确的历史数据</td>
+</tr>
+<tr>
+<td><strong>农民</strong></td>
+<td>计算春季最后一次霜冻可能日期</td>
+<td>需要本地化、实用的预测信息</td>
+</tr>
+<tr>
+<td><strong>土木工程师</strong></td>
+<td>了解降雨模式和洪水频率</td>
+<td>需要技术性强、精确的统计数据</td>
+</tr>
+<tr>
+<td><strong>大学生</strong></td>
+<td>规划某地区假期并考虑穿着</td>
+<td>需要简单易懂的天气概况</td>
+</tr>
+</tbody></table>
+<p>由于这些用户的动机不同，对任何特定查询响应的相关性评价也会有所不同。</p>
+<h2 id="搜索全面性的考量"><a href="#搜索全面性的考量" class="headerlink" title="搜索全面性的考量"></a>搜索全面性的考量</h2><p>查询响应应该多全面？与一般的相关性一样，这个问题的答案取决于搜索的语境。</p>
+<h3 id="成本效益分析"><a href="#成本效益分析" class="headerlink" title="成本效益分析"></a>成本效益分析</h3><p><strong>不</strong>找到特定文档的成本在某些语境下很高，在其他语境下则相当低：</p>
+<h4 id="高成本场景"><a href="#高成本场景" class="headerlink" title="高成本场景"></a>高成本场景</h4><ul>
+<li><strong>法律电子发现</strong>：响应传票的搜索，遗漏任何相关文档可能导致法律后果</li>
+<li><strong>医疗诊断</strong>：遗漏重要症状或治疗信息可能影响患者安全</li>
+<li><strong>安全审查</strong>：遗漏威胁信息可能带来安全风险</li>
+</ul>
+<h4 id="低成本场景"><a href="#低成本场景" class="headerlink" title="低成本场景"></a>低成本场景</h4><ul>
+<li><strong>菜谱搜索</strong>：在拥有数十或数百个蛋糕食谱的网站上搜索蛋糕食谱</li>
+<li><strong>娱乐内容</strong>：在视频网站上寻找娱乐视频</li>
+<li><strong>日常购物</strong>：在电商平台寻找常见商品</li>
+</ul>
+<h3 id="配置权衡"><a href="#配置权衡" class="headerlink" title="配置权衡"></a>配置权衡</h3><p>在配置Solr时，您应该在全面性与其他因素之间进行权衡：</p>
+<ul>
+<li><strong>及时性</strong>：结果返回的速度</li>
+<li><strong>易用性</strong>：用户界面的友好程度</li>
+<li><strong>准确性</strong>：结果的精确度</li>
+</ul>
+<h2 id="精确度与召回率"><a href="#精确度与召回率" class="headerlink" title="精确度与召回率"></a>精确度与召回率</h2><p>电子发现和菜谱搜索的例子展示了与相关性相关的两个重要概念：</p>
+<h3 id="精确度（Precision）"><a href="#精确度（Precision）" class="headerlink" title="精确度（Precision）"></a>精确度（Precision）</h3><p><strong>精确度</strong>是返回结果中相关文档的百分比。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">精确度 = 相关的检索文档数 / 总检索文档数</span><br></pre></td></tr></table></figure>
+
+<h4 id="精确度示例"><a href="#精确度示例" class="headerlink" title="精确度示例"></a>精确度示例</h4><p>假设搜索”Java编程”：</p>
+<ul>
+<li>返回10个结果</li>
+<li>其中8个确实关于Java编程</li>
+<li>精确度 &#x3D; 8&#x2F;10 &#x3D; 80%</li>
+</ul>
+<h3 id="召回率（Recall）"><a href="#召回率（Recall）" class="headerlink" title="召回率（Recall）"></a>召回率（Recall）</h3><p><strong>召回率</strong>是系统中所有相关结果中被返回的相关结果的百分比。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">召回率 = 检索到的相关文档数 / 系统中全部相关文档数</span><br></pre></td></tr></table></figure>
+
+<h4 id="召回率示例"><a href="#召回率示例" class="headerlink" title="召回率示例"></a>召回率示例</h4><p>假设系统中总共有50个关于”Java编程”的相关文档：</p>
+<ul>
+<li>搜索返回了其中的20个</li>
+<li>召回率 &#x3D; 20&#x2F;50 &#x3D; 40%</li>
+</ul>
+<h3 id="获得完美召回率"><a href="#获得完美召回率" class="headerlink" title="获得完美召回率"></a>获得完美召回率</h3><p>获得完美召回率很简单：只需对每个查询返回集合中的每个文档即可。但这显然不实用，因为精确度会极低。</p>
+<h2 id="不同场景的要求"><a href="#不同场景的要求" class="headerlink" title="不同场景的要求"></a>不同场景的要求</h2><h3 id="高召回率场景"><a href="#高召回率场景" class="headerlink" title="高召回率场景"></a>高召回率场景</h3><p>对于电子发现搜索应用来说，拥有100%的召回率非常重要，要返回与传票相关的所有文档。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>宁可多找不可漏找</li>
+<li>可以容忍一定的噪音</li>
+<li>后续人工筛选</li>
+</ul>
+<h3 id="高精确度场景"><a href="#高精确度场景" class="headerlink" title="高精确度场景"></a>高精确度场景</h3><p>对于菜谱应用来说，提供这种程度的精确度远没有那么重要。在某些情况下，在日常语境中返回太多结果可能会让用户不知所措。</p>
+<p><strong>特点</strong>：</p>
+<ul>
+<li>追求结果质量</li>
+<li>用户体验优先</li>
+<li>避免信息过载</li>
+</ul>
+<h3 id="平衡策略"><a href="#平衡策略" class="headerlink" title="平衡策略"></a>平衡策略</h3><p>在某些语境中，返回相关性更高但数量较少的结果可能是最佳方法。</p>
+<h2 id="量化相关性"><a href="#量化相关性" class="headerlink" title="量化相关性"></a>量化相关性</h2><p>使用精确度和召回率的概念，可以为文档集合跨用户和查询量化相关性。</p>
+<h3 id="理想系统"><a href="#理想系统" class="headerlink" title="理想系统"></a>理想系统</h3><p>完美的系统对每个用户和每个查询都具有100%的精确度和100%的召回率。换句话说，它将检索所有相关文档，除此之外别无其他。</p>
+<h3 id="实际考量"><a href="#实际考量" class="headerlink" title="实际考量"></a>实际考量</h3><p>在讨论实际系统中的精确度和召回率时，通常关注特定结果数量下的精确度和召回率，最常见（也是最有用）的是前十个结果。</p>
+<h4 id="P-10和R-10指标"><a href="#P-10和R-10指标" class="headerlink" title="P@10和R@10指标"></a>P@10和R@10指标</h4><ul>
+<li><strong>P@10</strong>：前10个结果的精确度</li>
+<li><strong>R@10</strong>：前10个结果的召回率</li>
+</ul>
+<p>这些指标更接近用户的实际体验，因为大多数用户只会查看搜索结果的前几页。</p>
+<h2 id="Solr的相关性配置"><a href="#Solr的相关性配置" class="headerlink" title="Solr的相关性配置"></a>Solr的相关性配置</h2><h3 id="搜索组件配置"><a href="#搜索组件配置" class="headerlink" title="搜索组件配置"></a>搜索组件配置</h3><p>通过分面、查询过滤器和其他搜索组件，可以配置Solr应用的灵活性，帮助用户微调搜索以返回最相关的结果。</p>
+<h4 id="分面搜索"><a href="#分面搜索" class="headerlink" title="分面搜索"></a>分面搜索</h4><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;query&quot;</span><span class="punctuation">:</span> <span class="string">&quot;java programming&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;facet&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;category&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;terms&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;category&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;difficulty&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;type&quot;</span><span class="punctuation">:</span> <span class="string">&quot;terms&quot;</span><span class="punctuation">,</span> </span><br><span class="line">      <span class="attr">&quot;field&quot;</span><span class="punctuation">:</span> <span class="string">&quot;difficulty_level&quot;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="查询过滤器"><a href="#查询过滤器" class="headerlink" title="查询过滤器"></a>查询过滤器</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 基础查询 + 类别过滤</span></span><br><span class="line">q=java programming&amp;fq=category:tutorial&amp;fq=level:beginner</span><br></pre></td></tr></table></figure>
+
+<h3 id="平衡精确度和召回率"><a href="#平衡精确度和召回率" class="headerlink" title="平衡精确度和召回率"></a>平衡精确度和召回率</h3><p>Solr可以配置为平衡精确度和召回率，以满足特定用户社区的需求。</p>
+<h4 id="配置策略"><a href="#配置策略" class="headerlink" title="配置策略"></a>配置策略</h4><ol>
+<li><p><strong>提高精确度</strong></p>
+<ul>
+<li>增强查询匹配规则</li>
+<li>提高相关性阈值</li>
+<li>使用更严格的过滤条件</li>
+</ul>
+</li>
+<li><p><strong>提高召回率</strong></p>
+<ul>
+<li>放宽匹配条件</li>
+<li>增加同义词扩展</li>
+<li>降低匹配要求</li>
+</ul>
+</li>
+</ol>
+<h2 id="应用配置考量"><a href="#应用配置考量" class="headerlink" title="应用配置考量"></a>应用配置考量</h2><p>Solr应用的配置应该考虑以下因素：</p>
+<h3 id="1-用户需求分析"><a href="#1-用户需求分析" class="headerlink" title="1. 用户需求分析"></a>1. 用户需求分析</h3><h4 id="多样化需求"><a href="#多样化需求" class="headerlink" title="多样化需求"></a>多样化需求</h4><ul>
+<li><strong>易用性</strong>：界面简单直观</li>
+<li><strong>响应速度</strong>：快速返回结果</li>
+<li><strong>信息需求</strong>：准确全面的内容</li>
+</ul>
+<h4 id="用户类型分析"><a href="#用户类型分析" class="headerlink" title="用户类型分析"></a>用户类型分析</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">专业用户 → 全面性、准确性优先</span><br><span class="line">普通用户 → 易用性、快速性优先</span><br><span class="line">偶然用户 → 简单性、相关性优先</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-分类体系设计"><a href="#2-分类体系设计" class="headerlink" title="2. 分类体系设计"></a>2. 分类体系设计</h3><p>在各种语境中对用户有意义的类别：</p>
+<table>
+<thead>
+<tr>
+<th>分类类型</th>
+<th>应用场景</th>
+<th>示例</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>时间分类</strong></td>
+<td>新闻、博客、事件</td>
+<td>最近一周、本月、今年</td>
+</tr>
+<tr>
+<td><strong>产品分类</strong></td>
+<td>电商、目录</td>
+<td>电子产品、服装、图书</td>
+</tr>
+<tr>
+<td><strong>地理分类</strong></td>
+<td>本地搜索、地图</td>
+<td>城市、省份、国家</td>
+</tr>
+<tr>
+<td><strong>主题分类</strong></td>
+<td>学术、知识库</td>
+<td>学科、领域、标签</td>
+</tr>
+</tbody></table>
+<h3 id="3-文档固有相关性"><a href="#3-文档固有相关性" class="headerlink" title="3. 文档固有相关性"></a>3. 文档固有相关性</h3><p>某些文档可能具有固有的相关性，例如：</p>
+<ul>
+<li><strong>官方产品描述</strong>：应该始终出现在搜索结果顶部</li>
+<li><strong>常见问题解答</strong>：对相关查询具有高优先级</li>
+<li><strong>权威内容</strong>：来自可信来源的内容</li>
+</ul>
+<h3 id="4-时效性考量"><a href="#4-时效性考量" class="headerlink" title="4. 时效性考量"></a>4. 时效性考量</h3><h4 id="时间敏感内容"><a href="#时间敏感内容" class="headerlink" title="时间敏感内容"></a>时间敏感内容</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">新闻资讯 → 最新的总是最重要</span><br><span class="line">技术文档 → 版本更新很关键</span><br><span class="line">法律条文 → 现行有效的为准</span><br><span class="line">历史资料 → 时间本身是价值</span><br></pre></td></tr></table></figure>
+
+<h2 id="部署前规划"><a href="#部署前规划" class="headerlink" title="部署前规划"></a>部署前规划</h2><h3 id="查询响应草图"><a href="#查询响应草图" class="headerlink" title="查询响应草图"></a>查询响应草图</h3><p>在Solr部署的规划阶段，为示例查询勾画出搜索应用应该返回的响应类型通常很有帮助。</p>
+<h4 id="示例规划表"><a href="#示例规划表" class="headerlink" title="示例规划表"></a>示例规划表</h4><table>
+<thead>
+<tr>
+<th>查询示例</th>
+<th>期望结果类型</th>
+<th>优先级排序</th>
+<th>数量建议</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>“Java教程”</td>
+<td>入门教程、官方文档、视频课程</td>
+<td>官方 &gt; 质量 &gt; 时效</td>
+<td>10-15个</td>
+</tr>
+<tr>
+<td>“Spring Boot”</td>
+<td>官方文档、实战案例、问题解答</td>
+<td>权威 &gt; 实用 &gt; 全面</td>
+<td>15-20个</td>
+</tr>
+<tr>
+<td>“数据库设计”</td>
+<td>理论知识、最佳实践、工具推荐</td>
+<td>基础 &gt; 进阶 &gt; 工具</td>
+<td>20-30个</td>
+</tr>
+</tbody></table>
+<h3 id="测试方法论"><a href="#测试方法论" class="headerlink" title="测试方法论"></a>测试方法论</h3><p>一旦应用启动并运行，您可以采用一系列测试方法：</p>
+<h4 id="1-焦点小组测试"><a href="#1-焦点小组测试" class="headerlink" title="1. 焦点小组测试"></a>1. 焦点小组测试</h4><ul>
+<li>邀请目标用户群体</li>
+<li>观察真实使用情况</li>
+<li>收集直接反馈</li>
+</ul>
+<h4 id="2-内部测试"><a href="#2-内部测试" class="headerlink" title="2. 内部测试"></a>2. 内部测试</h4><ul>
+<li>团队成员模拟用户行为</li>
+<li>系统性测试各种查询</li>
+<li>建立测试用例库</li>
+</ul>
+<h4 id="3-TREC测试"><a href="#3-TREC测试" class="headerlink" title="3. TREC测试"></a>3. TREC测试</h4><ul>
+<li>使用标准化测试集</li>
+<li>客观评估系统性能</li>
+<li>与其他系统对比</li>
+</ul>
+<h4 id="4-A-B测试"><a href="#4-A-B测试" class="headerlink" title="4. A&#x2F;B测试"></a>4. A&#x2F;B测试</h4><ul>
+<li>对比不同配置效果</li>
+<li>基于真实用户数据</li>
+<li>持续优化改进</li>
+</ul>
+<h2 id="相关性调优实践"><a href="#相关性调优实践" class="headerlink" title="相关性调优实践"></a>相关性调优实践</h2><h3 id="1-字段权重调整"><a href="#1-字段权重调整" class="headerlink" title="1. 字段权重调整"></a>1. 字段权重调整</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- DisMax配置示例 --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;qf&quot;</span>&gt;</span></span><br><span class="line">  title^4.0           <span class="comment">&lt;!-- 标题权重最高 --&gt;</span></span><br><span class="line">  content^1.0         <span class="comment">&lt;!-- 内容基础权重 --&gt;</span></span><br><span class="line">  tags^2.0           <span class="comment">&lt;!-- 标签中等权重 --&gt;</span></span><br><span class="line">  author^0.5         <span class="comment">&lt;!-- 作者权重较低 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-短语权重优化"><a href="#2-短语权重优化" class="headerlink" title="2. 短语权重优化"></a>2. 短语权重优化</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;pf&quot;</span>&gt;</span></span><br><span class="line">  title^6.0          <span class="comment">&lt;!-- 标题中的短语匹配 --&gt;</span></span><br><span class="line">  content^2.0        <span class="comment">&lt;!-- 内容中的短语匹配 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-最小匹配要求"><a href="#3-最小匹配要求" class="headerlink" title="3. 最小匹配要求"></a>3. 最小匹配要求</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;mm&quot;</span>&gt;</span>75%<span class="tag">&lt;/<span class="name">str</span>&gt;</span>  <span class="comment">&lt;!-- 至少匹配75%的查询词 --&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-自定义相关性函数"><a href="#4-自定义相关性函数" class="headerlink" title="4. 自定义相关性函数"></a>4. 自定义相关性函数</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;bf&quot;</span>&gt;</span></span><br><span class="line">  recip(ms(NOW,publish_date),3.16e-11,1,1)^2.0</span><br><span class="line">  <span class="comment">&lt;!-- 时间衰减函数：越新的文档权重越高 --&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="调试相关性问题"><a href="#调试相关性问题" class="headerlink" title="调试相关性问题"></a>调试相关性问题</h2><h3 id="查询调试信息"><a href="#查询调试信息" class="headerlink" title="查询调试信息"></a>查询调试信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 启用调试模式</span></span><br><span class="line">curl <span class="string">&#x27;http://localhost:8983/solr/collection1/select?q=java&amp;debugQuery=true&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="评分解释"><a href="#评分解释" class="headerlink" title="评分解释"></a>评分解释</h3><p>调试输出会包含每个文档的评分详细计算过程：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;debug&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;explain&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">      <span class="attr">&quot;doc1&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;match&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;value&quot;</span><span class="punctuation">:</span> <span class="number">1.4142135</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;description&quot;</span><span class="punctuation">:</span> <span class="string">&quot;weight(content:java in 0) [SchemaSimilarity]&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;details&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>...<span class="punctuation">]</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">&#125;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="相关性测试工具"><a href="#相关性测试工具" class="headerlink" title="相关性测试工具"></a>相关性测试工具</h3><ol>
+<li><strong>Solr Admin UI查询界面</strong>：可视化查询和结果分析</li>
+<li><strong>Luke工具</strong>：索引内容分析</li>
+<li><strong>自定义测试脚本</strong>：批量测试查询效果</li>
+</ol>
+<h2 id="最佳实践总结"><a href="#最佳实践总结" class="headerlink" title="最佳实践总结"></a>最佳实践总结</h2><h3 id="设计原则"><a href="#设计原则" class="headerlink" title="设计原则"></a>设计原则</h3><ol>
+<li><strong>了解用户</strong>：深入理解目标用户群体的需求</li>
+<li><strong>平衡权衡</strong>：在精确度和召回率之间找到最佳平衡点</li>
+<li><strong>持续优化</strong>：基于用户反馈和数据分析不断改进</li>
+<li><strong>测试驱动</strong>：建立系统化的测试和评估机制</li>
+</ol>
+<h3 id="配置建议"><a href="#配置建议" class="headerlink" title="配置建议"></a>配置建议</h3><ol>
+<li><strong>从简单开始</strong>：先实现基本功能，再逐步优化</li>
+<li><strong>数据驱动</strong>：基于真实使用数据进行调整</li>
+<li><strong>用户反馈</strong>：重视用户的实际使用体验</li>
+<li><strong>文档记录</strong>：详细记录配置决策和变更历史</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>搜索相关性是一个复杂的多维度概念，它：</p>
+<ul>
+<li><strong>依赖语境</strong>：不同用户和场景有不同的相关性标准</li>
+<li><strong>需要平衡</strong>：精确度和召回率之间需要权衡</li>
+<li><strong>可以量化</strong>：通过指标来测量和优化</li>
+<li><strong>持续演化</strong>：随着用户需求和内容变化而调整</li>
+</ul>
+<p>理解相关性原理是构建高质量搜索应用的基础，它将指导您在Solr配置和优化过程中做出正确的决策。</p>
+<h2 id="下一步学习"><a href="#下一步学习" class="headerlink" title="下一步学习"></a>下一步学习</h2><ul>
+<li><a href="/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%E8%AF%A6%E8%A7%A3/">Solr入门：管理界面详解</a> - 使用可视化工具测试相关性</li>
+<li><a href="/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7%E4%B8%8E%E4%BC%98%E5%8C%96%E7%AD%96%E7%95%A5/">Solr概念：搜索相关性与优化策略</a> - 深入的优化技术</li>
+<li><a href="/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8%E9%85%8D%E7%BD%AE/">Solr配置：请求处理器配置</a> - 配置查询处理器以优化相关性</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E5%85%A5%E9%97%A8/">Solr入门</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E7%9B%B8%E5%85%B3%E6%80%A7/">搜索相关性</a>
+  
+    <a class="article-tag" href="/tags/%E7%B2%BE%E7%A1%AE%E5%BA%A6/">精确度</a>
+  
+    <a class="article-tag" href="/tags/%E5%8F%AC%E5%9B%9E%E7%8E%87/">召回率</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E8%B4%A8%E9%87%8F/">搜索质量</a>
+  
+    <a class="article-tag" href="/tags/%E7%94%A8%E6%88%B7%E4%BD%93%E9%AA%8C/">用户体验</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/04/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E6%9C%AF%E8%AF%AD%E8%AF%8D%E6%B1%87%E8%A1%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr入门：术语词汇表
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/02/Solr%E5%85%A5%E9%97%A8%EF%BC%9A5%E5%88%86%E9%92%9F%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr入门：5分钟快速上手</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7%E7%9A%84%E8%AF%AD%E5%A2%83%E4%BE%9D%E8%B5%96%E6%80%A7"><span class="nav-number">1.</span> <span class="nav-text">相关性的语境依赖性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E5%BA%94%E7%94%A8%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.1.</span> <span class="nav-text">实际应用示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E5%85%A8%E9%9D%A2%E6%80%A7%E7%9A%84%E8%80%83%E9%87%8F"><span class="nav-number">2.</span> <span class="nav-text">搜索全面性的考量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%88%90%E6%9C%AC%E6%95%88%E7%9B%8A%E5%88%86%E6%9E%90"><span class="nav-number">2.1.</span> <span class="nav-text">成本效益分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%AB%98%E6%88%90%E6%9C%AC%E5%9C%BA%E6%99%AF"><span class="nav-number">2.1.1.</span> <span class="nav-text">高成本场景</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%BD%8E%E6%88%90%E6%9C%AC%E5%9C%BA%E6%99%AF"><span class="nav-number">2.1.2.</span> <span class="nav-text">低成本场景</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9D%83%E8%A1%A1"><span class="nav-number">2.2.</span> <span class="nav-text">配置权衡</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E5%BA%A6%E4%B8%8E%E5%8F%AC%E5%9B%9E%E7%8E%87"><span class="nav-number">3.</span> <span class="nav-text">精确度与召回率</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E5%BA%A6%EF%BC%88Precision%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">精确度（Precision）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%B2%BE%E7%A1%AE%E5%BA%A6%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.1.1.</span> <span class="nav-text">精确度示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8F%AC%E5%9B%9E%E7%8E%87%EF%BC%88Recall%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">召回率（Recall）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8F%AC%E5%9B%9E%E7%8E%87%E7%A4%BA%E4%BE%8B"><span class="nav-number">3.2.1.</span> <span class="nav-text">召回率示例</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%8E%B7%E5%BE%97%E5%AE%8C%E7%BE%8E%E5%8F%AC%E5%9B%9E%E7%8E%87"><span class="nav-number">3.3.</span> <span class="nav-text">获得完美召回率</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8D%E5%90%8C%E5%9C%BA%E6%99%AF%E7%9A%84%E8%A6%81%E6%B1%82"><span class="nav-number">4.</span> <span class="nav-text">不同场景的要求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E5%8F%AC%E5%9B%9E%E7%8E%87%E5%9C%BA%E6%99%AF"><span class="nav-number">4.1.</span> <span class="nav-text">高召回率场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%AB%98%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%9C%BA%E6%99%AF"><span class="nav-number">4.2.</span> <span class="nav-text">高精确度场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E7%AD%96%E7%95%A5"><span class="nav-number">4.3.</span> <span class="nav-text">平衡策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8F%E5%8C%96%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="nav-number">5.</span> <span class="nav-text">量化相关性</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%90%86%E6%83%B3%E7%B3%BB%E7%BB%9F"><span class="nav-number">5.1.</span> <span class="nav-text">理想系统</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%99%85%E8%80%83%E9%87%8F"><span class="nav-number">5.2.</span> <span class="nav-text">实际考量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#P-10%E5%92%8CR-10%E6%8C%87%E6%A0%87"><span class="nav-number">5.2.1.</span> <span class="nav-text">P@10和R@10指标</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Solr%E7%9A%84%E7%9B%B8%E5%85%B3%E6%80%A7%E9%85%8D%E7%BD%AE"><span class="nav-number">6.</span> <span class="nav-text">Solr的相关性配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%90%9C%E7%B4%A2%E7%BB%84%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">6.1.</span> <span class="nav-text">搜索组件配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%86%E9%9D%A2%E6%90%9C%E7%B4%A2"><span class="nav-number">6.1.1.</span> <span class="nav-text">分面搜索</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%BF%87%E6%BB%A4%E5%99%A8"><span class="nav-number">6.1.2.</span> <span class="nav-text">查询过滤器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B9%B3%E8%A1%A1%E7%B2%BE%E7%A1%AE%E5%BA%A6%E5%92%8C%E5%8F%AC%E5%9B%9E%E7%8E%87"><span class="nav-number">6.2.</span> <span class="nav-text">平衡精确度和召回率</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">6.2.1.</span> <span class="nav-text">配置策略</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%94%E7%94%A8%E9%85%8D%E7%BD%AE%E8%80%83%E9%87%8F"><span class="nav-number">7.</span> <span class="nav-text">应用配置考量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E7%94%A8%E6%88%B7%E9%9C%80%E6%B1%82%E5%88%86%E6%9E%90"><span class="nav-number">7.1.</span> <span class="nav-text">1. 用户需求分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E6%A0%B7%E5%8C%96%E9%9C%80%E6%B1%82"><span class="nav-number">7.1.1.</span> <span class="nav-text">多样化需求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%B1%BB%E5%9E%8B%E5%88%86%E6%9E%90"><span class="nav-number">7.1.2.</span> <span class="nav-text">用户类型分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%88%86%E7%B1%BB%E4%BD%93%E7%B3%BB%E8%AE%BE%E8%AE%A1"><span class="nav-number">7.2.</span> <span class="nav-text">2. 分类体系设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%96%87%E6%A1%A3%E5%9B%BA%E6%9C%89%E7%9B%B8%E5%85%B3%E6%80%A7"><span class="nav-number">7.3.</span> <span class="nav-text">3. 文档固有相关性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E6%97%B6%E6%95%88%E6%80%A7%E8%80%83%E9%87%8F"><span class="nav-number">7.4.</span> <span class="nav-text">4. 时效性考量</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%97%B6%E9%97%B4%E6%95%8F%E6%84%9F%E5%86%85%E5%AE%B9"><span class="nav-number">7.4.1.</span> <span class="nav-text">时间敏感内容</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E5%89%8D%E8%A7%84%E5%88%92"><span class="nav-number">8.</span> <span class="nav-text">部署前规划</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%93%8D%E5%BA%94%E8%8D%89%E5%9B%BE"><span class="nav-number">8.1.</span> <span class="nav-text">查询响应草图</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B%E8%A7%84%E5%88%92%E8%A1%A8"><span class="nav-number">8.1.1.</span> <span class="nav-text">示例规划表</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E6%96%B9%E6%B3%95%E8%AE%BA"><span class="nav-number">8.2.</span> <span class="nav-text">测试方法论</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-%E7%84%A6%E7%82%B9%E5%B0%8F%E7%BB%84%E6%B5%8B%E8%AF%95"><span class="nav-number">8.2.1.</span> <span class="nav-text">1. 焦点小组测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-%E5%86%85%E9%83%A8%E6%B5%8B%E8%AF%95"><span class="nav-number">8.2.2.</span> <span class="nav-text">2. 内部测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-TREC%E6%B5%8B%E8%AF%95"><span class="nav-number">8.2.3.</span> <span class="nav-text">3. TREC测试</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-A-B%E6%B5%8B%E8%AF%95"><span class="nav-number">8.2.4.</span> <span class="nav-text">4. A&#x2F;B测试</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7%E8%B0%83%E4%BC%98%E5%AE%9E%E8%B7%B5"><span class="nav-number">9.</span> <span class="nav-text">相关性调优实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%AD%97%E6%AE%B5%E6%9D%83%E9%87%8D%E8%B0%83%E6%95%B4"><span class="nav-number">9.1.</span> <span class="nav-text">1. 字段权重调整</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%9F%AD%E8%AF%AD%E6%9D%83%E9%87%8D%E4%BC%98%E5%8C%96"><span class="nav-number">9.2.</span> <span class="nav-text">2. 短语权重优化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%9C%80%E5%B0%8F%E5%8C%B9%E9%85%8D%E8%A6%81%E6%B1%82"><span class="nav-number">9.3.</span> <span class="nav-text">3. 最小匹配要求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E8%87%AA%E5%AE%9A%E4%B9%89%E7%9B%B8%E5%85%B3%E6%80%A7%E5%87%BD%E6%95%B0"><span class="nav-number">9.4.</span> <span class="nav-text">4. 自定义相关性函数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E7%9B%B8%E5%85%B3%E6%80%A7%E9%97%AE%E9%A2%98"><span class="nav-number">10.</span> <span class="nav-text">调试相关性问题</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E8%B0%83%E8%AF%95%E4%BF%A1%E6%81%AF"><span class="nav-number">10.1.</span> <span class="nav-text">查询调试信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E5%88%86%E8%A7%A3%E9%87%8A"><span class="nav-number">10.2.</span> <span class="nav-text">评分解释</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E6%80%A7%E6%B5%8B%E8%AF%95%E5%B7%A5%E5%85%B7"><span class="nav-number">10.3.</span> <span class="nav-text">相关性测试工具</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5%E6%80%BB%E7%BB%93"><span class="nav-number">11.</span> <span class="nav-text">最佳实践总结</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%BE%E8%AE%A1%E5%8E%9F%E5%88%99"><span class="nav-number">11.1.</span> <span class="nav-text">设计原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE"><span class="nav-number">11.2.</span> <span class="nav-text">配置建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">12.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8B%E4%B8%80%E6%AD%A5%E5%AD%A6%E4%B9%A0"><span class="nav-number">13.</span> <span class="nav-text">下一步学习</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：jwt认证插件配置与openid connect集成完整指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr安全认证JWTOpenID ConnectBearer TokenIdPOAuth2" />
+  
+  
+  
+  
+  <meta name="description" content="Solr部署：JWT认证插件配置与OpenID Connect集成完整指南概述Solr支持通过JWTAuthPlugin实现基于JSON Web Token (JWT) 的Bearer认证。这允许Solr验证用户已通过外部身份提供者（Identity Provider, IdP）进行身份验证，通过验证JWT格式的访问令牌的数字签名来确认用户身份。 典型应用场景是将Solr与启用了OpenID Co">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：JWT认证插件配置与OpenID Connect集成完整指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/04/22/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJWT%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8EOpenID%20Connect%E9%9B%86%E6%88%90%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr部署：JWT认证插件配置与OpenID Connect集成完整指南概述Solr支持通过JWTAuthPlugin实现基于JSON Web Token (JWT) 的Bearer认证。这允许Solr验证用户已通过外部身份提供者（Identity Provider, IdP）进行身份验证，通过验证JWT格式的访问令牌的数字签名来确认用户身份。 典型应用场景是将Solr与启用了OpenID Co">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-04-22T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T16:38:09.895Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="认证">
+<meta property="article:tag" content="JWT">
+<meta property="article:tag" content="OpenID Connect">
+<meta property="article:tag" content="Bearer Token">
+<meta property="article:tag" content="IdP">
+<meta property="article:tag" content="OAuth2">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：JWT认证插件配置与OpenID Connect集成完整指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：JWT认证插件配置与OpenID Connect集成完整指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/04/22/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJWT%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8EOpenID%20Connect%E9%9B%86%E6%88%90%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-04-22T16:00:00.000Z" itemprop="datePublished">四月 22, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr部署：JWT认证插件配置与OpenID-Connect集成完整指南"><a href="#Solr部署：JWT认证插件配置与OpenID-Connect集成完整指南" class="headerlink" title="Solr部署：JWT认证插件配置与OpenID Connect集成完整指南"></a>Solr部署：JWT认证插件配置与OpenID Connect集成完整指南</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>Solr支持通过JWTAuthPlugin实现基于JSON Web Token (JWT) 的Bearer认证。这允许Solr验证用户已通过外部身份提供者（Identity Provider, IdP）进行身份验证，通过验证JWT格式的访问令牌的数字签名来确认用户身份。</p>
+<p>典型应用场景是将Solr与启用了OpenID Connect的身份提供者集成。</p>
+<h2 id="模块要求"><a href="#模块要求" class="headerlink" title="模块要求"></a>模块要求</h2><p>JWT认证功能通过<code>jwt-auth</code> Solr模块提供，使用前需要先启用该模块。</p>
+<h2 id="启用JWT认证"><a href="#启用JWT认证" class="headerlink" title="启用JWT认证"></a>启用JWT认证</h2><h3 id="基本配置"><a href="#基本配置" class="headerlink" title="基本配置"></a>基本配置</h3><p>要使用JWT Bearer认证，<code>security.json</code>文件必须包含定义认证类和配置参数的<code>authentication</code>部分。</p>
+<p>最简单的配置示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span><span class="string">&quot;solr.JWTAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;blockUnknown&quot;</span><span class="punctuation">:</span><span class="string">&quot;false&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="关键配置说明"><a href="#关键配置说明" class="headerlink" title="关键配置说明"></a>关键配置说明</h3><ul>
+<li><strong>默认行为</strong>：插件默认要求所有流量都提供有效的JWT令牌</li>
+<li><strong>blockUnknown属性</strong>：设置为<code>false</code>时允许通过未认证的REST API调用进行配置</li>
+<li><strong>配置阶段</strong>：可以在<code>blockUnknown=false</code>状态下完成初始配置</li>
+</ul>
+<h2 id="配置参数详解"><a href="#配置参数详解" class="headerlink" title="配置参数详解"></a>配置参数详解</h2><h3 id="基础认证参数"><a href="#基础认证参数" class="headerlink" title="基础认证参数"></a>基础认证参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>blockUnknown</code></td>
+<td>设置为<code>false</code>允许通过REST API配置或与授权插件配合仅保护特定路径</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>realm</code></td>
+<td>在HTTP 401响应中回显的认证域名，也在管理界面登录页显示</td>
+<td><code>&#39;solr-jwt&#39;</code></td>
+</tr>
+<tr>
+<td><code>scope</code></td>
+<td>空格分隔的有效作用域列表。JWT访问令牌必须包含至少一个列出的作用域</td>
+<td>无</td>
+</tr>
+<tr>
+<td><code>requireIss</code></td>
+<td>拒绝缺少<code>iss</code>（颁发者）声明的请求</td>
+<td><code>true</code></td>
+</tr>
+<tr>
+<td><code>requireExp</code></td>
+<td>拒绝缺少<code>exp</code>（过期时间）声明的请求</td>
+<td><code>true</code></td>
+</tr>
+</tbody></table>
+<h3 id="算法和缓存参数"><a href="#算法和缓存参数" class="headerlink" title="算法和缓存参数"></a>算法和缓存参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>algAllowlist</code></td>
+<td>接受的算法JSON数组：<code>HS256</code>, <code>HS384</code>, <code>HS512</code>, <code>RS256</code>, <code>RS384</code>, <code>RS512</code>, <code>ES256</code>, <code>ES384</code>, <code>ES512</code>, <code>PS256</code>, <code>PS384</code>, <code>PS512</code>, <code>none</code></td>
+<td>允许所有算法</td>
+</tr>
+<tr>
+<td><code>jwkCacheDur</code></td>
+<td>JWK缓存持续时间（秒）</td>
+<td><code>3600</code>（1小时）</td>
+</tr>
+</tbody></table>
+<h3 id="声明处理参数"><a href="#声明处理参数" class="headerlink" title="声明处理参数"></a>声明处理参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>principalClaim</code></td>
+<td>提取用户主体的声明ID</td>
+<td><code>sub</code></td>
+</tr>
+<tr>
+<td><code>rolesClaim</code></td>
+<td>提取用户角色的声明ID。支持顶级和嵌套声明，使用<code>someClaim.child</code>语法</td>
+<td>默认使用<code>scope</code>声明中的作用域</td>
+</tr>
+<tr>
+<td><code>claimsMatch</code></td>
+<td>声明必须匹配正则表达式的JSON对象。例：&#96;{ “foo” : “A</td>
+<td>B” }&#96;</td>
+</tr>
+</tbody></table>
+<h3 id="UI和安全参数"><a href="#UI和安全参数" class="headerlink" title="UI和安全参数"></a>UI和安全参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>adminUiScope</code></td>
+<td>从管理界面登录时请求的作用域</td>
+<td>使用<code>scope</code>参数中的第一个作用域</td>
+</tr>
+<tr>
+<td><code>redirectUris</code></td>
+<td>外部认证后的有效重定向位置。字符串或字符串数组</td>
+<td>空列表</td>
+</tr>
+<tr>
+<td><code>trustedCerts</code></td>
+<td>信任的X.509 SSL证书（PEM或PKCS#7格式）</td>
+<td>Java信任存储</td>
+</tr>
+<tr>
+<td><code>trustedCertsFile</code></td>
+<td>包含信任证书的文件路径</td>
+<td>Java信任存储</td>
+</tr>
+</tbody></table>
+<h2 id="颁发者配置"><a href="#颁发者配置" class="headerlink" title="颁发者配置"></a>颁发者配置</h2><h3 id="多颁发者支持"><a href="#多颁发者支持" class="headerlink" title="多颁发者支持"></a>多颁发者支持</h3><p>插件支持一个或多个令牌颁发者（身份提供者）。颁发者在<code>issuers</code>配置键下配置为JSON对象列表。</p>
+<p><strong>重要</strong>：列表中的第一个颁发者是”主要颁发者”，用于管理界面登录。</p>
+<h3 id="颁发者配置参数"><a href="#颁发者配置参数" class="headerlink" title="颁发者配置参数"></a>颁发者配置参数</h3><table>
+<thead>
+<tr>
+<th>参数</th>
+<th>描述</th>
+<th>默认值</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>name</code></td>
+<td>颁发者的唯一名称</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>wellKnownUrl</code></td>
+<td>OpenID Connect发现端点URL</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>clientId</code></td>
+<td>OpenID Connect客户端标识符</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>jwksUrl</code></td>
+<td>JWKs端点URL（必须使用HTTPS）</td>
+<td>从<code>wellKnownUrl</code>自动配置</td>
+</tr>
+<tr>
+<td><code>jwk</code></td>
+<td>静态JSON格式的公钥（JWK或JWK Set格式）</td>
+<td>-</td>
+</tr>
+<tr>
+<td><code>iss</code></td>
+<td>颁发者ID</td>
+<td>从<code>wellKnownUrl</code>自动配置</td>
+</tr>
+<tr>
+<td><code>aud</code></td>
+<td>验证<code>aud</code>（受众）声明</td>
+<td>使用<code>clientId</code></td>
+</tr>
+<tr>
+<td><code>authorizationEndpoint</code></td>
+<td>身份提供者的授权端点URL</td>
+<td>从<code>wellKnownUrl</code>自动配置</td>
+</tr>
+<tr>
+<td><code>tokenEndpoint</code></td>
+<td>身份提供者的令牌端点URL</td>
+<td>从<code>wellKnownUrl</code>自动配置</td>
+</tr>
+<tr>
+<td><code>authorizationFlow</code></td>
+<td>OAuth 2.0流程：<code>implicit</code>或<code>code_pkce</code></td>
+<td><code>implicit</code></td>
+</tr>
+</tbody></table>
+<h3 id="向后兼容性"><a href="#向后兼容性" class="headerlink" title="向后兼容性"></a>向后兼容性</h3><p>主要颁发者的所有配置键（除<code>name</code>外）可以配置为顶级键以保持向后兼容。</p>
+<h2 id="配置示例"><a href="#配置示例" class="headerlink" title="配置示例"></a>配置示例</h2><h3 id="使用JWKS-URL的配置"><a href="#使用JWKS-URL的配置" class="headerlink" title="使用JWKS URL的配置"></a>使用JWKS URL的配置</h3><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.JWTAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;jwksUrl&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://my.key.server/jwk.json&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="支持管理界面的配置"><a href="#支持管理界面的配置" class="headerlink" title="支持管理界面的配置"></a>支持管理界面的配置</h3><p>使用OpenID Connect发现进行自动配置：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.JWTAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;wellKnownUrl&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://idp.example.com/.well-known/openid-configuration&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;clientId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;xyz&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;redirectUris&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://my.solr.server:8983/solr/&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="复杂配置示例"><a href="#复杂配置示例" class="headerlink" title="复杂配置示例"></a>复杂配置示例</h3><p>双颁发者配置，其中一个使用静态嵌入的JWK：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.JWTAuthPlugin&quot;</span><span class="punctuation">,</span>                    <span class="comment">// 插件类</span></span><br><span class="line">    <span class="attr">&quot;blockUnknown&quot;</span><span class="punctuation">:</span> <span class="literal"><span class="keyword">true</span></span><span class="punctuation">,</span>                            <span class="comment">// 阻止无效令牌</span></span><br><span class="line">    <span class="attr">&quot;principalClaim&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solruid&quot;</span><span class="punctuation">,</span>                     <span class="comment">// 从自定义声明提取用户ID</span></span><br><span class="line">    <span class="attr">&quot;claimsMatch&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span> </span><br><span class="line">      <span class="attr">&quot;foo&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;A|B&quot;</span><span class="punctuation">,</span> </span><br><span class="line">      <span class="attr">&quot;dept&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;IT&quot;</span> </span><br><span class="line">    <span class="punctuation">&#125;</span><span class="punctuation">,</span>                                               <span class="comment">// 声明匹配要求</span></span><br><span class="line">    <span class="attr">&quot;scope&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr:read solr:write solr:admin&quot;</span><span class="punctuation">,</span>      <span class="comment">// 必需的作用域</span></span><br><span class="line">    <span class="attr">&quot;algAllowlist&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span> <span class="string">&quot;RS256&quot;</span><span class="punctuation">,</span> <span class="string">&quot;RS384&quot;</span><span class="punctuation">,</span> <span class="string">&quot;RS512&quot;</span> <span class="punctuation">]</span><span class="punctuation">,</span>   <span class="comment">// 仅接受RSA算法</span></span><br><span class="line">    <span class="attr">&quot;issuers&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>                                     <span class="comment">// 颁发者配置数组</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;example1-static&quot;</span><span class="punctuation">,</span>                   <span class="comment">// 唯一颁发者名称</span></span><br><span class="line">        <span class="attr">&quot;jwk&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span>                                     <span class="comment">// 内联JWK</span></span><br><span class="line">          <span class="attr">&quot;e&quot;</span><span class="punctuation">:</span> <span class="string">&quot;AQAB&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;kid&quot;</span><span class="punctuation">:</span> <span class="string">&quot;k1&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;kty&quot;</span><span class="punctuation">:</span> <span class="string">&quot;RSA&quot;</span><span class="punctuation">,</span></span><br><span class="line">          <span class="attr">&quot;n&quot;</span><span class="punctuation">:</span> <span class="string">&quot;3ZF6w....vjbCXxw&quot;</span></span><br><span class="line">        <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;clientId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr-client-12345&quot;</span><span class="punctuation">,</span>             <span class="comment">// 客户端ID</span></span><br><span class="line">        <span class="attr">&quot;iss&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example.com/idp&quot;</span><span class="punctuation">,</span>            <span class="comment">// 颁发者ID</span></span><br><span class="line">        <span class="attr">&quot;aud&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example.com/solr&quot;</span>            <span class="comment">// 受众声明</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;example2&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;wellKnownUrl&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example2.com/.well-known/oidc&quot;</span><span class="punctuation">,</span>  <span class="comment">// 自动配置</span></span><br><span class="line">        <span class="attr">&quot;aud&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://example2.com/solr&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;trustedCertsFile&quot;</span><span class="punctuation">:</span> <span class="string">&quot;/path/to/certsFile.pem&quot;</span>     <span class="comment">// SSL证书信任文件</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="高级配置选项"><a href="#高级配置选项" class="headerlink" title="高级配置选项"></a>高级配置选项</h2><h3 id="非SSL-URL支持"><a href="#非SSL-URL支持" class="headerlink" title="非SSL URL支持"></a>非SSL URL支持</h3><p><strong>仅开发环境</strong>：生产环境必须使用SSL保护的HTTPS连接。</p>
+<p>开发环境中使用HTTP URL的启动参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">-Dsolr.auth.jwt.allowOutboundHttp=<span class="literal">true</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="信任IdP服务器"><a href="#信任IdP服务器" class="headerlink" title="信任IdP服务器"></a>信任IdP服务器</h3><p>与OAuth2服务器（IdP）的所有通信都通过HTTPS进行。</p>
+<h4 id="默认行为"><a href="#默认行为" class="headerlink" title="默认行为"></a>默认行为</h4><p>使用Java内置的TrustStore。</p>
+<h4 id="自定义信任配置"><a href="#自定义信任配置" class="headerlink" title="自定义信任配置"></a>自定义信任配置</h4><p>配置<code>trustedCertsFile</code>或<code>trustedCerts</code>后：</p>
+<ul>
+<li>仅信任提供的证书集合</li>
+<li>不信任根CA签署的任何证书</li>
+<li>更安全且支持自签名证书</li>
+<li>即使Solr未在SSL模式下启动也可以工作</li>
+</ul>
+<h4 id="配置规则"><a href="#配置规则" class="headerlink" title="配置规则"></a>配置规则</h4><ul>
+<li>仅配置<code>trustedCerts</code>或<code>trustedCertsFile</code>其中之一</li>
+<li>同时配置会导致错误</li>
+<li><code>trustedCertsFile</code>可以是字符串数组，Solr会解析所有文件中的证书</li>
+</ul>
+<h3 id="多重认证方案"><a href="#多重认证方案" class="headerlink" title="多重认证方案"></a>多重认证方案</h3><p>使用<code>MultiAuthPlugin</code>基于<code>Authorization</code>头支持多种认证方案：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.MultiAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;schemes&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;scheme&quot;</span><span class="punctuation">:</span> <span class="string">&quot;bearer&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.JWTAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;wellKnownUrl&quot;</span><span class="punctuation">:</span> <span class="string">&quot;https://idp.example.com/.well-known/openid-configuration&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;clientId&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr-client&quot;</span></span><br><span class="line">      <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span></span><br><span class="line">        <span class="attr">&quot;scheme&quot;</span><span class="punctuation">:</span> <span class="string">&quot;basic&quot;</span><span class="punctuation">,</span> </span><br><span class="line">        <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.BasicAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">        <span class="attr">&quot;credentials&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;admin&quot;</span><span class="punctuation">:</span> <span class="string">&quot;password&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line">      <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="动态配置管理"><a href="#动态配置管理" class="headerlink" title="动态配置管理"></a>动态配置管理</h2><h3 id="使用认证API"><a href="#使用认证API" class="headerlink" title="使用认证API"></a>使用认证API</h3><p>所有配置属性都可以通过认证API设置或更改：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># V1 API</span></span><br><span class="line">curl http://localhost:8983/solr/admin/authentication \</span><br><span class="line">  -H <span class="string">&#x27;Content-type:application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Authorization: Bearer xxx.yyy.zzz&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;blockUnknown&quot;:true,</span></span><br><span class="line"><span class="string">      &quot;wellKnownUrl&quot;: &quot;https://example.com/.well-known/openid-configuration&quot;,</span></span><br><span class="line"><span class="string">      &quot;scope&quot;: &quot;solr:read solr:write&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># V2 API  </span></span><br><span class="line">curl http://localhost:8983/api/cluster/security/authentication \</span><br><span class="line">  -H <span class="string">&#x27;Content-type:application/json&#x27;</span> \</span><br><span class="line">  -H <span class="string">&#x27;Authorization: Bearer xxx.yyy.zzz&#x27;</span> \</span><br><span class="line">  -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;set-property&quot;: &#123;</span></span><br><span class="line"><span class="string">      &quot;blockUnknown&quot;:true,</span></span><br><span class="line"><span class="string">      &quot;wellKnownUrl&quot;: &quot;https://example.com/.well-known/openid-configuration&quot;, </span></span><br><span class="line"><span class="string">      &quot;scope&quot;: &quot;solr:read solr:write&quot;</span></span><br><span class="line"><span class="string">    &#125;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="配置策略"><a href="#配置策略" class="headerlink" title="配置策略"></a>配置策略</h3><ol>
+<li><strong>初始配置</strong>：使用<code>blockUnknown=false</code></li>
+<li><strong>API配置</strong>：通过REST API完成详细配置</li>
+<li><strong>启用保护</strong>：设置<code>blockUnknown=true</code>开始强制执行</li>
+</ol>
+<p><strong>注意</strong>：当前不支持通过REST API添加多个令牌颁发者。</p>
+<h2 id="客户端使用指南"><a href="#客户端使用指南" class="headerlink" title="客户端使用指南"></a>客户端使用指南</h2><h3 id="cURL客户端"><a href="#cURL客户端" class="headerlink" title="cURL客户端"></a>cURL客户端</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">curl -H <span class="string">&quot;Authorization: Bearer xxxxxx.xxxxxx.xxxxxx&quot;</span> \</span><br><span class="line">  http://localhost:8983/solr/admin/info/system</span><br></pre></td></tr></table></figure>
+
+<h3 id="SolrJ客户端"><a href="#SolrJ客户端" class="headerlink" title="SolrJ客户端"></a>SolrJ客户端</h3><p><strong>限制</strong>：SolrJ当前不支持每请求提供JWT令牌。</p>
+<h3 id="管理界面"><a href="#管理界面" class="headerlink" title="管理界面"></a>管理界面</h3><p>启用插件后的管理界面行为：</p>
+<ol>
+<li><strong>登录流程</strong>：用户执行受限操作时重定向到登录页</li>
+<li><strong>IdP重定向</strong>：点击按钮后重定向到身份提供者登录页  </li>
+<li><strong>多颁发者</strong>：使用列表中的第一个颁发者</li>
+<li><strong>会话管理</strong>：会话持续至JWT令牌过期，仅对单个Solr服务器有效</li>
+<li><strong>登出功能</strong>：左侧列中的登出菜单</li>
+</ol>
+<h2 id="限制和注意事项"><a href="#限制和注意事项" class="headerlink" title="限制和注意事项"></a>限制和注意事项</h2><h3 id="当前限制"><a href="#当前限制" class="headerlink" title="当前限制"></a>当前限制</h3><ol>
+<li><strong>Solr控制脚本</strong>：<code>bin/solr</code>脚本当前不支持JWT认证</li>
+<li><strong>SolrJ集成</strong>：不支持每请求JWT令牌供应</li>
+<li><strong>会话范围</strong>：管理界面会话仅对单个Solr节点有效</li>
+</ol>
+<h3 id="安全建议"><a href="#安全建议" class="headerlink" title="安全建议"></a>安全建议</h3><ol>
+<li><strong>生产环境</strong>：始终使用HTTPS连接</li>
+<li><strong>证书管理</strong>：使用自定义信任存储提高安全性</li>
+<li><strong>作用域控制</strong>：合理配置scope限制访问权限</li>
+<li><strong>令牌管理</strong>：设置合理的令牌过期时间</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ol>
+<li><p><strong>认证失败</strong>：</p>
+<ul>
+<li>检查JWT令牌格式和有效性</li>
+<li>验证颁发者配置是否正确</li>
+<li>确认算法白名单设置</li>
+</ul>
+</li>
+<li><p><strong>管理界面问题</strong>：</p>
+<ul>
+<li>验证重定向URI配置</li>
+<li>检查客户端ID和IdP配置</li>
+<li>确认证书信任设置</li>
+</ul>
+</li>
+<li><p><strong>配置错误</strong>：</p>
+<ul>
+<li>验证JSON格式正确性</li>
+<li>检查必需参数是否提供</li>
+<li>确认模块已正确启用</li>
+</ul>
+</li>
+</ol>
+<h3 id="调试技巧"><a href="#调试技巧" class="headerlink" title="调试技巧"></a>调试技巧</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 检查认证配置</span></span><br><span class="line">curl http://localhost:8983/solr/admin/authentication</span><br><span class="line"></span><br><span class="line"><span class="comment"># 验证JWT令牌</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;xxx.yyy.zzz&quot;</span> | <span class="built_in">base64</span> -d</span><br><span class="line"></span><br><span class="line"><span class="comment"># 测试连接</span></span><br><span class="line">curl -v -H <span class="string">&quot;Authorization: Bearer TOKEN&quot;</span> http://localhost:8983/solr/admin/info/system</span><br></pre></td></tr></table></figure>
+
+<h2 id="最佳实践"><a href="#最佳实践" class="headerlink" title="最佳实践"></a>最佳实践</h2><h3 id="部署策略"><a href="#部署策略" class="headerlink" title="部署策略"></a>部署策略</h3><ol>
+<li><p><strong>分阶段部署</strong>：</p>
+<ul>
+<li>开发环境验证配置</li>
+<li>测试环境完整测试</li>
+<li>生产环境逐步迁移</li>
+</ul>
+</li>
+<li><p><strong>监控和告警</strong>：</p>
+<ul>
+<li>监控认证成功&#x2F;失败率</li>
+<li>设置证书过期告警</li>
+<li>监控令牌使用情况</li>
+</ul>
+</li>
+<li><p><strong>备份和恢复</strong>：</p>
+<ul>
+<li>备份security.json配置</li>
+<li>文档化恢复流程</li>
+<li>测试灾难恢复</li>
+</ul>
+</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>JWT认证插件为Solr提供了现代化的认证解决方案，通过与OpenID Connect集成实现了企业级的身份管理。正确配置JWT认证可以显著提高Solr部署的安全性，同时提供良好的用户体验。</p>
+<p>在实施过程中，需要特别注意证书管理、作用域配置和多颁发者支持等关键要素，确保系统既安全又易于管理维护。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Apache-Solr/">Apache Solr</a>
+      , 
+    
+      <a class="article-category" href="/categories/Apache-Solr/%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE/">安全配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8/">安全</a>
+  
+    <a class="article-tag" href="/tags/%E8%AE%A4%E8%AF%81/">认证</a>
+  
+    <a class="article-tag" href="/tags/JWT/">JWT</a>
+  
+    <a class="article-tag" href="/tags/OpenID-Connect/">OpenID Connect</a>
+  
+    <a class="article-tag" href="/tags/Bearer-Token/">Bearer Token</a>
+  
+    <a class="article-tag" href="/tags/IdP/">IdP</a>
+  
+    <a class="article-tag" href="/tags/OAuth2/">OAuth2</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/04/23/Solr%E9%83%A8%E7%BD%B2%EF%BC%9AKerberos%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8E%E4%BC%81%E4%B8%9A%E5%AE%89%E5%85%A8%E9%9B%86%E6%88%90%E6%8C%87%E5%8D%97/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：Kerberos认证插件配置与企业安全集成指南
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/04/18/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E6%9E%9A%E4%B8%BE%E5%AD%97%E6%AE%B5%E7%B1%BB%E5%9E%8B%E4%B8%8E%E9%A2%84%E5%AE%9A%E4%B9%89%E6%8E%92%E5%BA%8F%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr索引：枚举字段类型与预定义排序完整指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9AJWT%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE%E4%B8%8EOpenID-Connect%E9%9B%86%E6%88%90%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：JWT认证插件配置与OpenID Connect集成完整指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A8%A1%E5%9D%97%E8%A6%81%E6%B1%82"><span class="nav-number">1.2.</span> <span class="nav-text">模块要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%90%AF%E7%94%A8JWT%E8%AE%A4%E8%AF%81"><span class="nav-number">1.3.</span> <span class="nav-text">启用JWT认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE"><span class="nav-number">1.3.1.</span> <span class="nav-text">基本配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%94%AE%E9%85%8D%E7%BD%AE%E8%AF%B4%E6%98%8E"><span class="nav-number">1.3.2.</span> <span class="nav-text">关键配置说明</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.4.</span> <span class="nav-text">配置参数详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E8%AE%A4%E8%AF%81%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.1.</span> <span class="nav-text">基础认证参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%92%8C%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.2.</span> <span class="nav-text">算法和缓存参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A3%B0%E6%98%8E%E5%A4%84%E7%90%86%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.3.</span> <span class="nav-text">声明处理参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#UI%E5%92%8C%E5%AE%89%E5%85%A8%E5%8F%82%E6%95%B0"><span class="nav-number">1.4.4.</span> <span class="nav-text">UI和安全参数</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%81%E5%8F%91%E8%80%85%E9%85%8D%E7%BD%AE"><span class="nav-number">1.5.</span> <span class="nav-text">颁发者配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%A2%81%E5%8F%91%E8%80%85%E6%94%AF%E6%8C%81"><span class="nav-number">1.5.1.</span> <span class="nav-text">多颁发者支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%81%E5%8F%91%E8%80%85%E9%85%8D%E7%BD%AE%E5%8F%82%E6%95%B0"><span class="nav-number">1.5.2.</span> <span class="nav-text">颁发者配置参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%91%E5%90%8E%E5%85%BC%E5%AE%B9%E6%80%A7"><span class="nav-number">1.5.3.</span> <span class="nav-text">向后兼容性</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.</span> <span class="nav-text">配置示例</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8JWKS-URL%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.1.</span> <span class="nav-text">使用JWKS URL的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.6.2.</span> <span class="nav-text">支持管理界面的配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%8D%E6%9D%82%E9%85%8D%E7%BD%AE%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.6.3.</span> <span class="nav-text">复杂配置示例</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%AB%98%E7%BA%A7%E9%85%8D%E7%BD%AE%E9%80%89%E9%A1%B9"><span class="nav-number">1.7.</span> <span class="nav-text">高级配置选项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9ESSL-URL%E6%94%AF%E6%8C%81"><span class="nav-number">1.7.1.</span> <span class="nav-text">非SSL URL支持</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BF%A1%E4%BB%BBIdP%E6%9C%8D%E5%8A%A1%E5%99%A8"><span class="nav-number">1.7.2.</span> <span class="nav-text">信任IdP服务器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BB%98%E8%AE%A4%E8%A1%8C%E4%B8%BA"><span class="nav-number">1.7.2.1.</span> <span class="nav-text">默认行为</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%87%AA%E5%AE%9A%E4%B9%89%E4%BF%A1%E4%BB%BB%E9%85%8D%E7%BD%AE"><span class="nav-number">1.7.2.2.</span> <span class="nav-text">自定义信任配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E8%A7%84%E5%88%99"><span class="nav-number">1.7.2.3.</span> <span class="nav-text">配置规则</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A4%9A%E9%87%8D%E8%AE%A4%E8%AF%81%E6%96%B9%E6%A1%88"><span class="nav-number">1.7.3.</span> <span class="nav-text">多重认证方案</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8A%A8%E6%80%81%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86"><span class="nav-number">1.8.</span> <span class="nav-text">动态配置管理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E8%AE%A4%E8%AF%81API"><span class="nav-number">1.8.1.</span> <span class="nav-text">使用认证API</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E7%AD%96%E7%95%A5"><span class="nav-number">1.8.2.</span> <span class="nav-text">配置策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97"><span class="nav-number">1.9.</span> <span class="nav-text">客户端使用指南</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#cURL%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.9.1.</span> <span class="nav-text">cURL客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SolrJ%E5%AE%A2%E6%88%B7%E7%AB%AF"><span class="nav-number">1.9.2.</span> <span class="nav-text">SolrJ客户端</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%A1%E7%90%86%E7%95%8C%E9%9D%A2"><span class="nav-number">1.9.3.</span> <span class="nav-text">管理界面</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E5%88%B6%E5%92%8C%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.10.</span> <span class="nav-text">限制和注意事项</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BD%93%E5%89%8D%E9%99%90%E5%88%B6"><span class="nav-number">1.10.1.</span> <span class="nav-text">当前限制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.10.2.</span> <span class="nav-text">安全建议</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.11.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98"><span class="nav-number">1.11.1.</span> <span class="nav-text">常见问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E6%8A%80%E5%B7%A7"><span class="nav-number">1.11.2.</span> <span class="nav-text">调试技巧</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.12.</span> <span class="nav-text">最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%83%A8%E7%BD%B2%E7%AD%96%E7%95%A5"><span class="nav-number">1.12.1.</span> <span class="nav-text">部署策略</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.13.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：缓存预热管理指南 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="性能调优Solr配置缓存优化查询预热" />
+  
+  
+  
+  
+  <meta name="description" content="Solr配置：缓存预热管理指南Solr的缓存系统为提高查询性能提供了重要的优化手段。缓存可以存储文档、查询中使用的过滤器以及先前查询的结果。 缓存在提交（commit）后会被清空，通常需要重新填充才能再次发挥作用。为了解决这个问题，缓存可以在新搜索器被认为开放之前进行”预热”，通过自动使用旧缓存中的值填充新缓存。 缓存管理对于成功的Solr实现至关重要，因此应该注意的是，随着应用程序的增长，缓存将">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：缓存预热管理指南">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/07/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E9%A2%84%E7%83%AD%E7%AE%A1%E7%90%86%E6%8C%87%E5%8D%97/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr配置：缓存预热管理指南Solr的缓存系统为提高查询性能提供了重要的优化手段。缓存可以存储文档、查询中使用的过滤器以及先前查询的结果。 缓存在提交（commit）后会被清空，通常需要重新填充才能再次发挥作用。为了解决这个问题，缓存可以在新搜索器被认为开放之前进行”预热”，通过自动使用旧缓存中的值填充新缓存。 缓存管理对于成功的Solr实现至关重要，因此应该注意的是，随着应用程序的增长，缓存将">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T07:50:52.061Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="性能调优">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="缓存优化">
+<meta property="article:tag" content="查询预热">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：缓存预热管理指南" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：缓存预热管理指南
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/07/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E9%A2%84%E7%83%AD%E7%AE%A1%E7%90%86%E6%8C%87%E5%8D%97/" class="article-date">
+	  <time datetime="2025-01-07T16:00:00.000Z" itemprop="datePublished">一月 7, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：缓存预热管理指南"><a href="#Solr配置：缓存预热管理指南" class="headerlink" title="Solr配置：缓存预热管理指南"></a>Solr配置：缓存预热管理指南</h1><p>Solr的缓存系统为提高查询性能提供了重要的优化手段。缓存可以存储文档、查询中使用的过滤器以及先前查询的结果。</p>
+<p>缓存在提交（commit）后会被清空，通常需要重新填充才能再次发挥作用。为了解决这个问题，缓存可以在新搜索器被认为开放之前进行”预热”，通过自动使用旧缓存中的值填充新缓存。</p>
+<p>缓存管理对于成功的Solr实现至关重要，因此应该注意的是，随着应用程序的增长，缓存将需要进行微调。</p>
+<h2 id="solrconfig-xml中的配置"><a href="#solrconfig-xml中的配置" class="headerlink" title="solrconfig.xml中的&lt;query&gt;配置"></a>solrconfig.xml中的<code>&lt;query&gt;</code>配置</h2><p>本节中的设置影响Solr处理和响应查询的方式。</p>
+<p>这些设置都在<code>solrconfig.xml</code>中的<code>&lt;query&gt;</code>元素的子元素中配置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">config</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">query</span>&gt;</span></span><br><span class="line">    ...</span><br><span class="line">  <span class="tag">&lt;/<span class="name">query</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">config</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="缓存机制详解"><a href="#缓存机制详解" class="headerlink" title="缓存机制详解"></a>缓存机制详解</h2><p>Solr缓存与特定的Index Searcher实例相关联，这是索引的特定视图，在该搜索器的生命周期内不会更改。只要该Index Searcher正在使用，其缓存中的任何项目都将保持有效并可供重用。</p>
+<p>默认情况下，缓存的Solr对象不会在时间间隔后过期；相反，它们在Index Searcher的生命周期内保持有效。可以通过使用<code>maxIdleTime</code>选项启用基于空闲时间的过期。</p>
+<p>当新搜索器打开时，当前搜索器继续为请求提供服务，而新搜索器自动预热其缓存。新搜索器使用当前搜索器的缓存来预填充自己的缓存。当新搜索器准备就绪时，它被注册为当前搜索器并开始处理所有新的搜索请求。一旦旧搜索器完成为其所有请求提供服务，就会关闭它。</p>
+<h3 id="缓存实现"><a href="#缓存实现" class="headerlink" title="缓存实现"></a>缓存实现</h3><p>Solr附带了一个默认的<code>SolrCache</code>实现，用于不同类型的缓存。</p>
+<p><code>CaffeineCache</code>是由Caffeine缓存库支持的实现。默认情况下，它使用Window TinyLFU（W-TinyLFU）逐出策略，该策略允许基于使用频率和最近性在O(1)时间内逐出，占用空间小。通常，这种缓存相比传统缓存提供更低的内存占用、更高的命中率和更好的多线程性能。</p>
+<p><code>CaffeineCache</code>使用支持整数和百分比的自动预热计数，这些计数相对于预热时缓存的当前大小进行评估。</p>
+<p>Solr管理UI中的插件&#x2F;统计屏幕将显示有关所有活动缓存性能的信息。此信息可以帮助您为特定应用程序适当调整各种缓存的大小。当搜索器终止时，其缓存使用情况的摘要也会写入日志。</p>
+<h3 id="缓存参数"><a href="#缓存参数" class="headerlink" title="缓存参数"></a>缓存参数</h3><p>每个缓存都有设置来定义其初始大小（<code>initialSize</code>）、最大大小（<code>size</code>）和预热期间使用的项目数（<code>autowarmCount</code>）。对于<code>autowarmCount</code>，这也可以表示为百分比而不是绝对值。</p>
+<p><code>maxIdleTime</code>属性控制长时间未使用的条目的自动逐出。此属性以秒为单位表示，默认值<code>0</code>表示由于超出空闲时间而不会自动逐出任何条目。此属性的较小值将导致旧条目快速逐出，这将减少缓存内存使用，但可能会导致相同条目的重复逐出-查找-未命中-插入循环而出现抖动。较大的值将导致条目停留更长时间，等待被重用，代价是增加内存使用。根据查询量和模式，合理的值可能在60-3600之间。</p>
+<p><code>maxRamMB</code>属性限制缓存可能消耗的最大内存量。当同时指定<code>size</code>和<code>maxRamMB</code>限制时，<code>maxRamMB</code>限制将优先，<code>size</code>限制将被忽略。</p>
+<p><code>async</code>属性确定缓存是存储直接结果（<code>async=false</code>，禁用）还是存储对计算的间接引用（<code>async=true</code>，默认启用）。如果您的查询包括子文档或连接查询，则必须启用异步缓存才能正常运行。禁用异步选项可能会以增加CPU为代价，每个缓存条目使用稍少的内存。异步缓存在许多并发查询请求尚未缓存的相同结果集时提供最重要的改进，作为更大缓存大小或增加自动预热计数的替代方案。但是，异步缓存不会阻止时间限制查询的数据竞争，因为这些查询预期提供部分结果。</p>
+<p>可以使用值为<code>false</code>的参数<code>enabled</code>禁用所有缓存。</p>
+<p>以下描述了每个缓存的详细信息。</p>
+<h3 id="过滤缓存（Filter-Cache）"><a href="#过滤缓存（Filter-Cache）" class="headerlink" title="过滤缓存（Filter Cache）"></a>过滤缓存（Filter Cache）</h3><p>此缓存保存已解析的查询及其匹配的所有文档的无序集合。除非这样的集合很小，否则集合实现是位集。</p>
+<p>Solr使用<code>filterCache</code>的最典型方式是缓存每个<code>fq</code>搜索参数的结果，不过还有其他一些用例。使用相同参数过滤查询的后续查询会导致缓存命中并快速返回结果。</p>
+<p><strong>提示：</strong> 可以使用<code>cache</code>本地参数为特定查询的<code>fq</code>禁用此缓存的使用。</p>
+<p>Solr使用此缓存的另一个功能是默认Lucene查询解析器中的<code>filter(...)</code>语法。</p>
+<p>当配置参数<code>facet.method</code>设置为<code>fc</code>时，Solr也使用此缓存进行分面。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filterCache</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">size</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">initialSize</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">autowarmCount</span>=<span class="string">&quot;128&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>缓存支持<code>maxRamMB</code>参数，该参数限制此缓存使用的最大堆量。<code>CaffeineCache</code>仅支持按堆使用量或大小逐出，但不能同时支持两者。因此，如果指定了<code>maxRamMB</code>，则忽略<code>size</code>参数。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filterCache</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">maxRamMB</span>=<span class="string">&quot;1000&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">autowarmCount</span>=<span class="string">&quot;128&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>过滤缓存是启用<code>async</code>计算的良好候选者。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">filterCache</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">size</span>=<span class="string">&quot;1024&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">autowarmCount</span>=<span class="string">&quot;0&quot;</span></span></span><br><span class="line"><span class="tag">             <span class="attr">async</span>=<span class="string">&quot;true&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="查询结果缓存（Query-Result-Cache）"><a href="#查询结果缓存（Query-Result-Cache）" class="headerlink" title="查询结果缓存（Query Result Cache）"></a>查询结果缓存（Query Result Cache）</h3><p><code>queryResultCache</code>保存先前搜索的结果：基于查询、排序和请求的文档范围的有序文档ID列表（DocList）。</p>
+<p><code>queryResultCache</code>有一个可选设置来限制使用的最大RAM量（<code>maxRamMB</code>）。这让您可以指定此缓存内容使用的最大堆大小（以兆字节为单位）。当缓存增长超过此大小时，最旧访问的查询将被逐出，直到缓存的堆使用量降至指定限制以下。如果除了<code>maxRamMB</code>之外还指定了<code>size</code>，则仅遵守堆使用量限制。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">queryResultCache</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">size</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">initialSize</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">                  <span class="attr">autowarmCount</span>=<span class="string">&quot;128&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="文档缓存（Document-Cache）"><a href="#文档缓存（Document-Cache）" class="headerlink" title="文档缓存（Document Cache）"></a>文档缓存（Document Cache）</h3><p><code>documentCache</code>保存Lucene文档对象（每个文档的存储字段）。由于Lucene内部文档ID是临时的，所以此缓存不会自动预热。</p>
+<p><code>documentCache</code>的大小应始终大于<code>max_results</code>乘以<code>max_concurrent_queries</code>，以确保Solr在请求期间不需要重新获取文档。您在文档中存储的字段越多，此缓存的内存使用量就越高。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">documentCache</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">size</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">initialSize</span>=<span class="string">&quot;512&quot;</span></span></span><br><span class="line"><span class="tag">               <span class="attr">autowarmCount</span>=<span class="string">&quot;0&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> 不要对<code>documentCache</code>使用<code>maxRamMB</code>设置。缓存文档所需的内存量不会被正确计算，这可能导致缓存使用比预期多得多的内存。</p>
+<h3 id="用户自定义缓存"><a href="#用户自定义缓存" class="headerlink" title="用户自定义缓存"></a>用户自定义缓存</h3><p>您还可以为自己的应用程序代码定义命名缓存以供使用。您可以通过调用<code>SolrIndexSearcher</code>方法<code>getCache()</code>、<code>cacheLookup()</code>和<code>cacheInsert()</code>按名称定位和使用缓存对象。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;myUserCache&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">                          <span class="attr">size</span>=<span class="string">&quot;4096&quot;</span></span></span><br><span class="line"><span class="tag">                          <span class="attr">initialSize</span>=<span class="string">&quot;1024&quot;</span></span></span><br><span class="line"><span class="tag">                          <span class="attr">autowarmCount</span>=<span class="string">&quot;1024&quot;</span></span></span><br><span class="line"><span class="tag">                          <span class="attr">regenerator</span>=<span class="string">&quot;org.mycompany.mypackage.MyRegenerator&quot;</span> /&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果您希望缓存自动预热，请包含一个<code>regenerator</code>属性，其中包含实现<code>solr.search.CacheRegenerator</code>的类的完全限定名称。您也可以使用<code>NoOpRegenerator</code>，它只是用旧项目重新填充缓存。使用<code>regenerator</code>参数将其定义为<code>regenerator=&quot;solr.NoOpRegenerator&quot;</code>。</p>
+<h3 id="监控缓存大小和使用情况"><a href="#监控缓存大小和使用情况" class="headerlink" title="监控缓存大小和使用情况"></a>监控缓存大小和使用情况</h3><p>缓存统计部分描述了每个缓存可用的指标。可以在插件&#x2F;统计屏幕中或使用指标API访问这些指标。</p>
+<p>评估缓存时要检查的最重要指标是大小和命中率。</p>
+<p>大小表示缓存中有多少项目。某些缓存支持以MB为单位设置最大缓存大小。</p>
+<p>命中率是缓存提供查询服务的百分比，显示为0和1之间的数字。较高的值表示缓存经常被使用，而较低的值表明缓存对查询的帮助不大。理想情况下，此数字应尽可能接近1。</p>
+<p>如果您发现命中率很低但缓存大小设置很高，则可以通过减少缓存大小来进行优化-当不使用这些对象时，没有必要将它们保留在内存中。</p>
+<p>另一个有用的指标是缓存逐出，它测量从缓存中移除的对象。高逐出率可能表明您的缓存太小，增加它可能会显示更高的命中率。或者，如果您的命中率很高但逐出率很低，您的缓存可能太大，您可能会从减少大小中受益。</p>
+<p>低命中率并不总是特定缓存问题的征象。如果您的查询不经常重复，则会预期低命中率，因为缓存对象需要重用的可能性较小。在这些情况下，较小的缓存大小可能是系统的理想选择。</p>
+<h2 id="查询大小调整和预热"><a href="#查询大小调整和预热" class="headerlink" title="查询大小调整和预热"></a>查询大小调整和预热</h2><p>有几个元素可用于控制查询的大小以及如何预热缓存。</p>
+<h3 id="元素"><a href="#元素" class="headerlink" title="&lt;maxBooleanClauses&gt;元素"></a><code>&lt;maxBooleanClauses&gt;</code>元素</h3><p>设置解析布尔查询字符串时允许的最大子句数。</p>
+<p>此限制仅影响用户作为查询字符串的一部分指定的布尔查询，并提供对用户指定的布尔查询复杂程度的每个集合控制。指定超过此数量子句的查询字符串将导致错误。</p>
+<p>如果此每个集合限制大于在<code>solr.xml</code>中指定的全局<code>maxBooleanClauses</code>限制，则它将没有效果，因为该设置也限制用户指定的布尔查询的大小。</p>
+<p>在默认配置中，如果指定了<code>solr.max.booleanClauses</code>系统属性，则此属性使用该值。这与默认<code>solr.xml</code>中全局<code>maxBooleanClauses</code>设置中使用的系统属性相同，使Solr管理员可以轻松增加两个值（在所有集合中），而无需搜索和更新每个集合中的<code>solrconfig.xml</code>文件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">maxBooleanClauses</span>&gt;</span>$&#123;solr.max.booleanClauses:1024&#125;<span class="tag">&lt;/<span class="name">maxBooleanClauses</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-1"><a href="#元素-1" class="headerlink" title="&lt;minPrefixQueryTermLength&gt;元素"></a><code>&lt;minPrefixQueryTermLength&gt;</code>元素</h3><p>基于前缀的查询消耗的资源与以指定前缀开头的索引中的术语数成比例。特别短的前缀（例如只有一到两个字符的前缀）往往匹配索引的很大比例，是资源争用和不稳定的常见原因。此设置为查询建立最小前缀长度，为管理员提供一种阻止可能导致稳定性问题的查询的方法。不符合此最小前缀长度的查询会触发错误。可以通过提供具有不同值的<code>minPrefixQueryTermLength</code>“本地参数”，按查询覆盖设置。</p>
+<p>该设置旨在管理所有基于前缀的查询（例如<code>val_s:a*</code>、<code>&#123;!prefix f=val_s&#125;a</code>、<code>&#123;!complexphrase&#125;val_s:&quot;a*&quot;</code>）。</p>
+<p>在默认配置集中，最小前缀设置为’-1’（具有”无限制”语义的标志值），或者<code>solr.query.minPrefixLength</code>系统属性的值（如果指定）。</p>
+<h3 id="元素-2"><a href="#元素-2" class="headerlink" title="&lt;enableLazyFieldLoading&gt;元素"></a><code>&lt;enableLazyFieldLoading&gt;</code>元素</h3><p>当此参数设置为<code>true</code>时，未直接请求的字段将仅在需要时加载。</p>
+<p>如果最常见的查询只需要字段的一小部分，特别是如果不经常访问的字段很大，这可以提高性能。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">enableLazyFieldLoading</span>&gt;</span>true<span class="tag">&lt;/<span class="name">enableLazyFieldLoading</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-3"><a href="#元素-3" class="headerlink" title="&lt;useFilterForSortedQuery&gt;元素"></a><code>&lt;useFilterForSortedQuery&gt;</code>元素</h3><p>此设置仅影响请求的排序不包括”score”的查询（或者score无关紧要的查询-例如，没有请求文档，查询输出常数分数）。在这种情况下，将此元素配置为<code>true</code>会导致查询<code>filterCache</code>以获取与主查询匹配的过滤器。如果使用不同的排序选项或通过<code>offset</code>或<code>cursorMark</code>进行不同的分页（再次，前提是”score”未包含或与请求的排序无关）重复发出相同的搜索，这可能很有用。如果启用此选项，请确保<code>filterCache</code>有足够的容量来支持预期的使用模式。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">useFilterForSortedQuery</span>&gt;</span>true<span class="tag">&lt;/<span class="name">useFilterForSortedQuery</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-4"><a href="#元素-4" class="headerlink" title="&lt;queryResultWindowSize&gt;元素"></a><code>&lt;queryResultWindowSize&gt;</code>元素</h3><p>与<code>queryResultCache</code>一起使用，这将缓存请求文档ID数量的超集。</p>
+<p>例如，如果查询请求文档10到19，并且<code>queryWindowSize</code>是50，则将缓存文档0到49。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">queryResultWindowSize</span>&gt;</span>20<span class="tag">&lt;/<span class="name">queryResultWindowSize</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-5"><a href="#元素-5" class="headerlink" title="&lt;queryResultMaxDocsCached&gt;元素"></a><code>&lt;queryResultMaxDocsCached&gt;</code>元素</h3><p>此参数设置要为<code>queryResultCache</code>中任何条目缓存的最大文档数。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">queryResultMaxDocsCached</span>&gt;</span>200<span class="tag">&lt;/<span class="name">queryResultMaxDocsCached</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-6"><a href="#元素-6" class="headerlink" title="&lt;useColdSearcher&gt;元素"></a><code>&lt;useColdSearcher&gt;</code>元素</h3><p>此设置控制没有当前注册搜索器的搜索请求应该等待新搜索器预热（<code>false</code>）还是立即进行（<code>true</code>）。设置为<code>false</code>时，请求将阻塞，直到搜索器预热其缓存。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">useColdSearcher</span>&gt;</span>false<span class="tag">&lt;/<span class="name">useColdSearcher</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="元素-7"><a href="#元素-7" class="headerlink" title="&lt;maxWarmingSearchers&gt;元素"></a><code>&lt;maxWarmingSearchers&gt;</code>元素</h3><p>此参数设置在任何给定时间可能在后台预热的搜索器的最大数量。超过此限制将引发错误。</p>
+<p>对于只读从节点，值<code>2</code>是合理的。主节点应该设置得稍高一些。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">maxWarmingSearchers</span>&gt;</span>2<span class="tag">&lt;/<span class="name">maxWarmingSearchers</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="查询相关监听器"><a href="#查询相关监听器" class="headerlink" title="查询相关监听器"></a>查询相关监听器</h2><p>如缓存部分所述，新搜索器被缓存。可以使用监听器触发器来执行与查询相关的任务。最常见的用途是定义查询来进一步”预热”正在启动的搜索器。这种方法的一个好处是字段缓存被预填充以进行更快的排序。</p>
+<p>良好的查询选择是此类监听器的关键。最好选择您最常见和&#x2F;或最重的查询，不仅包括使用的关键词，还包括任何其他参数，如排序或过滤请求。</p>
+<p>有两种类型的事件可以触发监听器。</p>
+<ol>
+<li>当正在准备新搜索器但没有当前注册的搜索器来处理请求或获取自动预热数据时（即，在Solr启动时），会发生<code>firstSearcher</code>事件。</li>
+<li>每当正在准备新搜索器时（如提交后）且有当前搜索器处理请求时，就会触发<code>newSearcher</code>事件。</li>
+</ol>
+<p>下面的（注释掉的）示例可以在Solr附带的<code>sample_techproducts_configs</code>配置集的<code>solrconfig.xml</code>文件中找到，并演示使用<code>solr.QuerySenderListener</code>类来预热一组显式查询：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">listener</span> <span class="attr">event</span>=<span class="string">&quot;newSearcher&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.QuerySenderListener&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;queries&quot;</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">    &lt;lst&gt;&lt;str name=&quot;q&quot;&gt;solr&lt;/str&gt;&lt;str name=&quot;sort&quot;&gt;price asc&lt;/str&gt;&lt;/lst&gt;</span></span><br><span class="line"><span class="comment">    &lt;lst&gt;&lt;str name=&quot;q&quot;&gt;rocks&lt;/str&gt;&lt;str name=&quot;sort&quot;&gt;weight asc&lt;/str&gt;&lt;/lst&gt;</span></span><br><span class="line"><span class="comment">   --&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">listener</span> <span class="attr">event</span>=<span class="string">&quot;firstSearcher&quot;</span> <span class="attr">class</span>=<span class="string">&quot;solr.QuerySenderListener&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">arr</span> <span class="attr">name</span>=<span class="string">&quot;queries&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span>&gt;</span><span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;q&quot;</span>&gt;</span>static firstSearcher warming in solrconfig.xml<span class="tag">&lt;/<span class="name">str</span>&gt;</span><span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">arr</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">listener</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>重要提示：</strong><br>上述代码来自示例<code>solrconfig.xml</code>。</p>
+<p>一个关键的最佳实践是在将应用程序投入生产之前修改这些默认值，但请注意：虽然”newSearcher”部分的示例查询被注释掉了，但”firstSearcher”事件的示例查询没有被注释掉。</p>
+<p>如果查询字符串”static firstSearcher warming in solrconfig.xml”与您的搜索应用程序无关，那么使用它来自动预热您的搜索器就没有意义。</p>
+<h3 id="使用配置API管理预热查询"><a href="#使用配置API管理预热查询" class="headerlink" title="使用配置API管理预热查询"></a>使用配置API管理预热查询</h3><p>可以使用配置API使用如下命令管理预热查询。</p>
+<p>可以提供具有不同<code>name</code>属性的多个集合，任何更改都将立即生效，无需重新启动。</p>
+<h4 id="添加预热查询集"><a href="#添加预热查询集" class="headerlink" title="添加预热查询集"></a>添加预热查询集</h4><p>要添加一组预热查询，请使用<code>add-listener</code>命令。（您可能希望使用单独的命令和<code>name</code>也提供<code>firstSearcher</code>查询。）</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;add-listener&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;my-warming-queries&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;event&quot;</span><span class="punctuation">:</span> <span class="string">&quot;newSearcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.QuerySenderListener&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;queries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span> <span class="attr">&quot;q&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;sort&quot;</span><span class="punctuation">:</span> <span class="string">&quot;price asc&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="更新查询集"><a href="#更新查询集" class="headerlink" title="更新查询集"></a>更新查询集</h4><p>要更新集合，请使用<code>update-listener</code>命令。注意整个集合将被替换。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;update-listener&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;my-warming-queries&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;event&quot;</span><span class="punctuation">:</span> <span class="string">&quot;newSearcher&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.QuerySenderListener&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;queries&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span></span><br><span class="line">      <span class="punctuation">&#123;</span> <span class="attr">&quot;q&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;sort&quot;</span><span class="punctuation">:</span> <span class="string">&quot;price asc&quot;</span> <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="punctuation">&#123;</span> <span class="attr">&quot;q&quot;</span><span class="punctuation">:</span> <span class="string">&quot;rocks&quot;</span><span class="punctuation">,</span> <span class="attr">&quot;sort&quot;</span><span class="punctuation">:</span> <span class="string">&quot;weight asc&quot;</span> <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>如果在<code>solrconfig.xml</code>中定义了预热查询，如果将<code>name</code>属性添加到每个<code>&lt;listener&gt;</code>元素，则可以使用配置API覆盖它们。</p>
+<h4 id="删除查询集"><a href="#删除查询集" class="headerlink" title="删除查询集"></a>删除查询集</h4><p>要删除一组查询，请使用<code>delete-listener</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;delete-listener&quot;</span><span class="punctuation">:</span> <span class="string">&quot;my-warming-queries&quot;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意，对于最初在<code>solrconfig.xml</code>中定义的预热查询集，使用<code>delete-listener</code>命令将恢复到<code>solrconfig.xml</code>集而不是删除预热查询。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%80%A7%E8%83%BD%E8%B0%83%E4%BC%98/">性能调优</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/%E7%BC%93%E5%AD%98%E4%BC%98%E5%8C%96/">缓存优化</a>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E9%A2%84%E7%83%AD/">查询预热</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/08/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：集群插件管理详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/06/Solr%E5%85%A5%E9%97%A8%EF%BC%9A%E5%85%B3%E4%BA%8E%E6%9C%AC%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr入门：关于本指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E9%A2%84%E7%83%AD%E7%AE%A1%E7%90%86%E6%8C%87%E5%8D%97"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：缓存预热管理指南</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#solrconfig-xml%E4%B8%AD%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.</span> <span class="nav-text">solrconfig.xml中的&lt;query&gt;配置</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E6%9C%BA%E5%88%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">缓存机制详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">缓存实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%93%E5%AD%98%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.2.</span> <span class="nav-text">缓存参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E7%BC%93%E5%AD%98%EF%BC%88Filter-Cache%EF%BC%89"><span class="nav-number">1.2.3.</span> <span class="nav-text">过滤缓存（Filter Cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%BB%93%E6%9E%9C%E7%BC%93%E5%AD%98%EF%BC%88Query-Result-Cache%EF%BC%89"><span class="nav-number">1.2.4.</span> <span class="nav-text">查询结果缓存（Query Result Cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%87%E6%A1%A3%E7%BC%93%E5%AD%98%EF%BC%88Document-Cache%EF%BC%89"><span class="nav-number">1.2.5.</span> <span class="nav-text">文档缓存（Document Cache）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E8%87%AA%E5%AE%9A%E4%B9%89%E7%BC%93%E5%AD%98"><span class="nav-number">1.2.6.</span> <span class="nav-text">用户自定义缓存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E7%BC%93%E5%AD%98%E5%A4%A7%E5%B0%8F%E5%92%8C%E4%BD%BF%E7%94%A8%E6%83%85%E5%86%B5"><span class="nav-number">1.2.7.</span> <span class="nav-text">监控缓存大小和使用情况</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E5%A4%A7%E5%B0%8F%E8%B0%83%E6%95%B4%E5%92%8C%E9%A2%84%E7%83%AD"><span class="nav-number">1.3.</span> <span class="nav-text">查询大小调整和预热</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0"><span class="nav-number">1.3.1.</span> <span class="nav-text">&lt;maxBooleanClauses&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-1"><span class="nav-number">1.3.2.</span> <span class="nav-text">&lt;minPrefixQueryTermLength&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-2"><span class="nav-number">1.3.3.</span> <span class="nav-text">&lt;enableLazyFieldLoading&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-3"><span class="nav-number">1.3.4.</span> <span class="nav-text">&lt;useFilterForSortedQuery&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-4"><span class="nav-number">1.3.5.</span> <span class="nav-text">&lt;queryResultWindowSize&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-5"><span class="nav-number">1.3.6.</span> <span class="nav-text">&lt;queryResultMaxDocsCached&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-6"><span class="nav-number">1.3.7.</span> <span class="nav-text">&lt;useColdSearcher&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-7"><span class="nav-number">1.3.8.</span> <span class="nav-text">&lt;maxWarmingSearchers&gt;元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9F%A5%E8%AF%A2%E7%9B%B8%E5%85%B3%E7%9B%91%E5%90%AC%E5%99%A8"><span class="nav-number">1.4.</span> <span class="nav-text">查询相关监听器</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E9%85%8D%E7%BD%AEAPI%E7%AE%A1%E7%90%86%E9%A2%84%E7%83%AD%E6%9F%A5%E8%AF%A2"><span class="nav-number">1.4.1.</span> <span class="nav-text">使用配置API管理预热查询</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E9%A2%84%E7%83%AD%E6%9F%A5%E8%AF%A2%E9%9B%86"><span class="nav-number">1.4.1.1.</span> <span class="nav-text">添加预热查询集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%9F%A5%E8%AF%A2%E9%9B%86"><span class="nav-number">1.4.1.2.</span> <span class="nav-text">更新查询集</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%9F%A5%E8%AF%A2%E9%9B%86"><span class="nav-number">1.4.1.3.</span> <span class="nav-text">删除查询集</span></a></li></ol></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：solr.xml配置详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloudSolr配置核心管理solr.xml全局配置" />
+  
+  
+  
+  
+  <meta name="description" content="深入了解Solr的solr.xml配置文件，包括全局设置、SolrCloud配置和各种系统参数的详细说明">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：solr.xml配置详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入了解Solr的solr.xml配置文件，包括全局设置、SolrCloud配置和各种系统参数的详细说明">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-17T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:05:42.656Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="核心管理">
+<meta property="article:tag" content="solr.xml">
+<meta property="article:tag" content="全局配置">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：solr.xml配置详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：solr.xml配置详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/17/Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr.xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-17T16:00:00.000Z" itemprop="datePublished">一月 17, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：solr-xml配置详解"><a href="#Solr配置：solr-xml配置详解" class="headerlink" title="Solr配置：solr.xml配置详解"></a>Solr配置：solr.xml配置详解</h1><p><code>solr.xml</code>文件定义了一些适用于所有或多个核心的全局配置选项。</p>
+<p>本节将描述Solr附带的默认<code>solr.xml</code>文件以及如何根据需要修改它。有关如何配置<code>core.properties</code>的详细信息，请参见<a href="core-discovery.md">核心发现</a>部分。</p>
+<h2 id="定义solr-xml"><a href="#定义solr-xml" class="headerlink" title="定义solr.xml"></a>定义solr.xml</h2><p>您可以在<code>$SOLR_HOME</code>目录（通常是<code>server/solr</code>或<code>/var/solr/data</code>）中找到<code>solr.xml</code>，或者在使用SolrCloud时可选地在ZooKeeper中找到。如果找不到<code>$SOLR_HOME/solr.xml</code>，Solr将使用默认的<code>solr.xml</code>文件。</p>
+<p><strong>警告：</strong> 从ZooKeeper加载<code>solr.xml</code>已弃用，在未来版本中将不受支持。作为Solr的节点配置，此文件必须在早期启动时可用，并且也允许节点之间不同。</p>
+<p>默认的<code>solr.xml</code>文件位于<code>$SOLR_TIP/server/solr/solr.xml</code>，如下所示：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">solr</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;maxBooleanClauses&quot;</span>&gt;</span>$&#123;solr.max.booleanClauses:1024&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;sharedLib&quot;</span>&gt;</span>$&#123;solr.sharedLib:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;modules&quot;</span>&gt;</span>$&#123;solr.modules:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;allowPaths&quot;</span>&gt;</span>$&#123;solr.allowPaths:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;allowUrls&quot;</span>&gt;</span>$&#123;solr.allowUrls:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;hideStackTrace&quot;</span>&gt;</span>$&#123;solr.hideStackTrace:false&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">solrcloud</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;host&quot;</span>&gt;</span>$&#123;host:&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;hostPort&quot;</span>&gt;</span>$&#123;solr.port.advertise:0&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;hostContext&quot;</span>&gt;</span>$&#123;hostContext:solr&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;genericCoreNodeNames&quot;</span>&gt;</span>$&#123;genericCoreNodeNames:true&#125;<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;zkClientTimeout&quot;</span>&gt;</span>$&#123;zkClientTimeout:30000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;distribUpdateSoTimeout&quot;</span>&gt;</span>$&#123;distribUpdateSoTimeout:600000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;distribUpdateConnTimeout&quot;</span>&gt;</span>$&#123;distribUpdateConnTimeout:60000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;zkCredentialsProvider&quot;</span>&gt;</span>$&#123;zkCredentialsProvider:org.apache.solr.common.cloud.DefaultZkCredentialsProvider&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;zkACLProvider&quot;</span>&gt;</span>$&#123;zkACLProvider:org.apache.solr.common.cloud.DefaultZkACLProvider&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;zkCredentialsInjector&quot;</span>&gt;</span>$&#123;zkCredentialsInjector:org.apache.solr.common.cloud.DefaultZkCredentialsInjector&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;distributedClusterStateUpdates&quot;</span>&gt;</span>$&#123;distributedClusterStateUpdates:false&#125;<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;distributedCollectionConfigSetExecution&quot;</span>&gt;</span>$&#123;distributedCollectionConfigSetExecution:false&#125;<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minStateByteLenForCompression&quot;</span>&gt;</span>$&#123;minStateByteLenForCompression:-1&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;stateCompressor&quot;</span>&gt;</span>$&#123;stateCompressor:org.apache.solr.common.util.ZLibCompressor&#125;<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;/<span class="name">solrcloud</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">shardHandlerFactory</span> <span class="attr">name</span>=<span class="string">&quot;shardHandlerFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;HttpShardHandlerFactory&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;socketTimeout&quot;</span>&gt;</span>$&#123;socketTimeout:600000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;connTimeout&quot;</span>&gt;</span>$&#123;connTimeout:60000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">shardHandlerFactory</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">metrics</span> <span class="attr">enabled</span>=<span class="string">&quot;$&#123;metricsEnabled:true&#125;&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--reporter name=&quot;jmx_metrics&quot; group=&quot;core&quot; class=&quot;org.apache.solr.metrics.reporters.SolrJmxReporter&quot;/--&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">metrics</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>如您所见，发现Solr配置是”SolrCloud友好”的。但是，<code>&lt;solrcloud&gt;</code>元素的存在并<em>不</em>意味着Solr实例正在SolrCloud模式下运行。除非在启动时指定了<code>-DzkHost</code>或<code>-DzkRun</code>，否则此部分将被忽略。</p>
+<h2 id="solr-xml参数"><a href="#solr-xml参数" class="headerlink" title="solr.xml参数"></a>solr.xml参数</h2><h3 id="元素"><a href="#元素" class="headerlink" title="&lt;solr&gt;元素"></a>&lt;solr&gt;元素</h3><p>在<code>&lt;solr&gt;</code>标签中没有您可以指定的属性，它是<code>solr.xml</code>的根元素。下面的表列出了<code>solr.xml</code>中每个XML元素的子节点。</p>
+<p><strong>configSetService</strong></p>
+<ul>
+<li>可选参数，默认值：<code>configSetService</code></li>
+<li>此属性不需要设置</li>
+<li>如果使用，此属性应设置为继承自<code>ConfigSetService</code>的类的FQN（完全限定名），您必须提供一个带有类型为<code>org.apache.solr.core.CoreContainer</code>的参数的构造函数</li>
+<li>例如，<code>&lt;str name=&quot;configSetService&quot;&gt;com.myorg.CustomConfigSetService&lt;/str&gt;</code></li>
+<li>如果未设置此属性，Solr使用默认<code>configSetService</code>，有ZooKeeper意识的<code>org.apache.solr.cloud.ZkConfigSetService</code>，无ZooKeeper意识的<code>org.apache.solr.core.FileSystemConfigSetService</code></li>
+</ul>
+<p><strong>adminHandler</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.handler.admin.CoreAdminHandler</code></li>
+<li>此属性不需要设置</li>
+<li>如果使用，此属性应设置为继承自CoreAdminHandler的类的FQN</li>
+<li>例如，<code>&lt;str name=&quot;adminHandler&quot;&gt;com.myorg.MyAdminHandler&lt;/str&gt;</code>会配置自定义管理处理器(MyAdminHandler)来处理管理请求</li>
+<li>如果未设置此属性，Solr使用默认管理处理器<code>org.apache.solr.handler.admin.CoreAdminHandler</code></li>
+</ul>
+<p><strong>coreAdminHandlerActions</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>此属性不需要设置</li>
+<li>如果定义，它应包含要在CoreAdminHandler中注册的自定义操作列表</li>
+<li>列表的每个条目应为<code>str</code>类型，其中条目名称定义操作名称，值是继承自<code>CoreAdminOp</code>的操作类的FQN</li>
+<li>例如，操作可以这样定义：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">coreAdminHandlerActions</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;foo&quot;</span>&gt;</span>com.example.FooAction<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;bar&quot;</span>&gt;</span>com.example.BarAction<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">coreAdminHandlerActions</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>定义自定义操作后，可以使用其名称调用它们：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/admin/cores?action=foo</span><br></pre></td></tr></table></figure>
+
+<p><strong>collectionsHandler</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.handler.admin.CollectionsHandler</code></li>
+<li>如上，用于自定义CollectionsHandler实现</li>
+</ul>
+<p><strong>infoHandler</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.handler.admin.InfoHandler</code></li>
+<li>如上，用于自定义InfoHandler实现</li>
+</ul>
+<p><strong>coreLoadThreads</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>指定将分配用于并行加载核心的线程数</li>
+</ul>
+<p><strong>replayUpdatesThreads</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>指定将分配用于并行重放更新的线程数</li>
+<li>此池为节点的所有核心共享</li>
+<li>默认值等于处理器数量</li>
+</ul>
+<p><strong>indexSearcherExecutorThreads</strong></p>
+<ul>
+<li>可选参数，默认值：0</li>
+<li>指定将分配用于搜索查询的线程数</li>
+<li>值<code>-1</code>表示可用的总处理器线程数</li>
+</ul>
+<p><strong>coreRootDirectory</strong></p>
+<ul>
+<li>可选参数，默认值：<code>server/solr</code></li>
+<li>核心发现树的根，默认为<code>$SOLR_HOME</code></li>
+</ul>
+<p><strong>coresLocator</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.core.CorePropertiesLocator</code></li>
+<li>此属性不需要设置</li>
+<li>如果使用，此属性应设置为实现<code>CoresLocator</code>的类的FQN，您必须提供一个带有类型为<code>org.apache.solr.core.NodeConfig</code>的参数的构造函数</li>
+<li>例如，<code>&lt;str name=&quot;coresLocator&quot;&gt;com.myorg.CustomCoresLocator&lt;/str&gt;</code>会配置自定义核心定位器</li>
+</ul>
+<p><strong>coreSorter</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.core.CoreSorter</code></li>
+<li>此属性不需要设置</li>
+<li>如果使用，此属性应设置为实现<code>CoreSorter</code>的类的FQN，您必须提供一个带有类型为<code>org.apache.solr.core.CoreContainer</code>的参数的构造函数</li>
+<li>此服务在Solr启动时用于优先确定应首先加载哪些核心</li>
+</ul>
+<p><strong>managementPath</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>目前不可操作</li>
+</ul>
+<p><strong>sharedLib</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>指定将在所有核心间共享的公共库目录的路径</li>
+<li>此目录中的任何JAR文件都将添加到Solr插件的搜索路径中</li>
+<li>如果指定的路径不是绝对路径，它将相对于<code>$SOLR_HOME</code></li>
+<li>自定义处理器可以放置在此目录中</li>
+<li>注意，指定<code>sharedLib</code>不会从Solr的类路径中删除<code>$SOLR_HOME/lib</code></li>
+</ul>
+<p><strong>modules</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>接受要在启动时启用的捆绑<a href="solr-modules.md">Solr模块</a>列表</li>
+<li>这种添加模块的方式将它们添加到共享类加载器，使它们对Solr中的每个集合可用，与<code>solrconfig.xml</code>中仅适用于该集合的<code>&lt;lib&gt;</code>标签不同</li>
+<li>示例值：<code>extracting,ltr</code></li>
+<li>有关更多详细信息，请参见<a href="solr-modules.md">Solr模块</a>章节</li>
+</ul>
+<p><strong>allowPaths</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>Solr通常只会访问相对于<code>$SOLR_HOME</code>、<code>$SOLR_DATA_HOME</code>或<code>coreRootDir</code>的文件夹</li>
+<li>如果您需要在这些路径之外创建核心，您可以使用<code>allowPaths</code>显式允许路径</li>
+<li>它是一个逗号分隔的文件系统路径字符串以允许</li>
+<li>特殊值<code>*</code>将允许系统上的任何路径</li>
+</ul>
+<p><strong>allowUrls</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>逗号分隔的要允许的Solr主机列表</li>
+<li>可以省略HTTP&#x2F;HTTPS协议，仅检查主机和端口，即<code>10.0.0.1:8983/solr,10.0.0.1:8984/solr</code></li>
+<li>在运行Solr作为用户管理集群并使用<code>shards</code>参数时，需要特别配置主机列表作为允许列表，否则Solr将禁止请求</li>
+<li>在SolrCloud模式下，允许列表会自动配置为包括集群中的所有活动节点</li>
+<li>允许列表也可以在<code>solr.in.sh</code> &#x2F; <code>solr.in.cmd</code>中使用<code>solr.allowUrls</code>系统属性配置</li>
+<li>如果您需要为向后兼容性禁用此功能，可以设置系统属性<code>solr.disable.allowUrls=true</code></li>
+</ul>
+<p><strong>hideStackTrace</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>当此属性设置为<code>true</code>时，Solr在发生错误的情况下不会在HTTP响应中返回任何堆栈跟踪</li>
+<li>默认情况下（<code>false</code>），堆栈跟踪仅对可预测的Solr异常隐藏，但对意外异常（即HTTP 500）在响应中返回</li>
+</ul>
+<p><strong>shareSchema</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>此属性设置为<code>true</code>时，确保指向相同Schema资源文件的多个核心将引用相同的IndexSchema对象</li>
+<li>共享IndexSchema对象使加载核心更快</li>
+<li>如果您使用此功能，请确保在Schema文件中不使用核心特定的属性</li>
+</ul>
+<p><strong>transientCacheSize</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li><strong>自9.2起弃用。</strong> 定义在为需要的核心卸载未使用核心之前可以加载多少个具有<code>transient=true</code>的Solr核心</li>
+</ul>
+<p><strong>configSetBaseDir</strong></p>
+<ul>
+<li>可选参数，默认值：<code>$SOLR_HOME/configsets</code></li>
+<li>可以找到Solr核心配置集的目录</li>
+</ul>
+<p><strong>maxBooleanClauses</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>设置任何查询中允许的最大（嵌套）子句数</li>
+<li>此全局限制对任何集合的任何查询中允许的总子句数提供安全约束——无论这些子句是在查询字符串中显式指定的，还是基于索引中的术语从更复杂类型查询的查询扩展&#x2F;重写的结果</li>
+<li>此限制在Lucene的多个点强制执行，既防止构造具有过多子句数的原始查询对象（主要是<code>BooleanQuery</code>）以可能耗尽JVM堆的方式，也确保没有复合查询（由多个原始查询组成）可以以可能导致搜索线程使用过多CPU的方式执行具有过多<em>总</em>嵌套子句数</li>
+<li>在默认配置中，此属性使用<code>solr.max.booleanClauses</code>系统属性的值（如果指定）</li>
+<li>这是<code>_default</code>配置集中用于<a href="caches-warming.md#maxbooleanclauses-element"><code>solrconfig.xml</code>的<code>&lt;maxBooleanClauses&gt;</code>元素</a>的相同系统属性，使Solr管理员可以轻松增加两个值（在所有集合中），而无需搜索和更新所有配置</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">maxBooleanClauses</span>&gt;</span>$&#123;solr.max.booleanClauses:1024&#125;<span class="tag">&lt;/<span class="name">maxBooleanClauses</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>hiddenSysProps</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>用于匹配应被编辑以隐藏敏感信息的sysProps的正则表达式模式的逗号分隔列表</li>
+<li>允许列表也可以使用<code>solr.hiddenSysProps</code>系统属性或通过<code>SOLR_HIDDEN_SYS_PROPS</code>环境变量配置</li>
+<li>默认情况下，Solr将隐藏所有basicAuth、AWS、ZK或SSL秘密sysProps</li>
+<li>它还将隐藏任何包含”password”或”secret”的sysProp</li>
+</ul>
+<h3 id="元素-1"><a href="#元素-1" class="headerlink" title="&lt;solrcloud&gt;元素"></a>&lt;solrcloud&gt;元素</h3><p>此元素定义了与SolrCloud相关的几个参数。除非Solr实例以<code>-DzkRun</code>或<code>-DzkHost</code>启动，否则此部分将被忽略。</p>
+<p><strong>distribUpdateConnTimeout</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>用于设置集群内更新的底层<code>connTimeout</code></li>
+</ul>
+<p><strong>distribUpdateSoTimeout</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>用于设置集群内更新的底层<code>socketTimeout</code></li>
+</ul>
+<p><strong>host</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>Solr用于访问核心的主机名</li>
+</ul>
+<p><strong>hostContext</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>URL上下文路径</li>
+</ul>
+<p><strong>hostPort</strong></p>
+<ul>
+<li>可选参数，默认值：<code>$&#123;solr.port.advertise:0&#125;</code></li>
+<li>Solr用于访问核心并通过liveNodes宣传Solr节点位置的端口</li>
+<li>此选项仅在Solr实例侦听的端口与希望其他节点联系它的端口不同时才需要</li>
+<li>例如，如果Solr节点在代理后面运行或在允许端口映射的云环境（如Kubernetes）中运行</li>
+<li><code>hostPort</code>是Solr实例希望其他节点联系它的端口</li>
+<li>在默认的<code>solr.xml</code>文件中，这设置为<code>$&#123;solr.port.advertise:0&#125;</code></li>
+<li>如果没有通过<code>solr.xml</code>传递端口（即<code>0</code>），则Solr将默认为jetty正在侦听的端口，由<code>$&#123;jetty.port&#125;</code>定义</li>
+</ul>
+<p><strong>leaderVoteWait</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>当SolrCloud启动时，每个Solr节点在假设任何未报告的节点都已关闭之前，等待找到该分片的所有已知副本的时间</li>
+</ul>
+<p><strong>leaderConflictResolveWait</strong></p>
+<ul>
+<li>可选参数，默认值：<code>180000</code>毫秒</li>
+<li>当试图为分片选举领导者时，此属性设置副本等待看到冲突状态信息解决的最大时间</li>
+<li>在进行滚动重启时，特别是重启托管Overseer的节点时，状态信息中的临时冲突可能发生</li>
+<li>通常，默认值<code>180000</code>（毫秒）足以解决冲突</li>
+<li>如果您在SolrCloud中有数百或数千个小集合，您可能需要增加此值</li>
+</ul>
+<p><strong>zkClientTimeout</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>连接到ZooKeeper服务器的超时</li>
+<li>与SolrCloud一起使用</li>
+</ul>
+<p><strong>zkHost</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>在SolrCloud模式下，Solr应用于集群状态信息的ZooKeeper主机的URL</li>
+</ul>
+<p><strong>genericCoreNodeNames</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>如果为<code>true</code>，节点名称不基于节点的地址，而是基于标识核心的通用名称</li>
+<li>当不同机器接管服务该核心时，事情将更容易理解</li>
+</ul>
+<p><strong>zkCredentialsProvider、zkACLProvider和zkCredentialsInjector</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>如果您使用<a href="zookeeper-access-control.md">ZooKeeper访问控制</a>，可以指定的可选参数</li>
+</ul>
+<p><strong>distributedClusterStateUpdates</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>如果为<code>true</code>，SolrCloud的内部行为改变为不使用Overseer进行集合的<code>state.json</code>更新，而是直接对ZooKeeper进行此操作</li>
+</ul>
+<p><strong>minStateByteLenForCompression</strong></p>
+<ul>
+<li>可选参数，默认值：-1</li>
+<li>启用通过网络和存储在ZooKeeper中的state.json压缩的可选参数</li>
+<li>提供的值是压缩state.json的最小字节长度，即任何超过该大小（以字节为单位）的state.json都将被压缩</li>
+<li>默认值为-1，意味着state.json始终未压缩</li>
+</ul>
+<p><strong>stateCompressor</strong></p>
+<ul>
+<li>可选参数，默认值：<code>org.apache.solr.common.util.ZLibCompressor</code></li>
+<li>为通过网络和存储在ZooKeeper中的state.json提供压缩实现的可选参数</li>
+<li>提供的值是用于状态压缩的类</li>
+<li>仅当<code>minStateByteLenForCompression</code>设置为-1以上的值时才使用</li>
+</ul>
+<h3 id="元素-2"><a href="#元素-2" class="headerlink" title="&lt;logging&gt;元素"></a>&lt;logging&gt;元素</h3><p><strong>class</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>用于日志记录的类</li>
+<li>相应的JAR文件必须对Solr可用，可能通过<code>solrconfig.xml</code>中的<code>&lt;lib&gt;</code>指令</li>
+</ul>
+<p><strong>enabled</strong></p>
+<ul>
+<li>可选参数，默认值：<code>true</code></li>
+<li>是否启用日志记录</li>
+</ul>
+<h4 id="元素-3"><a href="#元素-3" class="headerlink" title="&lt;logging&gt;&lt;watcher&gt;元素"></a>&lt;logging&gt;&lt;watcher&gt;元素</h4><p><strong>size</strong></p>
+<ul>
+<li>可选参数，默认值：<code>50</code></li>
+<li>缓冲的日志事件数</li>
+</ul>
+<p><strong>threshold</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>您的特定日志记录实现将记录的日志记录级别以上</li>
+<li>例如，使用Log4j时可能指定DEBUG、WARN、INFO等</li>
+</ul>
+<h3 id="元素-4"><a href="#元素-4" class="headerlink" title="&lt;shardHandlerFactory&gt;元素"></a>&lt;shardHandlerFactory&gt;元素</h3><p>Solr使用”分片处理器”发送和跟踪内部进行的节点间请求以处理分布式搜索或其他请求。通过<code>&lt;shardHandlerFactory&gt;</code>元素配置的工厂用于根据需要创建新的分片处理器。这里定义的工厂将在整个Solr中使用，除非被<code>solrconfig.xml</code>中特定的requestHandler覆盖。</p>
+<p>有两种工厂实现可用，每种创建相应的分片处理器。默认的<code>HttpShardHandlerFactory</code>是大多数部署的最佳选择。但是，某些部署，特别是使用身份验证或具有大量分片集合的部署，可能受益于<code>ParallelHttpShardHandlerFactory</code>提供的额外并行化。</p>
+<p>也支持自定义分片处理器，应在<code>solr.xml</code>中通过其完全限定的类名引用：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">shardHandlerFactory</span> <span class="attr">name</span>=<span class="string">&quot;ShardHandlerFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;qualified.class.name&quot;</span>/&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>&lt;shardHandlerFactory&gt;</code>的子元素在自定义分片处理器的情况下可能有所不同，但<code>HttpShardHandlerFactory</code>和<code>ParallelShardHandlerFactory</code>都支持以下配置选项：</p>
+<p><strong>socketTimeout</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>集群内查询和管理请求的读取超时</li>
+<li>默认值与<code>&lt;solrcloud&gt;</code>部分中指定的<code>distribUpdateSoTimeout</code>相同</li>
+</ul>
+<p><strong>connTimeout</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>集群内查询和管理请求的连接超时</li>
+<li>默认为<code>&lt;solrcloud&gt;</code>部分中指定的<code>distribUpdateConnTimeout</code></li>
+</ul>
+<p><strong>urlScheme</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>在分布式搜索中使用的URL方案</li>
+</ul>
+<p><strong>maxConnectionsPerHost</strong></p>
+<ul>
+<li>可选参数，默认值：<code>100000</code></li>
+<li>每个主机允许的最大连接数</li>
+</ul>
+<p><strong>corePoolSize</strong></p>
+<ul>
+<li>可选参数，默认值：<code>0</code></li>
+<li>服务请求的线程池的初始核心大小</li>
+</ul>
+<p><strong>maximumPoolSize</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>服务请求的线程池的最大大小</li>
+<li>默认是无限制</li>
+</ul>
+<p><strong>maxThreadIdleTime</strong></p>
+<ul>
+<li>可选参数，默认值：<code>5</code>秒</li>
+<li>空闲线程在被终止之前在队列中持续的秒数</li>
+</ul>
+<p><strong>sizeOfQueue</strong></p>
+<ul>
+<li>可选参数，默认值：无</li>
+<li>如果线程池使用后备队列，使用直接切换的最大大小</li>
+<li>默认使用SynchronousQueue</li>
+</ul>
+<p><strong>fairnessPolicy</strong></p>
+<ul>
+<li>可选参数，默认值：<code>false</code></li>
+<li>配置线程池是否偏向公平性而不是吞吐量的布尔值</li>
+</ul>
+<p><strong>replicaRouting</strong></p>
+<ul>
+<li>可选参数，默认值：见描述</li>
+<li>指定副本路由偏好配置的NamedList</li>
+<li>可用于选择和配置副本路由偏好</li>
+<li><code>default=true</code>可用于设置默认基础副本路由偏好</li>
+<li>仅遵循正向默认状态断言；即<code>default=false</code>无效</li>
+<li>如果没有配置显式默认基础副本路由偏好，隐式默认将是<code>random</code></li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">shardHandlerFactory</span> <span class="attr">class</span>=<span class="string">&quot;HttpShardHandlerFactory&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;replicaRouting&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">lst</span> <span class="attr">name</span>=<span class="string">&quot;stable&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">bool</span> <span class="attr">name</span>=<span class="string">&quot;default&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">bool</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;dividend&quot;</span>&gt;</span>routingDividend<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">str</span> <span class="attr">name</span>=<span class="string">&quot;hash&quot;</span>&gt;</span>q<span class="tag">&lt;/<span class="name">str</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">lst</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">shardHandlerFactory</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>副本路由也可以通过<code>shards.preference</code>请求参数在每个请求中指定（覆盖默认值）。如果请求包含<code>dividend</code>和<code>hash</code>，<code>dividend</code>优先用于路由。对于配置<code>stable</code>路由，<code>hash</code>参数隐式默认为主查询参数（即<code>q</code>）的字符串值的哈希。<code>dividend</code>参数必须明确配置；没有隐式默认值。如果只需要<code>dividend</code>路由，<code>hash</code>可以明确设置为空字符串，完全禁用隐式基于哈希的路由。</p>
+<h3 id="元素-5"><a href="#元素-5" class="headerlink" title="&lt;replicaPlacementFactory&gt;元素"></a>&lt;replicaPlacementFactory&gt;元素</h3><p>可以在<code>solr.xml</code>中定义默认的<a href="replica-placement-plugins.md">副本放置插件</a>。为了允许这样做，必须将<code>solr.cluster.plugin.edit.enabled</code>系统属性设置为false。此设置将禁用<code>/cluster/plugins</code>编辑API，防止在运行时修改集群插件。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">replicaPlacementFactory</span> <span class="attr">class</span>=<span class="string">&quot;org.apache.solr.cluster.placement.plugins.AffinityPlacementFactory&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;minimalFreeDiskGB&quot;</span>&gt;</span>10<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;prioritizedFreeDiskGB&quot;</span>&gt;</span>200<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">replicaPlacementFactory</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>class</code>属性应设置为扩展<code>PlacementPluginFactory</code>的类的FQN。子元素特定于实现。</p>
+<h3 id="元素-6"><a href="#元素-6" class="headerlink" title="&lt;clusterSingleton&gt;元素"></a>&lt;clusterSingleton&gt;元素</h3><p>可以在<code>solr.xml</code>中声明一个或多个<code>clusterSingleton</code>元素。为了允许这样做，必须将<code>solr.cluster.plugin.edit.enabled</code>系统属性设置为false。此设置将禁用<code>/cluster/plugins</code>编辑API，防止在运行时修改集群插件。</p>
+<p>每个<code>clusterSingleton</code>元素指定一个应在Solr启动时加载的集群插件，以及其关联配置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">clusterSingleton</span> <span class="attr">name</span>=<span class="string">&quot;pluginName&quot;</span> <span class="attr">class</span>=<span class="string">&quot;qualified.plugin.class&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;value1&quot;</span>&gt;</span>20<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">clusterSingleton</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>name</code>属性是必需的，对每个<code>clusterSingleton</code>必须唯一。</p>
+<p><code>class</code>属性应设置为扩展<code>ClusterSingleton</code>的类的FQN。子元素特定于实现，这里的<code>value1</code>作为示例提供。</p>
+<h3 id="元素-7"><a href="#元素-7" class="headerlink" title="&lt;metrics&gt;元素"></a>&lt;metrics&gt;元素</h3><p><code>solr.xml</code>中的<code>&lt;metrics&gt;</code>元素允许您自定义Solr报告的指标。您可以定义不应返回的系统属性，或定义自定义供应商和报告器。</p>
+<p>如果您想为安装自定义指标，请参见<a href="metrics-reporting.md#metrics-configuration">指标配置</a>部分。</p>
+<h3 id="元素-8"><a href="#元素-8" class="headerlink" title="&lt;caches&gt;元素"></a>&lt;caches&gt;元素</h3><p><code>solr.xml</code>中的<code>&lt;caches&gt;</code>元素支持定义和配置命名的节点级缓存。</p>
+<p>这些缓存类似于<a href="caches-warming.md#user-defined-caches"><code>solrconfig.xml</code>中的用户定义缓存</a>，除了每个命名缓存作为长期存在的单例存在于节点级别。这些节点级缓存可通过<code>CoreContainer.getCache(String cacheName)</code>从应用程序代码访问。</p>
+<p>请注意，由于节点级缓存存在于单个核心的上下文之上，钩入核心&#x2F;搜索器生命周期的配置参数（如<code>autowarmCount</code>和<code>regenerator</code>）对节点级缓存是无关&#x2F;忽略的。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">solr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">caches</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">cache</span> <span class="attr">name</span>=<span class="string">&quot;myNodeLevelUserCache&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">class</span>=<span class="string">&quot;solr.CaffeineCache&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">size</span>=<span class="string">&quot;4096&quot;</span></span></span><br><span class="line"><span class="tag">           <span class="attr">initialSize</span>=<span class="string">&quot;1024&quot;</span> /&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">caches</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="在solr-xml中替换JVM系统属性"><a href="#在solr-xml中替换JVM系统属性" class="headerlink" title="在solr.xml中替换JVM系统属性"></a>在solr.xml中替换JVM系统属性</h2><p>Solr支持在<code>solr.xml</code>中替换JVM系统属性值的变量，这允许在运行时指定各种配置选项。语法是<code>$&#123;propertyname[:option default value]&#125;</code>。这允许定义可以在Solr启动时覆盖的默认值。如果未指定默认值，则必须在运行时指定属性，否则解析<code>solr.xml</code>文件时将生成错误。</p>
+<p>通常使用<code>-D</code>标志启动JVM时指定的任何JVM系统属性都可以用作<code>solr.xml</code>文件中的变量。</p>
+<p>例如，在下面显示的<code>solr.xml</code>文件中，<code>socketTimeout</code>和<code>connTimeout</code>值各自设置为”60000”。但是，如果您使用<code>bin/solr start -DsocketTimeout=1000</code>启动Solr，<code>HttpShardHandlerFactory</code>的<code>socketTimeout</code>选项将使用1000ms的值覆盖，而<code>connTimeout</code>选项将继续使用”60000”的默认属性值。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">solr</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">shardHandlerFactory</span> <span class="attr">name</span>=<span class="string">&quot;shardHandlerFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;HttpShardHandlerFactory&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;socketTimeout&quot;</span>&gt;</span>$&#123;socketTimeout:60000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">int</span> <span class="attr">name</span>=<span class="string">&quot;connTimeout&quot;</span>&gt;</span>$&#123;connTimeout:60000&#125;<span class="tag">&lt;/<span class="name">int</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">shardHandlerFactory</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">solr</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置最佳实践"><a href="#配置最佳实践" class="headerlink" title="配置最佳实践"></a>配置最佳实践</h2><h3 id="性能优化配置"><a href="#性能优化配置" class="headerlink" title="性能优化配置"></a>性能优化配置</h3><ol>
+<li><strong>线程池配置</strong>：根据硬件资源合理配置<code>coreLoadThreads</code>和<code>replayUpdatesThreads</code></li>
+<li><strong>缓存策略</strong>：利用<code>shareSchema</code>和节点级缓存优化内存使用</li>
+<li><strong>网络超时</strong>：根据网络环境调整各种超时设置</li>
+</ol>
+<h3 id="安全配置建议"><a href="#安全配置建议" class="headerlink" title="安全配置建议"></a>安全配置建议</h3><ol>
+<li><strong>隐藏敏感信息</strong>：配置<code>hiddenSysProps</code>和<code>hideStackTrace</code>保护敏感信息</li>
+<li><strong>路径控制</strong>：谨慎配置<code>allowPaths</code>和<code>allowUrls</code>限制访问范围</li>
+<li><strong>ZooKeeper安全</strong>：在生产环境中配置ZooKeeper访问控制</li>
+</ol>
+<h3 id="集群配置优化"><a href="#集群配置优化" class="headerlink" title="集群配置优化"></a>集群配置优化</h3><ol>
+<li><strong>节点标识</strong>：使用<code>genericCoreNodeNames</code>简化节点管理</li>
+<li><strong>状态压缩</strong>：在大规模集群中启用状态压缩</li>
+<li><strong>分布式操作</strong>：根据需要启用分布式集群状态更新</li>
+</ol>
+<h2 id="故障排除"><a href="#故障排除" class="headerlink" title="故障排除"></a>故障排除</h2><h3 id="常见配置问题"><a href="#常见配置问题" class="headerlink" title="常见配置问题"></a>常见配置问题</h3><ol>
+<li><strong>启动失败</strong>：检查必需参数是否正确设置</li>
+<li><strong>性能问题</strong>：评估线程池和超时配置</li>
+<li><strong>连接问题</strong>：验证网络相关设置</li>
+</ol>
+<h3 id="监控和诊断"><a href="#监控和诊断" class="headerlink" title="监控和诊断"></a>监控和诊断</h3><ol>
+<li><strong>日志配置</strong>：合理配置日志级别和缓冲区大小</li>
+<li><strong>指标收集</strong>：启用和配置适当的指标报告</li>
+<li><strong>系统属性</strong>：使用变量替换机制进行动态配置</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p><code>solr.xml</code>是Solr的核心配置文件，定义了影响整个Solr实例的全局设置。通过理解各个配置参数的作用和最佳实践，可以优化Solr的性能、安全性和可维护性。合理的配置不仅能提高系统效率，还能增强集群的稳定性和安全性。</p>
+<p>在实际应用中，应根据具体的硬件环境、网络条件和业务需求调整相应的配置参数。同时，利用变量替换机制可以实现更灵活的配置管理，便于在不同环境间部署和维护Solr集群。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/%E6%A0%B8%E5%BF%83%E7%AE%A1%E7%90%86/">核心管理</a>
+  
+    <a class="article-tag" href="/tags/solr-xml/">solr.xml</a>
+  
+    <a class="article-tag" href="/tags/%E5%85%A8%E5%B1%80%E9%85%8D%E7%BD%AE/">全局配置</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/18/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%88%86%E6%9E%90%E7%95%8C%E9%9D%A2/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr索引：分析界面
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/16/Solr%E9%85%8D%E7%BD%AE%EF%BC%9AConfigsets%20API%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：Configsets API完整指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9Asolr-xml%E9%85%8D%E7%BD%AE%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：solr.xml配置详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9A%E4%B9%89solr-xml"><span class="nav-number">1.1.</span> <span class="nav-text">定义solr.xml</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#solr-xml%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">solr.xml参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0"><span class="nav-number">1.2.1.</span> <span class="nav-text">&lt;solr&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">&lt;solrcloud&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-2"><span class="nav-number">1.2.3.</span> <span class="nav-text">&lt;logging&gt;元素</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-3"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">&lt;logging&gt;&lt;watcher&gt;元素</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-4"><span class="nav-number">1.2.4.</span> <span class="nav-text">&lt;shardHandlerFactory&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-5"><span class="nav-number">1.2.5.</span> <span class="nav-text">&lt;replicaPlacementFactory&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-6"><span class="nav-number">1.2.6.</span> <span class="nav-text">&lt;clusterSingleton&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-7"><span class="nav-number">1.2.7.</span> <span class="nav-text">&lt;metrics&gt;元素</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%83%E7%B4%A0-8"><span class="nav-number">1.2.8.</span> <span class="nav-text">&lt;caches&gt;元素</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8solr-xml%E4%B8%AD%E6%9B%BF%E6%8D%A2JVM%E7%B3%BB%E7%BB%9F%E5%B1%9E%E6%80%A7"><span class="nav-number">1.3.</span> <span class="nav-text">在solr.xml中替换JVM系统属性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AE%E6%9C%80%E4%BD%B3%E5%AE%9E%E8%B7%B5"><span class="nav-number">1.4.</span> <span class="nav-text">配置最佳实践</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E4%BC%98%E5%8C%96%E9%85%8D%E7%BD%AE"><span class="nav-number">1.4.1.</span> <span class="nav-text">性能优化配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%89%E5%85%A8%E9%85%8D%E7%BD%AE%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.4.2.</span> <span class="nav-text">安全配置建议</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%BC%98%E5%8C%96"><span class="nav-number">1.4.3.</span> <span class="nav-text">集群配置优化</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%85%E9%9A%9C%E6%8E%92%E9%99%A4"><span class="nav-number">1.5.</span> <span class="nav-text">故障排除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E9%85%8D%E7%BD%AE%E9%97%AE%E9%A2%98"><span class="nav-number">1.5.1.</span> <span class="nav-text">常见配置问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%9B%91%E6%8E%A7%E5%92%8C%E8%AF%8A%E6%96%AD"><span class="nav-number">1.5.2.</span> <span class="nav-text">监控和诊断</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.6.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

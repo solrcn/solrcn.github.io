@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr部署：认证和授权插件配置 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr部署安全认证授权" />
+  
+  
+  
+  
+  <meta name="description" content="Solr部署：认证和授权插件配置Solr具有支持用户认证、授权和审计的安全框架。这允许验证用户身份并限制对Solr集群中资源的访问。 Solr包含一些开箱即用的插件，还可以使用下面描述的认证、授权和审计日志框架开发其他插件。 所有认证、授权和审计日志插件都可以与Solr一起工作，无论它是作为集群还是单节点安装运行。所有相关配置，包括用户和权限规则，都存储在名为security.json的文件中。使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr部署：认证和授权插件配置">
+<meta property="og:url" content="https://solrcn.github.io/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AE%A4%E8%AF%81%E5%92%8C%E6%8E%88%E6%9D%83%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr部署：认证和授权插件配置Solr具有支持用户认证、授权和审计的安全框架。这允许验证用户身份并限制对Solr集群中资源的访问。 Solr包含一些开箱即用的插件，还可以使用下面描述的认证、授权和审计日志框架开发其他插件。 所有认证、授权和审计日志插件都可以与Solr一起工作，无论它是作为集群还是单节点安装运行。所有相关配置，包括用户和权限规则，都存储在名为security.json的文件中。使">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-02-05T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:29:28.084Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr部署">
+<meta property="article:tag" content="安全">
+<meta property="article:tag" content="认证">
+<meta property="article:tag" content="授权">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr部署：认证和授权插件配置" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr部署：认证和授权插件配置
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/02/05/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AE%A4%E8%AF%81%E5%92%8C%E6%8E%88%E6%9D%83%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE/" class="article-date">
+	  <time datetime="2025-02-05T16:00:00.000Z" itemprop="datePublished">二月 5, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr部署：认证和授权插件配置"><a href="#Solr部署：认证和授权插件配置" class="headerlink" title="Solr部署：认证和授权插件配置"></a>Solr部署：认证和授权插件配置</h1><p>Solr具有支持用户认证、授权和审计的安全框架。<br>这允许验证用户身份并限制对Solr集群中资源的访问。</p>
+<p>Solr包含一些开箱即用的插件，还可以使用下面描述的认证、授权和审计日志框架开发其他插件。</p>
+<p>所有认证、授权和审计日志插件都可以与Solr一起工作，无论它是作为集群还是单节点安装运行。<br>所有相关配置，包括用户和权限规则，都存储在名为<code>security.json</code>的文件中。<br>使用SolrCloud时，此文件必须位于ZooKeeper结构的chroot处。如果没有给出chroot，那么它必须在根目录。<br>在独立模式下运行Solr时（没有ZooKeeper），此文件必须在<code>$SOLR_HOME</code>目录中。手动从提取的存档运行Solr时，这很可能是<code>server/solr</code>。如果使用了服务安装脚本，其默认位置将是<code>/var/solr/data</code>，可以通过提供给服务安装程序的选项更改。</p>
+<h2 id="配置security-json"><a href="#配置security-json" class="headerlink" title="配置security.json"></a>配置security.json</h2><p>初始化安全插件所需的所有信息都存储在<code>security.json</code>文件中。<br>此文件包含3个部分，分别用于认证、授权和审计日志。</p>
+<p><strong>示例security.json</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span> <span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;class.that.implements.authentication&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;authorization&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;class.that.implements.authorization&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;auditlogging&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;class.that.implements.auditlogging&quot;</span></span><br><span class="line">  <span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>/security.json</code>文件需要在Solr实例启动之前就在正确的位置，这样Solr启动时安全插件就已启用。<br>有关如何执行此操作的信息，请参见下面的《与Solr一起使用security.json》部分。</p>
+<p>根据使用的插件，其他信息将存储在<code>security.json</code>中，例如用户信息或创建角色和权限的规则。<br>此信息通过Solr提供的每个插件的API添加，或者在自定义插件的情况下，通过您设计的方法添加。</p>
+<p>这是一个更详细的<code>security.json</code>示例。<br>在这个示例中，启用了基本认证和基于规则的授权插件，并添加了一些数据：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line"><span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span><span class="string">&quot;solr.BasicAuthPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;credentials&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;solr&quot;</span><span class="punctuation">:</span><span class="string">&quot;IV0EHq1OnNrj6gvRCwvFwTrZ1+z1oBbnQdiVC3otuq0= Ndd7LKvVBAaZIF0QAVi1ekCfAJXr1GGfLtRUXhgrF8c=&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">,</span></span><br><span class="line"><span class="attr">&quot;authorization&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span></span><br><span class="line">   <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span><span class="string">&quot;solr.RuleBasedAuthorizationPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;permissions&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span><span class="punctuation">&#123;</span><span class="attr">&quot;name&quot;</span><span class="punctuation">:</span><span class="string">&quot;security-edit&quot;</span><span class="punctuation">,</span></span><br><span class="line">      <span class="attr">&quot;role&quot;</span><span class="punctuation">:</span><span class="string">&quot;admin&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line">   <span class="attr">&quot;user-role&quot;</span><span class="punctuation">:</span><span class="punctuation">&#123;</span><span class="attr">&quot;solr&quot;</span><span class="punctuation">:</span><span class="string">&quot;admin&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="与Solr一起使用security-json"><a href="#与Solr一起使用security-json" class="headerlink" title="与Solr一起使用security.json"></a>与Solr一起使用security.json</h2><h3 id="在SolrCloud集群中"><a href="#在SolrCloud集群中" class="headerlink" title="在SolrCloud集群中"></a>在SolrCloud集群中</h3><p>在配置Solr使用认证或授权插件时，您需要将<code>security.json</code>文件上传到ZooKeeper。</p>
+<p>创建内容如下的文件<code>security.json</code>：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;solr.KerberosPlugin&quot;</span><span class="punctuation">&#125;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>注意此示例为认证定义了<code>KerberosPlugin</code>。<br>您将希望根据您使用的插件适当修改此部分。</p>
+<p>然后使用<code>bin/solr zk</code>命令上传文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;bin/solr zk <span class="built_in">cp</span> ./security.json zk:security.json -z localhost:2181</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong> 如果您在<code>solr.in.sh</code>&#x2F;<code>solr.in.cmd</code>中定义了<code>ZK_HOST</code>（参见<a href="zookeeper-ensemble.html#updating-solr-include-files">更新Solr包含文件</a>），您可以从上述命令中省略<code>-z &lt;zk host string&gt;</code>。</p>
+<p><strong>警告：</strong> 每当您使用任何安全插件并将<code>security.json</code>存储在ZooKeeper中时，我们强烈建议您在ZooKeeper节点中实施访问控制。<br>有关如何启用此功能的信息可在<a href="zookeeper-access-control.html">ZooKeeper访问控制</a>部分找到。</p>
+<p>一旦<code>security.json</code>已上传到ZooKeeper，您应该使用您正在使用的插件的相应API来更新它。<br>您可以手动编辑它，但必须小心删除任何版本数据，以便在所有ZooKeeper节点上正确更新。<br>版本数据在<code>security.json</code>文件的末尾找到，将显示为字母”v”后跟数字，例如<code>&#123;&quot;v&quot;:138&#125;</code>。</p>
+<h3 id="在用户管理的集群或单节点安装中"><a href="#在用户管理的集群或单节点安装中" class="headerlink" title="在用户管理的集群或单节点安装中"></a>在用户管理的集群或单节点安装中</h3><p>在用户管理的集群或单节点安装中运行Solr时，您创建<code>security.json</code>文件并将其放在您安装的<code>$SOLR_HOME</code>目录中（这是您放置<code>solr.xml</code>的同一位置，通常是<code>server/solr</code>）。</p>
+<p>对于用户管理的集群，您需要将<code>security.json</code>放在集群的每个节点上。</p>
+<p>您可以使用认证和授权API，但对于用户管理的集群，您需要在每个节点上分别发出相同的API请求。<br>您也可以手动编辑<code>security.json</code>，如果您愿意的话。</p>
+<h2 id="认证"><a href="#认证" class="headerlink" title="认证"></a>认证</h2><p>认证插件通过认证对Solr的传入请求来帮助保护Solr的端点。<br>可以通过扩展AuthenticationPlugin类来实现自定义插件。</p>
+<p>认证插件由两部分组成：</p>
+<ol>
+<li>服务器端组件，它使用插件中定义的机制（如Kerberos、基本认证或其他）拦截和认证对Solr的传入请求。</li>
+<li>客户端组件，即<code>HttpClientConfigurer</code>的扩展，它使SolrJ客户端能够使用服务器理解的认证机制向安全的Solr实例发出请求。</li>
+</ol>
+<h3 id="启用认证插件"><a href="#启用认证插件" class="headerlink" title="启用认证插件"></a>启用认证插件</h3><p>在<code>/security.json</code>中指定认证插件，如此示例：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authentication&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;class.that.implements.authentication&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;other_data&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>security.json</code>的<code>authentication</code>块中的所有内容都将在初始化期间作为映射传递给插件。</p>
+<p>认证插件也可以通过在启动期间传入<code>-DauthenticationPlugin=&lt;plugin class name&gt;</code>与单节点Solr实例一起使用。</p>
+<p>当前可用的认证插件有：</p>
+<ul>
+<li>基本认证插件</li>
+<li>JWT认证插件</li>
+<li>Kerberos认证插件</li>
+<li>Cert认证插件</li>
+<li>Hadoop认证插件</li>
+</ul>
+<h2 id="授权"><a href="#授权" class="headerlink" title="授权"></a>授权</h2><p>可以通过扩展<a target="_blank" rel="noopener" href="https://solr.apache.org/docs/9_9_0/core/org/apache/solr/security/AuthorizationPlugin.html">AuthorizationPlugin</a>接口为Solr编写授权插件。</p>
+<h3 id="启用授权插件"><a href="#启用授权插件" class="headerlink" title="启用授权插件"></a>启用授权插件</h3><p>插件实现必须在类路径中。<br>然后可以通过在<code>security.json</code>中以以下方式指定来初始化插件：</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;authorization&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;class&quot;</span><span class="punctuation">:</span> <span class="string">&quot;org.apache.solr.security.MockAuthorizationPlugin&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="attr">&quot;other_data&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;...&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>security.json</code>的<code>authorization</code>块中的所有内容都将在初始化期间作为映射传递给插件。</p>
+<p><strong>重要：</strong> 尚不支持重新加载插件，需要重新启动Solr安装（意思是，JVM应该重新启动，而不仅仅是核心重新加载）。</p>
+<p>当前可用的授权插件有：</p>
+<ul>
+<li>基于规则的授权插件</li>
+</ul>
+<h2 id="在管理UI中认证"><a href="#在管理UI中认证" class="headerlink" title="在管理UI中认证"></a>在管理UI中认证</h2><p>每当启用认证插件时，管理UI中的所有或某些操作也需要认证。<br>管理UI是在您浏览器内运行的AngularJS应用程序，被Solr视为任何其他外部客户端。</p>
+<p>需要认证时，管理UI将向您显示登录对话框。<br>管理UI当前支持的认证插件是：</p>
+<ul>
+<li>基本认证插件</li>
+<li>JWT认证插件</li>
+</ul>
+<p>如果您选择的插件不受支持，管理UI仍将允许您执行不受限制的操作，而对于受限制的操作，您需要通过发送HTTP请求而不是通过管理UI的图形用户界面与Solr交互。<br>管理UI支持的所有操作都可以通过Solr的API执行。</p>
+<h2 id="保护节点间请求"><a href="#保护节点间请求" class="headerlink" title="保护节点间请求"></a>保护节点间请求</h2><p>有很多请求来自Solr节点本身。<br>例如，从overseer到节点的请求、恢复线程等。<br>我们称这些为’节点间’请求。<br>Solr有一个内置的<code>PKIAuthenticationPlugin</code>（如下所述），始终可用于保护节点间流量。</p>
+<p>每个认证插件也可以决定自己保护节点间请求。<br>他们可以通过所谓的<code>HttpClientBuilder</code>机制来做到这一点，或者他们可以通过重写基类中的<code>interceptInternodeRequest()</code>方法，在每个请求的基础上选择委托给PKI或不委托，其中可以设置任何HTTP标头。</p>
+<h3 id="PKIAuthenticationPlugin"><a href="#PKIAuthenticationPlugin" class="headerlink" title="PKIAuthenticationPlugin"></a>PKIAuthenticationPlugin</h3><p><code>PKIAuthenticationPlugin</code>提供了一个内置的认证机制，其中每个Solr节点都是超级用户，通过使用公钥基础设施（PKI）完全被其他Solr节点信任。<br>每个认证插件可以选择将所有或某些节点间流量委托给PKI插件。</p>
+<p>Solr中目前有两个版本的PKI认证协议可用。对于每个传出请求，<code>PKIAuthenticationPlugin</code>添加一个特殊标头，其中包含请求时间戳和用户主体。<br>当节点接收到带有此特殊标头的请求时，它将使用相应源节点的公钥验证消息。<br>只对来自在ZooKeeper中注册的其他Solr节点的传入流量尝试消息验证。<br>如果请求通过PKI验证并且时间戳少于5秒，则请求将被信任。</p>
+<p><strong>注意：</strong> 因为PKI认证插件依赖于相对较短的时间戳过期来验证请求，集群中单独节点上的时钟必须同步。</p>
+<p>协议版本2是默认版本。在此版本中，<code>SolrAuthV2</code>标头包含：源节点名称、用户主体、请求时间戳和base64编码的RSA签名。所有节点将首先尝试验证此标头。</p>
+<p>为了支持从旧版本的滚动重启，可以配置Solr接受和验证使用协议v1的PKI认证。通过设置系统属性<code>solr.pki.sendVersion=v1</code>和<code>solr.pki.acceptVersions=v1,v2</code>启用此功能。启用时，请求将包含一个<code>SolrAuth</code>标头，其中包含使用发送方私钥加密的用户主体和时间戳。</p>
+<p>如果<code>SolrAuthV2</code>标头存在但验证失败，那么Solr将不会回退到检查<code>SolrAuth</code>。只有当最新标头不存在时，才会查询传统认证标头。</p>
+<p><code>solr.pki.acceptVersion</code>的未知值将发出警告日志消息，但不会导致错误，以更顺利地支持未来的协议修订。</p>
+<p>超时可通过名为<code>pkiauth.ttl</code>的系统属性配置。<br>例如，如果您希望将生存时间增加到10秒（10,000毫秒），请使用属性<code>&#39;-Dpkiauth.ttl=10000&#39;</code>启动每个节点。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E9%83%A8%E7%BD%B2/">Solr部署</a>
+  
+    <a class="article-tag" href="/tags/%E5%AE%89%E5%85%A8/">安全</a>
+  
+    <a class="article-tag" href="/tags/%E8%AE%A4%E8%AF%81/">认证</a>
+  
+    <a class="article-tag" href="/tags/%E6%8E%88%E6%9D%83/">授权</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/02/06/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%A4%87%E4%BB%BD%E5%92%8C%E6%81%A2%E5%A4%8D/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr部署：备份和恢复
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/02/04/Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E5%AE%A1%E8%AE%A1%E6%97%A5%E5%BF%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr部署：审计日志</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%83%A8%E7%BD%B2%EF%BC%9A%E8%AE%A4%E8%AF%81%E5%92%8C%E6%8E%88%E6%9D%83%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">1.</span> <span class="nav-text">Solr部署：认证和授权插件配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEsecurity-json"><span class="nav-number">1.1.</span> <span class="nav-text">配置security.json</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%8ESolr%E4%B8%80%E8%B5%B7%E4%BD%BF%E7%94%A8security-json"><span class="nav-number">1.2.</span> <span class="nav-text">与Solr一起使用security.json</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8SolrCloud%E9%9B%86%E7%BE%A4%E4%B8%AD"><span class="nav-number">1.2.1.</span> <span class="nav-text">在SolrCloud集群中</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86%E7%9A%84%E9%9B%86%E7%BE%A4%E6%88%96%E5%8D%95%E8%8A%82%E7%82%B9%E5%AE%89%E8%A3%85%E4%B8%AD"><span class="nav-number">1.2.2.</span> <span class="nav-text">在用户管理的集群或单节点安装中</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A4%E8%AF%81"><span class="nav-number">1.3.</span> <span class="nav-text">认证</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E8%AE%A4%E8%AF%81%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.1.</span> <span class="nav-text">启用认证插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%88%E6%9D%83"><span class="nav-number">1.4.</span> <span class="nav-text">授权</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%90%AF%E7%94%A8%E6%8E%88%E6%9D%83%E6%8F%92%E4%BB%B6"><span class="nav-number">1.4.1.</span> <span class="nav-text">启用授权插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9C%A8%E7%AE%A1%E7%90%86UI%E4%B8%AD%E8%AE%A4%E8%AF%81"><span class="nav-number">1.5.</span> <span class="nav-text">在管理UI中认证</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%9D%E6%8A%A4%E8%8A%82%E7%82%B9%E9%97%B4%E8%AF%B7%E6%B1%82"><span class="nav-number">1.6.</span> <span class="nav-text">保护节点间请求</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#PKIAuthenticationPlugin"><span class="nav-number">1.6.1.</span> <span class="nav-text">PKIAuthenticationPlugin</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr配置：集群插件管理详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="SolrCloud集群管理Solr配置插件系统" />
+  
+  
+  
+  
+  <meta name="description" content="Solr配置：集群插件管理详解集群（CoreContainer级别）插件子系统集群插件是在CoreContainer（节点）级别定义和实例化的可插拔组件。这些组件通常在Solr节点级别提供管理级功能和附加功能的API。 插件配置如果solr.cluster.plugin.edit.enabled属性设置为true（默认值），则可以使用&#x2F;cluster&#x2F;plugin API维护插件配置。 此API端">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr配置：集群插件管理详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/08/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Solr配置：集群插件管理详解集群（CoreContainer级别）插件子系统集群插件是在CoreContainer（节点）级别定义和实例化的可插拔组件。这些组件通常在Solr节点级别提供管理级功能和附加功能的API。 插件配置如果solr.cluster.plugin.edit.enabled属性设置为true（默认值），则可以使用&#x2F;cluster&#x2F;plugin API维护插件配置。 此API端">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T07:52:13.044Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="SolrCloud">
+<meta property="article:tag" content="集群管理">
+<meta property="article:tag" content="Solr配置">
+<meta property="article:tag" content="插件系统">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr配置：集群插件管理详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr配置：集群插件管理详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/08/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-01-08T16:00:00.000Z" itemprop="datePublished">一月 8, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr配置：集群插件管理详解"><a href="#Solr配置：集群插件管理详解" class="headerlink" title="Solr配置：集群插件管理详解"></a>Solr配置：集群插件管理详解</h1><h2 id="集群（CoreContainer级别）插件子系统"><a href="#集群（CoreContainer级别）插件子系统" class="headerlink" title="集群（CoreContainer级别）插件子系统"></a>集群（CoreContainer级别）插件子系统</h2><p>集群插件是在<code>CoreContainer</code>（节点）级别定义和实例化的可插拔组件。这些组件通常在Solr节点级别提供管理级功能和附加功能的API。</p>
+<h3 id="插件配置"><a href="#插件配置" class="headerlink" title="插件配置"></a>插件配置</h3><p>如果<code>solr.cluster.plugin.edit.enabled</code>属性设置为true（默认值），则可以使用<code>/cluster/plugin</code> API维护插件配置。</p>
+<p>此API端点允许添加、删除和更新插件配置。</p>
+<p>每个插件必须有一个唯一的名称来注册。尝试添加重复名称的插件会导致错误。某些类型的插件使用预定义的名称，并且必须在这些名称下注册才能正常运行。</p>
+<p>从Solr 9.0开始，插件配置在内部维护在ZooKeeper的<code>/clusterprops.json</code>文件中，位于<code>plugin</code>条目下。配置是一个JSON映射，其中键是唯一的插件名称，值是序列化的<code>org.apache.solr.client.solrj.request.beans.PluginMeta</code> Bean。</p>
+<p>支持以下通用插件属性：</p>
+<h4 id="name（名称）"><a href="#name（名称）" class="headerlink" title="name（名称）"></a>name（名称）</h4><ul>
+<li><strong>必需</strong> | 默认值：无</li>
+</ul>
+<p>唯一的插件名称。某些插件类型需要使用预定义名称之一才能正常运行。按惯例，此类预定义名称使用前导点前缀（例如，<code>.placement-plugin</code>）。</p>
+<h4 id="class（类）"><a href="#class（类）" class="headerlink" title="class（类）"></a>class（类）</h4><ul>
+<li><strong>必需</strong> | 默认值：无</li>
+</ul>
+<p>实现类。如果类作为Solr的一部分可用，则可以指定为完全限定的类名，或者也可以使用<code>&lt;package&gt;:&lt;className&gt;</code>语法指定来引用Solr包内的类。</p>
+<h4 id="version（版本）"><a href="#version（版本）" class="headerlink" title="version（版本）"></a>version（版本）</h4><ul>
+<li><strong>可选</strong> | 默认值：无</li>
+</ul>
+<p>Solr包版本。</p>
+<p>当类从包而不是从Solr本身加载时，此参数是必需的。</p>
+<h4 id="path-prefix（路径前缀）"><a href="#path-prefix（路径前缀）" class="headerlink" title="path-prefix（路径前缀）"></a>path-prefix（路径前缀）</h4><ul>
+<li><strong>可选</strong> | 默认值：无</li>
+</ul>
+<p>要添加到插件中定义的REST API端点的路径前缀。</p>
+<h4 id="config（配置）"><a href="#config（配置）" class="headerlink" title="config（配置）"></a>config（配置）</h4><ul>
+<li><strong>可选</strong> | 默认值：无</li>
+</ul>
+<p>附加插件配置参数的JSON映射。实现<code>ConfigurablePlugin</code>接口的插件将使用从此映射反序列化的特定于插件的配置对象进行初始化。</p>
+<p>插件配置示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add&quot;:&#123;</span></span><br><span class="line"><span class="string">        &quot;name&quot;: &quot;.placement-plugin&quot;,</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;org.apache.solr.cluster.placement.plugins.AffinityPlacementFactory&quot;,</span></span><br><span class="line"><span class="string">        &quot;config&quot;: &#123;</span></span><br><span class="line"><span class="string">          &quot;minimalFreeDiskGB&quot;: 20,</span></span><br><span class="line"><span class="string">          &quot;prioritizedFreeDiskGB&quot;: 100,</span></span><br><span class="line"><span class="string">          &quot;withCollection&quot;: &#123;</span></span><br><span class="line"><span class="string">            &quot;A_primary&quot;: &quot;A_secondary&quot;,</span></span><br><span class="line"><span class="string">            &quot;B_primary&quot;: &quot;B_secondary&quot;</span></span><br><span class="line"><span class="string">          &#125;</span></span><br><span class="line"><span class="string">        &#125;</span></span><br><span class="line"><span class="string">    &#125;&#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="集群插件类型"><a href="#集群插件类型" class="headerlink" title="集群插件类型"></a>集群插件类型</h3><p>从插件加载的类通常支持两种类型的功能（不互斥）：</p>
+<ul>
+<li><p><strong>请求处理器插件</strong>：公开REST API端点（实现类用<code>@EndPoint</code>注解，可选地用<code>@Command</code>注解）。这些插件的API自动注册为<code>@EndPoint</code>注解中定义的路径下的REST端点。</p>
+</li>
+<li><p><strong>特定接口实现插件</strong>：用作内部组件。加载后，它们会被自动发现并注册到使用此类插件的子系统中。示例包括<code>ClusterSingleton</code>、<code>ClusterEventProducer</code>、<code>ClusterEventListener</code>和<code>PlacementPluginFactory</code>。</p>
+</li>
+</ul>
+<h3 id="插件生命周期"><a href="#插件生命周期" class="headerlink" title="插件生命周期"></a>插件生命周期</h3><p>插件实例在Solr节点启动期间首次创建Solr的<code>CoreContainer</code>时加载和初始化。</p>
+<p>然后在每次配置更新时，每个节点都会收到更改通知，然后将现有插件与新配置进行比较，并分别创建、删除或替换（即，使用新配置删除和添加）节点上存在的插件实例。</p>
+<p>实际上，这意味着由此API管理的集群级插件可以动态更改和重新配置，而无需重新启动Solr节点，并且更改几乎同时应用于所有节点。</p>
+<h2 id="插件类型详解"><a href="#插件类型详解" class="headerlink" title="插件类型详解"></a>插件类型详解</h2><h3 id="预定义插件名称"><a href="#预定义插件名称" class="headerlink" title="预定义插件名称"></a>预定义插件名称</h3><p>具有这些名称的插件在Solr的特定部分中使用。它们的名称是保留的，不能用于其他插件类型：</p>
+<ul>
+<li><p><code>.placement-plugin</code>：实现<code>PlacementPluginFactory</code>接口的插件。此类插件确定集群中的副本放置策略。</p>
+</li>
+<li><p><code>.cluster-event-producer</code>：实现<code>ClusterEventProducer</code>接口的插件。此类插件用于生成集群级事件。</p>
+</li>
+</ul>
+<h3 id="PlacementPluginFactory插件"><a href="#PlacementPluginFactory插件" class="headerlink" title="PlacementPluginFactory插件"></a>PlacementPluginFactory插件</h3><p>此类插件支持集合副本的可配置放置策略。</p>
+<h3 id="ClusterSingleton插件"><a href="#ClusterSingleton插件" class="headerlink" title="ClusterSingleton插件"></a>ClusterSingleton插件</h3><p>实现<code>ClusterSingleton</code>接口的插件在每个Solr节点上实例化。但是，它们的启动&#x2F;停止生命周期（在接口中定义）受到控制，使得在任何时候集群中只有一个运行的插件实例。</p>
+<p>（目前这是通过重用Overseer领导选举来实现的，所以所有处于RUNNING状态的<code>ClusterSingleton</code>在Overseer领导节点上执行）。</p>
+<p>任何插件都可以实现此接口，以向Solr指示它需要这种集群单例行为。</p>
+<p><code>ClusterSingleton</code>插件也可以通过在<code>solr.xml</code>中声明它们来配置。</p>
+<h3 id="ClusterEventProducer插件"><a href="#ClusterEventProducer插件" class="headerlink" title="ClusterEventProducer插件"></a>ClusterEventProducer插件</h3><p>为了支持生成集群级事件，在每个Solr节点上创建<code>ClusterEventProducer</code>的实现。此组件也是<code>ClusterSingleton</code>，这意味着在任何时候集群中只有一个活动实例。</p>
+<p>如果未指定插件配置，则使用默认实现<code>org.apache.solr.cluster.events.impl.NoOpProducer</code>，它不生成任何事件-这意味着默认情况下事件生成是关闭的。在<code>org.apache.solr.cluster.events.impl.DefaultClusterEventProducer</code>中也提供了支持节点和集合事件生成的实现。</p>
+<p>事件生产者配置可以通过更改预定义的插件配置来动态更改，例如：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add&quot;:&#123;</span></span><br><span class="line"><span class="string">        &quot;name&quot;: &quot;.cluster-event-producer&quot;,</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;org.apache.solr.cluster.events.impl.DefaultClusterEventProducer&quot;</span></span><br><span class="line"><span class="string">    &#125;&#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<p>通过简单地删除插件，可以将其恢复到默认的无操作配置：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;remove&quot;: &quot;.cluster-event-producer&quot;</span></span><br><span class="line"><span class="string">  &#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="ClusterEventListener插件"><a href="#ClusterEventListener插件" class="headerlink" title="ClusterEventListener插件"></a>ClusterEventListener插件</h3><p>实现<code>ClusterEventListener</code>接口的插件将自动注册到<code>ClusterEventProducer</code>实例。</p>
+<p>实现将收到<code>ClusterEventProducer</code>生成的所有事件的通知，并需要仅选择它们感兴趣的事件。</p>
+<h4 id="org-apache-solr-cluster-events-impl-CollectionsRepairEventListener"><a href="#org-apache-solr-cluster-events-impl-CollectionsRepairEventListener" class="headerlink" title="org.apache.solr.cluster.events.impl.CollectionsRepairEventListener"></a>org.apache.solr.cluster.events.impl.CollectionsRepairEventListener</h4><p>监听器的实现，对NODE_LOST事件做出反应并检查需要将哪些副本重新添加到其他节点以保持与之前相同的复制计数。</p>
+<p>此实现等待一定时间（默认30秒）以确保节点真的宕机。对于位于宕机时间足够长的节点上的副本，它会生成适当的ADDREPLICA命令以抵消这些节点上丢失的副本。</p>
+<p>插件配置示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add&quot;:&#123;</span></span><br><span class="line"><span class="string">        &quot;name&quot;: &quot;collections-repair-listener&quot;,</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;org.apache.solr.cluster.events.impl.CollectionsRepairEventListener&quot;</span></span><br><span class="line"><span class="string">    &#125;&#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h2 id="插件管理API"><a href="#插件管理API" class="headerlink" title="插件管理API"></a>插件管理API</h2><h3 id="列出插件"><a href="#列出插件" class="headerlink" title="列出插件"></a>列出插件</h3><p>此命令使用HTTP GET并返回加载的插件及其配置的列表：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="添加插件"><a href="#添加插件" class="headerlink" title="添加插件"></a>添加插件</h3><p>此命令使用HTTP POST添加新的插件配置。如果已存在同名插件，则会导致错误。</p>
+<p>示例命令，添加包含在Solr包中的插件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;add&quot;:&#123;</span></span><br><span class="line"><span class="string">        &quot;name&quot;: &quot;my-plugin1&quot;,</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;my-package:com.example.MyPlugin&quot;,</span></span><br><span class="line"><span class="string">        &quot;version&quot;: &quot;1.0&quot;</span></span><br><span class="line"><span class="string">    &#125;&#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="更新插件"><a href="#更新插件" class="headerlink" title="更新插件"></a>更新插件</h3><p>此命令使用HTTP POST更新现有的插件配置。如果不存在此名称的插件，则会导致错误。</p>
+<p>此示例更新现有插件，可能更改其配置参数。旧的插件实例被删除，并使用提供的配置创建新实例。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;update&quot;:&#123;</span></span><br><span class="line"><span class="string">        &quot;name&quot;: &quot;collections-repair-listener&quot;,</span></span><br><span class="line"><span class="string">        &quot;class&quot;: &quot;org.apache.solr.cluster.events.impl.CollectionsRepairEventListener&quot;,</span></span><br><span class="line"><span class="string">        &quot;config&quot;:&#123;</span></span><br><span class="line"><span class="string">          &quot;waitForSecond&quot;: 30</span></span><br><span class="line"><span class="string">    &#125;&#125;&#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h3 id="删除插件"><a href="#删除插件" class="headerlink" title="删除插件"></a>删除插件</h3><p>此命令使用HTTP POST删除现有的插件配置。如果不存在此名称的插件，则会导致错误。</p>
+<p>与其他命令不同，此处的命令负载仅包含要删除的插件名称（作为字符串）。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">curl -X POST -H <span class="string">&#x27;Content-type: application/json&#x27;</span> -d <span class="string">&#x27;&#123;</span></span><br><span class="line"><span class="string">    &quot;remove&quot;: &quot;my-plugin1&quot;</span></span><br><span class="line"><span class="string">    &#125;&#x27;</span></span><br><span class="line">  http://localhost:8983/api/cluster/plugin</span><br></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Solr的集群插件系统提供了强大的扩展能力，允许开发者在集群级别添加自定义功能。通过理解不同的插件类型、生命周期管理和API操作，可以有效地利用这个系统来增强Solr集群的功能。</p>
+<p>关键要点：</p>
+<ul>
+<li>插件在CoreContainer级别操作，提供节点级功能</li>
+<li>支持动态配置更新，无需重启</li>
+<li>预定义名称的插件有特殊用途</li>
+<li>ClusterSingleton确保集群中只有一个运行实例</li>
+<li>通过REST API进行完整的插件生命周期管理</li>
+</ul>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/SolrCloud/">SolrCloud</a>
+  
+    <a class="article-tag" href="/tags/%E9%9B%86%E7%BE%A4%E7%AE%A1%E7%90%86/">集群管理</a>
+  
+    <a class="article-tag" href="/tags/Solr%E9%85%8D%E7%BD%AE/">Solr配置</a>
+  
+    <a class="article-tag" href="/tags/%E6%8F%92%E4%BB%B6%E7%B3%BB%E7%BB%9F/">插件系统</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/09/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%96%E8%A7%A3%E7%A0%81%E5%99%A8%E5%B7%A5%E5%8E%82%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr配置：编解码器工厂详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/07/Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E7%BC%93%E5%AD%98%E9%A2%84%E7%83%AD%E7%AE%A1%E7%90%86%E6%8C%87%E5%8D%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr配置：缓存预热管理指南</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E9%85%8D%E7%BD%AE%EF%BC%9A%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr配置：集群插件管理详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%EF%BC%88CoreContainer%E7%BA%A7%E5%88%AB%EF%BC%89%E6%8F%92%E4%BB%B6%E5%AD%90%E7%B3%BB%E7%BB%9F"><span class="nav-number">1.1.</span> <span class="nav-text">集群（CoreContainer级别）插件子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E9%85%8D%E7%BD%AE"><span class="nav-number">1.1.1.</span> <span class="nav-text">插件配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#name%EF%BC%88%E5%90%8D%E7%A7%B0%EF%BC%89"><span class="nav-number">1.1.1.1.</span> <span class="nav-text">name（名称）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#class%EF%BC%88%E7%B1%BB%EF%BC%89"><span class="nav-number">1.1.1.2.</span> <span class="nav-text">class（类）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#version%EF%BC%88%E7%89%88%E6%9C%AC%EF%BC%89"><span class="nav-number">1.1.1.3.</span> <span class="nav-text">version（版本）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#path-prefix%EF%BC%88%E8%B7%AF%E5%BE%84%E5%89%8D%E7%BC%80%EF%BC%89"><span class="nav-number">1.1.1.4.</span> <span class="nav-text">path-prefix（路径前缀）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#config%EF%BC%88%E9%85%8D%E7%BD%AE%EF%BC%89"><span class="nav-number">1.1.1.5.</span> <span class="nav-text">config（配置）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9B%86%E7%BE%A4%E6%8F%92%E4%BB%B6%E7%B1%BB%E5%9E%8B"><span class="nav-number">1.1.2.</span> <span class="nav-text">集群插件类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F"><span class="nav-number">1.1.3.</span> <span class="nav-text">插件生命周期</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E7%B1%BB%E5%9E%8B%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.2.</span> <span class="nav-text">插件类型详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%84%E5%AE%9A%E4%B9%89%E6%8F%92%E4%BB%B6%E5%90%8D%E7%A7%B0"><span class="nav-number">1.2.1.</span> <span class="nav-text">预定义插件名称</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PlacementPluginFactory%E6%8F%92%E4%BB%B6"><span class="nav-number">1.2.2.</span> <span class="nav-text">PlacementPluginFactory插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ClusterSingleton%E6%8F%92%E4%BB%B6"><span class="nav-number">1.2.3.</span> <span class="nav-text">ClusterSingleton插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ClusterEventProducer%E6%8F%92%E4%BB%B6"><span class="nav-number">1.2.4.</span> <span class="nav-text">ClusterEventProducer插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ClusterEventListener%E6%8F%92%E4%BB%B6"><span class="nav-number">1.2.5.</span> <span class="nav-text">ClusterEventListener插件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#org-apache-solr-cluster-events-impl-CollectionsRepairEventListener"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">org.apache.solr.cluster.events.impl.CollectionsRepairEventListener</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%92%E4%BB%B6%E7%AE%A1%E7%90%86API"><span class="nav-number">1.3.</span> <span class="nav-text">插件管理API</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%97%E5%87%BA%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.1.</span> <span class="nav-text">列出插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%BB%E5%8A%A0%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.2.</span> <span class="nav-text">添加插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.3.</span> <span class="nav-text">更新插件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A0%E9%99%A4%E6%8F%92%E4%BB%B6"><span class="nav-number">1.3.4.</span> <span class="nav-text">删除插件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">1.4.</span> <span class="nav-text">总结</span></a></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

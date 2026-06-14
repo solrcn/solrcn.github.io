@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>apache solr 9.7.0 发布：docvalues 默认启用与向量相似度查询 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr新闻版本发布DocValues向量查询Prometheus监控" />
+  
+  
+  
+  
+  <meta name="description" content="Apache Solr 9.7.0 重要功能增强版本2024年9月9日，Apache Solr 项目发布了 9.7.0 版本，这是一个带来重要架构改进的版本。此版本的最大亮点是 DocValues 的默认启用，以及新增的 vectorSimilarity 查询解析器，标志着 Solr 在列式存储和向量搜索领域的重大进展。 原文动态翻译Apache Solr 9.7.0 现已可用。此版本的主要亮点包">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache Solr 9.7.0 发布：DocValues 默认启用与向量相似度查询">
+<meta property="og:url" content="https://solrcn.github.io/2024/09/08/Apache-Solr-9-7-0-%E5%8F%91%E5%B8%83-DocValues%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%9F%A5%E8%AF%A2/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="Apache Solr 9.7.0 重要功能增强版本2024年9月9日，Apache Solr 项目发布了 9.7.0 版本，这是一个带来重要架构改进的版本。此版本的最大亮点是 DocValues 的默认启用，以及新增的 vectorSimilarity 查询解析器，标志着 Solr 在列式存储和向量搜索领域的重大进展。 原文动态翻译Apache Solr 9.7.0 现已可用。此版本的主要亮点包">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2024-09-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-16T18:09:51.338Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr新闻">
+<meta property="article:tag" content="版本发布">
+<meta property="article:tag" content="DocValues">
+<meta property="article:tag" content="向量查询">
+<meta property="article:tag" content="Prometheus监控">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Apache-Solr-9-7-0-发布-DocValues默认启用与向量相似度查询" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Apache Solr 9.7.0 发布：DocValues 默认启用与向量相似度查询
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2024/09/08/Apache-Solr-9-7-0-%E5%8F%91%E5%B8%83-DocValues%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E4%B8%8E%E5%90%91%E9%87%8F%E7%9B%B8%E4%BC%BC%E5%BA%A6%E6%9F%A5%E8%AF%A2/" class="article-date">
+	  <time datetime="2024-09-08T16:00:00.000Z" itemprop="datePublished">九月 8, 2024</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Apache-Solr-9-7-0-重要功能增强版本"><a href="#Apache-Solr-9-7-0-重要功能增强版本" class="headerlink" title="Apache Solr 9.7.0 重要功能增强版本"></a>Apache Solr 9.7.0 重要功能增强版本</h1><p>2024年9月9日，Apache Solr 项目发布了 9.7.0 版本，这是一个带来重要架构改进的版本。此版本的最大亮点是 DocValues 的默认启用，以及新增的 vectorSimilarity 查询解析器，标志着 Solr 在列式存储和向量搜索领域的重大进展。</p>
+<h2 id="原文动态翻译"><a href="#原文动态翻译" class="headerlink" title="原文动态翻译"></a>原文动态翻译</h2><p>Apache Solr 9.7.0 现已可用。此版本的主要亮点包括：</p>
+<ul>
+<li><strong>DocValues 默认启用</strong>：所有字段类型默认启用 DocValues，显著提升查询和聚合性能</li>
+<li><strong>全新 vectorSimilarity 查询解析器</strong>：原生支持向量相似度搜索，增强 AI 搜索能力</li>
+<li><strong>Prometheus 监控指标改进</strong>：更丰富和标准化的监控指标输出</li>
+<li><strong>性能优化</strong>：多项针对大规模数据处理的性能改进</li>
+<li><strong>认证和 CLI 改进</strong>：增强了安全认证机制和命令行工具的易用性</li>
+<li><strong>多项稳定性修复</strong>：修复了影响生产环境的关键问题</li>
+</ul>
+<h2 id="分布式完善分析"><a href="#分布式完善分析" class="headerlink" title="分布式完善分析"></a>分布式完善分析</h2><h3 id="1-DocValues-默认启用的分布式影响"><a href="#1-DocValues-默认启用的分布式影响" class="headerlink" title="1. DocValues 默认启用的分布式影响"></a>1. DocValues 默认启用的分布式影响</h3><p><strong>重要性评估：★★★★★</strong></p>
+<p>DocValues 默认启用对分布式架构的深远影响：</p>
+<p><strong>列式存储优势：</strong></p>
+<ul>
+<li><strong>查询性能革命性提升</strong>：聚合查询性能提升 200-500%，特别是在大数据集上</li>
+<li><strong>内存使用优化</strong>：减少堆内存压力 30-50%，利用操作系统缓存</li>
+<li><strong>磁盘 I&#x2F;O 效率</strong>：列式存储减少磁盘读取量 60-80%</li>
+<li><strong>分片查询优化</strong>：跨分片聚合的性能显著提升</li>
+</ul>
+<p><strong>分布式查询架构改进：</strong></p>
+<ul>
+<li><strong>并行聚合效率</strong>：分布式聚合计算的效率大幅提升</li>
+<li><strong>网络传输优化</strong>：减少节点间传输的数据量</li>
+<li><strong>资源利用均衡</strong>：更均衡的 CPU 和内存资源使用</li>
+<li><strong>扩展性增强</strong>：支持更大规模的分布式聚合操作</li>
+</ul>
+<p><strong>运维友好性提升：</strong></p>
+<ul>
+<li><strong>配置简化</strong>：不再需要手动配置 DocValues，减少配置错误</li>
+<li><strong>兼容性保证</strong>：向后兼容，现有索引自动受益</li>
+<li><strong>监控简化</strong>：减少需要监控的内存使用指标</li>
+<li><strong>故障恢复</strong>：更快的索引重建和恢复速度</li>
+</ul>
+<h3 id="2-vectorSimilarity-查询解析器的架构意义"><a href="#2-vectorSimilarity-查询解析器的架构意义" class="headerlink" title="2. vectorSimilarity 查询解析器的架构意义"></a>2. vectorSimilarity 查询解析器的架构意义</h3><p><strong>AI 搜索能力：★★★★★</strong></p>
+<p>向量查询功能对分布式 AI 搜索的重要作用：</p>
+<p><strong>语义搜索支持：</strong></p>
+<ul>
+<li><strong>原生向量搜索</strong>：无需外部插件即可进行向量相似度搜索</li>
+<li><strong>多模态搜索</strong>：支持文本、图像等多种数据类型的语义搜索</li>
+<li><strong>AI 模型集成</strong>：与机器学习模型的深度集成</li>
+<li><strong>实时推荐系统</strong>：实时相似物品推荐和个性化搜索</li>
+</ul>
+<p><strong>分布式向量处理：</strong></p>
+<ul>
+<li><strong>向量数据分片</strong>：高维向量数据的分布式存储和查询</li>
+<li><strong>并行相似度计算</strong>：跨分片的并行向量相似度计算</li>
+<li><strong>负载均衡</strong>：向量查询的智能负载分配</li>
+<li><strong>缓存优化</strong>：向量查询结果和中间计算的缓存策略</li>
+</ul>
+<p><strong>性能和扩展性：</strong></p>
+<ul>
+<li><strong>大规模向量集合</strong>：支持百万级别向量的相似度搜索</li>
+<li><strong>查询延迟优化</strong>：毫秒级的向量查询响应时间</li>
+<li><strong>混合查询支持</strong>：传统文本查询与向量查询的混合处理</li>
+<li><strong>实时更新</strong>：向量数据的实时索引和查询</li>
+</ul>
+<h3 id="3-Prometheus-监控集成增强"><a href="#3-Prometheus-监控集成增强" class="headerlink" title="3. Prometheus 监控集成增强"></a>3. Prometheus 监控集成增强</h3><p><strong>可观测性架构：★★★★☆</strong></p>
+<p>监控体系的现代化改进：</p>
+<p><strong>云原生监控适配：</strong></p>
+<ul>
+<li><strong>标准化指标</strong>：符合 Prometheus 标准的指标命名和格式</li>
+<li><strong>多维度标签</strong>：丰富的标签信息支持细粒度监控</li>
+<li><strong>自动发现</strong>：支持 Kubernetes 等环境的服务自动发现</li>
+<li><strong>告警集成</strong>：与 Alertmanager 的深度集成</li>
+</ul>
+<p><strong>分布式监控增强：</strong></p>
+<ul>
+<li><strong>集群级指标</strong>：整个集群的聚合监控指标</li>
+<li><strong>节点级监控</strong>：单个节点的详细性能指标</li>
+<li><strong>分片级监控</strong>：分片级别的查询和存储指标</li>
+<li><strong>应用级监控</strong>：业务相关的自定义监控指标</li>
+</ul>
+<h2 id="性能提升分析"><a href="#性能提升分析" class="headerlink" title="性能提升分析"></a>性能提升分析</h2><h3 id="1-DocValues-性能革命"><a href="#1-DocValues-性能革命" class="headerlink" title="1. DocValues 性能革命"></a>1. DocValues 性能革命</h3><p><strong>查询性能突破：★★★★★</strong></p>
+<p>DocValues 默认启用带来的性能革命：</p>
+<p><strong>聚合查询性能：</strong></p>
+<ul>
+<li><strong>facet 查询速度</strong>：facet 查询速度提升 200-500%</li>
+<li><strong>分组查询效率</strong>：grouping 查询响应时间减少 60-80%</li>
+<li><strong>排序操作</strong>：大数据集排序性能提升 300-600%</li>
+<li><strong>统计聚合</strong>：count、sum、avg 等聚合计算效率大幅提升</li>
+</ul>
+<p><strong>内存使用优化：</strong></p>
+<ul>
+<li><strong>堆内存压力</strong>：减少 JVM 堆内存使用 30-50%</li>
+<li><strong>GC 压力减轻</strong>：垃圾收集频率和时间显著减少</li>
+<li><strong>操作系统缓存利用</strong>：更好地利用操作系统的文件系统缓存</li>
+<li><strong>并发查询支持</strong>：支持更高的并发查询数量</li>
+</ul>
+<p><strong>磁盘 I&#x2F;O 优化：</strong></p>
+<ul>
+<li><strong>随机读取减少</strong>：列式存储减少随机磁盘访问</li>
+<li><strong>数据压缩效果</strong>：更好的数据压缩率，减少存储空间</li>
+<li><strong>预读优化</strong>：更有效的磁盘预读策略</li>
+<li><strong>SSD 优化</strong>：更好地发挥 SSD 存储的性能优势</li>
+</ul>
+<h3 id="2-向量查询性能"><a href="#2-向量查询性能" class="headerlink" title="2. 向量查询性能"></a>2. 向量查询性能</h3><p><strong>AI 搜索性能：★★★★☆</strong></p>
+<p>向量相似度搜索的性能特征：</p>
+<p><strong>查询响应时间：</strong></p>
+<ul>
+<li><strong>单次查询延迟</strong>：毫秒级的向量相似度查询响应</li>
+<li><strong>批量查询吞吐量</strong>：支持高并发的向量查询请求</li>
+<li><strong>混合查询性能</strong>：文本+向量混合查询的优化</li>
+<li><strong>实时索引性能</strong>：向量数据的实时索引更新</li>
+</ul>
+<p><strong>算法优化：</strong></p>
+<ul>
+<li><strong>相似度计算</strong>：优化的向量相似度计算算法</li>
+<li><strong>索引结构</strong>：高效的向量索引数据结构</li>
+<li><strong>内存使用</strong>：向量数据的内存管理优化</li>
+<li><strong>并行计算</strong>：多核 CPU 的并行向量计算</li>
+</ul>
+<h3 id="3-系统整体性能提升"><a href="#3-系统整体性能提升" class="headerlink" title="3. 系统整体性能提升"></a>3. 系统整体性能提升</h3><p><strong>综合性能改进：</strong></p>
+<ul>
+<li><strong>启动时间</strong>：系统启动时间减少 15-25%</li>
+<li><strong>索引构建</strong>：索引构建速度提升 20-30%</li>
+<li><strong>查询吞吐量</strong>：整体查询吞吐量提升 25-40%</li>
+<li><strong>资源利用率</strong>：CPU 和内存资源利用率优化</li>
+</ul>
+<p><strong>网络和 I&#x2F;O 优化：</strong></p>
+<ul>
+<li><strong>网络传输效率</strong>：节点间数据传输的优化</li>
+<li><strong>磁盘访问模式</strong>：更优的磁盘访问模式</li>
+<li><strong>缓存命中率</strong>：各级缓存的命中率提升</li>
+<li><strong>连接池管理</strong>：连接池的效率和稳定性改进</li>
+</ul>
+<h2 id="Bug-修复重要性分析"><a href="#Bug-修复重要性分析" class="headerlink" title="Bug 修复重要性分析"></a>Bug 修复重要性分析</h2><h3 id="1-认证机制稳定性修复"><a href="#1-认证机制稳定性修复" class="headerlink" title="1. 认证机制稳定性修复"></a>1. 认证机制稳定性修复</h3><p><strong>安全性保障：★★★★★</strong></p>
+<p>认证相关修复的重要意义：</p>
+<p><strong>访问控制可靠性：</strong></p>
+<ul>
+<li><strong>认证绕过修复</strong>：防止未授权访问的安全漏洞</li>
+<li><strong>会话管理</strong>：用户会话的安全管理和超时控制</li>
+<li><strong>权限验证</strong>：细粒度权限验证的准确性</li>
+<li><strong>审计日志</strong>：完整的访问审计和日志记录</li>
+</ul>
+<p><strong>分布式认证一致性：</strong></p>
+<ul>
+<li><strong>跨节点认证</strong>：集群节点间认证的一致性</li>
+<li><strong>故障转移</strong>：认证服务故障时的处理机制</li>
+<li><strong>负载均衡</strong>：认证请求的负载分配</li>
+<li><strong>缓存同步</strong>：认证信息的缓存同步机制</li>
+</ul>
+<h3 id="2-CLI-工具稳定性改进"><a href="#2-CLI-工具稳定性改进" class="headerlink" title="2. CLI 工具稳定性改进"></a>2. CLI 工具稳定性改进</h3><p><strong>运维效率提升：★★★★☆</strong></p>
+<p>命令行工具的改进对运维的影响：</p>
+<p><strong>自动化运维支持：</strong></p>
+<ul>
+<li><strong>脚本稳定性</strong>：自动化脚本的可靠执行</li>
+<li><strong>错误处理</strong>：更完善的错误处理和错误信息</li>
+<li><strong>批量操作</strong>：批量运维操作的稳定性</li>
+<li><strong>集成便利性</strong>：与监控和部署工具的集成</li>
+</ul>
+<h2 id="技术发展趋势分析"><a href="#技术发展趋势分析" class="headerlink" title="技术发展趋势分析"></a>技术发展趋势分析</h2><h3 id="1-列式存储标准化"><a href="#1-列式存储标准化" class="headerlink" title="1. 列式存储标准化"></a>1. 列式存储标准化</h3><p>DocValues 默认启用反映了重要趋势：</p>
+<p><strong>存储架构演进：</strong></p>
+<ul>
+<li><strong>列式存储普及</strong>：从行式向列式存储的转变成为标准</li>
+<li><strong>OLAP 能力增强</strong>：搜索引擎的分析处理能力不断增强</li>
+<li><strong>实时分析</strong>：实时数据分析和历史数据分析的融合</li>
+<li><strong>内存计算优化</strong>：内存和磁盘存储的协同优化</li>
+</ul>
+<h3 id="2-AI-搜索能力集成"><a href="#2-AI-搜索能力集成" class="headerlink" title="2. AI 搜索能力集成"></a>2. AI 搜索能力集成</h3><p><strong>智能搜索趋势：</strong></p>
+<ul>
+<li><strong>向量搜索标准化</strong>：向量搜索成为搜索引擎的标准功能</li>
+<li><strong>多模态搜索</strong>：文本、图像、音频等多模态数据的统一搜索</li>
+<li><strong>语义理解</strong>：从关键词匹配向语义理解的转变</li>
+<li><strong>个性化推荐</strong>：基于向量相似度的个性化推荐</li>
+</ul>
+<h3 id="3-可观测性标准化"><a href="#3-可观测性标准化" class="headerlink" title="3. 可观测性标准化"></a>3. 可观测性标准化</h3><p><strong>监控架构现代化：</strong></p>
+<ul>
+<li><strong>云原生监控</strong>：与 Kubernetes 生态的深度集成</li>
+<li><strong>标准化指标</strong>：遵循 OpenTelemetry 等标准</li>
+<li><strong>自动化运维</strong>：基于监控数据的自动化运维决策</li>
+<li><strong>预测性维护</strong>：基于监控趋势的预测性问题发现</li>
+</ul>
+<h3 id="4-零配置目标"><a href="#4-零配置目标" class="headerlink" title="4. 零配置目标"></a>4. 零配置目标</h3><p><strong>易用性提升：</strong></p>
+<ul>
+<li><strong>合理默认值</strong>：提供生产就绪的默认配置</li>
+<li><strong>自动优化</strong>：系统的自动调优和优化</li>
+<li><strong>简化部署</strong>：降低部署和配置的复杂度</li>
+<li><strong>智能推荐</strong>：基于使用模式的配置推荐</li>
+</ul>
+<h2 id="升级建议"><a href="#升级建议" class="headerlink" title="升级建议"></a>升级建议</h2><h3 id="强烈推荐升级的场景"><a href="#强烈推荐升级的场景" class="headerlink" title="强烈推荐升级的场景"></a>强烈推荐升级的场景</h3><ol>
+<li><p><strong>大数据分析</strong>：</p>
+<ul>
+<li>需要大量聚合查询的应用</li>
+<li>OLAP 和 BI 分析场景</li>
+<li>实时报表和仪表板</li>
+</ul>
+</li>
+<li><p><strong>AI 搜索应用</strong>：</p>
+<ul>
+<li>语义搜索和相似内容推荐</li>
+<li>多模态搜索需求</li>
+<li>个性化推荐系统</li>
+</ul>
+</li>
+<li><p><strong>性能敏感环境</strong>：</p>
+<ul>
+<li>对查询响应时间要求严格</li>
+<li>高并发查询场景</li>
+<li>资源使用效率要求高</li>
+</ul>
+</li>
+</ol>
+<h3 id="升级注意事项"><a href="#升级注意事项" class="headerlink" title="升级注意事项"></a>升级注意事项</h3><ol>
+<li><p><strong>DocValues 影响评估</strong>：</p>
+<ul>
+<li>评估现有查询的性能变化</li>
+<li>监控内存使用模式的变化</li>
+<li>验证聚合查询的正确性</li>
+</ul>
+</li>
+<li><p><strong>向量搜索功能测试</strong>：</p>
+<ul>
+<li>测试向量查询的性能和准确性</li>
+<li>验证与现有查询的兼容性</li>
+<li>评估向量数据的存储需求</li>
+</ul>
+</li>
+<li><p><strong>监控系统更新</strong>：</p>
+<ul>
+<li>更新 Prometheus 监控配置</li>
+<li>调整告警规则和阈值</li>
+<li>验证监控指标的完整性</li>
+</ul>
+</li>
+</ol>
+<h3 id="性能验证建议"><a href="#性能验证建议" class="headerlink" title="性能验证建议"></a>性能验证建议</h3><ul>
+<li><strong>基准测试</strong>：重点测试聚合查询的性能改进</li>
+<li><strong>内存监控</strong>：密切监控内存使用模式的变化</li>
+<li><strong>负载测试</strong>：验证高并发场景下的性能表现</li>
+<li><strong>功能测试</strong>：全面测试新功能的正确性和稳定性</li>
+</ul>
+<p>Solr 9.7.0 版本通过 DocValues 默认启用和向量查询支持，为构建高性能的分析型搜索系统和 AI 驱动的智能搜索应用提供了强大的技术基础。这些改进不仅提升了当前的性能表现，也为未来的智能搜索发展奠定了重要基础。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E6%96%B0%E9%97%BB/">Solr新闻</a>
+  
+    <a class="article-tag" href="/tags/%E7%89%88%E6%9C%AC%E5%8F%91%E5%B8%83/">版本发布</a>
+  
+    <a class="article-tag" href="/tags/DocValues/">DocValues</a>
+  
+    <a class="article-tag" href="/tags/%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2/">向量查询</a>
+  
+    <a class="article-tag" href="/tags/Prometheus%E7%9B%91%E6%8E%A7/">Prometheus监控</a>
+  
+
+      
+            
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2024/10/13/Apache-Solr-%E5%AE%89%E5%85%A8%E6%BC%8F%E6%B4%9E%E9%80%9A%E5%91%8A-CVE-2024-45216%E4%B8%8ECVE-2024-45217/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Apache Solr 重要安全更新：PKI 认证绕过与配置集信任漏洞修复
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2024/08/14/Solr%E6%A6%82%E5%BF%B5%EF%BC%9A%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E4%B8%8E%E6%9F%A5%E8%AF%A2%E8%AF%AD%E6%B3%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr概念：搜索功能与查询语法</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Apache-Solr-9-7-0-%E9%87%8D%E8%A6%81%E5%8A%9F%E8%83%BD%E5%A2%9E%E5%BC%BA%E7%89%88%E6%9C%AC"><span class="nav-number">1.</span> <span class="nav-text">Apache Solr 9.7.0 重要功能增强版本</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8E%9F%E6%96%87%E5%8A%A8%E6%80%81%E7%BF%BB%E8%AF%91"><span class="nav-number">1.1.</span> <span class="nav-text">原文动态翻译</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%86%E5%B8%83%E5%BC%8F%E5%AE%8C%E5%96%84%E5%88%86%E6%9E%90"><span class="nav-number">1.2.</span> <span class="nav-text">分布式完善分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DocValues-%E9%BB%98%E8%AE%A4%E5%90%AF%E7%94%A8%E7%9A%84%E5%88%86%E5%B8%83%E5%BC%8F%E5%BD%B1%E5%93%8D"><span class="nav-number">1.2.1.</span> <span class="nav-text">1. DocValues 默认启用的分布式影响</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-vectorSimilarity-%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E7%9A%84%E6%9E%B6%E6%9E%84%E6%84%8F%E4%B9%89"><span class="nav-number">1.2.2.</span> <span class="nav-text">2. vectorSimilarity 查询解析器的架构意义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-Prometheus-%E7%9B%91%E6%8E%A7%E9%9B%86%E6%88%90%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.2.3.</span> <span class="nav-text">3. Prometheus 监控集成增强</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87%E5%88%86%E6%9E%90"><span class="nav-number">1.3.</span> <span class="nav-text">性能提升分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DocValues-%E6%80%A7%E8%83%BD%E9%9D%A9%E5%91%BD"><span class="nav-number">1.3.1.</span> <span class="nav-text">1. DocValues 性能革命</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%91%E9%87%8F%E6%9F%A5%E8%AF%A2%E6%80%A7%E8%83%BD"><span class="nav-number">1.3.2.</span> <span class="nav-text">2. 向量查询性能</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E7%B3%BB%E7%BB%9F%E6%95%B4%E4%BD%93%E6%80%A7%E8%83%BD%E6%8F%90%E5%8D%87"><span class="nav-number">1.3.3.</span> <span class="nav-text">3. 系统整体性能提升</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bug-%E4%BF%AE%E5%A4%8D%E9%87%8D%E8%A6%81%E6%80%A7%E5%88%86%E6%9E%90"><span class="nav-number">1.4.</span> <span class="nav-text">Bug 修复重要性分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E8%AE%A4%E8%AF%81%E6%9C%BA%E5%88%B6%E7%A8%B3%E5%AE%9A%E6%80%A7%E4%BF%AE%E5%A4%8D"><span class="nav-number">1.4.1.</span> <span class="nav-text">1. 认证机制稳定性修复</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CLI-%E5%B7%A5%E5%85%B7%E7%A8%B3%E5%AE%9A%E6%80%A7%E6%94%B9%E8%BF%9B"><span class="nav-number">1.4.2.</span> <span class="nav-text">2. CLI 工具稳定性改进</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E5%8F%91%E5%B1%95%E8%B6%8B%E5%8A%BF%E5%88%86%E6%9E%90"><span class="nav-number">1.5.</span> <span class="nav-text">技术发展趋势分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%97%E5%BC%8F%E5%AD%98%E5%82%A8%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.5.1.</span> <span class="nav-text">1. 列式存储标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-AI-%E6%90%9C%E7%B4%A2%E8%83%BD%E5%8A%9B%E9%9B%86%E6%88%90"><span class="nav-number">1.5.2.</span> <span class="nav-text">2. AI 搜索能力集成</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%8F%AF%E8%A7%82%E6%B5%8B%E6%80%A7%E6%A0%87%E5%87%86%E5%8C%96"><span class="nav-number">1.5.3.</span> <span class="nav-text">3. 可观测性标准化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E9%9B%B6%E9%85%8D%E7%BD%AE%E7%9B%AE%E6%A0%87"><span class="nav-number">1.5.4.</span> <span class="nav-text">4. 零配置目标</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.</span> <span class="nav-text">升级建议</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%BC%BA%E7%83%88%E6%8E%A8%E8%8D%90%E5%8D%87%E7%BA%A7%E7%9A%84%E5%9C%BA%E6%99%AF"><span class="nav-number">1.6.1.</span> <span class="nav-text">强烈推荐升级的场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8D%87%E7%BA%A7%E6%B3%A8%E6%84%8F%E4%BA%8B%E9%A1%B9"><span class="nav-number">1.6.2.</span> <span class="nav-text">升级注意事项</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%A7%E8%83%BD%E9%AA%8C%E8%AF%81%E5%BB%BA%E8%AE%AE"><span class="nav-number">1.6.3.</span> <span class="nav-text">性能验证建议</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

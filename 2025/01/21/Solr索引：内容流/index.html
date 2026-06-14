@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr索引：内容流 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="Solr索引内容流ContentStream批量数据远程流请求处理器" />
+  
+  
+  
+  
+  <meta name="description" content="内容流是与Solr请求一起传递的批量数据。 当使用基于路径的URL访问Solr RequestHandlers时，包含请求参数的SolrQueryRequest对象还可能包含为请求提供批量数据的ContentStreams列表。（SolrQueryRequest这个名字有点误导性：它参与所有请求，无论是查询请求还是更新请求。） 内容流来源目前请求处理器可以通过多种方式获取内容流：  对于多部分文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr索引：内容流">
+<meta property="og:url" content="https://solrcn.github.io/2025/01/21/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%86%85%E5%AE%B9%E6%B5%81/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="内容流是与Solr请求一起传递的批量数据。 当使用基于路径的URL访问Solr RequestHandlers时，包含请求参数的SolrQueryRequest对象还可能包含为请求提供批量数据的ContentStreams列表。（SolrQueryRequest这个名字有点误导性：它参与所有请求，无论是查询请求还是更新请求。） 内容流来源目前请求处理器可以通过多种方式获取内容流：  对于多部分文件">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-01-21T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T08:09:40.352Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="Solr索引">
+<meta property="article:tag" content="内容流">
+<meta property="article:tag" content="ContentStream">
+<meta property="article:tag" content="批量数据">
+<meta property="article:tag" content="远程流">
+<meta property="article:tag" content="请求处理器">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr索引：内容流" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr索引：内容流
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/01/21/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%86%85%E5%AE%B9%E6%B5%81/" class="article-date">
+	  <time datetime="2025-01-21T16:00:00.000Z" itemprop="datePublished">一月 21, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>内容流是与Solr请求一起传递的批量数据。</p>
+<p>当使用基于路径的URL访问Solr RequestHandlers时，包含请求参数的<code>SolrQueryRequest</code>对象还可能包含为请求提供批量数据的ContentStreams列表。<br>（SolrQueryRequest这个名字有点误导性：它参与所有请求，无论是查询请求还是更新请求。）</p>
+<h2 id="内容流来源"><a href="#内容流来源" class="headerlink" title="内容流来源"></a>内容流来源</h2><p>目前请求处理器可以通过多种方式获取内容流：</p>
+<ul>
+<li>对于多部分文件上传，每个文件作为流传递。</li>
+<li>对于内容类型不是<code>application/x-www-form-urlencoded</code>的POST请求，原始POST正文作为流传递。<br>完整的POST正文被解析为参数并包含在Solr参数中。</li>
+<li>参数<code>stream.body</code>的内容作为流传递。<br>需要<code>SOLR_ENABLE_STREAM_BODY=true</code>。</li>
+<li>每个<code>stream.url</code>和<code>stream.file</code>参数都被解析&#x2F;获取并作为流传递。<br>需要<code>SOLR_ENABLE_REMOTE_STREAMING=true</code>。</li>
+</ul>
+<p>默认情况下，curl发送一个<code>contentType=&quot;application/x-www-form-urlencoded&quot;</code>头。<br>如果你需要测试SolrContentHeader内容流，你需要使用curl的<code>-H</code>标志设置内容类型。</p>
+<h2 id="远程流"><a href="#远程流" class="headerlink" title="远程流"></a>远程流</h2><p>远程流让你可以将URL的内容作为流发送到给定的Solr RequestHandler。<br>你可以使用远程流将远程或本地文件发送到更新插件。</p>
+<p>远程流默认是禁用的。<br>在没有你和不受信任的远程客户端之间额外安全措施的生产环境中，不建议启用它。</p>
+<blockquote>
+<p><strong>重要</strong></p>
+<p>如果使用远程流，请注意这允许<strong>任何人</strong>向任何URL或本地文件发送请求。<br>并且通过<a href="#debugging-requests">调试请求</a>中的DumpRequestHandler，任何人都可以查看Solr可以访问的内容。</p>
+</blockquote>
+<p>使用此环境变量启用它：<code>SOLR_ENABLE_REMOTE_STREAMING=true</code></p>
+<p>数据源可以使用gzip压缩，Solr通常会检测到这一点。<br>检测基于<code>Content-Encoding: gzip</code> HTTP头的存在或文件以.gz或.gzip结尾。<br>Gzip不适用于<code>stream.body</code>。</p>
+<h2 id="调试请求"><a href="#调试请求" class="headerlink" title="调试请求"></a>调试请求</h2><p>隐式的”dump”RequestHandler（参见<a href="configuration-guide:implicit-requesthandlers">隐式请求处理器</a>）简单地使用指定的编写器类型<code>wt</code>输出Solr QueryRequest的内容。<br>这是帮助理解RequestHandlers可用流的有用工具。</p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/Solr%E7%B4%A2%E5%BC%95/">Solr索引</a>
+  
+    <a class="article-tag" href="/tags/%E5%86%85%E5%AE%B9%E6%B5%81/">内容流</a>
+  
+    <a class="article-tag" href="/tags/ContentStream/">ContentStream</a>
+  
+    <a class="article-tag" href="/tags/%E6%89%B9%E9%87%8F%E6%95%B0%E6%8D%AE/">批量数据</a>
+  
+    <a class="article-tag" href="/tags/%E8%BF%9C%E7%A8%8B%E6%B5%81/">远程流</a>
+  
+    <a class="article-tag" href="/tags/%E8%AF%B7%E6%B1%82%E5%A4%84%E7%90%86%E5%99%A8/">请求处理器</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/01/22/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%A4%8D%E5%88%B6%E5%AD%97%E6%AE%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr索引：复制字段
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/01/20/Solr%E7%B4%A2%E5%BC%95%EF%BC%9A%E5%AD%97%E7%AC%A6%E8%BF%87%E6%BB%A4%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr索引：字符过滤器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%86%85%E5%AE%B9%E6%B5%81%E6%9D%A5%E6%BA%90"><span class="nav-number">1.</span> <span class="nav-text">内容流来源</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%9C%E7%A8%8B%E6%B5%81"><span class="nav-number">2.</span> <span class="nav-text">远程流</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B0%83%E8%AF%95%E8%AF%B7%E6%B1%82"><span class="nav-number">3.</span> <span class="nav-text">调试请求</span></a></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>

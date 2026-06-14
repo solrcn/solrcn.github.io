@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <!-- PACE Progress Bar START -->
+  
+    
+<script src="https://raw.githubusercontent.com/HubSpot/pace/v1.0.2/pace.min.js"></script>
+
+    
+<link rel="stylesheet" href="https://github.com/HubSpot/pace/raw/master/themes/orange/pace-theme-flash.css">
+
+  
+  
+
+  <!-- PACE Progress Bar START -->
+
+  
+  <title>solr查询：edismax查询解析器详解 | Solr Community of China</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  
+  <meta name="keywords" content="查询解析器搜索优化Solr查询SolreDisMax相关性提升" />
+  
+  
+  
+  
+  <meta name="description" content="深入解析Apache Solr eDisMax(扩展DisMax)查询解析器的功能特性、参数配置和实际应用。详细介绍eDisMax相对于DisMax的改进功能，包括布尔操作符支持、智能转义、邻近度提升、停用词处理等高级特性。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Solr查询：eDisMax查询解析器详解">
+<meta property="og:url" content="https://solrcn.github.io/2025/03/08/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9AeDisMax%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%A6%E8%A7%A3/index.html">
+<meta property="og:site_name" content="Solr Community of China">
+<meta property="og:description" content="深入解析Apache Solr eDisMax(扩展DisMax)查询解析器的功能特性、参数配置和实际应用。详细介绍eDisMax相对于DisMax的改进功能，包括布尔操作符支持、智能转义、邻近度提升、停用词处理等高级特性。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-03-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2025-08-25T14:55:20.249Z">
+<meta property="article:author" content="longkeyy">
+<meta property="article:tag" content="查询解析器">
+<meta property="article:tag" content="搜索优化">
+<meta property="article:tag" content="Solr查询">
+<meta property="article:tag" content="Solr">
+<meta property="article:tag" content="eDisMax">
+<meta property="article:tag" content="相关性提升">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Solr Community of China" type="application/atom+xml">
+  
+  <link rel="icon" href="/css/images/favicon.ico">
+  
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans|Montserrat:700" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Roboto:400,300,300italic,400italic" rel="stylesheet" type="text/css">
+  <link href="https://cdn.bootcss.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet">
+  <style type="text/css">
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/9749f0/00000000000000000001008f/27/l?subset_id=2&fvd=n5) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/90cf9f/000000000000000000010091/27/l?subset_id=2&fvd=n7) format("woff2");font-weight:500;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/8a5494/000000000000000000013365/27/l?subset_id=2&fvd=n4) format("woff2");font-weight:lighter;font-style:normal;}
+    @font-face{font-family:futura-pt;src:url(https://use.typekit.net/af/d337d8/000000000000000000010095/27/l?subset_id=2&fvd=i4) format("woff2");font-weight:400;font-style:italic;}</style>
+    
+  <link rel="stylesheet" id="athemes-headings-fonts-css" href="//fonts.googleapis.com/css?family=Yanone+Kaffeesatz%3A200%2C300%2C400%2C700&amp;ver=4.6.1" type="text/css" media="all">
+  
+<link rel="stylesheet" href="/css/style.css">
+
+
+  
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+
+  <!-- Bootstrap core CSS -->
+  <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.2/css/bootstrap.min.css" >
+  <link rel="stylesheet" href="/css/hiero.css" >
+  <link rel="stylesheet" href="/css/glyphs.css" >
+  
+
+  <!-- Custom CSS -->
+  
+<link rel="stylesheet" href="/css/my.css">
+
+  <!-- Google Adsense -->
+  
+  <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <script>
+      (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-0123456789ABCDEF",
+          enable_page_level_ads: true
+      });
+  </script>
+  
+<meta name="generator" content="Hexo 7.3.0"></head>
+
+<script>
+var themeMenus = {};
+
+  themeMenus["/"] = "首页"; 
+
+  themeMenus["/categories/Solr%E5%85%A5%E9%97%A8/"] = "solr入门"; 
+
+  themeMenus["/categories/Solr%E8%BF%9B%E9%98%B6/"] = "solr进阶"; 
+
+  themeMenus["/categories/Solr%E6%96%B0%E9%97%BB/"] = "solr动态"; 
+
+  themeMenus["/about/"] = "关于"; 
+
+</script>
+
+
+  <body data-spy="scroll" data-target="#toc" data-offset="50">
+
+
+  <header id="allheader" class="site-header" role="banner">
+  <div class="clearfix container">
+      <div class="site-branding">
+
+          <h1 class="site-title">
+            
+              <a href="/" rel="home" >
+                <img style="margin-bottom: 10px;"  width="320px" height="125px" alt="Hike News" src=" /css/images/logo.jpg">
+              </a>
+            
+          </h1>
+
+          
+            <div class="site-description">Apache Solr/Lucene 中文技术社区，提供Solr教程、技术文档、最佳实践和问题解答</div>
+          
+            
+          <nav id="main-navigation" class="main-navigation" role="navigation">
+            <a class="nav-open">Menu</a>
+            <a class="nav-close">Close</a>
+            <div class="clearfix sf-menu">
+
+              <ul id="main-nav" class="nmenu sf-js-enabled">
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/">首页</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E5%85%A5%E9%97%A8/">solr入门</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E8%BF%9B%E9%98%B6/">solr进阶</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/categories/Solr%E6%96%B0%E9%97%BB/">solr动态</a> </li>
+                    
+                      <li class="menu-item menu-item-type-custom menu-item-object-custom menu-item-home menu-item-1663"> <a class="" href="/about/">关于</a> </li>
+                    
+              </ul>
+            </div>
+          </nav>
+
+
+      </div>
+  </div>
+</header>
+
+
+
+
+  <div id="container">
+    <div id="wrap">
+            
+      <div id="content" class="outer">
+        
+          <section id="main" style="float:none;"><article id="post-Solr查询：eDisMax查询解析器详解" style="width: 66%; float:left;" class="article article-type-post" itemscope itemprop="blogPost" >
+  <div id="articleInner" class="clearfix post-1016 post type-post status-publish format-standard has-post-thumbnail hentry category-template-2 category-uncategorized tag-codex tag-edge-case tag-featured-image tag-image tag-template">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="thumb" class="article-title" itemprop="name">
+      Solr查询：eDisMax查询解析器详解
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-meta">
+      
+	Posted on <a href="/2025/03/08/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9AeDisMax%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%A6%E8%A7%A3/" class="article-date">
+	  <time datetime="2025-03-08T16:00:00.000Z" itemprop="datePublished">三月 8, 2025</time>
+	</a>
+
+      
+	<span id="busuanzi_container_page_pv">
+	  本文总阅读量<span id="busuanzi_value_page_pv"></span>次
+	</span>
+
+    </div>
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h1 id="Solr查询：eDisMax查询解析器详解"><a href="#Solr查询：eDisMax查询解析器详解" class="headerlink" title="Solr查询：eDisMax查询解析器详解"></a>Solr查询：eDisMax查询解析器详解</h1><h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>扩展DisMax（eDisMax）查询解析器是DisMax查询解析器的改进版本。</p>
+<p>除了支持所有DisMax查询解析器参数外，扩展DisMax还提供以下功能：</p>
+<ul>
+<li>支持标准查询解析器语法，例如（非完整列表）：<br>** 布尔操作符，如AND（+，&amp;&amp;）、OR（||）、NOT（-）<br>** 可选择将小写的”and”和”or”视为Lucene语法模式下的”AND”和”OR”<br>** 可选择允许使用其他查询解析器或函数的嵌入式查询</li>
+<li>在语法错误情况下包含改进的智能部分转义；在此模式下仍然支持字段查询、+&#x2F;-和短语查询</li>
+<li>通过使用词片段改进邻近度提升；在应用邻近度提升之前，不需要查询匹配文档中的所有词</li>
+<li>包含高级停用词处理：停用词在查询的必需部分不是必需的，但仍在邻近度提升部分中使用。如果查询完全由停用词组成，如”to be or not to be”，那么所有词都是必需的</li>
+<li>包含改进的提升函数：在扩展DisMax中，<code>boost</code>函数是一个乘数而不是加数，从而改进您的提升结果；DisMax的加法提升函数（<code>bf</code>和<code>bq</code>）也受到支持</li>
+<li>支持纯负嵌套查询：如<code>+foo (-foo)</code>这样的查询将匹配所有文档</li>
+<li>允许您指定最终用户可以查询的字段，并禁止直接字段搜索</li>
+</ul>
+<h2 id="扩展DisMax参数"><a href="#扩展DisMax参数" class="headerlink" title="扩展DisMax参数"></a>扩展DisMax参数</h2><p>除了所有DisMax参数外，扩展DisMax还包括以下查询参数：</p>
+<h3 id="sow"><a href="#sow" class="headerlink" title="sow"></a>sow</h3><p>分割空白字符。<br>如果设置为<code>true</code>，将为每个单独的空白分隔的术语单独调用文本分析。<br>默认值为<code>false</code>；空白分隔的术语序列将一次性提供给文本分析，从而使在术语序列上操作的分析过滤器能够正常工作，例如多词同义词和词片段。</p>
+<h3 id="mm"><a href="#mm" class="headerlink" title="mm"></a>mm</h3><p>最小应该匹配。<br>有关<code>mm</code>的描述，请参阅DisMax <code>mm</code>参数。<br>默认的eDisMax <code>mm</code>值与DisMax的不同：</p>
+<ul>
+<li>如果查询包含除”AND”之外的显式操作符（”-“、”+”、”OR”、”NOT”）；或者<code>q.op</code>是”OR”或未指定，则默认<code>mm</code>值为0%</li>
+<li>如果<code>q.op</code>是”AND”且查询不包含除”AND”之外的任何显式操作符，则默认<code>mm</code>值为100%</li>
+</ul>
+<h3 id="mm-autoRelax"><a href="#mm-autoRelax" class="headerlink" title="mm.autoRelax"></a>mm.autoRelax</h3><p>如果为<code>true</code>，如果子句从某些而不是所有<code>qf</code>字段中被删除（例如，通过停用词过滤器），则所需的子句数将自动放宽。<br>如果您遇到由于<code>qf</code>字段之间不均匀的停用词删除而导致查询返回零命中的情况，请使用此参数作为解决方法。</p>
+<p>注意，放宽<code>mm</code>可能会导致不希望的副作用，例如根据索引内容的性质损害搜索的精度。</p>
+<h3 id="boost"><a href="#boost" class="headerlink" title="boost"></a>boost</h3><p>一个多值字符串列表，解析为函数，其结果将乘以所有匹配文档的主查询分数。<br>此参数是使用<code>BoostQParserPlugin</code>包装eDisMax生成的查询的简写。</p>
+<p>以下两个示例是等效的：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">q=&#123;!edismax qf=name&#125;ipod</span><br><span class="line">boost=div(1,sum(1,price))</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">q=&#123;!boost b=div(1,sum(1,price)) v=$qq&#125;</span><br><span class="line">qq=&#123;!edismax qf=name&#125;ipod</span><br></pre></td></tr></table></figure>
+
+<h3 id="lowercaseOperators"><a href="#lowercaseOperators" class="headerlink" title="lowercaseOperators"></a>lowercaseOperators</h3><p>一个布尔参数，指示小写的”and”和”or”是否应该与操作符”AND”和”OR”相同处理。<br>默认为<code>false</code>。</p>
+<h3 id="pf"><a href="#pf" class="headerlink" title="pf"></a>pf</h3><p>短语字段。<br>一旦使用<code>fq</code>和<code>qf</code>参数识别了匹配文档列表，就可以使用<code>pf</code>参数在q参数中的所有术语出现在接近位置的情况下”提升”文档的分数。</p>
+<p>格式与<code>qf</code>参数使用的格式相同：当从整个q参数制作短语查询时，要与每个字段关联的字段和”提升”列表。</p>
+<h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><p>短语滑动。<br>在使用<code>pf</code>、<code>pf2</code>和&#x2F;或<code>pf3</code>字段构建的短语查询上的默认滑动量 - 术语之间的距离（影响提升）。<br>另请参阅下面的”使用’滑动’”部分。</p>
+<h3 id="pf2"><a href="#pf2" class="headerlink" title="pf2"></a>pf2</h3><p>带有可选权重的多值字段列表。<br>类似于<code>pf</code>，但基于词对片段。</p>
+<h3 id="ps2"><a href="#ps2" class="headerlink" title="ps2"></a>ps2</h3><p>这类似于<code>ps</code>，但覆盖用于<code>pf2</code>的滑动因子。<br>如果未指定，则使用<code>ps</code>。</p>
+<h3 id="pf3"><a href="#pf3" class="headerlink" title="pf3"></a>pf3</h3><p>带有可选权重的多值字段列表，基于词三元组片段。<br>类似于<code>pf</code>，但不是从输入中的所有词为每个字段构建短语，而是为每个字段从词三元组片段构建短语集合。</p>
+<h3 id="ps3"><a href="#ps3" class="headerlink" title="ps3"></a>ps3</h3><p>这类似于<code>ps</code>，但覆盖用于<code>pf3</code>的滑动因子。<br>如果未指定，则使用<code>ps</code>。</p>
+<h3 id="stopwords"><a href="#stopwords" class="headerlink" title="stopwords"></a>stopwords</h3><p>一个布尔参数，指示在解析查询时是否应遵守在查询分析器中配置的<code>StopFilterFactory</code>。<br>如果设置为<code>false</code>，则忽略查询分析器中的<code>StopFilterFactory</code>。</p>
+<h3 id="uf"><a href="#uf" class="headerlink" title="uf"></a>uf</h3><p>指定最终用户允许显式查询的模式字段，以及切换是否支持嵌入式Solr查询。<br>此参数支持通配符。<br>多个字段必须用空格分隔。</p>
+<p>默认是允许所有字段且不允许嵌入式Solr查询，相当于<code>uf=* -_query_</code>。</p>
+<ul>
+<li>要仅允许title字段，请使用<code>uf=title</code></li>
+<li>要允许title和所有以’_s’结尾的字段，请使用<code>uf=title *_s</code></li>
+<li>要允许除title之外的所有字段，请使用<code>uf=* -title</code></li>
+<li>要禁止所有字段搜索，请使用<code>uf=-*</code></li>
+<li>要允许嵌入式Solr查询（例如，<code>_query_:&quot;...&quot;</code>或<code>_val_:&quot;...&quot;</code>或<code>&#123;!lucene ...&#125;</code>），<br>您必须在<code>uf</code>中明确引用魔术字段<code>_query_</code>来启用此功能</li>
+</ul>
+<h2 id="使用每字段qf覆盖的字段别名"><a href="#使用每字段qf覆盖的字段别名" class="headerlink" title="使用每字段qf覆盖的字段别名"></a>使用每字段qf覆盖的字段别名</h2><p>可以指定<code>qf</code>参数的每字段覆盖，以提供从查询字符串中指定的字段名称到底层查询中使用的字段名称的一对多别名。<br>默认情况下，不使用别名，查询字符串中指定的字段名称被视为索引中的字面字段名称。</p>
+<h2 id="eDisMax查询示例"><a href="#eDisMax查询示例" class="headerlink" title="eDisMax查询示例"></a>eDisMax查询示例</h2><p>本节中的所有示例URL都假设您正在运行Solr的”techproducts”示例：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/solr start -e techproducts</span><br></pre></td></tr></table></figure>
+
+<p>基于文档的受欢迎程度提升查询术语”hello”的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/select?defType=edismax&amp;q=hello&amp;pf=text&amp;qf=text&amp;boost=popularity</span><br></pre></td></tr></table></figure>
+
+<p>搜索iPods OR video：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/select?defType=edismax&amp;q=ipod+OR+video</span><br></pre></td></tr></table></figure>
+
+<p>跨多个字段搜索，指定（通过提升）每个字段相对于其他字段的重要性：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/select?q=video&amp;defType=edismax&amp;qf=features^20.0+text^0.3</span><br></pre></td></tr></table></figure>
+
+<p>您可以提升具有匹配特定值字段的结果：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/select?q=video&amp;defType=edismax&amp;qf=features^20.0+text^0.3&amp;bq=cat:electronics^5.0</span><br></pre></td></tr></table></figure>
+
+<p>使用<code>mm</code>参数，1和2词查询要求所有可选子句匹配，但对于三个或更多子句的查询，允许一个丢失的子句：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8983/solr/techproducts/select?q=belkin+ipod&amp;defType=edismax&amp;mm=2</span><br><span class="line">http://localhost:8983/solr/techproducts/select?q=belkin+ipod+gibberish&amp;defType=edismax&amp;mm=2</span><br><span class="line">http://localhost:8983/solr/techproducts/select?q=belkin+ipod+apple&amp;defType=edismax&amp;mm=2</span><br></pre></td></tr></table></figure>
+
+<p>在下面的示例中，我们看到使用<code>qf</code>参数的每字段覆盖将查询字符串中的”name”别名为”last_name”和”first_name”字段：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">defType=edismax</span><br><span class="line">q=sysadmin name:Mike</span><br><span class="line">qf=title text last_name first_name</span><br><span class="line">f.name.qf=last_name first_name</span><br></pre></td></tr></table></figure>
+
+<h2 id="使用’滑动’"><a href="#使用’滑动’" class="headerlink" title="使用’滑动’"></a>使用’滑动’</h2><p><code>DisMax</code>和<code>eDisMax</code>可以对所有查询字段运行查询，还可以对短语字段以短语形式运行查询（这只适用于提升文档，不是实际匹配）。<br>然而，该短语查询可以有’滑动’，这是查询术语之间的距离，同时仍然将其视为短语匹配。<br>例如：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">q=foo bar</span><br><span class="line">qf=field1^5 field2^10</span><br><span class="line">pf=field1^50 field2^20</span><br><span class="line">defType=dismax</span><br></pre></td></tr></table></figure>
+
+<p>使用这些参数，DisMax查询解析器生成类似这样的查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(+(field1:foo^5 OR field2:foo^10) AND (field1:bar^5 OR field2:bar^10))</span><br></pre></td></tr></table></figure>
+
+<p>但它还生成另一个只用于提升结果的查询：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">field1:&quot;foo bar&quot;^50 OR field2:&quot;foo bar&quot;^20</span><br></pre></td></tr></table></figure>
+
+<p>因此，任何具有术语”foo”和”bar”的文档都将匹配；但是，如果其中一些文档将这两个术语作为短语，它将得分更高，因为它更相关。</p>
+<p>如果添加参数<code>ps</code>（短语滑动），第二个查询将改为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps=10 field1:&quot;foo bar&quot;~10^50 OR field2:&quot;foo bar&quot;~10^20</span><br></pre></td></tr></table></figure>
+
+<p>这意味着如果术语”foo”和”bar”在文档中出现时彼此之间少于10个术语，短语将匹配。<br>例如说以下文档：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*Foo* term1 term2 term3 *bar*</span><br></pre></td></tr></table></figure>
+
+<p>将匹配短语查询。</p>
+<p>如何使用短语滑动？通常在请求处理程序中（在<code>solrconfig</code>中）配置。</p>
+<p>使用查询滑动（<code>qs</code>），概念类似，但它适用于用户的显式短语查询。<br>例如，如果您想搜索姓名，可以输入：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">q=&quot;Hans Anderson&quot;</span><br></pre></td></tr></table></figure>
+
+<p>包含”Hans Anderson”的文档将匹配，但包含中间名”Christian”的文档或姓氏在前的姓名（”Anderson, Hans”）不会匹配。<br>对于这些情况，可以配置查询字段<code>qs</code>，这样即使用户搜索显式短语查询，也会应用滑动。</p>
+<p>最后，除了短语字段（<code>pf</code>）参数外，<code>edismax</code>还支持<code>pf2</code>和<code>pf3</code>参数，用于创建二元组和三元组短语查询的字段。<br>这些参数查询的短语滑动可以分别使用<code>ps2</code>和<code>ps3</code>参数指定。<br>如果您使用<code>pf2</code>&#x2F;<code>pf3</code>但不使用<code>ps2</code>&#x2F;<code>ps3</code>，那么这些参数查询的短语滑动将从<code>ps</code>参数中获取（如果有的话）。</p>
+<h3 id="带滑动的短语查询中的同义词扩展"><a href="#带滑动的短语查询中的同义词扩展" class="headerlink" title="带滑动的短语查询中的同义词扩展"></a>带滑动的短语查询中的同义词扩展</h3><p>当带滑动的短语查询（例如带<code>ps</code>的<code>pf</code>）触发同义词扩展时，将为同义词的每个组合生成单独的子句。<br>例如，配置同义词<code>dog,canine</code>和<code>cat,feline</code>，查询<code>&quot;dog chased cat&quot;</code>将生成以下短语查询子句：</p>
+<ul>
+<li><code>&quot;dog chased cat&quot;</code></li>
+<li><code>&quot;canine chased cat&quot;</code></li>
+<li><code>&quot;dog chased feline&quot;</code></li>
+<li><code>&quot;canine chased feline&quot;</code></li>
+</ul>
+<hr>
+<p><em>本文档翻译自Apache Solr官方参考指南，旨在为中文用户提供完整的eDisMax查询解析器使用指南。</em></p>
+
+      
+    </div>
+    <footer class="entry-meta entry-footer">
+      
+	<span class="ico-folder"></span>
+    
+      <a class="article-category" href="/categories/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+      
+    
+
+      
+  <span class="ico-tags"></span>
+  
+    <a class="article-tag" href="/tags/%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8/">查询解析器</a>
+  
+    <a class="article-tag" href="/tags/%E6%90%9C%E7%B4%A2%E4%BC%98%E5%8C%96/">搜索优化</a>
+  
+    <a class="article-tag" href="/tags/Solr%E6%9F%A5%E8%AF%A2/">Solr查询</a>
+  
+    <a class="article-tag" href="/tags/Solr/">Solr</a>
+  
+    <a class="article-tag" href="/tags/eDisMax/">eDisMax</a>
+  
+    <a class="article-tag" href="/tags/%E7%9B%B8%E5%85%B3%E6%80%A7%E6%8F%90%E5%8D%87/">相关性提升</a>
+  
+
+      
+            
+      
+        
+	<div id="comment">
+		<!-- 来必力City版安装代码 -->
+		<div id="lv-container" data-id="city" data-uid="MTAyMC8yOTQ4MS82MDQ5">
+		<script type="text/javascript">
+		   (function(d, s) {
+		       var j, e = d.getElementsByTagName(s)[0];
+
+		       if (typeof LivereTower === 'function') { return; }
+
+		       j = d.createElement(s);
+		       j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+		       j.async = true;
+
+		       e.parentNode.insertBefore(j, e);
+		   })(document, 'script');
+		</script>
+		<noscript>为正常使用来必力评论功能请激活JavaScript</noscript>
+		</div>
+		<!-- City版安装代码已完成 -->
+	</div>
+
+
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2025/03/09/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9A%E5%9C%B0%E7%90%86%E4%BD%8D%E7%BD%AE%E6%90%9C%E7%B4%A2%E5%8A%9F%E8%83%BD%E8%AF%A6%E8%A7%A3/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          Solr查询：地理位置搜索功能详解
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2025/03/07/Solr%E6%9F%A5%E8%AF%A2%EF%BC%9ADisMax%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%A6%E8%A7%A3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">Solr查询：DisMax查询解析器详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+<!-- Table of Contents -->
+
+  <aside id="sidebar">
+    <div id="toc" class="toc-article" style="overflow-y: scroll; max-width: 28%;">
+    <strong class="toc-title">文章目录</strong>
+    
+      <ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Solr%E6%9F%A5%E8%AF%A2%EF%BC%9AeDisMax%E6%9F%A5%E8%AF%A2%E8%A7%A3%E6%9E%90%E5%99%A8%E8%AF%A6%E8%A7%A3"><span class="nav-number">1.</span> <span class="nav-text">Solr查询：eDisMax查询解析器详解</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">1.1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95DisMax%E5%8F%82%E6%95%B0"><span class="nav-number">1.2.</span> <span class="nav-text">扩展DisMax参数</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sow"><span class="nav-number">1.2.1.</span> <span class="nav-text">sow</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mm"><span class="nav-number">1.2.2.</span> <span class="nav-text">mm</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mm-autoRelax"><span class="nav-number">1.2.3.</span> <span class="nav-text">mm.autoRelax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#boost"><span class="nav-number">1.2.4.</span> <span class="nav-text">boost</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lowercaseOperators"><span class="nav-number">1.2.5.</span> <span class="nav-text">lowercaseOperators</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pf"><span class="nav-number">1.2.6.</span> <span class="nav-text">pf</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps"><span class="nav-number">1.2.7.</span> <span class="nav-text">ps</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pf2"><span class="nav-number">1.2.8.</span> <span class="nav-text">pf2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps2"><span class="nav-number">1.2.9.</span> <span class="nav-text">ps2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pf3"><span class="nav-number">1.2.10.</span> <span class="nav-text">pf3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ps3"><span class="nav-number">1.2.11.</span> <span class="nav-text">ps3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stopwords"><span class="nav-number">1.2.12.</span> <span class="nav-text">stopwords</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#uf"><span class="nav-number">1.2.13.</span> <span class="nav-text">uf</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%AF%8F%E5%AD%97%E6%AE%B5qf%E8%A6%86%E7%9B%96%E7%9A%84%E5%AD%97%E6%AE%B5%E5%88%AB%E5%90%8D"><span class="nav-number">1.3.</span> <span class="nav-text">使用每字段qf覆盖的字段别名</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#eDisMax%E6%9F%A5%E8%AF%A2%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">eDisMax查询示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E2%80%99%E6%BB%91%E5%8A%A8%E2%80%99"><span class="nav-number">1.5.</span> <span class="nav-text">使用’滑动’</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B8%A6%E6%BB%91%E5%8A%A8%E7%9A%84%E7%9F%AD%E8%AF%AD%E6%9F%A5%E8%AF%A2%E4%B8%AD%E7%9A%84%E5%90%8C%E4%B9%89%E8%AF%8D%E6%89%A9%E5%B1%95"><span class="nav-number">1.5.1.</span> <span class="nav-text">带滑动的短语查询中的同义词扩展</span></a></li></ol></li></ol></li></ol>
+    
+    </div>
+  </aside>
+</section>
+        
+      </div>
+      <footer id="footer" class="site-footer">
+  
+
+  <div class="clearfix container">
+      <div class="site-info">
+	      &copy; 2026 Solr Community of China All Rights Reserved.
+          
+            <span id="busuanzi_container_site_uv">
+              本站访客数<span id="busuanzi_value_site_uv"></span>人次  
+              本站总访问量<span id="busuanzi_value_site_pv"></span>次
+            </span>
+          
+      </div>
+      <div class="site-credit">
+        Theme by <a href="https://github.com/iTimeTraveler/hexo-theme-hiero" target="_blank">hiero</a>
+      </div>
+  </div>
+</footer>
+
+
+<!-- min height -->
+
+<script>
+    var contentdiv = document.getElementById("content");
+
+    contentdiv.style.minHeight = document.body.offsetHeight - document.getElementById("allheader").offsetHeight - document.getElementById("footer").offsetHeight + "px";
+</script>
+
+<!-- Custome JS -->
+
+<script src="/js/my.js"></script>
+
+    </div>
+    <!-- <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">首页</a>
+  
+    <a href="/categories/Solr%E5%85%A5%E9%97%A8/" class="mobile-nav-link">Solr入门</a>
+  
+    <a href="/categories/Solr%E8%BF%9B%E9%98%B6/" class="mobile-nav-link">Solr进阶</a>
+  
+    <a href="/categories/Solr%E6%96%B0%E9%97%BB/" class="mobile-nav-link">Solr动态</a>
+  
+    <a href="/about/" class="mobile-nav-link">关于</a>
+  
+</nav> -->
+    
+
+<!-- mathjax config similar to math.stackexchange -->
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
+      processEscapes: true
+    }
+  });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+      tex2jax: {
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      }
+    });
+</script>
+
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css">
+
+  
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.js"></script>
+
+
+
+
+<script src="/js/scripts.js"></script>
+
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+
+
+  <div style="display: none;">
+    <script src="https://s95.cnzz.com/z_stat.php?id=1260716016&web_id=1260716016" language="JavaScript"></script>
+  </div>
+
+
+
+	<script async src="https://dnqof95d40fo6.cloudfront.net/atw7f8.js">
+	</script>
+
+
+
+
+
+
+
+<script defer src="https://track.lucene.cc/script.js" data-website-id="20a819c0-0086-4a5a-af57-0f22a5fda388"></script>
+
+
+  </div>
+
+  <a id="rocket" href="#top" class=""></a>
+  <script type="text/javascript" src="/js/totop.js" async=""></script>
+</body>
+</html>
